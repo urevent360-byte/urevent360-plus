@@ -56,7 +56,7 @@ export type Media = {
     altText: string;
     uploadDate: Date;
     type: 'image' | 'video';
-    url: string;
+    url: string; // Storage path or full URL
     eventId: string;
     clientId: string;
 };
@@ -70,6 +70,8 @@ export type Event = {
   endTime: Date;
   reminders?: Date[];
   notes?: string;
+  galleryVisibilityDate?: Date;
+  galleryExpirationDate?: Date;
 };
 
 // Collection: Chats
@@ -121,5 +123,9 @@ export type Booking = {
   eventId: string; // Link to the Event/Timeline entry
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'overdue';
-  photoboothLink?: string; // External link to photo booth album
+  photoboothLink?: {
+      url: string;
+      uploadedByAdmin: string; // Admin User ID
+      timestamp: Date;
+  };
 };

@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
-import { Mail, LogIn } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -35,6 +35,7 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { user, loading } = useAuth();
   
   useEffect(() => {
@@ -42,7 +43,7 @@ export default function LoginPage() {
       if (user.email === ADMIN_EMAIL) {
         router.push('/admin/dashboard');
       } else {
-        router.push('/portal');
+        router.push('/dashboard');
       }
     }
   }, [user, loading, router]);
@@ -57,8 +58,6 @@ export default function LoginPage() {
         title: 'Success!',
         description: 'Login successful! Redirecting...',
       });
-    
-    // Redirection is handled by the useEffect hook now
   }
 
   async function onSubmit(data: FormValues) {
@@ -121,12 +120,24 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password">{translations.auth.passwordLabel[language]}</Label>
-              <Input
-                id="password"
-                type="password"
-                {...register('password')}
-                aria-invalid={!!errors.password}
-              />
+               <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  {...register('password')}
+                  aria-invalid={!!errors.password}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute inset-y-0 right-0 h-full px-3"
+                  onClick={() => setShowPassword(prev => !prev)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <span className="sr-only">Toggle password visibility</span>
+                </Button>
+              </div>
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password?.message}</p>
               )}

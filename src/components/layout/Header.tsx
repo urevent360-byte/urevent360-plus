@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LogOut, ShoppingCart, Shield } from 'lucide-react';
+import { Menu, LogOut, ShoppingCart, Shield, LayoutGrid } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageProvider';
@@ -61,8 +61,8 @@ export function Header() {
           className={cn(
             'rounded-md px-3 py-1.5 font-medium transition-colors',
             pathname === item.href
-              ? 'bg-blue-100 text-blue-800'
-              : 'text-slate-500 hover:bg-blue-100/60 hover:text-blue-700',
+              ? 'bg-primary/10 text-primary'
+              : 'text-foreground/80 hover:bg-primary/10 hover:text-primary',
             isMobile && 'text-2xl'
           )}
           onClick={() => setSheetOpen(false)}
@@ -76,14 +76,16 @@ export function Header() {
   const showLoginButton = !user && !pathname.startsWith('/login') && !pathname.startsWith('/register');
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>
         
-        <div className="flex items-center gap-2 text-slate-800">
-          <NavLinks />
+        <div className="flex items-center gap-2">
+          <div className="hidden md:flex">
+            <NavLinks />
+          </div>
           <LanguageToggle />
 
            <Button variant="ghost" size="icon" className="relative" onClick={() => setInquiryOpen(true)}>
@@ -107,12 +109,15 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuItem asChild>
-                  <Link href="/portal">{translations.nav.dashboard[language]}</Link>
+                 <DropdownMenuItem asChild>
+                  <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'}>
+                    <LayoutGrid className="mr-2 h-4 w-4" />
+                    <span>{translations.nav.dashboard[language]}</span>
+                  </Link>
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin/dashboard">
+                    <Link href="/admin/leads">
                       <Shield className="mr-2 h-4 w-4" />
                       <span>Admin Panel</span>
                     </Link>
@@ -127,8 +132,8 @@ export function Header() {
             </DropdownMenu>
           ) : (
             isClient && showLoginButton && (
-                <Button asChild variant="ghost" size="sm">
-                <Link href="/login">{translations.nav.login[language]}</Link>
+                <Button asChild variant="outline" size="sm">
+                  <Link href="/login">{translations.nav.login[language]}</Link>
                 </Button>
             )
           )}

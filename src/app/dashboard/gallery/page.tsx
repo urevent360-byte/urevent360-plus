@@ -13,10 +13,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
-import { Separator } from '@/components/ui/separator';
-
 
 // We'll use the gallery images as placeholders for event photos
 const eventPhotos = placeholderImagesData.placeholderImages.filter(p => p.id.startsWith('gallery-'));

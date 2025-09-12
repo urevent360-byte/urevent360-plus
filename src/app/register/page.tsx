@@ -49,7 +49,7 @@ export default function RegisterPage() {
       if (user.email === ADMIN_EMAIL) {
         router.push('/admin/dashboard');
       } else {
-        router.push('/portal');
+        router.push('/dashboard');
       }
     }
   }, [user, loading, router]);
@@ -70,8 +70,6 @@ export default function RegisterPage() {
         description: 'Registration successful! Redirecting...',
       });
       
-       // Redirection is handled by the useEffect hook
-
     } catch (error: any) {
         toast({
             title: 'Error',

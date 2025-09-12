@@ -3,7 +3,6 @@
 import { useAuth } from '@/contexts/AuthProvider';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 
 export default function DashboardPage() {
@@ -40,7 +39,7 @@ export default function DashboardPage() {
                 <CardDescription>{language === 'en' ? 'Details about your next booking will appear here.' : 'Los detalles de tu próxima reserva aparecerán aquí.'}</CardDescription>
             </CardHeader>
             <CardContent>
-                <p className="text-muted-foreground">{language === 'en' ? 'You have no upcoming events.' : 'No tienes eventos próximos.'}</p>
+                 <p className="text-muted-foreground">{language === 'en' ? 'You have no upcoming events.' : 'No tienes eventos próximos.'}</p>
             </CardContent>
         </Card>
     </div>

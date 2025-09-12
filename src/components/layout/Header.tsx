@@ -60,7 +60,7 @@ export function Header() {
           href={item.href}
           className={cn(
             'font-medium transition-colors hover:text-primary',
-            pathname === item.href ? 'text-primary' : 'text-foreground/60',
+            pathname === item.href ? 'text-primary' : 'text-slate-500',
             isMobile && 'text-2xl'
           )}
           onClick={() => setSheetOpen(false)}
@@ -72,13 +72,13 @@ export function Header() {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <Logo />
         </Link>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-slate-800">
           <NavLinks />
           <LanguageToggle />
 

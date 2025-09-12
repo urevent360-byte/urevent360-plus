@@ -1,12 +1,12 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,9 +15,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
-import { loginAction, socialLoginAction } from './actions';
 import { Mail, LogIn } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
+import { auth } from '@/lib/firebase/client';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -26,65 +26,52 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  const { language } = useLanguage();
-  return (
-    <Button type="submit" disabled={pending} className="w-full">
-      {pending ? (
-        <>{language === 'en' ? 'Logging in...' : 'Iniciando sesión...'}</>
-      ) : (
-        <>
-          <Mail className="mr-2" />
-          {translations.auth.loginButton[language]}
-        </>
-      )}
-    </Button>
-  );
-}
 
 export default function LoginPage() {
   const { language } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const [state, formAction] = useFormState(loginAction, {
-    message: '',
-    errors: {},
-  });
-
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
-
-  useEffect(() => {
-    if (state.message) {
-      if (Object.keys(state.errors).length > 0) {
-        toast({
+  
+  async function onSubmit(data: FormValues) {
+    setIsSubmitting(true);
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      toast({
+        title: 'Success!',
+        description: 'Login successful!',
+      });
+      router.push('/dashboard');
+    } catch (error: any) {
+       toast({
           title: 'Error',
-          description: state.message,
+          description: error.message || 'Login failed. Please check your credentials.',
           variant: 'destructive',
         });
-      } else {
+    } finally {
+        setIsSubmitting(false);
+    }
+  }
+  
+  const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
+    const provider = providerName === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
         toast({
-          title: 'Success!',
-          description: state.message,
+            title: 'Success!',
+            description: `Logged in with ${providerName}.`,
         });
         router.push('/dashboard');
-      }
-    }
-  }, [state, toast, router]);
-  
-  const handleSocialLogin = async (provider: 'google' | 'facebook') => {
-    const error = await socialLoginAction(provider);
-    if (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: error,
+        description: error.message || `An unexpected error occurred during ${providerName} login.`,
         variant: 'destructive',
       });
-    } else {
-       router.push('/dashboard');
     }
   };
 
@@ -101,7 +88,7 @@ export default function LoginPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">{translations.auth.emailLabel[language]}</Label>
               <Input
@@ -109,10 +96,10 @@ export default function LoginPage() {
                 type="email"
                 {...register('email')}
                 placeholder="you@example.com"
-                aria-invalid={!!errors.email || !!state.errors?.email}
+                aria-invalid={!!errors.email}
               />
-              {(errors.email || state.errors?.email) && (
-                <p className="text-sm text-destructive">{errors.email?.message || state.errors?.email?.[0]}</p>
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email?.message}</p>
               )}
             </div>
 
@@ -122,14 +109,23 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 {...register('password')}
-                aria-invalid={!!errors.password || !!state.errors?.password}
+                aria-invalid={!!errors.password}
               />
-              {(errors.password || state.errors?.password) && (
-                <p className="text-sm text-destructive">{errors.password?.message || state.errors?.password?.[0]}</p>
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password?.message}</p>
               )}
             </div>
             
-            <SubmitButton />
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? (
+                <>{language === 'en' ? 'Logging in...' : 'Iniciando sesión...'}</>
+              ) : (
+                <>
+                  <Mail className="mr-2" />
+                  {translations.auth.loginButton[language]}
+                </>
+              )}
+            </Button>
           </form>
 
           <div className="relative my-6">

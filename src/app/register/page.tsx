@@ -1,12 +1,12 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -15,8 +15,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
-import { registerAction } from './actions';
 import { UserPlus } from 'lucide-react';
+import { auth } from '@/lib/firebase/client';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -30,54 +30,39 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-function SubmitButton() {
-  const { pending } = useFormStatus();
-  const { language } = useLanguage();
-  return (
-    <Button type="submit" disabled={pending} className="w-full">
-      {pending ? (
-        <>{language === 'en' ? 'Creating account...' : 'Creando cuenta...'}</>
-      ) : (
-        <>
-          <UserPlus className="mr-2" />
-          {translations.auth.registerButton[language]}
-        </>
-      )}
-    </Button>
-  );
-}
 
 export default function RegisterPage() {
   const { language } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
-
-  const [state, formAction] = useFormState(registerAction, {
-    message: '',
-    errors: {},
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
 
-  useEffect(() => {
-    if (state.message) {
-      if (Object.keys(state.errors).length > 0) {
+  async function onSubmit(data: FormValues) {
+    setIsSubmitting(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+      await updateProfile(userCredential.user, { displayName: data.name });
+      
+      toast({
+        title: 'Success!',
+        description: 'Registration successful! Redirecting to dashboard...',
+      });
+      router.push('/dashboard');
+
+    } catch (error: any) {
         toast({
-          title: 'Error',
-          description: state.message,
-          variant: 'destructive',
+            title: 'Error',
+            description: error.message || 'Registration failed. An account with this email may already exist.',
+            variant: 'destructive',
         });
-      } else {
-        toast({
-          title: 'Success!',
-          description: state.message,
-        });
-        router.push('/dashboard');
-      }
+    } finally {
+        setIsSubmitting(false);
     }
-  }, [state, toast, router]);
+  }
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
@@ -91,17 +76,17 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">{translations.auth.nameLabel[language]}</Label>
               <Input
                 id="name"
                 {...register('name')}
                 placeholder={language === 'en' ? 'John Doe' : 'Juan Pérez'}
-                aria-invalid={!!errors.name || !!state.errors?.name}
+                aria-invalid={!!errors.name}
               />
-              {(errors.name || state.errors?.name) && (
-                <p className="text-sm text-destructive">{errors.name?.message || state.errors?.name?.[0]}</p>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name?.message}</p>
               )}
             </div>
 
@@ -112,10 +97,10 @@ export default function RegisterPage() {
                 type="email"
                 {...register('email')}
                 placeholder="you@example.com"
-                aria-invalid={!!errors.email || !!state.errors?.email}
+                aria-invalid={!!errors.email}
               />
-              {(errors.email || state.errors?.email) && (
-                <p className="text-sm text-destructive">{errors.email?.message || state.errors?.email?.[0]}</p>
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email?.message}</p>
               )}
             </div>
 
@@ -125,10 +110,10 @@ export default function RegisterPage() {
                 id="password"
                 type="password"
                 {...register('password')}
-                aria-invalid={!!errors.password || !!state.errors?.password}
+                aria-invalid={!!errors.password}
               />
-              {(errors.password || state.errors?.password) && (
-                <p className="text-sm text-destructive">{errors.password?.message || state.errors?.password?.[0]}</p>
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password?.message}</p>
               )}
             </div>
             
@@ -138,14 +123,23 @@ export default function RegisterPage() {
                 id="confirmPassword"
                 type="password"
                 {...register('confirmPassword')}
-                aria-invalid={!!errors.confirmPassword || !!state.errors?.confirmPassword}
+                aria-invalid={!!errors.confirmPassword}
               />
-               {(errors.confirmPassword || state.errors?.confirmPassword) && (
-                <p className="text-sm text-destructive">{errors.confirmPassword?.message || state.errors?.confirmPassword?.[0]}</p>
+               {errors.confirmPassword && (
+                <p className="text-sm text-destructive">{errors.confirmPassword?.message}</p>
               )}
             </div>
 
-            <SubmitButton />
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? (
+                <>{language === 'en' ? 'Creating account...' : 'Creando cuenta...'}</>
+              ) : (
+                <>
+                  <UserPlus className="mr-2" />
+                  {translations.auth.registerButton[language]}
+                </>
+              )}
+            </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">

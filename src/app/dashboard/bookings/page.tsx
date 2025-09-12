@@ -9,42 +9,58 @@ import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 import { PartyPopper, CheckCircle2, Clock } from 'lucide-react';
 
+type Status = 'confirmed' | 'pending' | 'completed';
+
 const placeholderBookings = [
     {
         id: 'booking1',
         serviceName: '360 Photo Booth',
         eventDate: new Date('2024-08-25T18:00:00'),
-        status: 'confirmed' as const
+        status: 'confirmed' as Status
     },
     {
         id: 'booking2',
         serviceName: 'La Hora Loca',
         eventDate: new Date('2024-09-15T20:00:00'),
-        status: 'pending' as const
+        status: 'pending' as Status
     },
      {
         id: 'booking3',
         serviceName: 'Magic Mirror',
         eventDate: new Date('2024-07-20T18:00:00'),
-        status: 'completed' as const
+        status: 'completed' as Status
+    },
+     {
+        id: 'booking4',
+        serviceName: 'Cold Sparklers',
+        eventDate: new Date('2024-08-25T21:00:00'),
+        status: 'confirmed' as Status
     },
 ];
 
-const statusDetails = {
+const statusDetails: Record<Status, {
+    label: { en: string; es: string };
+    icon: JSX.Element;
+    badge: string;
+    calendar: string;
+}> = {
     confirmed: {
         label: { en: 'Confirmed', es: 'Confirmado' },
         icon: <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />,
-        badge: 'bg-green-500/20 text-green-700 border-green-500/30'
+        badge: 'bg-green-500/20 text-green-700 border-green-500/30 hover:bg-green-500/30',
+        calendar: 'bg-green-500/30 text-green-700'
     },
     pending: {
         label: { en: 'Pending', es: 'Pendiente' },
         icon: <Clock className="mr-2 h-4 w-4 text-yellow-500" />,
-        badge: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30'
+        badge: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30 hover:bg-yellow-500/30',
+        calendar: 'bg-yellow-500/30 text-yellow-700'
     },
     completed: {
         label: { en: 'Completed', es: 'Completado' },
         icon: <PartyPopper className="mr-2 h-4 w-4 text-blue-500" />,
-        badge: 'bg-blue-500/20 text-blue-700 border-blue-500/30'
+        badge: 'bg-blue-500/20 text-blue-700 border-blue-500/30 hover:bg-blue-500/30',
+        calendar: 'bg-blue-500/30 text-blue-700'
     },
 };
 
@@ -91,6 +107,8 @@ export default function BookingsPage() {
             )}
         </div>
     );
+    
+    const getEventDates = (status: Status) => placeholderBookings.filter(b => b.status === status).map(b => b.eventDate);
 
     return (
         <div>
@@ -115,12 +133,29 @@ export default function BookingsPage() {
                                 onSelect={setDate}
                                 className="rounded-md"
                                 modifiers={{
-                                    event: placeholderBookings.map(b => b.eventDate)
+                                    confirmed: getEventDates('confirmed'),
+                                    pending: getEventDates('pending'),
+                                    completed: getEventDates('completed'),
                                 }}
                                 modifiersClassNames={{
-                                    event: 'bg-primary/20 text-primary-foreground rounded-full'
+                                    confirmed: `font-bold ${statusDetails.confirmed.calendar} rounded-md`,
+                                    pending: `font-bold ${statusDetails.pending.calendar} rounded-md`,
+                                    completed: `font-bold ${statusDetails.completed.calendar} rounded-md`,
                                 }}
                             />
+                        </CardContent>
+                    </Card>
+                    <Card className="mt-4">
+                        <CardHeader>
+                            <CardTitle>Legend</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm">
+                           {Object.entries(statusDetails).map(([status, details]) => (
+                               <div key={status} className="flex items-center">
+                                   <span className={`w-4 h-4 rounded-full mr-2 ${details.calendar}`} />
+                                   <span>{details.label[language]}</span>
+                               </div>
+                           ))}
                         </CardContent>
                     </Card>
                 </div>

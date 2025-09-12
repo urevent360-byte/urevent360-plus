@@ -1,23 +1,24 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookUser, Briefcase, Bot, Newspaper, Users } from 'lucide-react';
+import { ArrowRight, BookUser, Briefcase, Bot, Newspaper, Users, BarChart, Calendar, Camera, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 const overviewCards = [
-    { title: 'New Leads', value: 4, icon: <BookUser />, link: '/admin/leads' },
-    { title: 'Confirmed Events', value: 1, icon: <Briefcase />, link: '/admin/events' },
+    { title: 'New Leads', value: 4, icon: <BookUser />, link: '/admin/crm' },
+    { title: 'Confirmed Events', value: 1, icon: <Calendar />, link: '/admin/calendar' },
     { title: 'Services', value: 9, icon: <Briefcase />, link: '/admin/services' },
     { title: 'Active Users', value: 3, icon: <Users />, link: '/admin/users' },
 ];
 
-export default function AdminDashboardPage() {
+export default function AdminHomePage() {
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">Admin Home</h1>
                     <p className="text-muted-foreground">Welcome back, Admin! Here's an overview of your platform.</p>
                 </div>
             </div>
@@ -45,10 +46,12 @@ export default function AdminDashboardPage() {
                         <CardTitle>Quick Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
-                       <Button asChild variant="outline"><Link href="/admin/leads"><BookUser className="mr-2"/> Manage Leads</Link></Button>
+                       <Button asChild variant="outline"><Link href="/admin/crm"><BookUser className="mr-2"/> Manage Leads</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/services/form"><Briefcase className="mr-2"/> Add New Service</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/assistant"><Bot className="mr-2"/> Chat with AI</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/content"><Newspaper className="mr-2"/> Edit Content</Link></Button>
+                       <Button asChild variant="outline"><Link href="/admin/calendar"><Calendar className="mr-2"/> View Calendar</Link></Button>
+                       <Button asChild variant="outline"><Link href="/admin/settings"><Settings className="mr-2"/> Platform Settings</Link></Button>
                     </CardContent>
                 </Card>
                  <Card>

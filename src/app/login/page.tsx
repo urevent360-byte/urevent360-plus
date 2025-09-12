@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -41,7 +42,7 @@ export default function LoginPage() {
       if (isAdmin) {
         router.push('/admin/dashboard');
       } else {
-        router.push('/dashboard');
+        router.push('/'); // Redirect non-admins to home page
       }
     }
   }, [user, loading, router, isAdmin]);

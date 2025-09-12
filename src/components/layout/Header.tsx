@@ -1,8 +1,9 @@
+
 'use client';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LogOut, ShoppingCart, Shield, LayoutGrid } from 'lucide-react';
+import { Menu, LogOut, ShoppingCart, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageProvider';
@@ -98,7 +99,7 @@ export function Header() {
             <span className="sr-only">Open inquiry cart</span>
           </Button>
 
-          {isClient && !authLoading && user ? (
+          {isClient && !authLoading && user && isAdmin ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -110,19 +111,11 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                  <DropdownMenuItem asChild>
-                  <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'}>
-                    <LayoutGrid className="mr-2 h-4 w-4" />
-                    <span>{translations.nav.dashboard[language]}</span>
+                  <Link href={'/admin/dashboard'}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Admin Panel</span>
                   </Link>
                 </DropdownMenuItem>
-                {isAdmin && (
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin/leads">
-                      <Shield className="mr-2 h-4 w-4" />
-                      <span>Admin Panel</span>
-                    </Link>
-                  </DropdownMenuItem>
-                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" />
@@ -137,6 +130,12 @@ export function Header() {
                 </Button>
             )
           )}
+           {isClient && !authLoading && user && !isAdmin && (
+               <Button onClick={signOut} variant="outline" size="sm">
+                  {translations.auth.logout[language]}
+                </Button>
+           )}
+
 
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>

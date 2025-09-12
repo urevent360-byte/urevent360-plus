@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LogOut, ShoppingCart } from 'lucide-react';
+import { Menu, LogOut, ShoppingCart, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageProvider';
@@ -22,6 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useCart } from '@/hooks/use-cart';
@@ -30,7 +31,7 @@ import { useOpenInquiryModal } from '../page/home/InquiryModal';
 
 export function Header() {
   const { language } = useLanguage();
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const pathname = usePathname();
   const [isSheetOpen, setSheetOpen] = useState(false);
   const { items } = useCart();
@@ -108,6 +109,15 @@ export function Header() {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard">{translations.nav.dashboard[language]}</Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/leads">
+                      <Shield className="mr-2 h-4 w-4" />
+                      <span>Admin Panel</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={signOut}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>{translations.auth.logout[language]}</span>

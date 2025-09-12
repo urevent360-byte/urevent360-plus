@@ -6,6 +6,7 @@ export function middleware(request: NextRequest) {
 
   const protectedRoutes = ['/dashboard', '/admin'];
 
+  // If trying to access a protected route without a session token, redirect to login
   if (protectedRoutes.some(p => pathname.startsWith(p))) {
     if (!sessionToken) {
       const loginUrl = new URL('/login', request.url);
@@ -14,9 +15,9 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  if ((pathname.startsWith('/login') || pathname.startsWith('/register')) && sessionToken) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
+  // This part of the logic will be handled client-side after login,
+  // based on the user's role (admin or not).
+  // The middleware's job is just to protect routes that require any authentication.
 
   return NextResponse.next();
 }
@@ -25,7 +26,8 @@ export const config = {
   matcher: [
     '/dashboard/:path*',
     '/admin/:path*',
-    '/login',
-    '/register',
+    // We remove /login and /register from here because client-side logic
+    // in AuthProvider and the pages themselves will handle redirects
+    // for already-logged-in users. This simplifies the middleware.
   ],
 };

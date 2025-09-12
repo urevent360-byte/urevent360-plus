@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -18,6 +18,9 @@ import { translations } from '@/lib/translations';
 import { Mail, LogIn } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
+import { useAuth } from '@/contexts/AuthProvider';
+
+const ADMIN_EMAIL = 'admin@example.com';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -32,20 +35,30 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isAdmin } = useAuth();
   
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
   
+  const handleLoginSuccess = (email: string | null) => {
+    toast({
+        title: 'Success!',
+        description: 'Login successful!',
+      });
+    
+    if (email === ADMIN_EMAIL) {
+      router.push('/admin/leads');
+    } else {
+      router.push('/dashboard');
+    }
+  }
+
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      toast({
-        title: 'Success!',
-        description: 'Login successful!',
-      });
-      router.push('/dashboard');
+      handleLoginSuccess(data.email);
     } catch (error: any) {
        toast({
           title: 'Error',
@@ -60,12 +73,8 @@ export default function LoginPage() {
   const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
     const provider = providerName === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
     try {
-        await signInWithPopup(auth, provider);
-        toast({
-            title: 'Success!',
-            description: `Logged in with ${providerName}.`,
-        });
-        router.push('/dashboard');
+        const result = await signInWithPopup(auth, provider);
+        handleLoginSuccess(result.user.email);
     } catch (error: any) {
       toast({
         title: 'Error',

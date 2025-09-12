@@ -18,6 +18,8 @@ import { translations } from '@/lib/translations';
 import { UserPlus } from 'lucide-react';
 import { auth } from '@/lib/firebase/client';
 
+const ADMIN_EMAIL = 'admin@example.com';
+
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email(),
@@ -49,9 +51,14 @@ export default function RegisterPage() {
       
       toast({
         title: 'Success!',
-        description: 'Registration successful! Redirecting to dashboard...',
+        description: 'Registration successful! Redirecting...',
       });
-      router.push('/dashboard');
+      
+      if (data.email === ADMIN_EMAIL) {
+        router.push('/admin/leads');
+      } else {
+        router.push('/dashboard');
+      }
 
     } catch (error: any) {
         toast({

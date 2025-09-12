@@ -5,8 +5,13 @@ import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/a
 import { auth } from '@/lib/firebase/client';
 import { useRouter } from 'next/navigation';
 
+// For this example, we'll hardcode the admin email. In a real-world scenario,
+// this would be managed in a database (e.g., Firestore) with user roles.
+const ADMIN_EMAIL = 'admin@example.com';
+
 interface AuthContextType {
   user: User | null;
+  isAdmin: boolean;
   loading: boolean;
   signOut: () => void;
 }
@@ -15,12 +20,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setIsAdmin(user?.email === ADMIN_EMAIL);
       setLoading(false);
       
       // Sync auth state with server via cookie
@@ -38,11 +45,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
+    setIsAdmin(false); // Reset admin state on sign out
     router.push('/');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signOut }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, signOut }}>
       {children}
     </AuthContext.Provider>
   );

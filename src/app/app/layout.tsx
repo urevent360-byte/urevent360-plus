@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { LayoutGrid, Briefcase, Camera, Music, CreditCard, User, LogOut, MessageSquare, ListTimeline, Bot } from 'lucide-react';
+import { LayoutGrid, Briefcase, Camera, Music, CreditCard, User, LogOut, MessageSquare, ListTree, Bot } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 
@@ -56,7 +56,7 @@ export default function AppLayout({
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/timeline">
-                  <ListTimeline />
+                  <ListTree />
                   Timeline
                 </Link>
               </SidebarMenuButton>

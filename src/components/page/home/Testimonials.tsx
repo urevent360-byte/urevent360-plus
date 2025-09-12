@@ -63,19 +63,19 @@ export function Testimonials() {
 
       <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {testimonialsData.map((testimonial, index) => (
-          <Card key={index} className="flex flex-col justify-between text-left shadow-lg border-0 bg-secondary/50 p-6">
+          <Card key={index} className="flex flex-col justify-between text-left shadow-lg border-0 bg-white p-6">
             <div>
               <div className="flex items-center justify-between">
                 <Rating rating={testimonial.rating} />
                 <Quote className="h-10 w-10 text-primary/20" />
               </div>
-              <p className="mt-4 text-foreground/90 italic">
+              <p className="mt-4 text-gray-700 italic">
                 {testimonial.text[language]}
               </p>
             </div>
             <div className="mt-6">
               <p className="font-semibold text-primary">{testimonial.author}</p>
-              <p className="text-sm text-muted-foreground">{testimonial.title[language]}</p>
+              <p className="text-sm text-gray-500">{testimonial.title[language]}</p>
             </div>
           </Card>
         ))}

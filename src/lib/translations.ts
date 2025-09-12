@@ -12,16 +12,26 @@ export const translations = {
     es: 'English',
   },
   about: {
-    title: { en: 'About Us', es: 'Sobre Nosotros' },
-    subtitle: { en: 'Who We Are', es: 'Quienes Somos' },
+    title: { en: 'About UREVENT 360', es: 'Sobre UREVENT 360' },
+    subtitle: { en: 'Crafting Unforgettable Moments, One Event at a Time', es: 'Creando Momentos Inolvidables, Un Evento a la Vez' },
     description1: {
-      en: 'UREVENT 360 PLUS was born from a passion for creating unforgettable experiences. We are a team of dedicated professionals who believe that every event, big or small, deserves to be special and unique.',
-      es: 'UREVENT 360 PLUS nació de la pasión por crear experiencias inolvidables. Somos un equipo de profesionales dedicados que creemos que cada evento, grande o pequeño, merece ser especial y único.',
+      en: 'At UREVENT 360, we believe every event is an opportunity to create lasting memories. We are a passionate team dedicated to transforming your visions into spectacular realities. With years of experience in event planning and entertainment, we bring creativity, professionalism, and a touch of magic to every celebration.',
+      es: 'En UREVENT 360, creemos que cada evento es una oportunidad para crear recuerdos duraderos. Somos un equipo apasionado dedicado a transformar tus visiones en realidades espectaculares. Con años de experiencia en planificación y entretenimiento de eventos, aportamos creatividad, profesionalismo y un toque de magia a cada celebración.',
     },
     description2: {
-      en: 'Our mission is to bring your vision to life with creativity, precision, and unparalleled service. From corporate functions to intimate celebrations, we handle every detail so you can enjoy the moment.',
-      es: 'Nuestra misión es hacer realidad tu visión con creatividad, precisión y un servicio inigualable. Desde funciones corporativas hasta celebraciones íntimas, nos encargamos de cada detalle para que puedas disfrutar del momento.',
+      en: 'Our mission is to provide seamless, stress-free event experiences that exceed expectations. From intimate gatherings to grand corporate affairs, we handle every detail with precision and care, ensuring your event is not just successful, but truly unforgettable. Let us bring your dream event to life!',
+      es: 'Nuestra misión es proporcionar experiencias de eventos fluidas y sin estrés que superen las expectativas. Desde reuniones íntimas hasta grandes asuntos corporativos, manejamos cada detalle con precisión y cuidado, asegurando que tu evento no solo sea exitoso, sino verdaderamente inolvidable. ¡Permítenos dar vida a tu evento soñado!',
     },
+    missionTitle: { en: 'Our Mission', es: 'Nuestra Misión' },
+    missionText: {
+      en: 'To deliver exceptional event experiences through innovative solutions and unparalleled service.',
+      es: 'Ofrecer experiencias de eventos excepcionales a través de soluciones innovadoras y un servicio inigualable.',
+    },
+    visionTitle: { en: 'Our Vision', es: 'Nuestra Visión' },
+    visionText: {
+      en: 'To be the leading event planning and entertainment provider, known for creativity, reliability, and client satisfaction.',
+      es: 'Ser el proveedor líder de planificación y entretenimiento de eventos, conocido por la creatividad, la confiabilidad y la satisfacción del cliente.',
+    }
   },
   footer: {
     motto: {

@@ -43,25 +43,9 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="bg-secondary/50 py-16 md:py-24">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
-            <div className="order-2 md:order-1">
-              <AboutContent />
-            </div>
-            <div className="order-1 md:order-2">
-              {aboutImage && (
-                <Image
-                  src={aboutImage.imageUrl}
-                  alt={aboutImage.description}
-                  width={1200}
-                  height={800}
-                  className="rounded-lg object-cover shadow-2xl"
-                  data-ai-hint={aboutImage.imageHint}
-                />
-              )}
-            </div>
-          </div>
+          <AboutContent />
         </div>
       </section>
     </div>

@@ -1,6 +1,7 @@
 export const translations = {
   nav: {
     home: { en: 'Home', es: 'Inicio' },
+    services: { en: 'Services', es: 'Servicios' },
     gallery: { en: 'Gallery', es: 'Galería' },
     contact: { en: 'Contact', es: 'Contacto' },
     login: { en: 'Login', es: 'Iniciar Sesión' },

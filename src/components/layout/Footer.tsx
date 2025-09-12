@@ -24,11 +24,19 @@ export function Footer() {
             <ul className="mt-4 space-y-2">
               <li className="flex items-center justify-center md:justify-start gap-2 hover:text-primary transition-colors">
                 <Mail className="h-5 w-5" />
+                <a href="mailto:urevent360@gmail.com">urevent360@gmail.com</a>
+              </li>
+               <li className="flex items-center justify-center md:justify-start gap-2 hover:text-primary transition-colors">
+                <Mail className="h-5 w-5" />
                 <a href="mailto:info@urevent360.com">info@urevent360.com</a>
               </li>
               <li className="flex items-center justify-center md:justify-start gap-2 hover:text-primary transition-colors">
                 <Phone className="h-5 w-5" />
-                <a href="tel:+1234567890">+1 (234) 567-890</a>
+                <a href="tel:6893025502">(689) 302-5502</a>
+              </li>
+              <li className="flex items-center justify-center md:justify-start gap-2 hover:text-primary transition-colors">
+                <Phone className="h-5 w-5" />
+                <a href="tel:4075330970">(407) 533-0970 (Español)</a>
               </li>
             </ul>
           </div>
@@ -39,7 +47,7 @@ export function Footer() {
               <a href="#" className="hover:text-primary transition-colors" aria-label="Facebook">
                 <Facebook className="h-6 w-6" />
               </a>
-              <a href="#" className="hover:text-primary transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/urevent360" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors" aria-label="Instagram">
                 <Instagram className="h-6 w-6" />
               </a>
               <a href="#" className="hover:text-primary transition-colors" aria-label="Twitter">

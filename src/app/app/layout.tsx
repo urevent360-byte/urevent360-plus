@@ -10,11 +10,11 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Settings, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search } from 'lucide-react';
+import { LayoutGrid, Briefcase, Camera, Music, CreditCard, User, LogOut, MessageSquare, ListTimeline } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 
-export default function AdminLayout({
+export default function AppLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export default function AdminLayout({
           <SidebarMenu>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/home">
+                <Link href="/app/home">
                   <LayoutGrid />
                   Home
                 </Link>
@@ -39,80 +39,71 @@ export default function AdminLayout({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/crm">
-                  <BookUser />
-                  CRM (Leads)
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/calendar">
-                  <Calendar />
-                  Calendar
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/services">
+                <Link href="/app/services">
                   <Briefcase />
-                  Services
+                  My Services
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/gallery">
-                  <Camera />
-                  Gallery
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/seo">
-                  <BarChart />
-                  SEO
+                <Link href="/app/inquiries">
+                  <MessageSquare />
+                  Inquiries
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/content">
-                  <Newspaper />
-                  Content
+                <Link href="/app/timeline">
+                  <ListTimeline />
+                  Timeline
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/users">
-                  <Users />
-                  Users
+                <Link href="/app/gallery">
+                  <Camera />
+                  My Gallery
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/settings">
-                  <Settings />
-                  Settings
+                <Link href="/app/payments">
+                  <CreditCard />
+                  Payments
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/app/chat">
+                  <Bot />
+                  Chat
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/">
-                  <Home />
-                  Go to Site
+                <Link href="/app/profile">
+                  <User />
+                  My Profile
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            {/* Footer content if needed */}
+            <SidebarMenu>
+                 <SidebarMenuItem>
+                    <SidebarMenuButton>
+                        <LogOut />
+                        Logout
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>

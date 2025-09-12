@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -29,7 +30,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 
-export default function LoginPage() {
+export default function HostLoginPage() {
   const { language } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
@@ -39,11 +40,11 @@ export default function LoginPage() {
   
   useEffect(() => {
     if (user && !loading) {
-      if (isAdmin) {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/dashboard'); 
-      }
+        if (isAdmin) {
+            router.push('/admin/home');
+        } else {
+            router.push('/app/home'); 
+        }
     }
   }, [user, loading, router, isAdmin]);
 
@@ -192,7 +193,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {translations.auth.noAccount[language]}{' '}
-            <Link href="/register" className="font-semibold text-primary hover:underline">
+            <Link href="/app/register" className="font-semibold text-primary hover:underline">
               {translations.auth.signUp[language]}
             </Link>
           </p>

@@ -123,7 +123,7 @@ export function Header() {
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                      <DropdownMenuItem asChild>
-                      <Link href={isAdmin ? '/admin/dashboard' : '/dashboard'}>
+                      <Link href={isAdmin ? '/admin/home' : '/app/home'}>
                         <User className="mr-2 h-4 w-4" />
                         <span>Dashboard</span>
                       </Link>
@@ -135,9 +135,9 @@ export function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-              !pathname.startsWith('/login') && !pathname.startsWith('/register') && !pathname.startsWith('/admin') && (
+              !pathname.startsWith('/app/login') && !pathname.startsWith('/app/register') && !pathname.startsWith('/admin') && (
                  <Button asChild variant="outline" size="sm">
-                  <Link href="/login">{translations.nav.login[language]}</Link>
+                  <Link href="/app/login">{translations.nav.login[language]}</Link>
                 </Button>
               )
             )

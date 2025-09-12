@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
@@ -5,8 +6,6 @@ import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/a
 import { auth } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
 
-// For this example, we'll hardcode the admin email. In a real-world scenario,
-// this would be managed in a database (e.g., Firestore) with user roles.
 const ADMIN_EMAIL = 'admin@urevent360.com';
 
 interface AuthContextType {
@@ -34,14 +33,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (user) {
         if (userIsAdmin) {
-          // If the user is an admin and not in the admin section, redirect them.
           if (!pathname.startsWith('/admin')) {
-            router.push('/admin/dashboard');
+            router.push('/admin/home');
           }
         } else {
-          // If the user is a client and not in the client dashboard, redirect them.
-          if (!pathname.startsWith('/dashboard') && !['/', '/services', '/gallery', '/contact', '/register', '/login'].some(p => pathname.startsWith(p)) ) {
-            router.push('/dashboard');
+          if (!pathname.startsWith('/app')) {
+             router.push('/app/home');
           }
         }
       }

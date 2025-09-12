@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
   
   useEffect(() => {
     if (user && isAdmin && !loading) {
-      router.push('/admin/dashboard');
+      router.push('/admin/home');
     }
   }, [user, loading, router, isAdmin]);
 
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
             <Shield className="inline-block mr-2" />
-            Admin Login
+            Admin Portal
           </CardTitle>
           <CardDescription className="text-lg">
             Access the UREVENT 360 PLUS dashboard.
@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
                 id="email"
                 type="email"
                 {...register('email')}
-                placeholder="admin@example.com"
+                placeholder="admin@urevent360.com"
                 aria-invalid={!!errors.email}
               />
               {errors.email && (

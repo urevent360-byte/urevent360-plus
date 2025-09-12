@@ -45,9 +45,9 @@ export default function RegisterPage() {
   useEffect(() => {
     if (user && !loading) {
       if (isAdmin) {
-        router.push('/admin/dashboard');
+        router.push('/admin/home');
       } else {
-        router.push('/dashboard');
+        router.push('/app/home');
       }
     }
   }, [user, loading, router, isAdmin]);
@@ -183,7 +183,7 @@ export default function RegisterPage() {
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
             {translations.auth.haveAccount[language]}{' '}
-            <Link href="/login" className="font-semibold text-primary hover:underline">
+            <Link href="/app/login" className="font-semibold text-primary hover:underline">
               {translations.auth.login[language]}
             </Link>
           </p>

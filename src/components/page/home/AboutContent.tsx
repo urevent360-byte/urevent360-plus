@@ -29,7 +29,7 @@ export function AboutContent() {
           </p>
         </div>
         <div className="space-y-8">
-          <Card className="bg-card shadow-lg border-l-4 border-primary">
+          <Card className="bg-white text-gray-800 shadow-lg border-l-4 border-primary">
             <CardHeader className="flex flex-row items-center gap-4">
                <div className="bg-primary/10 p-3 rounded-full">
                     <Sparkles className="h-6 w-6 text-primary" />
@@ -37,12 +37,12 @@ export function AboutContent() {
               <CardTitle className="text-xl font-headline">{content.missionTitle[language]}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-foreground/80">
+              <p>
                 {content.missionText[language]}
               </p>
             </CardContent>
           </Card>
-          <Card className="bg-card shadow-lg border-l-4 border-accent">
+          <Card className="bg-white text-gray-800 shadow-lg border-l-4 border-accent">
              <CardHeader className="flex flex-row items-center gap-4">
                 <div className="bg-accent/10 p-3 rounded-full">
                     <Rocket className="h-6 w-6 text-accent" />
@@ -50,7 +50,7 @@ export function AboutContent() {
               <CardTitle className="text-xl font-headline">{content.visionTitle[language]}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-foreground/80">
+              <p>
                 {content.visionText[language]}
               </p>
             </CardContent>

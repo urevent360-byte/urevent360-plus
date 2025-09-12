@@ -3,8 +3,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { LanguageProvider } from '@/contexts/LanguageProvider';
 import { AuthProvider } from '@/contexts/AuthProvider';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';

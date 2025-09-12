@@ -86,3 +86,36 @@ export type MusicPlaylist = {
   mustPlay: Song[];
   doNotPlay: Song[];
 };
+
+
+// === Admin & Service Management Types ===
+
+export type ServiceImage = {
+  id: string;
+  serviceId: string;
+  url: string; // URL to the image in storage
+  altText: string;
+  uploadDate: Date;
+};
+
+export type Service = {
+  id: string;
+  name: string;
+  shortDescription: string;
+  longDescription: string;
+  category: 'Photo Booth' | 'Entertainment' | 'Special Effects' | 'Decor' | 'Other';
+  keywords: string; // Comma-separated string
+  images: ServiceImage[];
+  metaTitle: string;
+  metaDescription: string;
+  lastUpdated: Date;
+};
+
+export type AdminUserRole = 'Super Admin' | 'Service Editor' | 'Photo Editor' | 'SEO Manager';
+
+export type AdminUser = {
+  id: string; // Corresponds to Firebase Auth UID
+  name: string;
+  email: string;
+  role: AdminUserRole;
+};

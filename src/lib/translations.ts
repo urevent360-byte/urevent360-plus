@@ -3,6 +3,8 @@ export const translations = {
     home: { en: 'Home', es: 'Inicio' },
     gallery: { en: 'Gallery', es: 'Galería' },
     contact: { en: 'Contact', es: 'Contacto' },
+    login: { en: 'Login', es: 'Iniciar Sesión' },
+    dashboard: { en: 'Dashboard', es: 'Panel' },
   },
   languageToggle: {
     en: 'Español',
@@ -36,7 +38,7 @@ export const translations = {
       es: 'Solicitar Información',
     },
     description: {
-      en: 'Have a question or want to start planning your event? Fill out the form below and we\'ll get back to you shortly.',
+      en: "Have a question or want to start planning your event? Fill out the form below and we'll get back to you shortly.",
       es: '¿Tiene alguna pregunta o quiere empezar a planificar su evento? Rellene el siguiente formulario y nos pondremos en contacto con usted en breve.',
     },
     nameLabel: { en: 'Your Name', es: 'Tu Nombre' },
@@ -79,5 +81,25 @@ export const translations = {
       en: 'AI-Generated Layout',
       es: 'Diseño Generado por IA',
     },
+  },
+  auth: {
+    loginTitle: { en: 'Client Login', es: 'Acceso de Cliente' },
+    loginDescription: { en: 'Access your client dashboard to manage your events.', es: 'Accede a tu panel de cliente para gestionar tus eventos.' },
+    emailLabel: { en: 'Email', es: 'Correo Electrónico' },
+    passwordLabel: { en: 'Password', es: 'Contraseña' },
+    loginButton: { en: 'Login', es: 'Iniciar Sesión' },
+    orSeparator: { en: 'OR', es: 'O' },
+    googleLoginButton: { en: 'Continue with Google', es: 'Continuar con Google' },
+    facebookLoginButton: { en: 'Continue with Facebook', es: 'Continuar con Facebook' },
+    noAccount: { en: "Don't have an account?", es: '¿No tienes una cuenta?' },
+    signUp: { en: 'Sign up', es: 'Regístrate' },
+    registerTitle: { en: 'Create Your Account', es: 'Crea Tu Cuenta' },
+    registerDescription: { en: 'Get started by creating your client account.', es: 'Comienza creando tu cuenta de cliente.' },
+    nameLabel: { en: 'Full Name', es: 'Nombre Completo' },
+    confirmPasswordLabel: { en: 'Confirm Password', es: 'Confirmar Contraseña' },
+    registerButton: { en: 'Create Account', es: 'Crear Cuenta' },
+    haveAccount: { en: 'Already have an account?', es: '¿Ya tienes una cuenta?' },
+    login: { en: 'Log in', es: 'Iniciar sesión' },
+    logout: { en: 'Logout', es: 'Cerrar Sesión' },
   }
 };

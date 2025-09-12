@@ -16,6 +16,8 @@ const existingService = {
     shortDescription: 'Capture every angle of the fun with our 360-degree photo booth experience.',
     longDescription: 'Our 360 photo booth is the ultimate party centerpiece. Guests stand on a platform while a camera revolves around them, creating stunning, dynamic video clips perfect for social media. We provide props, instant sharing capabilities, and a professional attendant to ensure everything runs smoothly.',
     category: 'Photo Booth',
+    metaTitle: '360 Photo Booth Rental | UREVENT 360 PLUS',
+    metaDescription: 'Rent the best 360 photo booth for your wedding, party, or corporate event. Create amazing slow-motion videos for social media.',
     keywords: '360 photo booth, video booth, event entertainment, social media booth',
     images: [
         { url: 'https://picsum.photos/seed/service1-1/800/600', alt: 'Guests enjoying the 360 photo booth' },
@@ -73,6 +75,25 @@ export default function ServiceFormPage() {
                     <div className="space-y-2">
                         <Label htmlFor="long-description">Long Description</Label>
                         <Textarea id="long-description" className="min-h-32" defaultValue={isEditing ? existingService.longDescription : ''} placeholder="A detailed description for the service page." />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>SEO & Discoverability</CardTitle>
+                    <CardDescription>Optimize how this service appears on search engines.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                     <div className="space-y-2">
+                        <Label htmlFor="meta-title">SEO Meta Title</Label>
+                        <Input id="meta-title" defaultValue={isEditing ? existingService.metaTitle : ''} placeholder="Title for search engine results" />
+                        <p className="text-sm text-muted-foreground">Appears in the browser tab and search results. Keep it concise.</p>
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="meta-description">SEO Meta Description</Label>
+                        <Textarea id="meta-description" defaultValue={isEditing ? existingService.metaDescription : ''} placeholder="A short summary for search engine results." />
+                         <p className="text-sm text-muted-foreground">Briefly describe this service (approx. 155-160 characters).</p>
                     </div>
                      <div className="space-y-2">
                         <Label htmlFor="keywords">SEO Keywords / Tags</Label>

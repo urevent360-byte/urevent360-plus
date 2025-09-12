@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Briefcase, LayoutGrid, Newspaper, Users, BookUser, Bot } from 'lucide-react';
+import { Briefcase, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 
@@ -28,11 +28,27 @@ export default function AdminLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/dashboard">
+                  <LayoutGrid />
+                  Dashboard
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/admin/leads">
                   <BookUser />
                   Leads
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/events">
+                  <Calendar />
+                  Events
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -43,6 +59,14 @@ export default function AdminLayout({
                         AI Assistant
                     </Link>
                 </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/admin/gallery">
+                  <Camera />
+                  Gallery
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
@@ -70,9 +94,9 @@ export default function AdminLayout({
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/dashboard">
+                <Link href="/portal">
                   <LayoutGrid />
-                  Client Dashboard
+                  Client Portal
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

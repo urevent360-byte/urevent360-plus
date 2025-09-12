@@ -40,9 +40,9 @@ export default function LoginPage() {
   useEffect(() => {
     if (user && !loading) {
       if (user.email === ADMIN_EMAIL) {
-        router.push('/admin/leads');
+        router.push('/admin/dashboard');
       } else {
-        router.push('/dashboard');
+        router.push('/portal');
       }
     }
   }, [user, loading, router]);

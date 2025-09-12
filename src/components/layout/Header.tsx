@@ -73,7 +73,7 @@ export function Header() {
     </nav>
   );
 
-  const showLoginButton = !user && pathname !== '/login' && pathname !== '/register';
+  const showLoginButton = !user && !pathname.startsWith('/login') && !pathname.startsWith('/register');
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
@@ -108,11 +108,11 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">{translations.nav.dashboard[language]}</Link>
+                  <Link href="/portal">{translations.nav.dashboard[language]}</Link>
                 </DropdownMenuItem>
                 {isAdmin && (
                   <DropdownMenuItem asChild>
-                    <Link href="/admin/leads">
+                    <Link href="/admin/dashboard">
                       <Shield className="mr-2 h-4 w-4" />
                       <span>Admin Panel</span>
                     </Link>

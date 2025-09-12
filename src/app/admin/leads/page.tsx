@@ -13,21 +13,25 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, QrCode } from 'lucide-react';
+import { MoreHorizontal, QrCode, Link as LinkIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import QRCode from "qrcode.react";
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const placeholderLeads = [
-    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-07-30', status: 'confirmed', eventId: 'evt-john-doe-2024' },
-    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024' },
-    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024' },
-    { id: 'lead4', name: 'Mary Brown', email: 'mary@example.com', date: '2024-07-27', status: 'converted', eventId: 'evt-mary-brown-2024' },
+    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-07-30', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1' },
+    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null },
+    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null },
+    { id: 'lead4', name: 'Mary Brown', email: 'mary@example.com', date: '2024-07-27', status: 'converted', eventId: 'evt-mary-brown-2024', photoboothLink: null },
 ];
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
@@ -42,15 +46,33 @@ const statusColors: Record<Status, string> = {
 };
 
 export default function LeadsPage() {
+  const [leads, setLeads] = useState(placeholderLeads);
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
+  const [linkModalState, setLinkModalState] = useState<{ isOpen: boolean; leadId: string | null, currentLink: string }>({ isOpen: false, leadId: null, currentLink: '' });
+  const { toast } = useToast();
 
-  const filteredLeads = placeholderLeads.filter(lead => filter === 'all' || lead.status === filter);
+  const filteredLeads = leads.filter(lead => filter === 'all' || lead.status === filter);
   
   const generateQrCode = (eventId: string) => {
     const url = `${window.location.origin}/upload/${eventId}`;
     setQrCodeData({ url, eventId });
   };
+  
+  const handleSaveLink = () => {
+    if (!linkModalState.leadId) return;
+
+    setLeads(prevLeads => prevLeads.map(lead => 
+      lead.id === linkModalState.leadId ? { ...lead, photoboothLink: linkModalState.currentLink } : lead
+    ));
+
+    toast({
+      title: 'Link Saved!',
+      description: 'The photo booth album link has been updated.',
+    });
+    setLinkModalState({ isOpen: false, leadId: null, currentLink: '' });
+  };
+
 
   return (
     <div>
@@ -64,7 +86,7 @@ export default function LeadsPage() {
         <Card>
             <CardHeader>
                 <CardTitle>All Inquiries</CardTitle>
-                <CardDescription>A list of all leads from the contact form. Confirmed events have QR generation capability.</CardDescription>
+                <CardDescription>A list of all leads from the contact form. Confirmed events have QR and Photo Booth link capabilities.</CardDescription>
                 <div className="flex items-center gap-2 pt-4">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
                     <Button variant={filter === 'new' ? 'default' : 'outline'} onClick={() => setFilter('new')}>New</Button>
@@ -108,10 +130,16 @@ export default function LeadsPage() {
                                         <DropdownMenuItem>View Details</DropdownMenuItem>
                                         <DropdownMenuItem>Add Note</DropdownMenuItem>
                                         {lead.status === 'confirmed' && (
+                                          <>
                                             <DropdownMenuItem onClick={() => generateQrCode(lead.eventId)}>
                                                 <QrCode className="mr-2 h-4 w-4" />
                                                 Generate Upload QR
                                             </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setLinkModalState({ isOpen: true, leadId: lead.id, currentLink: lead.photoboothLink || '' })}>
+                                                <LinkIcon className="mr-2 h-4 w-4" />
+                                                Add Photo Booth Link
+                                            </DropdownMenuItem>
+                                          </>
                                         )}
                                         <DropdownMenuItem>Assign to Team</DropdownMenuItem>
                                     </DropdownMenuContent>
@@ -142,6 +170,34 @@ export default function LeadsPage() {
                         />
                     )}
                 </div>
+            </DialogContent>
+        </Dialog>
+        
+        <Dialog open={linkModalState.isOpen} onOpenChange={(isOpen) => !isOpen && setLinkModalState({ isOpen: false, leadId: null, currentLink: '' })}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Set Photo Booth Album Link</DialogTitle>
+                    <DialogDescription>
+                        Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox).
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="photobooth-link" className="text-right">
+                            Album URL
+                        </Label>
+                        <Input
+                            id="photobooth-link"
+                            value={linkModalState.currentLink}
+                            onChange={(e) => setLinkModalState(prev => ({...prev, currentLink: e.target.value}))}
+                            className="col-span-3"
+                            placeholder="https://..."
+                        />
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSaveLink}>Save Link</Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     </div>

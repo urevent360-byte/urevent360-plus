@@ -121,4 +121,5 @@ export type Booking = {
   eventId: string; // Link to the Event/Timeline entry
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   paymentStatus: 'pending' | 'paid' | 'overdue';
+  photoboothLink?: string; // External link to photo booth album
 };

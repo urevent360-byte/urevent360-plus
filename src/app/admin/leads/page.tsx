@@ -29,10 +29,11 @@ import { useToast } from '@/hooks/use-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 
 const placeholderLeads = [
-    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-07-30', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-08-25'), expirationDate: new Date('2024-09-25') },
+    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-08-25', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
     { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
-    { id: 'lead4', name: 'Mary Brown', email: 'mary@example.com', date: '2024-07-27', status: 'converted', eventId: 'evt-mary-brown-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
+    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: 'evt-maria-garcia-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
+    { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'archived', eventId: 'evt-david-lee-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
 ];
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
@@ -233,7 +234,7 @@ export default function LeadsPage() {
                     <DialogDescription>
                         Control gallery visibility and expiration for {eventSettingsModal.lead?.name}'s event.
                     </DialogDescription>
-                </DialogHeader>
+                </Header>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="visibility-date" className="text-right">

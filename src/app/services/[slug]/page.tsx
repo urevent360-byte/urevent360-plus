@@ -10,21 +10,21 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import Link from 'next/link';
 import { Mail, Tag, ShoppingCart, Video } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 
+// In a real app, this data would come from a CMS or database.
 const placeholderServicesData: any = {
     '360-photo-booth': {
         slug: '360-photo-booth',
         name: { en: '360 Photo Booth', es: 'Cabina de Fotos 360' },
-        longDescription: { en: 'Ultra-realistic photo of a glamorous quinceañera party with a group of friends standing on a modern 360 photo booth platform. Camera capturing them mid-dance, with confetti in the air, LED lights glowing around the booth. Guests smiling and posing while the rotating arm records. Elegant ballroom background with balloons and luxury decorations.', es: 'Foto ultra realista de una glamorosa fiesta de quinceañera con un grupo de amigos en una moderna plataforma de cabina de fotos 360. La cámara los captura en medio del baile, con confeti en el aire y luces LED brillando alrededor de la cabina. Los invitados sonríen y posan mientras el brazo giratorio graba. Fondo elegante de salón de baile con globos y decoraciones de lujo.' },
+        longDescription: { en: "Step onto our platform and let our revolving camera capture you in a stunning 360-degree slow-motion video. It's the perfect way to create dynamic, shareable content that will make your event unforgettable. We provide a professional attendant, fun props, and instant sharing options so your guests can show off their amazing videos right away.", es: 'Sube a nuestra plataforma y deja que nuestra cámara giratoria te capture en un impresionante video en cámara lenta de 360 grados. Es la forma perfecta de crear contenido dinámico y compartible que hará que tu evento sea inolvidable. Ofrecemos un asistente profesional, accesorios divertidos y opciones para compartir al instante para que tus invitados puedan mostrar sus increíbles videos de inmediato.' },
         images: [
-            'https://picsum.photos/seed/service1-1/800/600',
-            'https://picsum.photos/seed/service1-2/800/600',
-            'https://picsum.photos/seed/service1-3/800/600',
+            { url: 'https://picsum.photos/seed/service1-1/800/600', alt: 'Guests enjoying the 360 photo booth at a quinceañera' },
+            { url: 'https://picsum.photos/seed/service1-2/800/600', alt: 'Close-up of the 360 camera setup with lighting' },
+            { url: 'https://picsum.photos/seed/service1-3/800/600', alt: 'A couple posing on the 360 photo booth platform' },
         ],
         videos: [
             { url: 'https://www.youtube.com/embed/5_v634-9W3E', alt: '360 Photo Booth Sample Video' }
@@ -34,80 +34,81 @@ const placeholderServicesData: any = {
     'photo-booth-printer': {
         slug: 'photo-booth-printer',
         name: { en: 'Photo Booth Printer', es: 'Impresora para Cabina de Fotos' },
-        longDescription: { en: 'Wedding reception scene with guests receiving glossy printed photo strips from a sleek photo booth printer. Close-up of a guest holding the photo smiling, showing the custom wedding logo on the print. Warm fairy lights and flowers in the background.', es: 'Escena de recepción de boda con invitados recibiendo tiras de fotos brillantes impresas desde una elegante impresora de cabina de fotos. Primer plano de un invitado sonriendo sosteniendo la foto, mostrando el logo de boda personalizado en la impresión. Luces cálidas y flores en el fondo.' },
+        longDescription: { en: "Don't let memories stay digital. Our high-speed, professional-grade printers produce beautiful, glossy photo strips in seconds. We can customize the prints with your event's logo, date, or a special message, creating the perfect take-home souvenir for your guests.", es: 'No dejes que los recuerdos se queden en lo digital. Nuestras impresoras de alta velocidad y grado profesional producen hermosas y brillantes tiras de fotos en segundos. Podemos personalizar las impresiones con el logo de tu evento, la fecha o un mensaje especial, creando el recuerdo perfecto para que tus invitados se lleven a casa.' },
         images: [
-            'https://picsum.photos/seed/service2-1/800/600',
-            'https://picsum.photos/seed/service2-2/800/600',
+            { url: 'https://picsum.photos/seed/service2-1/800/600', alt: 'Guests holding freshly printed photo strips at a wedding' },
+            { url: 'https://picsum.photos/seed/service2-2/800/600', alt: 'A custom-branded photo strip with a wedding logo' },
         ],
-        keywords: ['photo printer', 'instant prints', 'wedding souvenirs', 'custom photos'],
+        keywords: ['photo printer', 'instant prints', 'wedding souvenirs', 'custom photos', 'photo booth rental'],
     },
      'magic-mirror': {
         slug: 'magic-mirror',
         name: { en: 'Magic Mirror', es: 'Espejo Mágico' },
-        longDescription: { en: 'Elegant event with a tall Magic Mirror photo booth glowing with golden animations. Guests interacting with the mirror, touching the screen with bright effects appearing. Reflection of people smiling in the mirror. Luxury ballroom background with chandeliers.', es: 'Evento elegante con una alta cabina de fotos Magic Mirror brillando con animaciones doradas. Invitados interactuando con el espejo, tocando la pantalla con efectos brillantes apareciendo. Reflejo de personas sonriendo en el espejo. Fondo de salón de baile de lujo con candelabros.' },
+        longDescription: { en: "It's not just a photo booth, it's an experience. This full-length touch-screen mirror interacts with your guests through vibrant animations and voice guidance. They can sign their creations, add emojis, and get their photos printed instantly. It's a sleek and magical addition to any upscale event.", es: 'No es solo una cabina de fotos, es una experiencia. Este espejo de pantalla táctil de cuerpo entero interactúa con tus invitados a través de animaciones vibrantes y guía de voz. Pueden firmar sus creaciones, añadir emojis y obtener sus fotos impresas al instante. Es una adición elegante y mágica a cualquier evento de lujo.' },
         images: [
-            'https://picsum.photos/seed/service3-1/800/600',
-            'https://picsum.photos/seed/service3-2/800/600',
+            { url: 'https://picsum.photos/seed/service3-1/800/600', alt: 'Guests interacting with the Magic Mirror at a corporate event' },
+            { url: 'https://picsum.photos/seed/service3-2/800/600', alt: 'Colorful animations displayed on the Magic Mirror screen' },
         ],
-        keywords: ['magic mirror', 'selfie mirror', 'photo booth', 'interactive entertainment'],
+        keywords: ['magic mirror', 'selfie mirror', 'photo booth', 'interactive entertainment', 'corporate events'],
     },
     'la-hora-loca-led-robot': {
         slug: 'la-hora-loca-led-robot',
         name: { en: 'La Hora Loca with LED Robot', es: 'La Hora Loca con Robot LED' },
-        longDescription: { en: 'Epic party photo of a giant LED robot dancing in the middle of a packed dance floor, surrounded by excited guests holding LED sticks. Robot glowing in vibrant neon lights, CO2 smoke jets shooting in the air. Samba dancers in colorful costumes join the show.', es: 'Foto épica de fiesta de un robot LED gigante bailando en medio de una pista de baile llena, rodeado de invitados emocionados sosteniendo varas de LED. El robot brilla con luces de neón vibrantes, chorros de humo de CO2 disparándose al aire. Bailarines de samba con trajes coloridos se unen al espectáculo.' },
+        longDescription: { en: "Turn your party into an epic festival with La Hora Loca! We bring the energy with a towering LED Robot that dances with your guests, shoots CO2 cannons, and lights up the room. Accompanied by samba dancers and a host of party props, it's an hour of non-stop, high-octane fun that no one will ever forget.", es: '¡Convierte tu fiesta en un festival épico con La Hora Loca! Traemos la energía con un imponente Robot LED que baila con tus invitados, dispara cañones de CO2 e ilumina el lugar. Acompañado de bailarines de samba y una gran cantidad de accesorios de fiesta, es una hora de diversión sin parar y de alta energía que nadie olvidará jamás.' },
         images: [
-            'https://picsum.photos/seed/service4-1/800/600',
-            'https://picsum.photos/seed/service4-2/800/600',
+            { url: 'https://picsum.photos/seed/service4-1/800/600', alt: 'Giant LED Robot dancing with guests during La Hora Loca' },
+            { url: 'https://picsum.photos/seed/service4-2/800/600', alt: 'Samba dancers in full costume performing at a party' },
         ],
         keywords: ['la hora loca', 'LED robot', 'party entertainment', 'samba dancers', 'CO2 jets'],
     },
     'cold-sparklers': {
         slug: 'cold-sparklers',
         name: { en: 'Cold Sparklers', es: 'Chispas Frías' },
-        longDescription: { en: 'Romantic wedding photo of bride and groom’s first dance with golden cold sparklers shooting dramatically around them. Slow exposure effect with sparkling trails glowing in the air. Guests clapping in the background, elegant ballroom setting with soft lighting.', es: 'Foto romántica de boda del primer baile de los novios con chispas frías doradas disparándose dramáticamente a su alrededor. Efecto de exposición lenta con estelas brillantes en el aire. Invitados aplaudiendo en el fondo, elegante salón de baile con iluminación suave.' },
+        longDescription: { en: "Create a breathtaking 'wow' moment with our cold sparkler fountains. These are completely safe for indoor use, with no smoke, heat, or fire hazard. They are perfect for a grand entrance, a romantic first dance, or a spectacular cake-cutting ceremony, adding a touch of Hollywood glamour to your event.", es: "Crea un momento 'wow' impresionante con nuestras fuentes de chispas frías. Son completamente seguras para uso en interiores, sin humo, calor ni riesgo de incendio. Son perfectas para una gran entrada, un primer baile romántico o una espectacular ceremonia de corte de pastel, añadiendo un toque de glamour de Hollywood a tu evento." },
         images: [
-            'https://picsum.photos/seed/service5-1/800/600',
-            'https://picsum.photos/seed/service5-2/800/600',
+            { url: 'https://picsum.photos/seed/service5-1/800/600', alt: "Bride and groom's first dance surrounded by cold sparklers" },
+            { url: 'https://picsum.photos/seed/service5-2/800/600', alt: 'A grand entrance at a party with cold sparkler fountains' },
         ],
-        keywords: ['cold sparklers', 'wedding first dance', 'special effects', 'indoor fireworks'],
+        keywords: ['cold sparklers', 'wedding first dance', 'special effects', 'indoor fireworks', 'grand entrance'],
     },
+    // Add other services with detailed descriptions and keywords
     'dance-on-the-clouds': {
         slug: 'dance-on-the-clouds',
         name: { en: 'Dance on the Clouds', es: 'Baile en las Nubes' },
-        longDescription: { en: 'Cinematic wedding photo of a bride and groom dancing surrounded by a thick dreamy cloud effect covering the floor. Couple illuminated by soft spotlights above, giving the impression they are floating. Elegant ballroom background with guests watching in awe.', es: 'Foto cinematográfica de boda de un novio y una novia bailando rodeados de un espeso y soñador efecto de nube que cubre el suelo. La pareja está iluminada por focos suaves desde arriba, dando la impresión de que están flotando. Fondo de salón de baile elegante con invitados observando con asombro.' },
+        longDescription: { en: 'Create a truly magical first dance with our "Dance on the Clouds" effect. Using professional-grade dry ice machines, we create a thick, low-lying cloud that covers the dance floor, making it seem as if you are floating. It’s a breathtaking visual that will leave your guests in awe and create unforgettable photos.', es: 'Crea un primer baile verdaderamente mágico con nuestro efecto "Baile en las Nubes". Usando máquinas de hielo seco de grado profesional, creamos una nube espesa y baja que cubre la pista de baile, haciendo que parezca que estás flotando. Es una imagen impresionante que dejará a tus invitados asombrados y creará fotos inolvidables.' },
         images: [
-            'https://picsum.photos/seed/service6-1/800/600',
-            'https://picsum.photos/seed/service6-2/800/600',
+            { url: 'https://picsum.photos/seed/service6-1/800/600', alt: 'Couple having their first dance on a cloud of dry ice' },
+            { url: 'https://picsum.photos/seed/service6-2/800/600', alt: 'The low-lying cloud effect on a dance floor' },
         ],
-        keywords: ['dance on clouds', 'dry ice effect', 'wedding first dance', 'magical atmosphere'],
+        keywords: ['dance on clouds', 'dry ice effect', 'wedding first dance', 'magical atmosphere', 'event effects'],
     },
-    'projector-slideshows-videos': {
+     'projector-slideshows-videos': {
         slug: 'projector-slideshows-videos',
         name: { en: 'Projector (Slideshows & Videos)', es: 'Proyector (Presentaciones y Videos)' },
-        longDescription: { en: 'Wedding reception image showing a large projector screen with a slideshow of bride and groom’s childhood photos. Guests seated at elegant tables smiling and reacting emotionally. Warm lighting, elegant ballroom decoration.', es: 'Imagen de recepción de boda que muestra una gran pantalla de proyector con una presentación de diapositivas de fotos de la infancia de los novios. Invitados sentados en mesas elegantes sonriendo y reaccionando emocionalmente. Iluminación cálida, decoración elegante de salón de baile.' },
+        longDescription: { en: "Share your story with your guests. We provide high-definition projectors and large screens to display photo slideshows, love stories, or corporate presentations. It's a perfect way to add a personal and emotional touch to weddings, anniversaries, and corporate events.", es: 'Comparte tu historia con tus invitados. Ofrecemos proyectores de alta definición y pantallas grandes para mostrar presentaciones de fotos, historias de amor o presentaciones corporativas. Es una forma perfecta de añadir un toque personal y emocional a bodas, aniversarios y eventos corporativos.' },
         images: [
-            'https://picsum.photos/seed/service7-1/800/600',
-            'https://picsum.photos/seed/service7-2/800/600',
+            { url: 'https://picsum.photos/seed/service7-1/800/600', alt: 'A photo slideshow playing on a large screen at a wedding reception' },
+            { url: 'https://picsum.photos/seed/service7-2/800/600', alt: 'Guests watching a video presentation at a corporate event' },
         ],
-        keywords: ['projector rental', 'slideshow', 'video projection', 'event visuals'],
+        keywords: ['projector rental', 'slideshow', 'video projection', 'event visuals', 'presentation screen'],
     },
     'monogram-projector': {
         slug: 'monogram-projector',
         name: { en: 'Monogram Projector', es: 'Proyector de Monograma' },
-        longDescription: { en: 'Photo of a luxury wedding dance floor with a glowing custom monogram projection on the floor in gold and white light. Initials of bride and groom with elegant floral patterns. Cinematic angle showing guests admiring it.', es: 'Foto de una lujosa pista de baile de boda con una brillante proyección de monograma personalizado en el suelo con luz dorada y blanca. Iniciales de los novios con elegantes patrones florales. Ángulo cinematográfico que muestra a los invitados admirándolo.' },
+        longDescription: { en: 'Personalize your venue with a custom monogram projection. We can project your initials, wedding date, or a custom design onto the dance floor, a wall, or the ceiling. This elegant lighting effect, also known as a gobo, adds a sophisticated and branded touch to your event space.', es: 'Personaliza tu lugar con una proyección de monograma a medida. Podemos proyectar tus iniciales, la fecha de tu boda o un diseño personalizado en la pista de baile, una pared o el techo. Este elegante efecto de iluminación, también conocido como gobo, añade un toque sofisticado y de marca a tu espacio de evento.' },
         images: [
-            'https://picsum.photos/seed/service8-1/800/600',
-            'https://picsum.photos/seed/service8-2/800/600',
+            { url: 'https://picsum.photos/seed/service8-1/800/600', alt: 'A custom wedding monogram projected onto a dance floor' },
+            { url: 'https://picsum.photos/seed/service8-2/800/600', alt: 'A corporate logo projected on a wall at an event' },
         ],
-        keywords: ['monogram projection', 'gobo', 'wedding lighting', 'custom logo'],
+        keywords: ['monogram projection', 'gobo projection', 'wedding lighting', 'custom logo light', 'event branding'],
     },
     'led-screens-wall': {
         slug: 'led-screens-wall',
         name: { en: 'LED Screens Wall', es: 'Pared de Pantallas LED' },
-        longDescription: { en: 'Grand wedding stage setup with a massive LED screen wall showing vibrant visuals and the couple’s names in glowing animated letters. Guests dancing in front of the screen, silhouettes lit by colorful lights.', es: 'Gran montaje de escenario de boda con una enorme pared de pantallas LED que muestra visuales vibrantes y los nombres de la pareja en letras animadas y brillantes. Invitados bailando frente a la pantalla, siluetas iluminadas por luces de colores.' },
+        longDescription: { en: 'Make a massive impact with a stunning LED video wall. Perfect for stage backdrops, live camera feeds, or dynamic visual displays, our LED walls offer vibrant colors and seamless resolution. Elevate your concert, conference, or high-end wedding with this state-of-the-art visual centerpiece.', es: 'Causa un impacto masivo con una impresionante pared de video LED. Perfecta para fondos de escenario, transmisiones de cámara en vivo o exhibiciones visuales dinámicas, nuestras paredes LED ofrecen colores vibrantes y una resolución impecable. Eleva tu concierto, conferencia o boda de alto nivel con este centro de atención visual de última generación.' },
         images: [
-            'https://picsum.photos/seed/service9-1/800/600',
-            'https://picsum.photos/seed/service9-2/800/600',
+            { url: 'https://picsum.photos/seed/service9-1/800/600', alt: 'A huge LED wall behind a DJ at a music festival' },
+            { url: 'https://picsum.photos/seed/service9-2/800/600', alt: 'A corporate presentation on a seamless LED video wall' },
         ],
         keywords: ['LED wall', 'video wall', 'stage design', 'event production', 'visuals'],
     },
@@ -126,20 +127,22 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
     }
     
     const t = {
-        addToCart: { en: 'Add to Cart', es: 'Añadir al Carrito' },
+        addToCart: { en: 'Add to Inquiry', es: 'Añadir a Consulta' },
         keywords: { en: 'Keywords', es: 'Palabras Clave' },
         videosTitle: { en: 'See It In Action', es: 'Míralo en Acción' },
+        addedToCart: { en: 'Added to inquiry cart!', es: '¡Añadido a la consulta!' },
+        description: { en: (name: string) => `${name} has been added to your inquiry cart.`, es: (name: string) => `${name} ha sido añadido a tu carrito de consulta.` },
     };
 
     const handleAddToCart = () => {
         addToCart({
             slug: service.slug,
             name: service.name.en,
-            image: service.images[0]
+            image: service.images[0].url
         });
         toast({
-            title: 'Added to cart!',
-            description: `${service.name[language]} has been added to your inquiry cart.`,
+            title: t.addedToCart[language],
+            description: t.description(service.name[language])(service.name[language]),
         });
     }
 
@@ -149,12 +152,12 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
                 <div>
                      <Carousel className="w-full">
                         <CarouselContent>
-                            {service.images.map((img: string, index: number) => (
+                            {service.images.map((img: {url: string, alt: string}, index: number) => (
                             <CarouselItem key={index}>
                                 <div className="relative aspect-video">
                                 <Image
-                                    src={img}
-                                    alt={`${service.name[language]} - Image ${index + 1}`}
+                                    src={img.url}
+                                    alt={img.alt}
                                     fill
                                     className="object-cover rounded-lg shadow-lg"
                                 />

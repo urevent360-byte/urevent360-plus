@@ -11,17 +11,24 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-// Firestore and Storage would be initialized here in a real Cloud Function environment
-// For example:
-// import { getFirestore } from 'firebase-admin/firestore';
-// import { getStorage } from 'firebase-admin/storage';
-// const db = getFirestore();
-// const storage = getStorage();
+// In a real Cloud Function environment, you would initialize the Firebase Admin SDK here.
+// Make sure to add 'firebase-admin' to your package.json dependencies.
+/*
+import * as admin from 'firebase-admin';
+
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+
+const db = admin.firestore();
+const storage = admin.storage().bucket();
+*/
+
 
 /**
  * This flow is designed to be run on a schedule (e.g., daily) by a service like Cloud Scheduler.
  * It queries for events where the galleryExpirationDate is in the past, then deletes
- * the associated photos from Firebase Storage.
+ * the associated photos from Firebase Storage and cleans up the event data.
  */
 export const deleteExpiredPhotosFlow = ai.defineFlow(
   {
@@ -29,29 +36,62 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
     inputSchema: z.void(),
     outputSchema: z.object({
       success: z.boolean(),
-      deletedEventsCount: z.number(),
-      deletedPhotosCount: z.number(),
+      deletedEventsCount: z.number().describe("The number of events whose galleries were deleted."),
+      deletedPhotosCount: z.number().describe("The total number of photos deleted from storage."),
     }),
   },
   async () => {
     console.log('Running deleteExpiredPhotosFlow...');
-    // In a real implementation:
-    // 1. Query Firestore for events where `galleryExpirationDate` <= now.
-    // const expiredEvents = await db.collection('events').where('galleryExpirationDate', '<=', new Date()).get();
-    
-    // 2. For each event, list all files in its Firebase Storage folder (e.g., `gs://<bucket>/events/{eventId}/`).
-    
-    // 3. Delete each file found.
-    
-    // 4. (Optional) Update the event document in Firestore to reflect that the gallery has been cleaned up.
+    let deletedEventsCount = 0;
+    let deletedPhotosCount = 0;
+
+    // In a real implementation, you would uncomment and use the Firebase Admin SDK.
+    /*
+    const now = new Date();
+    const expiredEventsSnapshot = await db.collection('events')
+      .where('galleryExpirationDate', '<=', now)
+      .where('galleryArchived', '==', false) // Avoid processing already archived events
+      .get();
+
+    if (expiredEventsSnapshot.empty) {
+      console.log('No expired galleries to delete.');
+      return { success: true, deletedEventsCount: 0, deletedPhotosCount: 0 };
+    }
+
+    for (const doc of expiredEventsSnapshot.docs) {
+      const event = doc.data();
+      const eventId = doc.id;
+      const folderPath = `events/${eventId}/`;
+
+      console.log(`Processing expired event: ${eventId}`);
+
+      // 1. Delete all files in the event's Firebase Storage folder.
+      const [files] = await storage.getFiles({ prefix: folderPath });
+      for (const file of files) {
+        await file.delete();
+        deletedPhotosCount++;
+      }
+      console.log(`Deleted ${files.length} photos for event ${eventId}.`);
+
+      // 2. Update the event document in Firestore to mark it as archived.
+      // This prevents the flow from processing it again.
+      await db.collection('events').doc(eventId).update({
+        galleryArchived: true,
+        galleryArchivedDate: now,
+      });
+
+      deletedEventsCount++;
+    }
+    */
     
     console.log('Simulating deletion of expired photos. In a real scenario, this would interact with Firestore and Cloud Storage.');
+    console.log(`Finished processing. Deleted galleries for ${deletedEventsCount} events and a total of ${deletedPhotosCount} photos.`);
 
-    // Placeholder response
+    // Placeholder response. In a real scenario, you'd return the actual counts.
     return {
       success: true,
-      deletedEventsCount: 0, // Replace with actual count
-      deletedPhotosCount: 0, // Replace with actual count
+      deletedEventsCount,
+      deletedPhotosCount,
     };
   }
 );
@@ -68,27 +108,61 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
     inputSchema: z.void(),
     outputSchema: z.object({
         success: z.boolean(),
-        notificationsSent: z.number(),
+        notificationsSent: z.number().describe("The number of clients notified."),
     }),
   },
   async () => {
     console.log('Running notifyOnGalleryVisibilityFlow...');
+    let notificationsSent = 0;
 
-    // In a real implementation:
-    // 1. Query Firestore for events where `galleryVisibilityDate` is today and notification has not been sent.
-    
-    // 2. For each event, get the client's email from the 'clients' collection.
-    
-    // 3. Use an email service (e.g., SendGrid, Mailgun, or Firebase Extensions) to send a notification.
-    
-    // 4. Update the event document to mark that the notification has been sent to prevent duplicates.
+    // In a real implementation, you would uncomment and use the Firebase Admin SDK and an email service.
+    /*
+    const now = new Date();
+    // Query for events where visibility date is in the past and notification hasn't been sent.
+    const eventsToNotifySnapshot = await db.collection('events')
+        .where('galleryVisibilityDate', '<=', now)
+        .where('galleryNotificationSent', '==', false)
+        .get();
 
+    if (eventsToNotifySnapshot.empty) {
+        console.log('No new galleries to notify about.');
+        return { success: true, notificationsSent: 0 };
+    }
+
+    for (const doc of eventsToNotifySnapshot.docs) {
+        const event = doc.data();
+        const clientSnapshot = await db.collection('clients').doc(event.clientId).get();
+        if (!clientSnapshot.exists) continue;
+
+        const client = clientSnapshot.data();
+        const clientEmail = client.email;
+        const eventId = doc.id;
+        
+        console.log(`Sending notification to ${clientEmail} for event ${eventId}`);
+        
+        // 3. Use an email service (e.g., SendGrid, Mailgun, or Firebase Extensions) to send a notification.
+        // await sendEmail({
+        //   to: clientEmail,
+        //   subject: `Your event gallery is ready!`,
+        //   body: `Hi ${client.name}, the photo gallery for your event is now available. You can view it here: ...`,
+        // });
+        
+        // 4. Update the event document to mark that the notification has been sent.
+        await db.collection('events').doc(eventId).update({
+          galleryNotificationSent: true,
+        });
+
+        notificationsSent++;
+    }
+    */
+    
     console.log('Simulating sending gallery-ready notifications. In a real scenario, this would use an email service.');
+    console.log(`Finished processing. Sent ${notificationsSent} notifications.`);
 
     // Placeholder response
     return {
         success: true,
-        notificationsSent: 0, // Replace with actual count
+        notificationsSent,
     };
   }
 );

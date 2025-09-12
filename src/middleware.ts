@@ -4,7 +4,7 @@ export function middleware(request: NextRequest) {
   const sessionToken = request.cookies.get('sessionToken')?.value;
   const { pathname } = request.nextUrl;
 
-  const protectedRoutes = ['/dashboard'];
+  const protectedRoutes = ['/dashboard', '/admin'];
 
   if (protectedRoutes.some(p => pathname.startsWith(p))) {
     if (!sessionToken) {
@@ -24,6 +24,7 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/admin/:path*',
     '/login',
     '/register',
   ],

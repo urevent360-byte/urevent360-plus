@@ -15,71 +15,45 @@ import {
 import placeholderImages from '@/lib/placeholder-images.json';
 import type { PlaceholderImage } from '@/lib/types';
 import { ExperienceCardContent } from './ExperienceCardContent';
+import { Button } from '@/components/ui/button';
+import { useOpenInquiryModal } from './InquiryModal';
+import { useLanguage } from '@/contexts/LanguageProvider';
+import { ArrowRight } from 'lucide-react';
 
-const experienceImages = placeholderImages.placeholderImages.filter(p =>
-  p.id.startsWith('experience-')
-);
-
-const experiences: {
-  title: { en: string; es: string };
-  description: { en: string; es: string };
-  image: PlaceholderImage | undefined;
-}[] = [
-  {
-    title: { en: 'Weddings & Anniversaries', es: 'Bodas y Aniversarios' },
-    description: {
-      en: 'Crafting magical moments for your special day.',
-      es: 'Creando momentos mágicos para tu día especial.',
+const placeholderServices = [
+    { 
+        slug: '360-photo-booth',
+        name: { en: '360 Photo Booth', es: 'Cabina de Fotos 360' },
+        shortDescription: { en: 'Capture every angle of the fun with our 360-degree photo booth experience.', es: 'Captura cada ángulo de la diversión con nuestra experiencia de cabina de fotos de 360 grados.' },
+        image: 'https://picsum.photos/seed/service1-1/800/600'
     },
-    image: experienceImages[0],
-  },
-  {
-    title: { en: 'Corporate Events', es: 'Eventos Corporativos' },
-    description: {
-      en: 'Professional and seamless events that impress.',
-      es: 'Eventos profesionales e impecables que impresionan.',
+    { 
+        slug: 'magic-mirror',
+        name: { en: 'Magic Mirror', es: 'Espejo Mágico' },
+        shortDescription: { en: 'An interactive, full-length mirror that takes amazing selfies.', es: 'Un espejo interactivo de cuerpo entero que toma selfies increíbles.' },
+        image: 'https://picsum.photos/seed/service2/800/600'
     },
-    image: experienceImages[1],
-  },
-  {
-    title: { en: 'Parties & Celebrations', es: 'Fiestas y Celebraciones' },
-    description: {
-      en: 'Unforgettable parties for any occasion.',
-      es: 'Fiestas inolvidables para cualquier ocasión.',
+    { 
+        slug: 'la-hora-loca',
+        name: { en: 'La Hora Loca', es: 'La Hora Loca' },
+        shortDescription: { en: 'An hour of high-energy entertainment with dancers, props, and music.', es: 'Una hora de entretenimiento de alta energía con bailarines, accesorios y música.' },
+        image: 'https://picsum.photos/seed/service3/800/600'
     },
-    image: experienceImages[2],
-  },
-  {
-    title: { en: 'Festivals & Concerts', es: 'Festivales y Conciertos' },
-    description: {
-      en: 'Large-scale events managed with expertise.',
-      es: 'Eventos a gran escala gestionados con pericia.',
+    { 
+        slug: 'cold-sparklers',
+        name: { en: 'Cold Sparklers', es: 'Chispas Frías' },
+        shortDescription: { en: 'Create a stunning pyrotechnic-like effect without the heat or smoke.', es: 'Crea un impresionante efecto pirotécnico sin calor ni humo.' },
+        image: 'https://picsum.photos/seed/service4/800/600'
     },
-    image: experienceImages[3],
-  },
-  // Add more experiences if needed to have more items in the carousel
-  {
-    title: { en: 'Quinceañeras', es: 'Quinceañeras' },
-    description: {
-      en: 'A magical celebration for a special milestone.',
-      es: 'Una celebración mágica para un hito especial.',
-    },
-    image: placeholderImages.placeholderImages.find(p => p.id === 'gallery-1'),
-  },
-  {
-    title: { en: 'Private Dinners', es: 'Cenas Privadas' },
-    description: {
-      en: 'Intimate and elegant dining experiences.',
-      es: 'Experiencias gastronómicas íntimas y elegantes.',
-    },
-    image: placeholderImages.placeholderImages.find(p => p.id === 'gallery-4'),
-  },
 ];
+
 
 export function ExperiencesCarousel() {
   const plugin = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
   );
+  const { setOpen } = useOpenInquiryModal();
+  const { language } = useLanguage();
 
   return (
     <Carousel
@@ -91,30 +65,31 @@ export function ExperiencesCarousel() {
       }}
     >
       <CarouselContent className="-ml-4">
-        {experiences.map((exp, index) => (
-          <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+        {placeholderServices.map((service, index) => (
+          <CarouselItem key={index} className="pl-4 md:basis-1/2 lg:basis-1/3">
             <div className="p-1">
               <Card
                 className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2"
               >
                 <CardContent className="p-0">
                   <div className="relative h-64 w-full">
-                    {exp.image && (
                       <Image
-                        src={exp.image.imageUrl}
-                        alt={exp.image.description}
+                        src={service.image}
+                        alt={service.name[language]}
                         fill
                         className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                        data-ai-hint={exp.image.imageHint}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
-                    )}
                   </div>
                   <div className="bg-card p-6">
-                    <ExperienceCardContent
-                      title={exp.title}
-                      description={exp.description}
-                    />
+                    <h3 className="font-headline text-xl font-semibold text-primary">
+                        {service.name[language]}
+                    </h3>
+                    <p className="mt-2 text-foreground/80 h-12">{service.shortDescription[language]}</p>
+                    <Button onClick={() => setOpen(true)} className="mt-4" variant="outline">
+                        {language === 'en' ? 'Request Inquiry' : 'Solicitar Información'}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

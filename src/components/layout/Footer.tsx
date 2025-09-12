@@ -4,9 +4,12 @@ import { Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
+import footerData from '@/lib/footer-data.json';
 
 export function Footer() {
   const { language } = useLanguage();
+
+  const { contact, social } = footerData;
 
   return (
     <footer className="bg-white text-gray-800">
@@ -22,37 +25,41 @@ export function Footer() {
           <div>
             <h3 className="font-headline font-semibold uppercase tracking-wider text-primary">Contact Us</h3>
             <ul className="mt-4 space-y-2">
-              <li className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
-                <Mail className="h-5 w-5" />
-                <a href="mailto:urevent360@gmail.com">urevent360@gmail.com</a>
-              </li>
-               <li className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
-                <Mail className="h-5 w-5" />
-                <a href="mailto:info@urevent360.com">info@urevent360.com</a>
-              </li>
-              <li className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
-                <Phone className="h-5 w-5" />
-                <a href="tel:6893025502">(689) 302-5502</a>
-              </li>
-              <li className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
-                <Phone className="h-5 w-5" />
-                <a href="tel:4075330970">(407) 533-0970 (Español)</a>
-              </li>
+              {contact.emails.map((email, index) => (
+                <li key={index} className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
+                  <Mail className="h-5 w-5" />
+                  <a href={`mailto:${email.address}`}>{email.address}</a>
+                </li>
+              ))}
+              {contact.phones.map((phone, index) => (
+                 <li key={index} className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
+                    <Phone className="h-5 w-5" />
+                    <a href={`tel:${phone.number.replace(/\D/g, '')}`}>
+                      {phone.number} {phone.label && `(${phone.label})`}
+                    </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h3 className="font-headline font-semibold uppercase tracking-wider text-primary">Follow Us</h3>
             <div className="mt-4 flex justify-center md:justify-start space-x-4">
-              <a href="#" className="text-gray-600 hover:text-primary transition-colors" aria-label="Facebook">
-                <Facebook className="h-6 w-6" />
-              </a>
-              <a href="https://www.instagram.com/urevent360" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors" aria-label="Instagram">
-                <Instagram className="h-6 w-6" />
-              </a>
-              <a href="#" className="text-gray-600 hover:text-primary transition-colors" aria-label="Twitter">
-                <Twitter className="h-6 w-6" />
-              </a>
+              {social.facebook && social.facebook !== '#' && (
+                <a href={social.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors" aria-label="Facebook">
+                  <Facebook className="h-6 w-6" />
+                </a>
+              )}
+              {social.instagram && social.instagram !== '#' && (
+                <a href={social.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors" aria-label="Instagram">
+                  <Instagram className="h-6 w-6" />
+                </a>
+              )}
+               {social.twitter && social.twitter !== '#' && (
+                <a href={social.twitter} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-primary transition-colors" aria-label="Twitter">
+                  <Twitter className="h-6 w-6" />
+                </a>
+              )}
             </div>
           </div>
         </div>

@@ -18,6 +18,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const publicRoutes = ['/', '/contact', '/gallery'];
+const servicesRegex = /^\/services(\/.*)?$/;
+const uploadRegex = /^\/upload(\/.*)?$/;
+
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -33,25 +38,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsAdmin(userIsAdmin);
       setLoading(false);
 
-      const isAuthPage = pathname.startsWith('/app/login') || pathname.startsWith('/app/register') || pathname.startsWith('/admin/login');
+      const isAppLogin = pathname === '/app/login' || pathname === '/app/register' || pathname === '/app/forgot-password';
+      const isAdminLogin = pathname === '/admin/login' || pathname === '/admin/forgot-password';
+
+      const isPublicRoute = publicRoutes.includes(pathname) || servicesRegex.test(pathname) || uploadRegex.test(pathname);
 
       if (user) {
         if (userIsAdmin) {
-          // If admin is logged in, ensure they are in the admin portal.
-          // Redirect from any other location to the admin home.
+          // If admin is logged in, and they are not in the admin section, redirect them.
           if (!pathname.startsWith('/admin')) {
             router.push('/admin/home');
           }
         } else {
-          // If a non-admin (host) is logged in, ensure they are in the app portal.
-          // Redirect from any other location (including /admin) to the app home.
+          // If a non-admin client is logged in, and they are not in the app section, redirect them.
           if (!pathname.startsWith('/app')) {
-             router.push('/app/home');
+            router.push('/app/home');
           }
         }
       } else {
-        // User is not logged in. Middleware will handle unauthorized access
-        // to private routes.
+        // User is not logged in.
+        // If they try to access a protected route, redirect to the appropriate login page.
+        if (pathname.startsWith('/admin') && !isAdminLogin) {
+          router.push('/admin/login');
+        } else if (pathname.startsWith('/app') && !isAppLogin) {
+          router.push('/app/login');
+        }
       }
     });
 
@@ -60,13 +71,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    // Redirect to the main public page after sign-out.
     router.push('/');
   };
 
+  const isAuthRoute = pathname.startsWith('/admin') || pathname.startsWith('/app');
+
+  // If we are loading and it's a protected route, show nothing to prevent flicker.
+  // Public routes can render immediately.
+  if (loading && isAuthRoute) {
+    return null;
+  }
+  
   return (
     <AuthContext.Provider value={{ user, isAdmin, loading, signOut }}>
-      {loading ? null : children}
+      {children}
     </AuthContext.Provider>
   );
 };

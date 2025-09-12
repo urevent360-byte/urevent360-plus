@@ -10,9 +10,11 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Settings, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search } from 'lucide-react';
+import { Settings, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
+import { Button } from '@/components/ui/button';
+import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
 
 export default function AdminLayout({
   children,
@@ -103,16 +105,31 @@ export default function AdminLayout({
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/">
-                  <Home />
-                  Go to Site
+                <Link href="/admin/assistant">
+                  <Bot />
+                  AI Assistant
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-            {/* Footer content if needed */}
+            <SidebarMenu>
+                <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                        <Link href="/">
+                        <Home />
+                        Go to Site
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                 <SidebarMenuItem>
+                    <AuthSignOutButton>
+                        <LogOut />
+                        Logout
+                    </AuthSignOutButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>

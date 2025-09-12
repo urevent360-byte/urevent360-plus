@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { LanguageProvider } from '@/contexts/LanguageProvider';
@@ -6,6 +7,8 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
+import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
+
 
 export const metadata: Metadata = {
   title: 'UREVENT 360 PLUS',
@@ -31,9 +34,7 @@ export default function RootLayout({
         <AuthProvider>
           <LanguageProvider>
             <div className="flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
+              <AppLayoutClient>{children}</AppLayoutClient>
             </div>
             <Toaster />
           </LanguageProvider>

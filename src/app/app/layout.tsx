@@ -10,9 +10,10 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { LayoutGrid, Briefcase, Camera, Music, CreditCard, User, LogOut, MessageSquare, ListTree, Bot } from 'lucide-react';
+import { LayoutGrid, Briefcase, Camera, ListTree, CreditCard, User, LogOut, MessageSquare, Home, Bot } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
+import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
 
 export default function AppLayout({
   children,
@@ -98,10 +99,18 @@ export default function AppLayout({
         <SidebarFooter>
             <SidebarMenu>
                  <SidebarMenuItem>
-                    <SidebarMenuButton>
+                    <SidebarMenuButton asChild>
+                        <Link href="/">
+                        <Home />
+                        Go to Site
+                        </Link>
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+                 <SidebarMenuItem>
+                    <AuthSignOutButton>
                         <LogOut />
                         Logout
-                    </SidebarMenuButton>
+                    </AuthSignOutButton>
                 </SidebarMenuItem>
             </SidebarMenu>
         </SidebarFooter>

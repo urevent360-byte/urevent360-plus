@@ -1,3 +1,76 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero",
+      "description": "A vibrant event with confetti falling on a joyful crowd.",
+      "imageUrl": "https://picsum.photos/seed/hero/1920/1080",
+      "imageHint": "event celebration"
+    },
+    {
+      "id": "experience-1",
+      "description": "A beautifully decorated wedding reception.",
+      "imageUrl": "https://picsum.photos/seed/exp1/600/400",
+      "imageHint": "wedding reception"
+    },
+    {
+      "id": "experience-2",
+      "description": "A corporate event with professional lighting.",
+      "imageUrl": "https://picsum.photos/seed/exp2/600/400",
+      "imageHint": "corporate event"
+    },
+    {
+      "id": "experience-3",
+      "description": "A lively birthday party with balloons.",
+      "imageUrl": "https://picsum.photos/seed/exp3/600/400",
+      "imageHint": "birthday party"
+    },
+    {
+      "id": "experience-4",
+      "description": "An outdoor festival stage at sunset.",
+      "imageUrl": "https://picsum.photos/seed/exp4/600/400",
+      "imageHint": "outdoor festival"
+    },
+    {
+      "id": "gallery-1",
+      "description": "Close-up of a DJ at a party.",
+      "imageUrl": "https://picsum.photos/seed/gal1/400/600",
+      "imageHint": "dj party"
+    },
+    {
+      "id": "gallery-2",
+      "description": "Guests dancing at an event.",
+      "imageUrl": "https://picsum.photos/seed/gal2/600/400",
+      "imageHint": "people dancing"
+    },
+    {
+      "id": "gallery-3",
+      "description": "A spectacular fireworks display.",
+      "imageUrl": "https://picsum.photos/seed/gal3/600/400",
+      "imageHint": "fireworks display"
+    },
+    {
+      "id": "gallery-4",
+      "description": "Elaborate table setting for a gala dinner.",
+      "imageUrl": "https://picsum.photos/seed/gal4/400/600",
+      "imageHint": "gala dinner"
+    },
+    {
+      "id": "gallery-5",
+      "description": "A live band performing on stage.",
+      "imageUrl": "https://picsum.photos/seed/gal5/600/400",
+      "imageHint": "live band"
+    },
+    {
+      "id": "gallery-6",
+      "description": "Colorful cocktails on a bar.",
+      "imageUrl": "https://picsum.photos/seed/gal6/400/600",
+      "imageHint": "cocktails bar"
+    },
+    {
+      "id": "gallery-7",
+      "description": "A child's birthday party with a theme.",
+      "imageUrl": "https://picsum.photos/seed/gal7/600/400",
+      "imageHint": "kids party"
+    }
+  ]
 }

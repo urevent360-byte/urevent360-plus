@@ -33,6 +33,13 @@ export const translations = {
       es: 'Ser el proveedor líder de planificación y entretenimiento de eventos, conocido por la creatividad, la confiabilidad y la satisfacción del cliente.',
     }
   },
+  testimonials: {
+    title: { en: 'What Our Clients Say', es: 'Lo que Dicen Nuestros Clientes' },
+    subtitle: { 
+      en: "Don't just take our word for it - hear from those who've experienced our magic", 
+      es: "No confíes solo en nuestra palabra - escucha a quienes han experimentado nuestra magia" 
+    },
+  },
   footer: {
     motto: {
       en: 'Crafting unforgettable moments.',

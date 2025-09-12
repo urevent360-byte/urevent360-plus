@@ -8,6 +8,7 @@ import { ExperienceCardContent } from '@/components/page/home/ExperienceCardCont
 import { AboutContent } from '@/components/page/home/AboutContent';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
+import { Testimonials } from '@/components/page/home/Testimonials';
 
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
@@ -46,6 +47,12 @@ export default function Home() {
       <section className="bg-secondary/50 py-16 md:py-24">
         <div className="container mx-auto px-4">
           <AboutContent />
+        </div>
+      </section>
+
+      <section className="bg-background py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <Testimonials />
         </div>
       </section>
     </div>

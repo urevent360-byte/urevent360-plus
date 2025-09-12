@@ -18,6 +18,7 @@ import {
   CreditCard,
   User,
   Home,
+  Camera,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
@@ -32,6 +33,7 @@ export default function DashboardLayout({
   const t = {
     dashboard: { en: 'Dashboard', es: 'Panel' },
     bookings: { en: 'My Bookings', es: 'Mis Reservas' },
+    gallery: { en: 'My Gallery', es: 'Mi Galería' },
     music: { en: 'Music Preferences', es: 'Preferencias Musicales' },
     payments: { en: 'Payments', es: 'Pagos' },
     profile: { en: 'My Profile', es: 'Mi Perfil' },
@@ -62,6 +64,14 @@ export default function DashboardLayout({
                 <Link href="/dashboard/bookings">
                   <Calendar />
                   {t.bookings[language]}
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/dashboard/gallery">
+                  <Camera />
+                  {t.gallery[language]}
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

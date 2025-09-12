@@ -20,8 +20,6 @@ import { UserPlus, Eye, EyeOff } from 'lucide-react';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
 
-const ADMIN_EMAIL = 'admin@urevent360.com';
-
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
   email: z.string().email(),
@@ -42,17 +40,17 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   
   useEffect(() => {
     if (user && !loading) {
-      if (user.email === ADMIN_EMAIL) {
+      if (isAdmin) {
         router.push('/admin/dashboard');
       } else {
         router.push('/dashboard');
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isAdmin]);
 
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({

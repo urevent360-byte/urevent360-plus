@@ -20,8 +20,6 @@ import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
 
-const ADMIN_EMAIL = 'admin@urevent360.com';
-
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
@@ -36,17 +34,17 @@ export default function LoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, loading } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   
   useEffect(() => {
     if (user && !loading) {
-      if (user.email === ADMIN_EMAIL) {
+      if (isAdmin) {
         router.push('/admin/dashboard');
       } else {
         router.push('/dashboard');
       }
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, isAdmin]);
 
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({

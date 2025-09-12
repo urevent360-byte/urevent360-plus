@@ -9,6 +9,7 @@ import { AboutContent } from '@/components/page/home/AboutContent';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
 import { Testimonials } from '@/components/page/home/Testimonials';
+import { ChatWidget } from '@/components/shared/ChatWidget';
 
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
@@ -44,7 +45,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="bg-white py-16 md:py-24">
         <div className="container mx-auto px-4">
           <AboutContent />
         </div>
@@ -55,6 +56,7 @@ export default function Home() {
           <Testimonials />
         </div>
       </section>
+      <ChatWidget />
     </div>
   );
 }

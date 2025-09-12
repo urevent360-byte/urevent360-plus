@@ -2,17 +2,17 @@ import { NextResponse, type NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const publicRoutes = ['/', '/services', '/gallery', '/contact', '/login', '/register'];
 
-  // This is a simplified example. In a real app, you'd use a more robust
-  // method for managing auth state on the server, likely involving middleware
-  // that verifies a session cookie against your auth provider.
-  // For now, we'll keep the client-side check as the primary guard.
+  // Allow access to the new admin login page
+  if (pathname === '/admin/login') {
+      return NextResponse.next();
+  }
 
-  if (pathname.startsWith('/dashboard') || pathname.startsWith('/admin')) {
-      // These routes are protected and rely on client-side auth checks.
-      // The middleware's primary job is to allow Next.js to render the page shell,
-      // which will then handle redirection if the user is not authenticated.
+  if (pathname.startsWith('/admin')) {
+      // This is a simplified example. In a real app, you'd use a more robust
+      // method for managing auth state on the server, likely involving middleware
+      // that verifies a session cookie against your auth provider.
+      // For now, we'll let the client-side checks in AuthProvider handle redirection.
   }
 
   return NextResponse.next();

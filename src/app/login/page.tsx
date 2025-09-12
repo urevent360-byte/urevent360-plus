@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import Link from 'next/link';
@@ -44,7 +42,7 @@ export default function LoginPage() {
       if (isAdmin) {
         router.push('/admin/dashboard');
       } else {
-        router.push('/'); // Redirect non-admins to home page
+        router.push('/dashboard'); 
       }
     }
   }, [user, loading, router, isAdmin]);
@@ -99,7 +97,7 @@ export default function LoginPage() {
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button variant="ghost" size="icon" asChild>
-                            <Link href="/admin/dashboard">
+                            <Link href="/admin/login">
                                 <Shield className="h-5 w-5 text-muted-foreground hover:text-primary" />
                             </Link>
                         </Button>

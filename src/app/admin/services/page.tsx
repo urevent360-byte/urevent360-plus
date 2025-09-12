@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlusCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const placeholderServices = [
     { id: 1, name: '360 Photo Booth', category: 'Photo Booth', lastUpdated: '2024-07-28' },
@@ -27,9 +28,11 @@ export default function ServiceManagementPage() {
                 <h1 className="text-3xl font-bold tracking-tight">Service Management</h1>
                 <p className="text-muted-foreground">Add, edit, or delete your event services.</p>
             </div>
-            <Button>
-                <PlusCircle className="mr-2" />
-                Add New Service
+            <Button asChild>
+                <Link href="/admin/services/form">
+                    <PlusCircle className="mr-2" />
+                    Add New Service
+                </Link>
             </Button>
         </div>
 
@@ -57,7 +60,9 @@ export default function ServiceManagementPage() {
                             <TableCell>{service.category}</TableCell>
                             <TableCell>{service.lastUpdated}</TableCell>
                             <TableCell className="text-right">
-                                <Button variant="ghost" size="sm" className="mr-2">Edit</Button>
+                                <Button variant="ghost" size="sm" asChild className="mr-2">
+                                    <Link href={`/admin/services/form?id=${service.id}`}>Edit</Link>
+                                </Button>
                                 <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">Delete</Button>
                             </TableCell>
                         </TableRow>

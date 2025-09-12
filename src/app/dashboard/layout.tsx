@@ -23,6 +23,7 @@ import {
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 import { useLanguage } from '@/contexts/LanguageProvider';
+import { usePathname } from 'next/navigation';
 
 export default function DashboardLayout({
   children,
@@ -30,16 +31,28 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { language } = useLanguage();
+  const pathname = usePathname();
+
   const t = {
     dashboard: { en: 'Dashboard', es: 'Panel' },
     bookings: { en: 'My Bookings', es: 'Mis Reservas' },
     gallery: { en: 'My Gallery', es: 'Mi Galería' },
-    music: { en: 'Music Preferences', es: 'Preferencias Musicales' },
+    music: { en: 'Music Playlist', es: 'Playlist de Música' },
     payments: { en: 'Payments', es: 'Pagos' },
     profile: { en: 'My Profile', es: 'Mi Perfil' },
     backToSite: { en: 'Back to Main Site', es: 'Volver al Sitio Principal' },
-    admin: { en: 'Admin', es: 'Administración' },
   };
+
+  const menuItems = [
+    { href: '/dashboard', icon: <LayoutGrid />, label: t.dashboard[language] },
+    { href: '/dashboard/bookings', icon: <Calendar />, label: t.bookings[language] },
+    { href: '/dashboard/gallery', icon: <Camera />, label: t.gallery[language] },
+    { href: '/dashboard/music', icon: <Music />, label: t.music[language] },
+    { href: '/dashboard/payments', icon: <CreditCard />, label: t.payments[language] },
+    { href: '/dashboard/profile', icon: <User />, label: t.profile[language] },
+    { isSeparator: true },
+    { href: '/', icon: <Home />, label: t.backToSite[language] },
+  ];
 
   return (
     <SidebarProvider>
@@ -51,62 +64,18 @@ export default function DashboardLayout({
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard">
-                  <LayoutGrid />
-                  {t.dashboard[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard/bookings">
-                  <Calendar />
-                  {t.bookings[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard/gallery">
-                  <Camera />
-                  {t.gallery[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard/music">
-                  <Music />
-                  {t.music[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard/payments">
-                  <CreditCard />
-                  {t.payments[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/dashboard/profile">
-                  <User />
-                  {t.profile[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/">
-                  <Home />
-                  {t.backToSite[language]}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {menuItems.map((item, index) => 
+                item.isSeparator ? <SidebarMenuItem key={index}></SidebarMenuItem> : (
+                <SidebarMenuItem key={index}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href!}>
+                      {item.icon}
+                      {item.label}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            )}
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>{/* Footer content if needed */}</SidebarFooter>

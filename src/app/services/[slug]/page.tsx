@@ -11,9 +11,10 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import Link from 'next/link';
-import { Mail, Tag, ShoppingCart } from 'lucide-react';
+import { Mail, Tag, ShoppingCart, Video } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 const placeholderServicesData: any = {
     '360-photo-booth': {
@@ -24,6 +25,9 @@ const placeholderServicesData: any = {
             'https://picsum.photos/seed/service1-1/800/600',
             'https://picsum.photos/seed/service1-2/800/600',
             'https://picsum.photos/seed/service1-3/800/600',
+        ],
+        videos: [
+            { url: 'https://www.youtube.com/embed/5_v634-9W3E', alt: '360 Photo Booth Sample Video' }
         ],
         keywords: ['360 photo booth', 'video booth', 'quinceañera', 'event entertainment', 'social media booth'],
     },
@@ -124,6 +128,7 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
     const t = {
         addToCart: { en: 'Add to Cart', es: 'Añadir al Carrito' },
         keywords: { en: 'Keywords', es: 'Palabras Clave' },
+        videosTitle: { en: 'See It In Action', es: 'Míralo en Acción' },
     };
 
     const handleAddToCart = () => {
@@ -180,6 +185,30 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
                     </Button>
                 </div>
             </div>
+
+            {service.videos && service.videos.length > 0 && (
+                <div className="mt-16 md:mt-24">
+                    <Separator />
+                    <div className="text-center my-12">
+                        <h2 className="font-headline text-3xl font-bold text-primary md:text-4xl flex items-center justify-center gap-3">
+                           <Video /> {t.videosTitle[language]}
+                        </h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {service.videos.map((video: {url: string, alt: string}, index: number) => (
+                            <div key={index} className="aspect-video">
+                                <iframe
+                                    src={video.url}
+                                    title={video.alt}
+                                    className="w-full h-full rounded-lg shadow-lg"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                ></iframe>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

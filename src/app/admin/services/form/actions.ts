@@ -14,6 +14,10 @@ const serviceFormSchema = z.object({
     url: z.string().url(),
     alt: z.string().min(2, 'Alt text is required.'),
   })),
+  videos: z.array(z.object({
+    url: z.string().url(),
+    alt: z.string().min(2, 'Alt text is required.'),
+  })).optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -22,6 +26,7 @@ export async function createServiceAction(data: ServiceFormValues): Promise<{ su
   const validatedFields = serviceFormSchema.safeParse(data);
 
   if (!validatedFields.success) {
+    console.error('Validation errors:', validatedFields.error.flatten().fieldErrors);
     return {
       success: false,
       message: 'Invalid form data.',

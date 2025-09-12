@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, X, ArrowLeft } from 'lucide-react';
+import { Upload, X, ArrowLeft, Video } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -37,6 +37,10 @@ const serviceFormSchema = z.object({
     url: z.string().url(),
     alt: z.string().min(2, 'Alt text is required.'),
   })),
+  videos: z.array(z.object({
+    url: z.string().url(),
+    alt: z.string().min(2, 'Alt text is required.'),
+  })).optional(),
 });
 
 type ServiceFormValues = z.infer<typeof serviceFormSchema>;
@@ -53,6 +57,9 @@ const existingService: ServiceFormValues = {
     images: [
         { url: 'https://picsum.photos/seed/service1-1/800/600', alt: 'Guests enjoying the 360 photo booth' },
         { url: 'https://picsum.photos/seed/service1-2/800/600', alt: 'Close-up of the 360 camera setup' },
+    ],
+    videos: [
+        { url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', alt: 'Sample video of the 360 photo booth in action' }
     ]
 };
 
@@ -72,12 +79,18 @@ export default function ServiceFormPage() {
             metaDescription: '',
             keywords: '',
             images: [],
+            videos: [],
         },
     });
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
         control: form.control,
         name: 'images',
+    });
+
+    const { fields: videoFields, append: appendVideo, remove: removeVideo } = useFieldArray({
+        control: form.control,
+        name: 'videos',
     });
     
     async function onSubmit(data: ServiceFormValues) {
@@ -234,12 +247,12 @@ export default function ServiceFormPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>Photo / Gallery Management</CardTitle>
+                    <CardTitle>Photo Gallery Management</CardTitle>
                     <CardDescription>Upload, replace, or delete images for this service.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {fields.map((image, index) => (
+                        {imageFields.map((image, index) => (
                             <div key={image.id} className="relative group border rounded-lg p-2 space-y-2">
                                 <Image
                                     src={image.url}
@@ -262,7 +275,7 @@ export default function ServiceFormPage() {
                                     )}
                                 />
                                 <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => remove(index)}>
+                                    <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => removeImage(index)}>
                                         <X className="h-4 w-4" />
                                         <span className="sr-only">Delete</span>
                                     </Button>
@@ -279,6 +292,80 @@ export default function ServiceFormPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Video Management</CardTitle>
+                    <CardDescription>Add, replace, or delete videos for this service (e.g., YouTube embed links).</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {videoFields.map((video, index) => (
+                            <div key={video.id} className="relative group border rounded-lg p-2 space-y-2">
+                               <div className="aspect-video bg-muted rounded-md flex items-center justify-center">
+                                 {video.url.includes('youtube.com') || video.url.includes('youtu.be') ? (
+                                    <iframe
+                                        src={video.url.replace('watch?v=', 'embed/')}
+                                        title={video.alt}
+                                        className="w-full h-full rounded-md"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    ></iframe>
+                                    ) : (
+                                        <div className="text-center text-muted-foreground p-4">
+                                            <Video className="w-8 h-8 mx-auto mb-2" />
+                                            <p className="text-xs">Video preview not available. Ensure it's a valid embed URL.</p>
+                                        </div>
+                                    )}
+                               </div>
+                                <FormField
+                                    control={form.control}
+                                    name={`videos.${index}.url`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Video URL</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="https://youtube.com/embed/..." {...field}/>
+                                            </FormControl>
+                                            <FormMessage className="text-xs" />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name={`videos.${index}.alt`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Alt Text / Description</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Describe the video" {...field}/>
+                                            </FormControl>
+                                            <FormMessage className="text-xs" />
+                                        </FormItem>
+                                    )}
+                                />
+                                <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => removeVideo(index)}>
+                                        <X className="h-4 w-4" />
+                                        <span className="sr-only">Delete Video</span>
+                                    </Button>
+                                </div>
+                            </div>
+                        ))}
+                         <div
+                            className="flex flex-col items-center justify-center w-full min-h-[300px] border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted"
+                             onClick={() => appendVideo({ url: '', alt: ''})}
+                        >
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <Video className="w-8 h-8 mb-4 text-muted-foreground" />
+                                <p className="mb-2 text-sm text-muted-foreground text-center">Click to add a new video</p>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+
              <div className="flex justify-end gap-2">
                 <Button variant="outline" type="button" onClick={() => router.back()}>Cancel</Button>
                 <Button type="submit" disabled={form.formState.isSubmitting}>

@@ -3,6 +3,7 @@
 import React from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -12,13 +13,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import placeholderImages from '@/lib/placeholder-images.json';
-import type { PlaceholderImage } from '@/lib/types';
-import { ExperienceCardContent } from './ExperienceCardContent';
 import { Button } from '@/components/ui/button';
-import { useOpenInquiryModal } from './InquiryModal';
 import { useLanguage } from '@/contexts/LanguageProvider';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/use-cart';
+import { useToast } from '@/hooks/use-toast';
 
 const placeholderServices = [
     { 
@@ -52,8 +51,21 @@ export function ExperiencesCarousel() {
   const plugin = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
   );
-  const { setOpen } = useOpenInquiryModal();
   const { language } = useLanguage();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
+
+  const handleAddToCart = (service: typeof placeholderServices[0]) => {
+    addToCart({
+      slug: service.slug,
+      name: service.name.en,
+      image: service.image,
+    });
+    toast({
+      title: 'Added to cart!',
+      description: `${service.name[language]} has been added to your inquiry cart.`,
+    });
+  };
 
   return (
     <Carousel
@@ -72,24 +84,34 @@ export function ExperiencesCarousel() {
                 className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2"
               >
                 <CardContent className="p-0">
-                  <div className="relative h-64 w-full">
-                      <Image
-                        src={service.image}
-                        alt={service.name[language]}
-                        fill
-                        className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                  </div>
+                  <Link href={`/services/${service.slug}`} className="block">
+                    <div className="relative h-64 w-full">
+                        <Image
+                          src={service.image}
+                          alt={service.name[language]}
+                          fill
+                          className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        />
+                    </div>
+                  </Link>
                   <div className="bg-card p-6">
                     <h3 className="font-headline text-xl font-semibold text-primary">
                         {service.name[language]}
                     </h3>
                     <p className="mt-2 text-foreground/80 h-12">{service.shortDescription[language]}</p>
-                    <Button onClick={() => setOpen(true)} className="mt-4" variant="outline">
-                        {language === 'en' ? 'Request Inquiry' : 'Solicitar Información'}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
+                    <div className="mt-4 flex gap-2">
+                        <Button asChild className="flex-1" variant="outline">
+                            <Link href={`/services/${service.slug}`}>
+                                {language === 'en' ? 'View Details' : 'Ver Detalles'}
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                        <Button onClick={() => handleAddToCart(service)} className="flex-1">
+                             <ShoppingCart className="mr-2"/>
+                            {language === 'en' ? 'Add to Cart' : 'Añadir'}
+                        </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

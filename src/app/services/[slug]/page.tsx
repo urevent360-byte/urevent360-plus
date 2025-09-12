@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +11,9 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import Link from 'next/link';
-import { Mail, Tag } from 'lucide-react';
+import { Mail, Tag, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/use-cart';
+import { useToast } from '@/hooks/use-toast';
 
 const placeholderServicesData: any = {
     '360-photo-booth': {
@@ -43,15 +44,30 @@ const placeholderServicesData: any = {
 export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
     const { language } = useLanguage();
     const service = placeholderServicesData[params.slug];
+    const { toast } = useToast();
+    const { addToCart } = useCart();
+
 
     if (!service) {
         notFound();
     }
     
     const t = {
-        requestInquiry: { en: 'Request an Inquiry', es: 'Solicitar Información' },
+        addToCart: { en: 'Add to Cart', es: 'Añadir al Carrito' },
         keywords: { en: 'Keywords', es: 'Palabras Clave' },
     };
+
+    const handleAddToCart = () => {
+        addToCart({
+            slug: service.slug,
+            name: service.name.en,
+            image: service.images[0]
+        });
+        toast({
+            title: 'Added to cart!',
+            description: `${service.name[language]} has been added to your inquiry cart.`,
+        });
+    }
 
     return (
         <div className="container mx-auto px-4 py-16 md:py-24">
@@ -89,11 +105,9 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
                         </div>
                     </div>
 
-                    <Button asChild size="lg" className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90">
-                        <Link href="/contact">
-                            {t.requestInquiry[language]}
-                            <Mail className="ml-2" />
-                        </Link>
+                    <Button onClick={handleAddToCart} size="lg" className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90">
+                        {t.addToCart[language]}
+                        <ShoppingCart className="ml-2" />
                     </Button>
                 </div>
             </div>

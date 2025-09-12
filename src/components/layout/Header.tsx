@@ -2,8 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, LogOut, ShoppingCart } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -24,12 +24,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { useCart } from '@/hooks/use-cart';
+import { useOpenInquiryModal } from '../page/home/InquiryModal';
+
 
 export function Header() {
   const { language } = useLanguage();
   const { user, signOut } = useAuth();
   const pathname = usePathname();
   const [isSheetOpen, setSheetOpen] = useState(false);
+  const { items } = useCart();
+  const { setOpen: setInquiryOpen } = useOpenInquiryModal();
+
+  // Prevent hydration errors by only rendering the cart count on the client
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const navItems = [
     { href: '/', label: translations.nav.home },
@@ -70,6 +81,16 @@ export function Header() {
         <div className="flex items-center gap-2">
           <NavLinks />
           <LanguageToggle />
+
+           <Button variant="ghost" size="icon" className="relative" onClick={() => setInquiryOpen(true)}>
+            <ShoppingCart className="h-5 w-5" />
+            {isClient && items.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                    {items.length}
+                </span>
+            )}
+            <span className="sr-only">Open inquiry cart</span>
+          </Button>
 
           {user ? (
             <DropdownMenu>

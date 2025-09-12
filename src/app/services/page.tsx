@@ -4,7 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/use-cart';
+import { useToast } from '@/hooks/use-toast';
 
 const placeholderServices = [
     { 
@@ -35,12 +37,27 @@ const placeholderServices = [
 
 export default function ServicesPage() {
   const { language } = useLanguage();
+  const { addToCart } = useCart();
+  const { toast } = useToast();
 
   const t = {
       title: { en: 'Our Services', es: 'Nuestros Servicios' },
       description: { en: 'Explore the wide range of services we offer to make your event unforgettable.', es: 'Explora la amplia gama de servicios que ofrecemos para que tu evento sea inolvidable.' },
-      viewDetails: { en: 'View Details', es: 'Ver Detalles' }
-  }
+      viewDetails: { en: 'View Details', es: 'Ver Detalles' },
+      addToCart: { en: 'Add to Cart', es: 'Añadir al Carrito' },
+  };
+
+  const handleAddToCart = (service: typeof placeholderServices[0]) => {
+    addToCart({
+      slug: service.slug,
+      name: service.name.en, // Use a consistent name for the cart
+      image: service.image,
+    });
+    toast({
+      title: 'Added to cart!',
+      description: `${service.name[language]} has been added to your inquiry cart.`,
+    });
+  };
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
@@ -57,23 +74,31 @@ export default function ServicesPage() {
         {placeholderServices.map((service) => (
           <Card key={service.slug} className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2">
             <CardContent className="p-0">
-              <div className="relative h-64 w-full">
-                <Image
-                  src={service.image}
-                  alt={service.name[language]}
-                  fill
-                  className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
+              <Link href={`/services/${service.slug}`} className="block">
+                <div className="relative h-64 w-full">
+                  <Image
+                    src={service.image}
+                    alt={service.name[language]}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
+              </Link>
               <div className="p-6">
                 <h3 className="font-headline text-xl font-semibold text-primary">{service.name[language]}</h3>
-                <p className="mt-2 text-foreground/80">{service.shortDescription[language]}</p>
-                 <Button asChild className="mt-4" variant="outline">
-                    <Link href={`/services/${service.slug}`}>
-                        {t.viewDetails[language]} <ArrowRight className="ml-2" />
-                    </Link>
-                </Button>
+                <p className="mt-2 text-foreground/80 min-h-[48px]">{service.shortDescription[language]}</p>
+                <div className="mt-4 flex gap-2">
+                    <Button asChild className="flex-1" variant="outline">
+                        <Link href={`/services/${service.slug}`}>
+                            {t.viewDetails[language]} <ArrowRight className="ml-2" />
+                        </Link>
+                    </Button>
+                    <Button onClick={() => handleAddToCart(service)} className="flex-1">
+                        <ShoppingCart className="mr-2"/>
+                        {t.addToCart[language]}
+                    </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

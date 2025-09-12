@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
@@ -18,8 +18,9 @@ import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
 import { UserPlus, Eye, EyeOff } from 'lucide-react';
 import { auth } from '@/lib/firebase/client';
+import { useAuth } from '@/contexts/AuthProvider';
 
-const ADMIN_EMAIL = 'admin@example.com';
+const ADMIN_EMAIL = 'admin@urevent360.com';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -41,6 +42,18 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { user, loading } = useAuth();
+  
+  useEffect(() => {
+    if (user && !loading) {
+      if (user.email === ADMIN_EMAIL) {
+        router.push('/admin/leads');
+      } else {
+        router.push('/dashboard');
+      }
+    }
+  }, [user, loading, router]);
+
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -57,11 +70,7 @@ export default function RegisterPage() {
         description: 'Registration successful! Redirecting...',
       });
       
-      if (data.email === ADMIN_EMAIL) {
-        router.push('/admin/leads');
-      } else {
-        router.push('/dashboard');
-      }
+       // Redirection is handled by the useEffect hook
 
     } catch (error: any) {
         toast({

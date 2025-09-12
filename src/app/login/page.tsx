@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
 
@@ -20,7 +20,7 @@ import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
 
-const ADMIN_EMAIL = 'admin@example.com';
+const ADMIN_EMAIL = 'admin@urevent360.com';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -35,8 +35,19 @@ export default function LoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { isAdmin } = useAuth();
+  const { user, loading } = useAuth();
   
+  useEffect(() => {
+    if (user && !loading) {
+      if (user.email === ADMIN_EMAIL) {
+        router.push('/admin/leads');
+      } else {
+        router.push('/dashboard');
+      }
+    }
+  }, [user, loading, router]);
+
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
   });
@@ -44,21 +55,17 @@ export default function LoginPage() {
   const handleLoginSuccess = (email: string | null) => {
     toast({
         title: 'Success!',
-        description: 'Login successful!',
+        description: 'Login successful! Redirecting...',
       });
     
-    if (email === ADMIN_EMAIL) {
-      router.push('/admin/leads');
-    } else {
-      router.push('/dashboard');
-    }
+    // Redirection is handled by the useEffect hook now
   }
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      handleLoginSuccess(data.email);
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      handleLoginSuccess(userCredential.user.email);
     } catch (error: any) {
        toast({
           title: 'Error',

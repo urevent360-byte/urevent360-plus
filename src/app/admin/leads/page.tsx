@@ -29,7 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 
 const placeholderLeads = [
-    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-08-25', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
+    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
     { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: 'evt-maria-garcia-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },

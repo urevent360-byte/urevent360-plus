@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 // For this example, we'll hardcode the admin email. In a real-world scenario,
 // this would be managed in a database (e.g., Firestore) with user roles.
-const ADMIN_EMAIL = 'admin@example.com';
+const ADMIN_EMAIL = 'admin@urevent360.com';
 
 interface AuthContextType {
   user: User | null;

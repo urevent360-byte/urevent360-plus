@@ -5,112 +5,85 @@ export type PlaceholderImage = {
   imageHint: string;
 };
 
-// Client account information, ties into Firebase Auth
+// Collection: Clients
 export type Client = {
-  uid: string; // Corresponds to Firebase Auth UID
+  id: string; // Corresponds to Firebase Auth UID
   name: string;
   email: string;
-  languagePreference: 'en' | 'es';
-  photoURL?: string;
+  phone?: string;
+  language: 'en' | 'es';
+  profileInfo?: {
+    photoURL?: string;
+    [key: string]: any;
+  };
 };
 
-// For inquiries and potential customers
+// Collection: Leads
 export type Lead = {
   id: string;
+  clientId?: string; // Optional link to a client account
+  name: string; // Name if not a client yet
+  email: string; // Email if not a client yet
+  serviceRequested: string;
+  status: 'new' | 'contacted' | 'follow-up' | 'confirmed' | 'archived';
+  notes?: string;
+  timestamp: Date;
+};
+
+// Collection: Services
+export type Service = {
+  id: string; // e.g., '360-photo-booth'
   name: string;
-  email: string;
-  message: string;
-  languagePreference: 'en' | 'es';
-  status: 'new' | 'contacted' | 'converted' | 'archived';
-  createdAt: Date;
-};
-
-// Represents a booked service by a client
-export type Booking = {
-  id: string;
-  clientId: string; // Links to Client.uid
-  serviceId: string; // e.g., '360-photo-booth'
-  serviceName: string;
-  eventDate: Date;
-  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-};
-
-// For internal notes or client requests related to a booking
-export type ClientNote = {
-  id: string;
-  bookingId: string; // Links to Booking.id
-  text: string;
-  isInternal: boolean; // True if for admin eyes only
-  createdAt: Date;
-  authorId: string; // UID of creator
-};
-
-// Timeline for a specific event/booking
-export type TimelineEvent = {
-  id: string;
-  time: string; // e.g., "7:00 PM"
   description: string;
+  category: 'Photo Booth' | 'Entertainment' | 'Special Effects' | 'Decor' | 'Other';
+  images: { url: string; alt: string }[];
+  videos?: { url: string; alt: string }[];
+  seoKeywords: string[]; // Changed from comma-separated string to array
+  seoMetadata: {
+    title: string;
+    description: string;
+  };
+  lastUpdated: Date;
 };
 
-export type Timeline = {
+// Collection: Photos / Media
+export type Media = {
+    id: string;
+    serviceId: string;
+    filename: string;
+    altText: string;
+    uploadDate: Date;
+    type: 'image' | 'video';
+    url: string;
+};
+
+// Collection: Events / Timeline
+export type Event = {
   id: string;
-  bookingId: string; // Links to Booking.id
-  events: TimelineEvent[];
+  clientId: string;
+  serviceId: string;
+  startTime: Date;
+  endTime: Date;
+  reminders?: Date[];
+  notes?: string;
 };
 
-// Chat messages for a booking
+// Collection: Chats
 export type ChatMessage = {
   id: string;
-  senderId: string; // UID of the sender
-  text: string;
+  chatId: string;
+  sender: 'client' | 'admin' | 'AI';
+  message: string;
   timestamp: Date;
 };
 
 export type Chat = {
-  id: string;
-  bookingId: string; // Links to Booking.id
+  id: string; // Associated with a client or booking
+  clientId: string;
   messages: ChatMessage[];
 };
 
-// Music preferences for an event
-export type Song = {
-  id: string;
-  title: string;
-  artist: string;
-  spotifyUrl?: string;
-};
-
-export type MusicPlaylist = {
-  id:string;
-  bookingId: string; // Links to Booking.id
-  mustPlay: Song[];
-  doNotPlay: Song[];
-};
-
-
-// === Admin & Service Management Types ===
-
-export type ServiceImage = {
-  id: string;
-  serviceId: string;
-  url: string; // URL to the image in storage
-  altText: string;
-  uploadDate: Date;
-};
-
-export type Service = {
-  id: string;
-  name: string;
-  shortDescription: string;
-  longDescription: string;
-  category: 'Photo Booth' | 'Entertainment' | 'Special Effects' | 'Decor' | 'Other';
-  keywords: string; // Comma-separated string
-  images: ServiceImage[];
-  metaTitle: string;
-  metaDescription: string;
-  lastUpdated: Date;
-};
-
+// Collection: Admin Users
 export type AdminUserRole = 'Super Admin' | 'Service Editor' | 'Photo Editor' | 'SEO Manager';
 
 export type AdminUser = {
@@ -118,4 +91,30 @@ export type AdminUser = {
   name: string;
   email: string;
   role: AdminUserRole;
+  permissions?: string[];
+};
+
+// Collection: Music / Playlists
+export type Song = {
+  title: string;
+  artist: string;
+};
+
+export type MusicPlaylist = {
+  id: string; // Could be the booking ID
+  clientId: string;
+  songList?: Song[]; // General requests
+  mustPlay: Song[];
+  doNotPlay: Song[];
+  spotifyLink?: string;
+};
+
+// This represents a confirmed booking, linking multiple collections
+export type Booking = {
+  id: string;
+  clientId: string;
+  serviceId: string;
+  eventId: string; // Link to the Event/Timeline entry
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  paymentStatus: 'pending' | 'paid' | 'overdue';
 };

@@ -85,7 +85,7 @@ export default function Home() {
             {experiences.map((exp, index) => (
               <Card
                 key={index}
-                className="group overflow-hidden border-0 shadow-lg transition-shadow duration-500 ease-in-out hover:shadow-2xl"
+                className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2"
               >
                 <CardContent className="p-0">
                   <div className="relative h-64 w-full">
@@ -94,7 +94,7 @@ export default function Home() {
                         src={exp.image.imageUrl}
                         alt={exp.image.description}
                         fill
-                        className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-110"
+                        className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                         data-ai-hint={exp.image.imageHint}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       />

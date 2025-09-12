@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } else {
           // If the user is a client and not in the client dashboard, redirect them.
-          if (!pathname.startsWith('/dashboard') && !['/', '/services', '/gallery', '/contact', '/register'].includes(pathname)) {
+          if (!pathname.startsWith('/dashboard') && !['/', '/services', '/gallery', '/contact', '/register', '/login'].some(p => pathname.startsWith(p)) ) {
             router.push('/dashboard');
           }
         }

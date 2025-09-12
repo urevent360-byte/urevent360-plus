@@ -1,3 +1,4 @@
+
 export type PlaceholderImage = {
   id: string;
   description: string;
@@ -28,6 +29,7 @@ export type Lead = {
   status: 'new' | 'contacted' | 'follow-up' | 'confirmed' | 'archived';
   notes?: string;
   timestamp: Date;
+  eventId?: string;
 };
 
 // Collection: Services
@@ -55,6 +57,8 @@ export type Media = {
     uploadDate: Date;
     type: 'image' | 'video';
     url: string;
+    eventId: string;
+    clientId: string;
 };
 
 // Collection: Events / Timeline
@@ -78,7 +82,7 @@ export type ChatMessage = {
 };
 
 export type Chat = {
-  id: string; // Associated with a client or booking
+  id:string; // Associated with a client or booking
   clientId: string;
   messages: ChatMessage[];
 };

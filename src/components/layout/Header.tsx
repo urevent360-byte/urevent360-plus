@@ -51,7 +51,7 @@ export function Header() {
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <nav className={cn(
-      "flex items-center gap-4",
+      "flex items-center gap-2",
       isMobile ? "flex-col space-y-4 pt-8" : "hidden md:flex"
     )}>
       {navItems.map((item) => (
@@ -59,8 +59,10 @@ export function Header() {
           key={item.href}
           href={item.href}
           className={cn(
-            'font-medium transition-colors hover:text-primary',
-            pathname === item.href ? 'text-primary' : 'text-slate-500',
+            'rounded-md px-3 py-1.5 font-medium transition-colors',
+            pathname === item.href
+              ? 'bg-blue-100 text-blue-800'
+              : 'text-slate-500 hover:bg-blue-100/60 hover:text-blue-700',
             isMobile && 'text-2xl'
           )}
           onClick={() => setSheetOpen(false)}

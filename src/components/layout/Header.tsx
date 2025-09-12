@@ -74,6 +74,9 @@ export function Header() {
     </nav>
   );
 
+  const showLoginButton = !user && pathname !== '/login' && pathname !== '/register';
+
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -125,9 +128,11 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/login">{translations.nav.login[language]}</Link>
-            </Button>
+            showLoginButton && (
+                <Button asChild variant="ghost" size="sm">
+                <Link href="/login">{translations.nav.login[language]}</Link>
+                </Button>
+            )
           )}
 
           <div className="md:hidden">

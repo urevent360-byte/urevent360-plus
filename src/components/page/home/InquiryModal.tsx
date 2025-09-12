@@ -27,7 +27,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useToast } from '@/hooks/use-toast';
-import { submitHeroInquiryAction } from '@/app/actions/inquiry';
+import { submitHeroInquiryAction } from '@/lib/actions/inquiry';
 import { useCart } from '@/hooks/use-cart';
 import { X } from 'lucide-react';
 

@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
@@ -8,6 +7,7 @@ import type { PlaceholderImage } from '@/lib/types';
 import { ExperienceCardContent } from '@/components/page/home/ExperienceCardContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
+import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
 
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
@@ -15,48 +15,6 @@ const heroImage = placeholderImages.placeholderImages.find(
 const aboutImage = placeholderImages.placeholderImages.find(
   p => p.id === 'about-us'
 );
-const experienceImages = placeholderImages.placeholderImages.filter(p =>
-  p.id.startsWith('experience-')
-);
-
-const experiences: {
-  title: { en: string; es: string };
-  description: { en: string; es: string };
-  image: PlaceholderImage | undefined;
-}[] = [
-  {
-    title: { en: 'Weddings & Anniversaries', es: 'Bodas y Aniversarios' },
-    description: {
-      en: 'Crafting magical moments for your special day.',
-      es: 'Creando momentos mágicos para tu día especial.',
-    },
-    image: experienceImages[0],
-  },
-  {
-    title: { en: 'Corporate Events', es: 'Eventos Corporativos' },
-    description: {
-      en: 'Professional and seamless events that impress.',
-      es: 'Eventos profesionales e impecables que impresionan.',
-    },
-    image: experienceImages[1],
-  },
-  {
-    title: { en: 'Parties & Celebrations', es: 'Fiestas y Celebraciones' },
-    description: {
-      en: 'Unforgettable parties for any occasion.',
-      es: 'Fiestas inolvidables para cualquier ocasión.',
-    },
-    image: experienceImages[2],
-  },
-  {
-    title: { en: 'Festivals & Concerts', es: 'Festivales y Conciertos' },
-    description: {
-      en: 'Large-scale events managed with expertise.',
-      es: 'Eventos a gran escala gestionados con pericia.',
-    },
-    image: experienceImages[3],
-  },
-];
 
 export default function Home() {
   return (
@@ -81,35 +39,7 @@ export default function Home() {
       <section className="bg-background py-16 md:py-24">
         <div className="container mx-auto px-4">
           <ExperiencesContent />
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {experiences.map((exp, index) => (
-              <Card
-                key={index}
-                className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2"
-              >
-                <CardContent className="p-0">
-                  <div className="relative h-64 w-full">
-                    {exp.image && (
-                      <Image
-                        src={exp.image.imageUrl}
-                        alt={exp.image.description}
-                        fill
-                        className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
-                        data-ai-hint={exp.image.imageHint}
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      />
-                    )}
-                  </div>
-                  <div className="bg-card p-6">
-                    <ExperienceCardContent
-                      title={exp.title}
-                      description={exp.description}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <ExperiencesCarousel />
         </div>
       </section>
 

@@ -29,15 +29,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       setIsAdmin(user?.email === ADMIN_EMAIL);
       setLoading(false);
-      
-      // Sync auth state with server via cookie
-      if (user) {
-        user.getIdToken().then(token => {
-          document.cookie = `sessionToken=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
-        });
-      } else {
-        document.cookie = 'sessionToken=; path=/; max-age=-1';
-      }
     });
 
     return () => unsubscribe();
@@ -45,7 +36,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    setIsAdmin(false); // Reset admin state on sign out
     router.push('/');
   };
 

@@ -31,13 +31,12 @@ import { useOpenInquiryModal } from '../page/home/InquiryModal';
 
 export function Header() {
   const { language } = useLanguage();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const [isSheetOpen, setSheetOpen] = useState(false);
   const { items } = useCart();
   const { setOpen: setInquiryOpen } = useOpenInquiryModal();
 
-  // Prevent hydration errors by only rendering the cart count on the client
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
@@ -76,7 +75,6 @@ export function Header() {
 
   const showLoginButton = !user && pathname !== '/login' && pathname !== '/register';
 
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -98,7 +96,7 @@ export function Header() {
             <span className="sr-only">Open inquiry cart</span>
           </Button>
 
-          {user ? (
+          {isClient && !authLoading && user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -128,7 +126,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            showLoginButton && (
+            isClient && showLoginButton && (
                 <Button asChild variant="ghost" size="sm">
                 <Link href="/login">{translations.nav.login[language]}</Link>
                 </Button>

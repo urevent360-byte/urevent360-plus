@@ -125,11 +125,11 @@ export function ExperiencesCarousel() {
                         />
                     </div>
                   </Link>
-                  <div className="bg-card p-6">
+                  <div className="bg-white p-6">
                     <h3 className="font-headline text-xl font-semibold text-primary">
                         {service.name[language]}
                     </h3>
-                    <p className="mt-2 text-foreground/80 h-12">{service.shortDescription[language]}</p>
+                    <p className="mt-2 text-gray-700 h-12">{service.shortDescription[language]}</p>
                     <div className="mt-4 flex gap-2">
                         <Button asChild className="flex-1" variant="outline">
                             <Link href={`/services/${service.slug}`}>

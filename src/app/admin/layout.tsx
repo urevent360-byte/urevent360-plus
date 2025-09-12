@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Briefcase, LayoutGrid, Newspaper, Users, BookUser } from 'lucide-react';
+import { Briefcase, LayoutGrid, Newspaper, Users, BookUser, Bot } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 
@@ -35,6 +35,14 @@ export default function AdminLayout({
                   Leads
                 </Link>
               </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                    <Link href="/admin/assistant">
+                        <Bot />
+                        AI Assistant
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>

@@ -12,8 +12,8 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, QrCode, Link as LinkIcon } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { MoreHorizontal, QrCode, Link as LinkIcon, CalendarCog, Edit } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -26,12 +26,13 @@ import QRCode from "qrcode.react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { DatePicker } from '@/components/ui/date-picker';
 
 const placeholderLeads = [
-    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-07-30', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1' },
-    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null },
-    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null },
-    { id: 'lead4', name: 'Mary Brown', email: 'mary@example.com', date: '2024-07-27', status: 'converted', eventId: 'evt-mary-brown-2024', photoboothLink: null },
+    { id: 'lead1', name: 'John Doe', email: 'john@example.com', date: '2024-07-30', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-08-25'), expirationDate: new Date('2024-09-25') },
+    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
+    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
+    { id: 'lead4', name: 'Mary Brown', email: 'mary@example.com', date: '2024-07-27', status: 'converted', eventId: 'evt-mary-brown-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
 ];
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
@@ -50,6 +51,8 @@ export default function LeadsPage() {
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
   const [linkModalState, setLinkModalState] = useState<{ isOpen: boolean; leadId: string | null, currentLink: string }>({ isOpen: false, leadId: null, currentLink: '' });
+  const [eventSettingsModal, setEventSettingsModal] = useState<{ isOpen: boolean; lead: typeof placeholderLeads[0] | null }>({ isOpen: false, lead: null });
+
   const { toast } = useToast();
 
   const filteredLeads = leads.filter(lead => filter === 'all' || lead.status === filter);
@@ -72,14 +75,30 @@ export default function LeadsPage() {
     });
     setLinkModalState({ isOpen: false, leadId: null, currentLink: '' });
   };
+  
+  const handleSaveEventSettings = () => {
+    if (!eventSettingsModal.lead) return;
+
+    // In a real app, you would save this to the database
+    // For now, we update the local state
+    setLeads(prevLeads => prevLeads.map(l => 
+        l.id === eventSettingsModal.lead!.id ? eventSettingsModal.lead! : l
+    ));
+
+    toast({
+        title: "Event Settings Saved",
+        description: `Settings for ${eventSettingsModal.lead.name}'s event have been updated.`
+    });
+    setEventSettingsModal({ isOpen: false, lead: null });
+  };
 
 
   return (
     <div>
         <div className="flex items-center justify-between mb-8">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Leads CRM</h1>
-                <p className="text-muted-foreground">Manage all incoming client inquiries.</p>
+                <h1 className="text-3xl font-bold tracking-tight">Leads & Events</h1>
+                <p className="text-muted-foreground">Manage client inquiries and confirmed events.</p>
             </div>
         </div>
 
@@ -127,10 +146,13 @@ export default function LeadsPage() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem>View Details</DropdownMenuItem>
-                                        <DropdownMenuItem>Add Note</DropdownMenuItem>
+                                        <DropdownMenuItem>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            View/Edit Lead
+                                        </DropdownMenuItem>
                                         {lead.status === 'confirmed' && (
                                           <>
+                                            <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => generateQrCode(lead.eventId)}>
                                                 <QrCode className="mr-2 h-4 w-4" />
                                                 Generate Upload QR
@@ -139,9 +161,12 @@ export default function LeadsPage() {
                                                 <LinkIcon className="mr-2 h-4 w-4" />
                                                 Add Photo Booth Link
                                             </DropdownMenuItem>
+                                             <DropdownMenuItem onClick={() => setEventSettingsModal({ isOpen: true, lead })}>
+                                                <CalendarCog className="mr-2 h-4 w-4" />
+                                                Manage Event Settings
+                                            </DropdownMenuItem>
                                           </>
                                         )}
-                                        <DropdownMenuItem>Assign to Team</DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
@@ -180,7 +205,7 @@ export default function LeadsPage() {
                     <DialogDescription>
                         Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox).
                     </DialogDescription>
-                </DialogHeader>
+                </Header>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="photobooth-link" className="text-right">
@@ -197,6 +222,44 @@ export default function LeadsPage() {
                 </div>
                 <DialogFooter>
                     <Button onClick={handleSaveLink}>Save Link</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        <Dialog open={eventSettingsModal.isOpen} onOpenChange={(isOpen) => !isOpen && setEventSettingsModal({ isOpen: false, lead: null })}>
+            <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>Manage Event Settings</DialogTitle>
+                    <DialogDescription>
+                        Control gallery visibility and expiration for {eventSettingsModal.lead?.name}'s event.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="visibility-date" className="text-right">
+                            Visible From
+                        </Label>
+                        <div className="col-span-3">
+                           <DatePicker
+                             date={eventSettingsModal.lead?.visibilityDate || undefined}
+                             onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, visibilityDate: date}} : prev)}
+                           />
+                        </div>
+                    </div>
+                     <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="visibility-date" className="text-right">
+                            Expires On
+                        </Label>
+                        <div className="col-span-3">
+                            <DatePicker
+                                date={eventSettingsModal.lead?.expirationDate || undefined}
+                                onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, expirationDate: date}} : prev)}
+                            />
+                        </div>
+                    </div>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleSaveEventSettings}>Save Settings</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

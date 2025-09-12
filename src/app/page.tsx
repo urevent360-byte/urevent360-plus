@@ -1,14 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
 import type { PlaceholderImage } from '@/lib/types';
 import { ExperienceCardContent } from '@/components/page/home/ExperienceCardContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
+import { InquiryModal } from '@/components/page/home/InquiryModal';
 
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
@@ -62,6 +61,7 @@ const experiences: {
 export default function Home() {
   return (
     <div className="flex flex-col">
+      <InquiryModal />
       <section className="relative flex h-[60vh] w-full items-center justify-center text-center text-white md:h-[80vh]">
         {heroImage && (
           <Image

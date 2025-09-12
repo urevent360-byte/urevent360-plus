@@ -1,12 +1,13 @@
 'use client';
 
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageProvider';
+import { useOpenInquiryModal } from './InquiryModal';
 
 export function HeroContent() {
   const { language } = useLanguage();
+  const { setOpen } = useOpenInquiryModal();
 
   return (
     <>
@@ -21,14 +22,12 @@ export function HeroContent() {
           : 'UREVENT 360 PLUS hace realidad tu visión con pasión, creatividad y precisión. Creemos recuerdos juntos.'}
       </p>
       <Button
-        asChild
         size="lg"
         className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90"
+        onClick={() => setOpen(true)}
       >
-        <Link href="/contact">
-          {language === 'en' ? 'Request an Inquiry' : 'Solicitar Información'}
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Link>
+        {language === 'en' ? 'Request an Inquiry' : 'Solicitar Información'}
+        <ArrowRight className="ml-2 h-5 w-5" />
       </Button>
     </>
   );

@@ -1,7 +1,6 @@
 import {
   Sidebar,
   SidebarProvider,
-  SidebarTrigger,
   SidebarInset,
   SidebarHeader,
   SidebarContent,

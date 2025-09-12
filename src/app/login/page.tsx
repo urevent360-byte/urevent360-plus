@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -16,10 +17,11 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/LanguageProvider';
 import { translations } from '@/lib/translations';
-import { Mail, LogIn, Eye, EyeOff } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -91,9 +93,25 @@ export default function LoginPage() {
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
-      <Card className="max-w-md w-full shadow-xl border-0">
+      <Card className="max-w-md w-full shadow-xl border-0 relative">
+        <div className="absolute top-4 right-4">
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="icon" asChild>
+                            <Link href="/admin/dashboard">
+                                <Shield className="h-5 w-5 text-muted-foreground hover:text-primary" />
+                            </Link>
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <p>Admin Login</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        </div>
         <CardHeader className="text-center">
-          <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
+          <CardTitle className="font-headline text-3xl md:text-4xl text-primary pt-8">
             <LogIn className="inline-block mr-2" />
             {translations.auth.loginTitle[language]}
           </CardTitle>

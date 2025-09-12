@@ -36,6 +36,7 @@ export default function DashboardLayout({
     payments: { en: 'Payments', es: 'Pagos' },
     profile: { en: 'My Profile', es: 'Mi Perfil' },
     backToSite: { en: 'Back to Main Site', es: 'Volver al Sitio Principal' },
+    admin: { en: 'Admin', es: 'Administración' },
   };
 
   return (

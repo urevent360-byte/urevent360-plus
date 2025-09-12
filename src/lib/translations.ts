@@ -4,7 +4,7 @@ export const translations = {
     services: { en: 'Services', es: 'Servicios' },
     gallery: { en: 'Gallery', es: 'Galería' },
     contact: { en: 'Contact', es: 'Contacto' },
-    login: { en: 'Login', es: 'Iniciar Sesión' },
+    login: { en: 'Host Login', es: 'Acceso Cliente' },
     dashboard: { en: 'Dashboard', es: 'Panel' },
   },
   languageToggle: {
@@ -101,8 +101,8 @@ export const translations = {
     },
   },
   auth: {
-    loginTitle: { en: 'Client Login', es: 'Acceso de Cliente' },
-    loginDescription: { en: 'Access your client dashboard to manage your events.', es: 'Accede a tu panel de cliente para gestionar tus eventos.' },
+    loginTitle: { en: 'Host Portal', es: 'Portal del Cliente' },
+    loginDescription: { en: 'Access your portal to manage your events.', es: 'Accede a tu portal para gestionar tus eventos.' },
     emailLabel: { en: 'Email', es: 'Correo Electrónico' },
     passwordLabel: { en: 'Password', es: 'Contraseña' },
     loginButton: { en: 'Login', es: 'Iniciar Sesión' },
@@ -112,7 +112,7 @@ export const translations = {
     noAccount: { en: "Don't have an account?", es: '¿No tienes una cuenta?' },
     signUp: { en: 'Sign up', es: 'Regístrate' },
     registerTitle: { en: 'Create Your Account', es: 'Crea Tu Cuenta' },
-    registerDescription: { en: 'Get started by creating your client account.', es: 'Comienza creando tu cuenta de cliente.' },
+    registerDescription: { en: 'Get started by creating your host account.', es: 'Comienza creando tu cuenta de anfitrión.' },
     nameLabel: { en: 'Full Name', es: 'Nombre Completo' },
     confirmPasswordLabel: { en: 'Confirm Password', es: 'Confirmar Contraseña' },
     registerButton: { en: 'Create Account', es: 'Crear Cuenta' },

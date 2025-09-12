@@ -1,42 +1,32 @@
-
 import { NextResponse, type NextRequest } from 'next/server';
-import { getApps, getApp, initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-
-// This is a simplified middleware. For production, you'd use a more robust
-// solution like NextAuth.js or server-side session verification with cookies.
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const publicHostRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
-  const publicAdminRoutes = ['/admin/login', '/admin/forgot-password'];
   
-  const authedCookie = request.cookies.get('firebase-authed');
+  // Publicly accessible auth pages for each portal
+  const publicHostRoutes = ['/app/login', '/app/register'];
+  const publicAdminRoutes = ['/admin/login'];
+  
+  // Attempt to get the authentication cookie.
+  // Note: This is a simplification. Firebase's official recommendation for server-side
+  // rendering is to use session cookies, which is more complex to set up.
+  // This cookie (`firebase-authed`) is a placeholder name and would depend
+  // on the actual implementation of how the session is persisted.
+  // For this prototype, the client-side `AuthProvider` is the primary guard.
+  const isAuthed = request.cookies.has('firebase-authed'); // This is a conceptual check
 
-  // If the user is not authenticated and trying to access a private route
-  if (!authedCookie) {
-    if (pathname.startsWith('/admin') && !publicAdminRoutes.includes(pathname)) {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-    if (pathname.startsWith('/app') && !publicHostRoutes.includes(pathname)) {
-        return NextResponse.redirect(new URL('/app/login', request.url));
-    }
+  // If the user is trying to access a private admin route and is not authenticated
+  if (pathname.startsWith('/admin') && !publicAdminRoutes.includes(pathname) && !isAuthed) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 
-  // If the user is authenticated, handle redirects from login pages
-  if (authedCookie) {
-      if (publicAdminRoutes.includes(pathname)) {
-          // This is a tricky part. We don't know the user's role here.
-          // The client-side AuthProvider will handle the final redirect to /admin/home or /app/home.
-          // We can just let them pass or redirect to a generic home.
-          return NextResponse.redirect(new URL('/', request.url));
-      }
-       if (publicHostRoutes.includes(pathname)) {
-          return NextResponse.redirect(new URL('/app/home', request.url));
-      }
+  // If the user is trying to access a private host/client route and is not authenticated
+  if (pathname.startsWith('/app') && !publicHostRoutes.includes(pathname) && !isAuthed) {
+      return NextResponse.redirect(new URL('/app/login', request.url));
   }
-
-
+  
+  // All other cases are handled by the client-side AuthProvider,
+  // which can correctly identify the user's role and redirect if necessary.
   return NextResponse.next();
 }
 
@@ -48,9 +38,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - / (public homepage)
-     * - /services, /gallery, /contact (other public pages)
+     * - /, /services, /gallery, /contact (public pages)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|services|gallery|contact|$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|services|gallery|contact|^/$).*)',
   ],
 };

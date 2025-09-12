@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -41,16 +40,19 @@ export default function AdminLoginPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: 'admin@urevent360.com'
+    }
   });
   
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The useEffect will handle the redirect on successful login
+      // The useEffect in AuthProvider will handle the redirect on successful login
       toast({
         title: 'Success!',
-        description: 'Login successful! Redirecting...',
+        description: 'Login successful! Redirecting to Admin Dashboard...',
       });
     } catch (error: any) {
        toast({
@@ -122,7 +124,7 @@ export default function AdminLoginPage() {
               ) : (
                 <>
                   <Mail className="mr-2" />
-                  Login
+                  Login with Email
                 </>
               )}
             </Button>

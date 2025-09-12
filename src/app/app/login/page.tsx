@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -41,6 +40,8 @@ export default function HostLoginPage() {
   useEffect(() => {
     if (user && !loading) {
         if (isAdmin) {
+            // This should ideally not happen if an admin uses the correct login page,
+            // but as a safeguard, we redirect them to the admin portal.
             router.push('/admin/home');
         } else {
             router.push('/app/home'); 
@@ -51,12 +52,15 @@ export default function HostLoginPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "client@urevent360.com"
+    }
   });
   
   const handleLoginSuccess = (email: string | null) => {
     toast({
         title: 'Success!',
-        description: 'Login successful! Redirecting...',
+        description: 'Login successful! Redirecting to your portal...',
       });
   }
 
@@ -91,7 +95,7 @@ export default function HostLoginPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
+    <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center min-h-screen">
       <Card className="max-w-md w-full shadow-xl border-0 relative">
         <div className="absolute top-4 right-4">
             <TooltipProvider>

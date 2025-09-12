@@ -1,5 +1,8 @@
 'use client';
 
+import { useForm, useFieldArray } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,9 +12,37 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Upload, X, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { createServiceAction } from './actions';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+
+const serviceFormSchema = z.object({
+  name: z.string().min(2, 'Service name is required.'),
+  category: z.string().min(1, 'Category is required.'),
+  shortDescription: z.string().min(10, 'Short description must be at least 10 characters.'),
+  longDescription: z.string().min(20, 'Long description must be at least 20 characters.'),
+  metaTitle: z.string().min(5, 'SEO title is required.'),
+  metaDescription: z.string().min(10, 'SEO description is required.'),
+  keywords: z.string().min(1, 'Please add at least one keyword.'),
+  images: z.array(z.object({
+    url: z.string().url(),
+    alt: z.string().min(2, 'Alt text is required.'),
+  })),
+});
+
+type ServiceFormValues = z.infer<typeof serviceFormSchema>;
 
 // Placeholder data for an existing service being edited
-const existingService = {
+const existingService: ServiceFormValues = {
     name: '360 Photo Booth',
     shortDescription: 'Capture every angle of the fun with our 360-degree photo booth experience.',
     longDescription: 'Our 360 photo booth is the ultimate party centerpiece. Guests stand on a platform while a camera revolves around them, creating stunning, dynamic video clips perfect for social media. We provide props, instant sharing capabilities, and a professional attendant to ensure everything runs smoothly.',
@@ -25,11 +56,46 @@ const existingService = {
     ]
 };
 
-
 export default function ServiceFormPage() {
-    // In a real app, you'd use a hook like useSearchParams to get the ID and fetch service data.
-    // For now, we'll just use the placeholder data as if we're editing.
-    const isEditing = true; 
+    const isEditing = true; // Placeholder for edit mode detection
+    const { toast } = useToast();
+    const router = useRouter();
+
+    const form = useForm<ServiceFormValues>({
+        resolver: zodResolver(serviceFormSchema),
+        defaultValues: isEditing ? existingService : {
+            name: '',
+            category: '',
+            shortDescription: '',
+            longDescription: '',
+            metaTitle: '',
+            metaDescription: '',
+            keywords: '',
+            images: [],
+        },
+    });
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: 'images',
+    });
+    
+    async function onSubmit(data: ServiceFormValues) {
+        const result = await createServiceAction(data);
+        if (result.success) {
+            toast({
+                title: 'Service Saved!',
+                description: `The service "${data.name}" has been successfully saved.`,
+            });
+            router.push('/admin/services');
+        } else {
+            toast({
+                title: 'Error',
+                description: result.message || 'An unknown error occurred.',
+                variant: 'destructive',
+            });
+        }
+    }
 
   return (
     <div>
@@ -41,41 +107,77 @@ export default function ServiceFormPage() {
                 </Link>
             </Button>
         </div>
-
-        <form className="space-y-8">
+        <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card>
                 <CardHeader>
                     <CardTitle>{isEditing ? 'Edit Service' : 'Add New Service'}</CardTitle>
                     <CardDescription>Fill out the details for the service below.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <div className="space-y-2">
-                        <Label htmlFor="service-name">Service Name</Label>
-                        <Input id="service-name" defaultValue={isEditing ? existingService.name : ''} placeholder="e.g., Magic Mirror" />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="category">Category</Label>
-                        <Select defaultValue={isEditing ? existingService.category : undefined}>
-                            <SelectTrigger id="category">
-                                <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Photo Booth">Photo Booth</SelectItem>
-                                <SelectItem value="Entertainment">Entertainment</SelectItem>
-                                <SelectItem value="Special Effects">Special Effects</SelectItem>
-                                <SelectItem value="Decor">Decor</SelectItem>
-                                <SelectItem value="Other">Other</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="short-description">Short Description</Label>
-                        <Textarea id="short-description" defaultValue={isEditing ? existingService.shortDescription : ''} placeholder="A brief, catchy description for service cards." />
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="long-description">Long Description</Label>
-                        <Textarea id="long-description" className="min-h-32" defaultValue={isEditing ? existingService.longDescription : ''} placeholder="A detailed description for the service page." />
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Service Name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., Magic Mirror" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Category</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Photo Booth">Photo Booth</SelectItem>
+                                        <SelectItem value="Entertainment">Entertainment</SelectItem>
+                                        <SelectItem value="Special Effects">Special Effects</SelectItem>
+                                        <SelectItem value="Decor">Decor</SelectItem>
+                                        <SelectItem value="Other">Other</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="shortDescription"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Short Description</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="A brief, catchy description for service cards." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="longDescription"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Long Description</FormLabel>
+                                <FormControl>
+                                    <Textarea className="min-h-32" placeholder="A detailed description for the service page." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </CardContent>
             </Card>
 
@@ -85,21 +187,48 @@ export default function ServiceFormPage() {
                     <CardDescription>Optimize how this service appears on search engines.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                     <div className="space-y-2">
-                        <Label htmlFor="meta-title">SEO Meta Title</Label>
-                        <Input id="meta-title" defaultValue={isEditing ? existingService.metaTitle : ''} placeholder="Title for search engine results" />
-                        <p className="text-sm text-muted-foreground">Appears in the browser tab and search results. Keep it concise.</p>
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="meta-description">SEO Meta Description</Label>
-                        <Textarea id="meta-description" defaultValue={isEditing ? existingService.metaDescription : ''} placeholder="A short summary for search engine results." />
-                         <p className="text-sm text-muted-foreground">Briefly describe this service (approx. 155-160 characters).</p>
-                    </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="keywords">SEO Keywords / Tags</Label>
-                        <Input id="keywords" defaultValue={isEditing ? existingService.keywords : ''} placeholder="e.g., quinceañera entertainment, LED robot" />
-                        <p className="text-sm text-muted-foreground">Separate keywords with a comma.</p>
-                    </div>
+                     <FormField
+                        control={form.control}
+                        name="metaTitle"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>SEO Meta Title</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Title for search engine results" {...field} />
+                                </FormControl>
+                                <FormDescription>Appears in the browser tab and search results. Keep it concise.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="metaDescription"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>SEO Meta Description</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder="A short summary for search engine results." {...field} />
+                                </FormControl>
+                                <FormDescription>Briefly describe this service (approx. 155-160 characters).</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="keywords"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>SEO Keywords / Tags</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="e.g., quinceañera entertainment, LED robot" {...field} />
+                                </FormControl>
+                                <FormDescription>Separate keywords with a comma.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </CardContent>
             </Card>
 
@@ -110,8 +239,8 @@ export default function ServiceFormPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {isEditing && existingService.images.map((image, index) => (
-                            <div key={index} className="relative group border rounded-lg p-2 space-y-2">
+                        {fields.map((image, index) => (
+                            <div key={image.id} className="relative group border rounded-lg p-2 space-y-2">
                                 <Image
                                     src={image.url}
                                     alt={image.alt}
@@ -119,12 +248,21 @@ export default function ServiceFormPage() {
                                     height={300}
                                     className="rounded-md aspect-[4/3] object-cover w-full"
                                 />
-                                <div className="space-y-1">
-                                     <Label htmlFor={`alt-text-${index}`} className="text-xs">Alt Text</Label>
-                                     <Input id={`alt-text-${index}`} defaultValue={image.alt} placeholder="Describe the image"/>
-                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name={`images.${index}.alt`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-xs">Alt Text</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Describe the image" {...field}/>
+                                            </FormControl>
+                                            <FormMessage className="text-xs" />
+                                        </FormItem>
+                                    )}
+                                />
                                 <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button size="icon" variant="destructive" className="h-8 w-8">
+                                    <Button size="icon" variant="destructive" className="h-8 w-8" onClick={() => remove(index)}>
                                         <X className="h-4 w-4" />
                                         <span className="sr-only">Delete</span>
                                     </Button>
@@ -142,10 +280,13 @@ export default function ServiceFormPage() {
                 </CardContent>
             </Card>
              <div className="flex justify-end gap-2">
-                <Button variant="outline">Cancel</Button>
-                <Button>{isEditing ? 'Save Changes' : 'Create Service'}</Button>
+                <Button variant="outline" type="button" onClick={() => router.back()}>Cancel</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? 'Saving...' : (isEditing ? 'Save Changes' : 'Create Service')}
+                </Button>
             </div>
         </form>
+        </Form>
     </div>
   );
 }

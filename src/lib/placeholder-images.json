@@ -7,6 +7,12 @@
       "imageHint": "event celebration"
     },
     {
+      "id": "about-us",
+      "description": "The UREVENT 360 PLUS team working together at an event.",
+      "imageUrl": "https://picsum.photos/seed/about/1200/800",
+      "imageHint": "event team"
+    },
+    {
       "id": "experience-1",
       "description": "A beautifully decorated wedding reception.",
       "imageUrl": "https://picsum.photos/seed/exp1/600/400",

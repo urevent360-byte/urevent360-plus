@@ -8,6 +8,18 @@ export const translations = {
     en: 'Español',
     es: 'English',
   },
+  about: {
+    title: { en: 'About Us', es: 'Sobre Nosotros' },
+    subtitle: { en: 'Who We Are', es: 'Quienes Somos' },
+    description1: {
+      en: 'UREVENT 360 PLUS was born from a passion for creating unforgettable experiences. We are a team of dedicated professionals who believe that every event, big or small, deserves to be special and unique.',
+      es: 'UREVENT 360 PLUS nació de la pasión por crear experiencias inolvidables. Somos un equipo de profesionales dedicados que creemos que cada evento, grande o pequeño, merece ser especial y único.',
+    },
+    description2: {
+      en: 'Our mission is to bring your vision to life with creativity, precision, and unparalleled service. From corporate functions to intimate celebrations, we handle every detail so you can enjoy the moment.',
+      es: 'Nuestra misión es hacer realidad tu visión con creatividad, precisión y un servicio inigualable. Desde funciones corporativas hasta celebraciones íntimas, nos encargamos de cada detalle para que puedas disfrutar del momento.',
+    },
+  },
   footer: {
     motto: {
       en: 'Crafting unforgettable moments.',

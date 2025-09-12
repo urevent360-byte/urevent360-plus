@@ -8,9 +8,13 @@ import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
 import type { PlaceholderImage } from '@/lib/types';
 import { ExperienceCardContent } from '@/components/page/home/ExperienceCardContent';
+import { AboutContent } from '@/components/page/home/AboutContent';
 
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
+);
+const aboutImage = placeholderImages.placeholderImages.find(
+  p => p.id === 'about-us'
 );
 const experienceImages = placeholderImages.placeholderImages.filter(p =>
   p.id.startsWith('experience-')
@@ -105,6 +109,28 @@ export default function Home() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
+            <div className="order-2 md:order-1">
+              <AboutContent />
+            </div>
+            <div className="order-1 md:order-2">
+              {aboutImage && (
+                <Image
+                  src={aboutImage.imageUrl}
+                  alt={aboutImage.description}
+                  width={1200}
+                  height={800}
+                  className="rounded-lg object-cover shadow-2xl"
+                  data-ai-hint={aboutImage.imageHint}
+                />
+              )}
+            </div>
           </div>
         </div>
       </section>

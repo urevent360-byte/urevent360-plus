@@ -119,5 +119,12 @@ export const translations = {
     haveAccount: { en: 'Already have an account?', es: '¿Ya tienes una cuenta?' },
     login: { en: 'Log in', es: 'Iniciar sesión' },
     logout: { en: 'Logout', es: 'Cerrar Sesión' },
+    forgotPassword: { en: 'Forgot Password?', es: '¿Olvidaste tu contraseña?' },
+    resetPasswordTitle: { en: 'Reset Your Password', es: 'Restablece tu Contraseña' },
+    resetPasswordDescription: { en: 'Enter your email and we\'ll send you a link to reset your password.', es: 'Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.' },
+    sendResetLink: { en: 'Send Reset Link', es: 'Enviar Enlace' },
+    backToLogin: { en: 'Back to Login', es: 'Volver a Iniciar Sesión' },
+    resetSuccessTitle: { en: 'Check Your Email', es: 'Revisa tu Correo' },
+    resetSuccessDescription: { en: 'If an account exists for that email, a password reset link has been sent.', es: 'Si existe una cuenta para ese correo, se ha enviado un enlace para restablecer la contraseña.' },
   }
 };

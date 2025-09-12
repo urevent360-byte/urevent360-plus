@@ -139,7 +139,15 @@ export default function HostLoginPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">{translations.auth.passwordLabel[language]}</Label>
+               <div className="flex items-center justify-between">
+                <Label htmlFor="password">{translations.auth.passwordLabel[language]}</Label>
+                <Link
+                  href="/app/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  {translations.auth.forgotPassword[language]}
+                </Link>
+              </div>
                <div className="relative">
                 <Input
                   id="password"

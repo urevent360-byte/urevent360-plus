@@ -10,7 +10,13 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "verify:portals": "node scripts/verify-portals.js"
+    "verify:types": "npm run typecheck",
+    "verify:lint": "npm run lint",
+    "verify:build": "npm run build",
+    "verify:structure": "node scripts/verify-portals.js",
+    "verify:rules": "echo 'Skipping: Firebase rules tests not yet implemented.'",
+    "verify:routes": "echo 'Skipping: E2E route tests not yet implemented.'",
+    "verify:portals": "npm run verify:types && npm run verify:lint && npm run verify:build && npm run verify:structure"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

@@ -7,12 +7,16 @@ const checks = {
     'src/app/app',
     'src/app/layout.tsx',
     'src/app/globals.css',
-    'src/app/page.tsx', // Assuming a public landing page is desired
+    'src/app/page.tsx', // A public landing page is required
   ],
   mustNotExist: [
     'src/app/login',
     'src/app/register',
     'src/app/portal',
+    'src/app/services',
+    'src/app/upload',
+    'src/app/contact',
+    'src/app/gallery'
   ],
 };
 
@@ -49,7 +53,7 @@ function runChecks() {
     if (!fs.existsSync(fullPath)) {
       console.log(`  ${colors.green}✓ OK:${colors.reset}   '${p}' does not exist.`);
     } else {
-      console.error(`  ${colors.red}✗ ERROR:${colors-reset} Obsolete path '${p}' still exists.`);
+      console.error(`  ${colors.red}✗ ERROR:${colors.reset} Obsolete path '${p}' still exists.`);
       errors++;
     }
   });
@@ -57,7 +61,7 @@ function runChecks() {
   console.log('');
 
   if (errors === 0) {
-    console.log(colors.green, '✅ Verification successful! All checks passed.', colors.reset);
+    console.log(colors.green, '✅ Verification successful! All structure checks passed.', colors.reset);
     process.exit(0);
   } else {
     console.error(

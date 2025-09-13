@@ -1,9 +1,6 @@
 /* eslint-disable tailwindcss/no-custom-classname */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @layer base {
+  @tailwind base;
   :root {
     --background: 251 52% 16%;
     --foreground: 0 0% 98%;
@@ -47,9 +44,7 @@
     --input: 251 20% 30%;
     --ring: 45 93% 47%;
   }
-}
 
-@layer base {
   * {
     border-color: hsl(var(--border));
   }
@@ -58,4 +53,12 @@
     color: hsl(var(--foreground));
     scroll-behavior: smooth;
   }
+}
+
+@layer components {
+  @tailwind components;
+}
+
+@layer utilities {
+  @tailwind utilities;
 }

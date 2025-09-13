@@ -11,7 +11,12 @@ const formSchema = z.object({
 });
 
 type State = {
-  errors: Record<string, string[]> & { form?: string };
+  errors: {
+    form?: string[];
+    name?: string[];
+    email?: string[];
+    message?: string[];
+  };
   message: string;
 };
 
@@ -42,7 +47,7 @@ export async function submitInquiryAction(
     console.error('Error submitting inquiry:', error);
     return {
       message: 'An unexpected error occurred while routing your inquiry.',
-      errors: { form: 'AI routing failed.' },
+      errors: { form: ['AI routing failed.'] },
     };
   }
 }

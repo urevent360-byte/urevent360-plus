@@ -107,10 +107,7 @@ export default function AppLayout({
                     </SidebarMenuButton>
                 </SidebarMenuItem>
                  <SidebarMenuItem>
-                    <AuthSignOutButton>
-                        <LogOut />
-                        Logout
-                    </AuthSignOutButton>
+                    <AuthSignOutButton />
                 </SidebarMenuItem>
             </SidebarMenu>
         </SidebarFooter>

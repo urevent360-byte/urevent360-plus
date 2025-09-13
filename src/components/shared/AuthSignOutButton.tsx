@@ -2,12 +2,14 @@
 
 import { useAuth } from '@/contexts/AuthProvider';
 import { SidebarMenuButton } from '../ui/sidebar';
+import { LogOut } from 'lucide-react';
 
-export function AuthSignOutButton({
-    children,
-  }: {
-    children: React.ReactNode;
-  }) {
+export function AuthSignOutButton() {
     const { signOut } = useAuth();
-    return <SidebarMenuButton onClick={signOut}>{children}</SidebarMenuButton>;
+    return (
+        <SidebarMenuButton onClick={signOut}>
+            <LogOut />
+            Logout
+        </SidebarMenuButton>
+    );
 }

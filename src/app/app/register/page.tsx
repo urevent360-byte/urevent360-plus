@@ -66,19 +66,33 @@ export default function RegisterPage() {
       });
       
     } catch (error: any) {
-        if (error.code === 'auth/operation-not-allowed') {
-             toast({
-                title: 'Configuration Error',
-                description: 'Email/Password sign-up is not enabled. Please enable it in the Firebase console.',
-                variant: 'destructive',
-            });
-        } else {
-            toast({
-                title: 'Error',
-                description: error.message || 'Registration failed. An account with this email may already exist.',
-                variant: 'destructive',
-            });
+        let title = 'Registration Error';
+        let description = 'An unknown error occurred. Please try again.';
+
+        switch (error.code) {
+            case 'auth/operation-not-allowed':
+                title = 'Auth Method Disabled';
+                description = 'Email/Password sign-up is not enabled in your Firebase project. Please enable it in the Firebase Console under Authentication > Sign-in method.';
+                break;
+            case 'auth/email-already-in-use':
+                title = 'Email Already Exists';
+                description = 'An account with this email address already exists. Please log in instead.';
+                break;
+            case 'auth/unauthorized-domain':
+                title = 'Unauthorized Domain';
+                description = `This domain (${window.location.hostname}) is not authorized for Firebase operations. Please add it to the list of authorized domains in your Firebase project settings.`;
+                break;
+            default:
+                description = error.message || description;
+                break;
         }
+
+        toast({
+            title: title,
+            description: description,
+            variant: 'destructive',
+            duration: 9000,
+        });
     } finally {
         setIsSubmitting(false);
     }
@@ -197,5 +211,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
-    

@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlusCircle, Shield } from 'lucide-react';
-import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 
 const placeholderUsers = [

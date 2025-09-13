@@ -16,7 +16,7 @@
     "verify:structure": "node scripts/verify-portals.js",
     "verify:rules": "echo 'Skipping: Firebase rules tests not yet implemented.'",
     "verify:routes": "echo 'Skipping: E2E route tests not yet implemented.'",
-    "verify:portals": "npm run verify:types && npm run verify:lint && npm run verify:build && npm run verify:structure"
+    "verify:portals": "npm run verify:types && npm run verify:lint && npm run verify:build && npm run verify:structure && echo 'All portal checks passed ✅'"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",

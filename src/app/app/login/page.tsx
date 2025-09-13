@@ -87,11 +87,19 @@ export default function HostLoginPage() {
         const result = await signInWithPopup(auth, provider);
         handleLoginSuccess(result.user.email);
     } catch (error: any) {
-      toast({
-        title: 'Error',
-        description: error.message || `An unexpected error occurred during ${providerName} login.`,
-        variant: 'destructive',
-      });
+      if (error.code === 'auth/configuration-not-found') {
+        toast({
+          title: 'Configuration Error',
+          description: `The ${providerName} sign-in provider is not enabled. Please enable it in your Firebase console.`,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: error.message || `An unexpected error occurred during ${providerName} login.`,
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -215,5 +223,3 @@ export default function HostLoginPage() {
     </div>
   );
 }
-
-    

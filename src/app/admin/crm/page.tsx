@@ -219,7 +219,7 @@ export default function CrmPage() {
                     <DialogDescription>
                         Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox).
                     </DialogDescription>
-                </Header>
+                </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="photobooth-link" className="text-right">
@@ -247,7 +247,7 @@ export default function CrmPage() {
                     <DialogDescription>
                         Control gallery visibility and expiration for {eventSettingsModal.lead?.name}'s event.
                     </DialogDescription>
-                </Header>
+                </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">
                         <Label htmlFor="visibility-date" className="text-right">

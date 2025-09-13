@@ -29,15 +29,27 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 
-const placeholderLeads = [
+type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
+
+type Lead = {
+    id: string;
+    name: string;
+    email: string;
+    date: string;
+    status: Status;
+    eventId: string;
+    photoboothLink: string | null;
+    visibilityDate: Date | null;
+    expirationDate: Date | null;
+};
+
+const placeholderLeads: Lead[] = [
     { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
     { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: 'evt-maria-garcia-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'archived', eventId: 'evt-david-lee-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
 ];
-
-type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
 
 const statusColors: Record<Status, string> = {
     new: 'bg-blue-500',
@@ -49,11 +61,11 @@ const statusColors: Record<Status, string> = {
 };
 
 export default function CrmPage() {
-  const [leads, setLeads] = useState(placeholderLeads);
+  const [leads, setLeads] = useState<Lead[]>(placeholderLeads);
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
   const [linkModalState, setLinkModalState] = useState<{ isOpen: boolean; leadId: string | null, currentLink: string }>({ isOpen: false, leadId: null, currentLink: '' });
-  const [eventSettingsModal, setEventSettingsModal] = useState<{ isOpen: boolean; lead: typeof placeholderLeads[0] | null }>({ isOpen: false, lead: null });
+  const [eventSettingsModal, setEventSettingsModal] = useState<{ isOpen: boolean; lead: Lead | null }>({ isOpen: false, lead: null });
 
   const { toast } = useToast();
 
@@ -244,7 +256,7 @@ export default function CrmPage() {
                         <div className="col-span-3">
                            <DatePicker
                              date={eventSettingsModal.lead?.visibilityDate || undefined}
-                             onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, visibilityDate: date}} : prev)}
+                             onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, visibilityDate: date || null}} : prev)}
                            />
                         </div>
                     </div>
@@ -255,7 +267,7 @@ export default function CrmPage() {
                         <div className="col-span-3">
                             <DatePicker
                                 date={eventSettingsModal.lead?.expirationDate || undefined}
-                                onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, expirationDate: date}} : prev)}
+                                onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, expirationDate: date || null}} : prev)}
                             />
                         </div>
                     </div>

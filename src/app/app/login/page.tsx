@@ -87,7 +87,7 @@ export default function HostLoginPage() {
       if (error.code === 'auth/configuration-not-found') {
         toast({
           title: 'Configuration Error',
-          description: `The ${providerName} sign-in provider is not enabled. Please enable it in your Firebase console.`,
+          description: `The ${providerName} sign-in provider is not enabled. Please enable it in your Firebase console under Authentication > Sign-in method.`,
           variant: 'destructive',
         });
       } else {
@@ -220,3 +220,5 @@ export default function HostLoginPage() {
     </div>
   );
 }
+
+    

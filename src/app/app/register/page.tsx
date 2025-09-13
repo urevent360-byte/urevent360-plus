@@ -66,11 +66,19 @@ export default function RegisterPage() {
       });
       
     } catch (error: any) {
-        toast({
-            title: 'Error',
-            description: error.message || 'Registration failed. An account with this email may already exist.',
-            variant: 'destructive',
-        });
+        if (error.code === 'auth/operation-not-allowed') {
+             toast({
+                title: 'Configuration Error',
+                description: 'Email/Password sign-up is not enabled. Please enable it in the Firebase console.',
+                variant: 'destructive',
+            });
+        } else {
+            toast({
+                title: 'Error',
+                description: error.message || 'Registration failed. An account with this email may already exist.',
+                variant: 'destructive',
+            });
+        }
     } finally {
         setIsSubmitting(false);
     }
@@ -189,3 +197,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+    

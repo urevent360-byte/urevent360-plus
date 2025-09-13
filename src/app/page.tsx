@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';

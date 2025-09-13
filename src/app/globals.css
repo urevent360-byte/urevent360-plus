@@ -1,6 +1,7 @@
 /* eslint-disable tailwindcss/no-custom-classname */
+@tailwind base;
+
 @layer base {
-  @tailwind base;
   :root {
     --background: 251 52% 16%;
     --foreground: 0 0% 98%;

@@ -9,7 +9,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Mail, Tag, ShoppingCart, Video } from 'lucide-react';
+import { Tag, ShoppingCart, Video } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';

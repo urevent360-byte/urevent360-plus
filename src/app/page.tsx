@@ -12,9 +12,6 @@ import { ChatWidget } from '@/components/shared/ChatWidget';
 const heroImage = placeholderImages.placeholderImages.find(
   p => p.id === 'hero'
 );
-const aboutImage = placeholderImages.placeholderImages.find(
-  p => p.id === 'about-us'
-);
 
 export default function Home() {
   return (

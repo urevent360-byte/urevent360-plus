@@ -1,3 +1,4 @@
+
 import { NextResponse, type NextRequest } from 'next/server';
 
 // This middleware is now mostly handled by the client-side AuthProvider,

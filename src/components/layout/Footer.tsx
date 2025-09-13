@@ -2,12 +2,9 @@
 
 import { Facebook, Instagram, Twitter, Mail, Phone } from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import footerData from '@/lib/footer-data.json';
 
 export function Footer() {
-  const { language } = useLanguage();
 
   const { contact, social } = footerData;
 
@@ -18,7 +15,7 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-start">
             <Logo />
             <p className="mt-4 max-w-xs text-gray-600">
-              {translations.footer.motto[language]}
+              Crafting unforgettable moments.
             </p>
           </div>
           
@@ -65,7 +62,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
-          <p>&copy; {new Date().getFullYear()} UREVENT 360 PLUS. {translations.footer.copyright[language]}</p>
+          <p>&copy; {new Date().getFullYear()} UREVENT 360 PLUS. All rights reserved.</p>
         </div>
       </div>
     </footer>

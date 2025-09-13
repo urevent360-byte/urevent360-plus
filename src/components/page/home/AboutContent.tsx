@@ -1,31 +1,26 @@
 'use client';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Sparkles, Rocket } from 'lucide-react';
 
 export function AboutContent() {
-  const { language } = useLanguage();
   
-  const content = translations.about;
-
   return (
     <div>
        <div className="text-center mb-12">
             <h2 className="font-headline text-3xl font-bold text-primary md:text-4xl">
-                {content.title[language]}
+                About UREVENT 360
             </h2>
             <p className="mt-2 text-lg text-accent max-w-2xl mx-auto">
-                {content.subtitle[language]}
+                Crafting Unforgettable Moments, One Event at a Time
             </p>
         </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-6">
           <p className="text-lg text-foreground/80">
-            {content.description1[language]}
+            At UREVENT 360, we believe every event is an opportunity to create lasting memories. We are a passionate team dedicated to transforming your visions into spectacular realities. With years of experience in event planning and entertainment, we bring creativity, professionalism, and a touch of magic to every celebration.
           </p>
           <p className="text-lg text-foreground/80">
-            {content.description2[language]}
+            Our mission is to provide seamless, stress-free event experiences that exceed expectations. From intimate gatherings to grand corporate affairs, we handle every detail with precision and care, ensuring your event is not just successful, but truly unforgettable. Let us bring your dream event to life!
           </p>
         </div>
         <div className="space-y-8">
@@ -34,11 +29,11 @@ export function AboutContent() {
                <div className="bg-primary/10 p-3 rounded-full">
                     <Sparkles className="h-6 w-6 text-primary" />
                 </div>
-              <CardTitle className="text-xl font-headline">{content.missionTitle[language]}</CardTitle>
+              <CardTitle className="text-xl font-headline">Our Mission</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                {content.missionText[language]}
+                To deliver exceptional event experiences through innovative solutions and unparalleled service.
               </p>
             </CardContent>
           </Card>
@@ -47,11 +42,11 @@ export function AboutContent() {
                 <div className="bg-accent/10 p-3 rounded-full">
                     <Rocket className="h-6 w-6 text-accent" />
                 </div>
-              <CardTitle className="text-xl font-headline">{content.visionTitle[language]}</CardTitle>
+              <CardTitle className="text-xl font-headline">Our Vision</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                {content.visionText[language]}
+                To be the leading event planning and entertainment provider, known for creativity, reliability, and client satisfaction.
               </p>
             </CardContent>
           </Card>

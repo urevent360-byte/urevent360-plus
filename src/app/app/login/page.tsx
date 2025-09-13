@@ -14,8 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import { Mail, LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
@@ -31,7 +29,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 export default function HostLoginPage() {
-  const { language } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -125,16 +122,16 @@ export default function HostLoginPage() {
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary pt-8">
             <LogIn className="inline-block mr-2" />
-            {translations.auth.loginTitle[language]}
+            Host Portal
           </CardTitle>
           <CardDescription className="text-lg">
-            {translations.auth.loginDescription[language]}
+            Access your portal to manage your events.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{translations.auth.emailLabel[language]}</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -149,12 +146,12 @@ export default function HostLoginPage() {
 
             <div className="space-y-2">
                <div className="flex items-center justify-between">
-                <Label htmlFor="password">{translations.auth.passwordLabel[language]}</Label>
+                <Label htmlFor="password">Password</Label>
                 <Link
                   href="/app/forgot-password"
                   className="text-sm font-medium text-primary hover:underline"
                 >
-                  {translations.auth.forgotPassword[language]}
+                  Forgot Password?
                 </Link>
               </div>
                <div className="relative">
@@ -182,11 +179,11 @@ export default function HostLoginPage() {
             
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
-                <>{language === 'en' ? 'Logging in...' : 'Iniciando sesión...'}</>
+                <>Logging in...</>
               ) : (
                 <>
                   <Mail className="mr-2" />
-                  {translations.auth.loginButton[language]}
+                  Login
                 </>
               )}
             </Button>
@@ -197,25 +194,25 @@ export default function HostLoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">{translations.auth.orSeparator[language]}</span>
+              <span className="bg-card px-2 text-muted-foreground">OR</span>
             </div>
           </div>
           
           <div className="space-y-4">
             <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')}>
               <GoogleIcon className="mr-2" />
-              {translations.auth.googleLoginButton[language]}
+              Continue with Google
             </Button>
             <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')}>
               <FacebookIcon className="mr-2" />
-              {translations.auth.facebookLoginButton[language]}
+              Continue with Facebook
             </Button>
           </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {translations.auth.noAccount[language]}{' '}
+            Don't have an account?{' '}
             <Link href="/app/register" className="font-semibold text-primary hover:underline">
-              {translations.auth.signUp[language]}
+              Sign up
             </Link>
           </p>
         </CardContent>

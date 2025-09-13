@@ -1,3 +1,5 @@
+// This file is no longer needed as the application has been converted to English-only.
+// Keeping it for reference, but it is not used in the code.
 export const translations = {
   nav: {
     home: { en: 'Home', es: 'Inicio' },

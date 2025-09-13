@@ -12,8 +12,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import { Mail, KeyRound, ArrowLeft } from 'lucide-react';
 import { forgotPasswordAction } from './actions';
 
@@ -25,7 +23,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 export default function ForgotPasswordPage() {
-  const { language } = useLanguage();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,8 +39,8 @@ export default function ForgotPasswordPage() {
     
     if (result.success) {
         toast({
-            title: translations.auth.resetSuccessTitle[language],
-            description: translations.auth.resetSuccessDescription[language],
+            title: 'Check Your Email',
+            description: 'If an account exists for that email, a password reset link has been sent.',
         });
     } else {
         toast({
@@ -61,16 +58,16 @@ export default function ForgotPasswordPage() {
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
             <KeyRound className="inline-block mr-2" />
-            {translations.auth.resetPasswordTitle[language]}
+            Reset Your Password
           </CardTitle>
           <CardDescription className="text-lg">
-            {translations.auth.resetPasswordDescription[language]}
+            Enter your email and we'll send you a link to reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{translations.auth.emailLabel[language]}</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -85,11 +82,11 @@ export default function ForgotPasswordPage() {
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
-                <>{language === 'en' ? 'Sending...' : 'Enviando...'}</>
+                <>Sending...</>
               ) : (
                 <>
                   <Mail className="mr-2" />
-                  {translations.auth.sendResetLink[language]}
+                  Send Reset Link
                 </>
               )}
             </Button>
@@ -99,7 +96,7 @@ export default function ForgotPasswordPage() {
              <Button variant="link" asChild>
                 <Link href="/app/login">
                     <ArrowLeft className="mr-2" />
-                    {translations.auth.backToLogin[language]}
+                    Back to Login
                 </Link>
              </Button>
           </div>
@@ -108,5 +105,3 @@ export default function ForgotPasswordPage() {
     </div>
   );
 }
-
-    

@@ -9,8 +9,6 @@ import {
   dynamicallyArrangeImages,
   type DynamicallyArrangeImagesOutput,
 } from '@/ai/flows/dynamically-arrange-images-with-ai';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -23,8 +21,6 @@ export default function GalleryPage() {
   const [arrangedData, setArrangedData] =
     useState<DynamicallyArrangeImagesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { language } = useLanguage();
-  const t = translations.galleryPage;
 
   const handleArrangeClick = async () => {
     setIsLoading(true);
@@ -61,10 +57,10 @@ export default function GalleryPage() {
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="mb-12 text-center">
         <h1 className="font-headline text-3xl font-bold text-primary md:text-4xl">
-          {t.title[language]}
+          Dynamic Image Gallery
         </h1>
         <p className="mx-auto mt-2 max-w-3xl text-lg text-foreground/80">
-          {t.description[language]}
+          Explore our past events. Click the button below to see our AI dynamically rearrange the gallery for a unique visual experience.
         </p>
       </div>
 
@@ -73,17 +69,17 @@ export default function GalleryPage() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              {t.arrangingButton[language]}
+              Arranging...
             </>
           ) : (
-            t.arrangeButton[language]
+            'Arrange with AI'
           )}
         </Button>
       </div>
 
       {arrangedData && (
         <Alert className="my-8 max-w-4xl mx-auto">
-          <AlertTitle className="font-bold">{t.aiLayoutTitle[language]}</AlertTitle>
+          <AlertTitle className="font-bold">AI-Generated Layout</AlertTitle>
           <AlertDescription>
             {arrangedData.layoutMetadata}
           </AlertDescription>

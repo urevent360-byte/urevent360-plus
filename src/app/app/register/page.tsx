@@ -14,8 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useLanguage } from '@/contexts/LanguageProvider';
-import { translations } from '@/lib/translations';
 import { UserPlus, Eye, EyeOff } from 'lucide-react';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -34,7 +32,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 export default function RegisterPage() {
-  const { language } = useLanguage();
   const { toast } = useToast();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -84,20 +81,20 @@ export default function RegisterPage() {
       <Card className="max-w-md w-full shadow-xl border-0">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
-            {translations.auth.registerTitle[language]}
+            Create Your Account
           </CardTitle>
           <CardDescription className="text-lg">
-            {translations.auth.registerDescription[language]}
+            Get started by creating your host account.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">{translations.auth.nameLabel[language]}</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
                 {...register('name')}
-                placeholder={language === 'en' ? 'John Doe' : 'Juan Pérez'}
+                placeholder='John Doe'
                 aria-invalid={!!errors.name}
               />
               {errors.name && (
@@ -106,7 +103,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">{translations.auth.emailLabel[language]}</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -120,7 +117,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">{translations.auth.passwordLabel[language]}</Label>
+              <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -145,7 +142,7 @@ export default function RegisterPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{translations.auth.confirmPasswordLabel[language]}</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
@@ -171,20 +168,20 @@ export default function RegisterPage() {
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
               {isSubmitting ? (
-                <>{language === 'en' ? 'Creating account...' : 'Creando cuenta...'}</>
+                <>Creating account...</>
               ) : (
                 <>
                   <UserPlus className="mr-2" />
-                  {translations.auth.registerButton[language]}
+                  Create Account
                 </>
               )}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {translations.auth.haveAccount[language]}{' '}
+            Already have an account?{' '}
             <Link href="/app/login" className="font-semibold text-primary hover:underline">
-              {translations.auth.login[language]}
+              Log in
             </Link>
           </p>
         </CardContent>
@@ -192,5 +189,3 @@ export default function RegisterPage() {
     </div>
   );
 }
-
-    

@@ -6,12 +6,9 @@ import { usePathname } from 'next/navigation';
 import { Menu, LogOut, ShoppingCart, Shield, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-import { useLanguage } from '@/contexts/LanguageProvider';
 import { useAuth } from '@/contexts/AuthProvider';
-import { translations } from '@/lib/translations';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/icons';
-import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import {
   Sheet,
   SheetContent,
@@ -32,7 +29,6 @@ import { useOpenInquiryModal } from '../page/home/InquiryModal';
 
 
 export function Header() {
-  const { language } = useLanguage();
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
   const pathname = usePathname();
   const [isSheetOpen, setSheetOpen] = useState(false);
@@ -45,10 +41,10 @@ export function Header() {
   }, []);
 
   const navItems = [
-    { href: '/', label: translations.nav.home },
-    { href: '/services', label: translations.nav.services },
-    { href: '/gallery', label: { en: 'Gallery', es: 'Galería' } },
-    { href: '/contact', label: translations.nav.contact },
+    { href: '/', label: 'Home' },
+    { href: '/services', label: 'Services' },
+    { href: '/gallery', label: 'Gallery' },
+    { href: '/contact', label: 'Contact' },
   ];
   
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
@@ -69,7 +65,7 @@ export function Header() {
           )}
           onClick={() => setSheetOpen(false)}
         >
-          {item.label[language]}
+          {item.label}
         </Link>
       ))}
     </nav>
@@ -89,7 +85,6 @@ export function Header() {
           <div className="hidden md:flex">
             <NavLinks />
           </div>
-          <LanguageToggle />
 
            <Button variant="ghost" size="icon" className="relative" onClick={() => setInquiryOpen(true)}>
             <ShoppingCart className="h-5 w-5" />
@@ -130,14 +125,14 @@ export function Header() {
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={signOut}>
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>{translations.auth.logout[language]}</span>
+                      <span>Logout</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
               !pathname.startsWith('/app/login') && !pathname.startsWith('/app/register') && !pathname.startsWith('/admin') && (
                  <Button asChild variant="outline" size="sm">
-                  <Link href="/app/login">{translations.nav.login[language]}</Link>
+                  <Link href="/app/login">Host Login</Link>
                 </Button>
               )
             )

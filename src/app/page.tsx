@@ -2,8 +2,6 @@ import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
-import type { PlaceholderImage } from '@/lib/types';
-import { ExperienceCardContent } from '@/components/page/home/ExperienceCardContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';

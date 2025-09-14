@@ -63,19 +63,7 @@ export default function HostLoginPage() {
   }
 
   async function onSubmit(data: FormValues) {
-    setIsSubmitting(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      handleLoginSuccess(userCredential.user.email);
-    } catch (error: any) {
-       toast({
-          title: 'Error',
-          description: error.message || 'Login failed. Please check your credentials.',
-          variant: 'destructive',
-        });
-    } finally {
-        setIsSubmitting(false);
-    }
+    router.push('/app/home');
   }
   
   const handleSocialLogin = async (providerName: 'google' | 'facebook') => {

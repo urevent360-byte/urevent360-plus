@@ -43,11 +43,11 @@ type Lead = {
 
 const placeholderLeads: Lead[] = [
     { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1' },
-    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: null, photoboothLink: null },
+    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'quote_sent', eventId: null, photoboothLink: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: null, photoboothLink: null },
     { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: null, photoboothLink: null },
     { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'rejected', eventId: null, photoboothLink: null },
-    { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'quote_sent', eventId: null, photoboothLink: null },
+    { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'contacted', eventId: null, photoboothLink: null },
     { id: 'lead7', name: 'Chris Green', email: 'chris@example.com', date: '2024-09-20', status: 'accepted', eventId: null, photoboothLink: null },
 ];
 

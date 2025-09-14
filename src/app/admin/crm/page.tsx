@@ -28,6 +28,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { DatePicker } from '@/components/ui/date-picker';
+import Link from 'next/link';
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
 
@@ -160,9 +161,11 @@ export default function CrmPage() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem>
-                                            <Edit className="mr-2 h-4 w-4" />
-                                            View/Edit Lead
+                                        <DropdownMenuItem asChild>
+                                            <Link href={`/admin/crm/${lead.id}`}>
+                                                <Edit className="mr-2 h-4 w-4" />
+                                                View/Edit Lead
+                                            </Link>
                                         </DropdownMenuItem>
                                         {lead.status === 'confirmed' && (
                                           <>

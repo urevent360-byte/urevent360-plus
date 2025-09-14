@@ -48,9 +48,9 @@ export default function AdminPortalLayout({
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/projects">
+                <Link href="/admin/events">
                   <FolderKanban />
-                  Projects
+                  Events
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

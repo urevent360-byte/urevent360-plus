@@ -1,6 +1,7 @@
 
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, User, Calendar, MapPin, FilePlus, Bot, Music, QrCode, GalleryHorizontal, ListTree, CreditCard, Files, Briefcase } from 'lucide-react';
@@ -10,10 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Textarea } from '@/components/ui/textarea';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Placeholder data - in a real app, this would be fetched for the eventId
-const eventData = {
+
+// In a real app, this data would be fetched from Firestore based on eventId.
+// We'll simulate fetching by using a timeout.
+const placeholderEventData = {
     clientName: 'John Doe',
     clientEmail: 'client@urevent360.com',
     eventName: "John's Quinceañera",
@@ -27,6 +30,21 @@ const eventData = {
 export default function AdminEventDetailPage() {
     const params = useParams();
     const { eventId } = params;
+    const [eventData, setEventData] = useState<typeof placeholderEventData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate fetching data for the event.
+        // This helps visualize loading states and prepares for real data fetching.
+        setLoading(true);
+        const timer = setTimeout(() => {
+            setEventData(placeholderEventData);
+            setLoading(false);
+        }, 1000);
+
+        return () => clearTimeout(timer);
+    }, [eventId]);
+
 
     return (
         <div>
@@ -43,19 +61,47 @@ export default function AdminEventDetailPage() {
                 <div className="lg:col-span-1 space-y-8">
                      <Card>
                         <CardHeader>
-                            <CardTitle>Project Overview</CardTitle>
-                            <CardDescription>Event ID: {eventId}</CardDescription>
+                            {loading ? (
+                                <>
+                                    <Skeleton className="h-6 w-3/4" />
+                                    <Skeleton className="h-4 w-1/2" />
+                                </>
+                            ) : (
+                                <>
+                                    <CardTitle>Project Overview</CardTitle>
+                                    <CardDescription>Event ID: {eventId}</CardDescription>
+                                </>
+                            )}
                         </CardHeader>
                         <CardContent className="space-y-4 text-sm">
-                             <div className="flex items-center gap-3">
-                                <User className="text-muted-foreground" /> <span>{eventData.clientName} ({eventData.clientEmail})</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <Calendar className="text-muted-foreground" /> <span>{eventData.eventName} on {eventData.eventDate}</span>
-                            </div>
-                             <div className="flex items-center gap-3">
-                                <MapPin className="text-muted-foreground" /> <span>{eventData.location}</span>
-                            </div>
+                            {loading ? (
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-5 w-5 rounded-full" />
+                                        <Skeleton className="h-4 w-full" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-5 w-5 rounded-full" />
+                                        <Skeleton className="h-4 w-full" />
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Skeleton className="h-5 w-5 rounded-full" />
+                                        <Skeleton className="h-4 w-full" />
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="flex items-center gap-3">
+                                        <User className="text-muted-foreground" /> <span>{eventData?.clientName} ({eventData?.clientEmail})</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <Calendar className="text-muted-foreground" /> <span>{eventData?.eventName} on {eventData?.eventDate}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <MapPin className="text-muted-foreground" /> <span>{eventData?.location}</span>
+                                    </div>
+                                </>
+                             )}
                         </CardContent>
                     </Card>
                 </div>
@@ -74,7 +120,7 @@ export default function AdminEventDetailPage() {
                             <TabsTrigger value="services">Services</TabsTrigger>
                         </TabsList>
                         <Card>
-                            <TabsContent value="details" className="p-6">
+                             <TabsContent value="details" className="p-6">
                                 <CardTitle className="flex items-center gap-2 mb-4"><ListTree /> Event Details</CardTitle>
                                 <p className="text-muted-foreground">This section contains editable details about the event.</p>
                             </TabsContent>
@@ -99,24 +145,43 @@ export default function AdminEventDetailPage() {
                              <TabsContent value="gallery" className="p-6">
                                  <CardTitle className="flex items-center gap-2 mb-4"><GalleryHorizontal /> Gallery Settings</CardTitle>
                                  <div className="space-y-4">
-                                    <div>
-                                        <Label htmlFor="photobooth-link">Photo Booth Album URL</Label>
-                                        <Input id="photobooth-link" defaultValue={eventData.photoBoothAlbumUrl} />
-                                        <p className="text-xs text-muted-foreground mt-1">The public URL for the professional photo booth album (e.g., Google Photos).</p>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <Label>Gallery Visibility Date</Label>
-                                            <DatePicker date={new Date()} onDateChange={() => {}} />
+                                    {loading ? (
+                                        <div className="space-y-4">
+                                            <Skeleton className="h-6 w-1/4" />
+                                            <Skeleton className="h-10 w-full" />
+                                            <div className="grid grid-cols-2 gap-4 pt-4">
+                                                <div>
+                                                    <Skeleton className="h-6 w-1/2 mb-2" />
+                                                    <Skeleton className="h-10 w-full" />
+                                                </div>
+                                                <div>
+                                                    <Skeleton className="h-6 w-1/2 mb-2" />
+                                                    <Skeleton className="h-10 w-full" />
+                                                </div>
+                                            </div>
                                         </div>
-                                         <div>
-                                            <Label>Guest Uploads Purge Date</Label>
-                                            <DatePicker date={new Date(new Date().setDate(new Date().getDate() + 30))} onDateChange={() => {}} />
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-end">
-                                        <Button>Save Gallery Settings</Button>
-                                    </div>
+                                    ) : (
+                                        <>
+                                            <div>
+                                                <Label htmlFor="photobooth-link">Photo Booth Album URL</Label>
+                                                <Input id="photobooth-link" defaultValue={eventData?.photoBoothAlbumUrl} />
+                                                <p className="text-xs text-muted-foreground mt-1">The public URL for the professional photo booth album (e.g., Google Photos).</p>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <Label>Gallery Visibility Date</Label>
+                                                    <DatePicker date={new Date()} onDateChange={() => {}} />
+                                                </div>
+                                                 <div>
+                                                    <Label>Guest Uploads Purge Date</Label>
+                                                    <DatePicker date={new Date(new Date().setDate(new Date().getDate() + 30))} onDateChange={() => {}} />
+                                                </div>
+                                            </div>
+                                            <div className="flex justify-end">
+                                                <Button>Save Gallery Settings</Button>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </TabsContent>
                             <TabsContent value="guest-qr" className="p-6">

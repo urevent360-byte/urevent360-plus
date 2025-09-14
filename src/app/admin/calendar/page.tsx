@@ -58,6 +58,7 @@ const statusDetails: Record<Status, {
 
 export default function CalendarPage() {
     const [date, setDate] = useState<Date | undefined>(new Date());
+    const [language, setLanguage] = useState<'en' | 'es'>('en');
     
     const upcomingEvents = placeholderEvents.filter(b => b.status === 'confirmed');
     const pastEvents = placeholderEvents.filter(b => b.status === 'completed');
@@ -80,7 +81,7 @@ export default function CalendarPage() {
                                 <div className="flex items-center gap-4">
                                      <Badge variant="outline" className={`flex items-center ${statusDetails[event.status].badge}`}>
                                         {statusDetails[event.status].icon}
-                                        {statusDetails[event.status].label['en']}
+                                        {statusDetails[event.status].label[language]}
                                     </Badge>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -113,6 +114,10 @@ export default function CalendarPage() {
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Event Calendar</h1>
                     <p className="text-muted-foreground">View and manage all confirmed and completed events.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => setLanguage('en')}>EN</Button>
+                    <Button variant={language === 'es' ? 'default' : 'outline'} onClick={() => setLanguage('es')}>ES</Button>
                 </div>
             </div>
 
@@ -148,7 +153,7 @@ export default function CalendarPage() {
                            {Object.entries(statusDetails).map(([status, details]) => (
                                <div key={status} className="flex items-center">
                                    <span className={`w-4 h-4 rounded-full mr-2 ${details.calendar}`} />
-                                   <span>{details.label['en']}</span>
+                                   <span>{details.label[language]}</span>
                                </div>
                            ))}
                         </CardContent>

@@ -61,6 +61,8 @@ const statusColors: Record<Status, string> = {
     rejected: 'bg-gray-500',
 };
 
+const allStatuses: Status[] = ['new', 'contacted', 'follow-up', 'quote_sent', 'accepted', 'converted', 'rejected'];
+
 export default function CrmPage() {
   const [leads, setLeads] = useState<Lead[]>(placeholderLeads);
   const [filter, setFilter] = useState<Status | 'all'>('all');
@@ -108,13 +110,16 @@ export default function CrmPage() {
                 <CardDescription>A list of all leads from the contact form. Converted events have QR and Photo Booth link capabilities.</CardDescription>
                 <div className="flex items-center gap-2 pt-4 flex-wrap">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
-                    <Button variant={filter === 'new' ? 'default' : 'outline'} onClick={() => setFilter('new')}>New</Button>
-                    <Button variant={filter === 'contacted' ? 'default' : 'outline'} onClick={() => setFilter('contacted')}>Contacted</Button>
-                    <Button variant={filter === 'follow-up' ? 'default' : 'outline'} onClick={() => setFilter('follow-up')}>Follow-up</Button>
-                    <Button variant={filter === 'quote_sent' ? 'default' : 'outline'} onClick={() => setFilter('quote_sent')}>Quote Sent</Button>
-                    <Button variant={filter === 'accepted' ? 'default' : 'outline'} onClick={() => setFilter('accepted')}>Accepted</Button>
-                    <Button variant={filter === 'converted' ? 'default' : 'outline'} onClick={() => setFilter('converted')}>Converted</Button>
-                    <Button variant={filter === 'rejected' ? 'default' : 'outline'} onClick={() => setFilter('rejected')}>Rejected</Button>
+                    {allStatuses.map(status => (
+                        <Button 
+                            key={status}
+                            variant={filter === status ? 'default' : 'outline'} 
+                            onClick={() => setFilter(status)}
+                            className="capitalize"
+                        >
+                            {status.replace('_', ' ')}
+                        </Button>
+                    ))}
                 </div>
             </CardHeader>
             <CardContent>
@@ -155,7 +160,7 @@ export default function CrmPage() {
                                                 View/Edit Lead
                                             </Link>
                                         </DropdownMenuItem>
-                                        {lead.status === 'converted' && lead.eventId && (
+                                        {lead.eventId && (
                                           <>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => generateQrCode(lead.eventId!)}>

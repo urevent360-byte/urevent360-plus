@@ -14,15 +14,16 @@ export function middleware(request: NextRequest) {
   // you would use Firebase session cookies to reliably check authentication status here.
   const isAuthed = request.cookies.has('firebase-authed');
 
+  // TEMPORARILY DISABLED FOR DEVELOPMENT
   // Redirect unauthenticated users trying to access protected portals
-  if (!isAuthed) {
-    if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/admin/forgot-password')) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-    if (pathname.startsWith('/app') && !pathname.startsWith('/app/login') && !pathname.startsWith('/app/register') && !pathname.startsWith('/app/forgot-password')) {
-      return NextResponse.redirect(new URL('/app/login', request.url));
-    }
-  }
+  // if (!isAuthed) {
+  //   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login') && !pathname.startsWith('/admin/forgot-password')) {
+  //     return NextResponse.redirect(new URL('/admin/login', request.url));
+  //   }
+  //   if (pathname.startsWith('/app') && !pathname.startsWith('/app/login') && !pathname.startsWith('/app/register') && !pathname.startsWith('/app/forgot-password')) {
+  //     return NextResponse.redirect(new URL('/app/login', request.url));
+  //   }
+  // }
 
   return NextResponse.next();
 }

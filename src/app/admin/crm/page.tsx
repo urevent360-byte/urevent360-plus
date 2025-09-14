@@ -27,10 +27,9 @@ import QRCode from "qrcode.react";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { DatePicker } from '@/components/ui/date-picker';
 import Link from 'next/link';
 
-type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived';
+type Status = 'new' | 'contacted' | 'follow-up' | 'quote_sent' | 'accepted' | 'converted' | 'rejected';
 
 type Lead = {
     id: string;
@@ -38,26 +37,28 @@ type Lead = {
     email: string;
     date: string;
     status: Status;
-    eventId: string;
+    eventId: string | null;
     photoboothLink: string | null;
-    visibilityDate: Date | null;
-    expirationDate: Date | null;
 };
 
 const placeholderLeads: Lead[] = [
-    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
-    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
-    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
-    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: 'evt-maria-garcia-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
-    { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'archived', eventId: 'evt-david-lee-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
+    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1' },
+    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: null, photoboothLink: null },
+    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: null, photoboothLink: null },
+    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: null, photoboothLink: null },
+    { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'rejected', eventId: null, photoboothLink: null },
+    { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'quote_sent', eventId: null, photoboothLink: null },
+    { id: 'lead7', name: 'Chris Green', email: 'chris@example.com', date: '2024-09-20', status: 'accepted', eventId: null, photoboothLink: null },
 ];
 
 const statusColors: Record<Status, string> = {
     new: 'bg-blue-500',
     contacted: 'bg-yellow-500',
     'follow-up': 'bg-orange-500',
+    quote_sent: 'bg-purple-500',
+    accepted: 'bg-teal-500',
     converted: 'bg-green-500',
-    archived: 'bg-gray-500',
+    rejected: 'bg-gray-500',
 };
 
 export default function CrmPage() {
@@ -65,7 +66,6 @@ export default function CrmPage() {
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
   const [linkModalState, setLinkModalState] = useState<{ isOpen: boolean; leadId: string | null, currentLink: string }>({ isOpen: false, leadId: null, currentLink: '' });
-  const [eventSettingsModal, setEventSettingsModal] = useState<{ isOpen: boolean; lead: Lead | null }>({ isOpen: false, lead: null });
 
   const { toast } = useToast();
 
@@ -89,22 +89,6 @@ export default function CrmPage() {
     });
     setLinkModalState({ isOpen: false, leadId: null, currentLink: '' });
   };
-  
-  const handleSaveEventSettings = () => {
-    if (!eventSettingsModal.lead) return;
-
-    // In a real app, you would save this to the database
-    // For now, we update the local state
-    setLeads(prevLeads => prevLeads.map(l => 
-        l.id === eventSettingsModal.lead!.id ? eventSettingsModal.lead! : l
-    ));
-
-    toast({
-        title: "Event Settings Saved",
-        description: `Settings for ${eventSettingsModal.lead.name}'s event have been updated.`
-    });
-    setEventSettingsModal({ isOpen: false, lead: null });
-  };
 
 
   return (
@@ -120,12 +104,15 @@ export default function CrmPage() {
             <CardHeader>
                 <CardTitle>All Inquiries</CardTitle>
                 <CardDescription>A list of all leads from the contact form. Converted events have QR and Photo Booth link capabilities.</CardDescription>
-                <div className="flex items-center gap-2 pt-4">
+                <div className="flex items-center gap-2 pt-4 flex-wrap">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
                     <Button variant={filter === 'new' ? 'default' : 'outline'} onClick={() => setFilter('new')}>New</Button>
                     <Button variant={filter === 'contacted' ? 'default' : 'outline'} onClick={() => setFilter('contacted')}>Contacted</Button>
                     <Button variant={filter === 'follow-up' ? 'default' : 'outline'} onClick={() => setFilter('follow-up')}>Follow-up</Button>
+                    <Button variant={filter === 'quote_sent' ? 'default' : 'outline'} onClick={() => setFilter('quote_sent')}>Quote Sent</Button>
+                    <Button variant={filter === 'accepted' ? 'default' : 'outline'} onClick={() => setFilter('accepted')}>Accepted</Button>
                     <Button variant={filter === 'converted' ? 'default' : 'outline'} onClick={() => setFilter('converted')}>Converted</Button>
+                    <Button variant={filter === 'rejected' ? 'default' : 'outline'} onClick={() => setFilter('rejected')}>Rejected</Button>
                 </div>
             </CardHeader>
             <CardContent>
@@ -147,8 +134,8 @@ export default function CrmPage() {
                             </TableCell>
                             <TableCell>{lead.date}</TableCell>
                             <TableCell>
-                                <Badge className={`${statusColors[lead.status as Status]} text-white hover:${statusColors[lead.status as Status]}`}>
-                                    {lead.status.replace('-', ' ')}
+                                <Badge className={`${statusColors[lead.status as Status]} text-white capitalize hover:${statusColors[lead.status as Status]}`}>
+                                    {lead.status.replace('_', ' ')}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
@@ -166,10 +153,10 @@ export default function CrmPage() {
                                                 View/Edit Lead
                                             </Link>
                                         </DropdownMenuItem>
-                                        {lead.status === 'converted' && (
+                                        {lead.status === 'converted' && lead.eventId && (
                                           <>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={() => generateQrCode(lead.eventId)}>
+                                            <DropdownMenuItem onClick={() => generateQrCode(lead.eventId!)}>
                                                 <QrCode className="mr-2 h-4 w-4" />
                                                 Generate Upload QR
                                             </DropdownMenuItem>
@@ -177,9 +164,11 @@ export default function CrmPage() {
                                                 <LinkIcon className="mr-2 h-4 w-4" />
                                                 Add Photo Booth Link
                                             </DropdownMenuItem>
-                                             <DropdownMenuItem onClick={() => setEventSettingsModal({ isOpen: true, lead })}>
-                                                <CalendarCog className="mr-2 h-4 w-4" />
-                                                Manage Event Settings
+                                             <DropdownMenuItem asChild>
+                                                <Link href={`/admin/events/${lead.eventId}`}>
+                                                    <CalendarCog className="mr-2 h-4 w-4" />
+                                                    Manage Event Settings
+                                                </Link>
                                             </DropdownMenuItem>
                                           </>
                                         )}
@@ -242,43 +231,6 @@ export default function CrmPage() {
             </DialogContent>
         </Dialog>
 
-        <Dialog open={eventSettingsModal.isOpen} onOpenChange={(isOpen) => !isOpen && setEventSettingsModal({ isOpen: false, lead: null })}>
-            <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                    <DialogTitle>Manage Event Settings</DialogTitle>
-                    <DialogDescription>
-                        Control gallery visibility and expiration for {eventSettingsModal.lead?.name}'s event.
-                    </Description>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="visibility-date" className="text-right">
-                            Visible From
-                        </Label>
-                        <div className="col-span-3">
-                           <DatePicker
-                             date={eventSettingsModal.lead?.visibilityDate || undefined}
-                             onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, visibilityDate: date || null}} : prev)}
-                           />
-                        </div>
-                    </div>
-                     <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="visibility-date" className="text-right">
-                            Expires On
-                        </Label>
-                        <div className="col-span-3">
-                            <DatePicker
-                                date={eventSettingsModal.lead?.expirationDate || undefined}
-                                onDateChange={(date) => setEventSettingsModal(prev => prev.lead ? {...prev, lead: {...prev.lead, expirationDate: date || null}} : prev)}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleSaveEventSettings}>Save Settings</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
     </div>
   );
 }

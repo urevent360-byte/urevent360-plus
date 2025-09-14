@@ -211,7 +211,7 @@ export default function AppEventDetailPage() {
                 </Button>
             </div>
             
-            {status !== 'Booked' ? (
+            {status !== 'Booked' && status !== 'Completed' ? (
                 <ActivationGate onActivate={handleActivation} />
             ) : (
                 <EventProfile />
@@ -220,4 +220,3 @@ export default function AppEventDetailPage() {
         </div>
     );
 }
-

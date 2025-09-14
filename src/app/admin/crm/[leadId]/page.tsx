@@ -1,16 +1,17 @@
-
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileText, User, Calendar, MapPin, Wand2 } from 'lucide-react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 // Placeholder data - in a real app, this would be fetched for the leadId
 const leadData = {
+    id: 'lead2',
     name: 'Jane Smith',
     email: 'jane@example.com',
     eventDate: '2024-10-15',
@@ -19,13 +20,40 @@ const leadData = {
     requestedServices: [
         { id: 'magic-mirror', name: 'Magic Mirror', quantity: 1, price: 0 },
         { id: 'led-screens-wall', name: 'LED Screens Wall', quantity: 1, price: 0 },
-    ]
+    ],
+    status: 'quote_sent',
+    // In a real scenario, this would be null until converted
+    // For QA purposes, we can toggle this to see idempotent behavior
+    eventId: null,
+    // eventId: 'evt-jane-smith-2024', 
 }
 
 
 export default function LeadDetailPage() {
     const params = useParams();
+    const router = useRouter();
+    const { toast } = useToast();
     const { leadId } = params;
+
+    const handleConvertToProject = () => {
+        // This is a placeholder for the server action that would:
+        // 1. Check if an eventId already exists.
+        // 2. If not, create a new event in Firestore and get the new ID.
+        // 3. Update the lead with the new eventId and set status to 'converted'.
+        // 4. Redirect to the event page.
+
+        toast({
+            title: leadData.eventId ? 'Redirecting to Existing Project' : 'Converting to Project...',
+            description: leadData.eventId ? `This lead is already linked to event ${leadData.eventId}.` : 'A new project is being created for this lead.',
+        });
+
+        // Simulate the logic: if eventId exists, use it, otherwise create a new one.
+        const targetEventId = leadData.eventId || `evt-${leadData.name.toLowerCase().replace(' ', '-')}-${new Date().getFullYear()}`;
+
+        setTimeout(() => {
+            router.push(`/admin/events/${targetEventId}`);
+        }, 1500);
+    };
 
     return (
         <div>
@@ -44,7 +72,7 @@ export default function LeadDetailPage() {
                         <CardHeader>
                             <CardTitle>Quote Builder</CardTitle>
                             <CardDescription>
-                                Add services and set pricing to generate a quote for this lead.
+                                Add services and set pricing to generate a quote for this lead. Prices are admin-only.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -104,7 +132,7 @@ export default function LeadDetailPage() {
                             <CardTitle>Actions</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-2">
-                            <Button><Wand2 className="mr-2" /> Convert to Project</Button>
+                            <Button onClick={handleConvertToProject}><Wand2 className="mr-2" /> Convert to Project</Button>
                             <Button variant="outline">Mark as Accepted</Button>
                             <Button variant="destructive" className="mt-4">Mark as Rejected</Button>
                         </CardContent>

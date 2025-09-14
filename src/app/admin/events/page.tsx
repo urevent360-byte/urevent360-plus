@@ -16,24 +16,24 @@ import { MoreHorizontal, CheckCircle, Clock, AlertTriangle } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 
-type ProjectStatus = 'planning' | 'active' | 'completed' | 'on-hold';
+type EventStatus = 'planning' | 'active' | 'completed' | 'on-hold';
 
-type Project = {
+type Event = {
     id: string;
     clientName: string;
     eventName: string;
     eventDate: string;
-    status: ProjectStatus;
+    status: EventStatus;
 };
 
-const placeholderProjects: Project[] = [
+const placeholderEvents: Event[] = [
     { id: 'evt-john-doe-2024', clientName: 'John Doe', eventName: "John's Quinceañera", eventDate: '2024-08-25', status: 'planning' },
     { id: 'evt-david-lee-2024', clientName: 'David Lee', eventName: "Lee Corporate Gala", eventDate: '2024-07-20', status: 'completed' },
     { id: 'evt-maria-garcia-2024', clientName: 'Maria Garcia', eventName: "Garcia Wedding", eventDate: '2024-09-15', status: 'active' },
     { id: 'evt-jane-smith-2024', clientName: 'Jane Smith', eventName: "Smith & Co Product Launch", eventDate: '2024-10-01', status: 'on-hold' },
 ];
 
-const statusDetails: Record<ProjectStatus, {
+const statusDetails: Record<EventStatus, {
     label: string;
     icon: JSX.Element;
     badgeClass: string;
@@ -66,7 +66,7 @@ export default function EventsPage() {
     <div>
         <div className="flex items-center justify-between mb-8">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">Events / Projects</h1>
+                <h1 className="text-3xl font-bold tracking-tight">Events</h1>
                 <p className="text-muted-foreground">Manage all active, planned, and completed client events.</p>
             </div>
         </div>
@@ -90,17 +90,17 @@ export default function EventsPage() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {placeholderProjects.map((project) => (
-                        <TableRow key={project.id}>
+                        {placeholderEvents.map((event) => (
+                        <TableRow key={event.id}>
                             <TableCell>
-                                <div className="font-medium">{project.clientName}</div>
+                                <div className="font-medium">{event.clientName}</div>
                             </TableCell>
-                            <TableCell>{project.eventName}</TableCell>
-                            <TableCell>{project.eventDate}</TableCell>
+                            <TableCell>{event.eventName}</TableCell>
+                            <TableCell>{event.eventDate}</TableCell>
                             <TableCell>
-                                <Badge variant="outline" className={`flex items-center w-fit gap-1 ${statusDetails[project.status].badgeClass}`}>
-                                    {statusDetails[project.status].icon}
-                                    {statusDetails[project.status].label}
+                                <Badge variant="outline" className={`flex items-center w-fit gap-1 ${statusDetails[event.status].badgeClass}`}>
+                                    {statusDetails[event.status].icon}
+                                    {statusDetails[event.status].label}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
@@ -113,8 +113,8 @@ export default function EventsPage() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem asChild>
-                                            <Link href={`/admin/events/${project.id}`}>
-                                                View Project Details
+                                            <Link href={`/admin/events/${event.id}`}>
+                                                View Event Details
                                             </Link>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>

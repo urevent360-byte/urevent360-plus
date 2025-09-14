@@ -30,7 +30,7 @@ import { useToast } from '@/hooks/use-toast';
 import { DatePicker } from '@/components/ui/date-picker';
 import Link from 'next/link';
 
-type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived' | 'confirmed';
+type Status = 'new' | 'contacted' | 'follow-up' | 'converted' | 'archived';
 
 type Lead = {
     id: string;
@@ -45,7 +45,7 @@ type Lead = {
 };
 
 const placeholderLeads: Lead[] = [
-    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'confirmed', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
+    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1', visibilityDate: new Date('2024-09-25'), expirationDate: new Date('2024-10-25') },
     { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'contacted', eventId: 'evt-jane-smith-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: 'evt-peter-jones-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
     { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: 'evt-maria-garcia-2024', photoboothLink: null, visibilityDate: null, expirationDate: null },
@@ -57,7 +57,6 @@ const statusColors: Record<Status, string> = {
     contacted: 'bg-yellow-500',
     'follow-up': 'bg-orange-500',
     converted: 'bg-green-500',
-    confirmed: 'bg-teal-500',
     archived: 'bg-gray-500',
 };
 
@@ -113,20 +112,20 @@ export default function CrmPage() {
         <div className="flex items-center justify-between mb-8">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">CRM & Leads</h1>
-                <p className="text-muted-foreground">Manage client inquiries and confirmed events.</p>
+                <p className="text-muted-foreground">Manage client inquiries and converted events.</p>
             </div>
         </div>
 
         <Card>
             <CardHeader>
                 <CardTitle>All Inquiries</CardTitle>
-                <CardDescription>A list of all leads from the contact form. Confirmed events have QR and Photo Booth link capabilities.</CardDescription>
+                <CardDescription>A list of all leads from the contact form. Converted events have QR and Photo Booth link capabilities.</CardDescription>
                 <div className="flex items-center gap-2 pt-4">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
                     <Button variant={filter === 'new' ? 'default' : 'outline'} onClick={() => setFilter('new')}>New</Button>
                     <Button variant={filter === 'contacted' ? 'default' : 'outline'} onClick={() => setFilter('contacted')}>Contacted</Button>
                     <Button variant={filter === 'follow-up' ? 'default' : 'outline'} onClick={() => setFilter('follow-up')}>Follow-up</Button>
-                    <Button variant={filter === 'confirmed' ? 'default' : 'outline'} onClick={() => setFilter('confirmed')}>Confirmed</Button>
+                    <Button variant={filter === 'converted' ? 'default' : 'outline'} onClick={() => setFilter('converted')}>Converted</Button>
                 </div>
             </CardHeader>
             <CardContent>
@@ -167,7 +166,7 @@ export default function CrmPage() {
                                                 View/Edit Lead
                                             </Link>
                                         </DropdownMenuItem>
-                                        {lead.status === 'confirmed' && (
+                                        {lead.status === 'converted' && (
                                           <>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => generateQrCode(lead.eventId)}>
@@ -249,7 +248,7 @@ export default function CrmPage() {
                     <DialogTitle>Manage Event Settings</DialogTitle>
                     <DialogDescription>
                         Control gallery visibility and expiration for {eventSettingsModal.lead?.name}'s event.
-                    </DialogDescription>
+                    </Description>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <div className="grid grid-cols-4 items-center gap-4">

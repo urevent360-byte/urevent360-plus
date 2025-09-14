@@ -18,7 +18,6 @@ import { Mail, LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/client';
 import { useAuth } from '@/contexts/AuthProvider';
-import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -52,7 +51,7 @@ export default function HostLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "client@urevent360.com",
-      password: ""
+      password: "password"
     }
   });
   
@@ -103,23 +102,7 @@ export default function HostLoginPage() {
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center min-h-screen">
-      <Card className="max-w-md w-full shadow-xl border-0 relative">
-        <div className="absolute top-4 right-4">
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link href="/admin/login">
-                                <Shield className="h-5 w-5 text-muted-foreground hover:text-primary" />
-                            </Link>
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Admin Login</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-        </div>
+      <Card className="max-w-md w-full shadow-xl border-0">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary pt-8">
             <LogIn className="inline-block mr-2" />

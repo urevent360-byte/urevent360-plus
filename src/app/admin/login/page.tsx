@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: 'admin@urevent360.com',
-      password: ''
+      password: 'password'
     }
   });
 
@@ -198,7 +198,6 @@ export default function AdminLoginPage() {
                 <Button type="submit" disabled={isSubmitting} className="w-full">
                     {isSubmitting ? 'Verifying...' : <><Smartphone className="mr-2" />Verify Code</>}
                 </Button>
-                 <Button variant="link" onClick={() => setStep('credentials')}>Back to Login</Button>
             </form>
           )}
         </CardContent>

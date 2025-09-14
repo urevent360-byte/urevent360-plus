@@ -164,7 +164,7 @@ export default function CrmPage() {
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => setLinkModalState({ isOpen: true, leadId: lead.id, currentLink: lead.photoboothLink || '' })}>
                                                 <LinkIcon className="mr-2 h-4 w-4" />
-                                                Add Photo Booth Link
+                                                Set Photo Booth Link
                                             </DropdownMenuItem>
                                              <DropdownMenuItem asChild>
                                                 <Link href={`/admin/events/${lead.eventId}`}>
@@ -189,7 +189,7 @@ export default function CrmPage() {
                 <DialogHeader>
                     <DialogTitle>Event Photo Upload QR Code</DialogTitle>
                     <DialogDescription>
-                        Clients can scan this code to upload photos to the event gallery for "{qrCodeData?.eventId}".
+                        This generates a unique QR code for guests to upload photos to the event gallery for <span className="font-bold">"{qrCodeData?.eventId}"</span>. This action modifies the event itself.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-center p-4">
@@ -210,7 +210,7 @@ export default function CrmPage() {
                 <DialogHeader>
                     <DialogTitle>Set Photo Booth Album Link</DialogTitle>
                     <DialogDescription>
-                        Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox). This is saved on the event, not the lead.
+                        Paste the public URL for the external photo booth album (e.g., Google Photos). This updates the <span className="font-bold">event's</span> record, not the lead.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">

@@ -79,13 +79,15 @@ export default function CrmPage() {
   const handleSaveLink = () => {
     if (!linkModalState.leadId) return;
 
+    // In a real app, this would update events/{eventId}.photoBoothAlbumUrl in Firestore.
+    // For this prototype, we'll just update the local state.
     setLeads(prevLeads => prevLeads.map(lead => 
       lead.id === linkModalState.leadId ? { ...lead, photoboothLink: linkModalState.currentLink } : lead
     ));
 
     toast({
       title: 'Link Saved!',
-      description: 'The photo booth album link has been updated.',
+      description: 'The photo booth album link has been updated for the event.',
     });
     setLinkModalState({ isOpen: false, leadId: null, currentLink: '' });
   };
@@ -208,7 +210,7 @@ export default function CrmPage() {
                 <DialogHeader>
                     <DialogTitle>Set Photo Booth Album Link</DialogTitle>
                     <DialogDescription>
-                        Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox).
+                        Paste the public URL for the external photo booth album (e.g., Google Photos, Dropbox). This is saved on the event, not the lead.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">

@@ -50,7 +50,8 @@ export default function AdminLoginPage() {
   const { register: registerCredentials, handleSubmit: handleCredentialsSubmit, formState: { errors: credentialErrors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: 'admin@urevent360.com'
+      email: 'admin@urevent360.com',
+      password: 'password'
     }
   });
 

@@ -51,7 +51,8 @@ export default function HostLoginPage() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "client@urevent360.com"
+      email: "client@urevent360.com",
+      password: "password"
     }
   });
   

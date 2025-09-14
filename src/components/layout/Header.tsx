@@ -130,11 +130,9 @@ export function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-              !pathname.startsWith('/app/login') && !pathname.startsWith('/app/register') && !pathname.startsWith('/admin') && (
                  <Button asChild variant="outline" size="sm">
-                  <Link href="/app/login">Host Login</Link>
+                  <Link href="/app/dashboard">Login</Link>
                 </Button>
-              )
             )
           )}
 

@@ -1,9 +1,11 @@
 'use server';
 /**
- * @fileOverview This file defines Genkit flows for automating gallery management tasks,
- * such as deleting expired photos and notifying clients about gallery visibility.
- * These flows are intended to be deployed as scheduled Cloud Functions.
+ * @fileOverview This file defines Genkit flows for automating event management tasks.
+ * These flows are intended to be triggered by external webhooks (e.g., from payment processors
+ * or e-signature services) or run as scheduled jobs (e.g., via Cloud Scheduler).
  *
+ * - handleDepositWebhookFlow - Simulates handling a webhook after a client pays a deposit.
+ * - handleContractSignedWebhookFlow - Simulates handling a webhook after a client signs a contract.
  * - deleteExpiredPhotosFlow - Deletes photos for events where the gallery has expired.
  * - notifyOnGalleryVisibilityFlow - Notifies clients when their event gallery becomes visible.
  */
@@ -22,10 +24,122 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 const storage = admin.storage().bucket();
+const messaging = admin.messaging();
 */
 
 
 /**
+ * WEBHOOK FLOW: Deposit Paid (e.g., from QuickBooks)
+ * This flow would be exposed as an HTTP endpoint and triggered by a webhook
+ * from a payment processor like QuickBooks when an invoice's deposit is paid.
+ */
+export const handleDepositWebhookFlow = ai.defineFlow(
+  {
+    name: 'handleDepositWebhookFlow',
+    inputSchema: z.object({
+      invoiceId: z.string().describe("The ID of the invoice that was paid."),
+      eventId: z.string().describe("The ID of the associated event."),
+    }),
+    outputSchema: z.object({
+      success: z.boolean(),
+      message: z.string(),
+    }),
+  },
+  async ({ eventId }) => {
+    console.log(`Webhook received: Deposit paid for event ${eventId}.`);
+
+    // In a real implementation:
+    /*
+    const eventRef = db.collection('events').doc(eventId);
+    const eventDoc = await eventRef.get();
+
+    if (!eventDoc.exists) {
+      return { success: false, message: 'Event not found.' };
+    }
+
+    // 1. Update the event status to 'booked'.
+    await eventRef.update({
+      status: 'booked',
+      confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // 2. Post a system message to the event's chat.
+    await db.collection('chats').doc(eventId).collection('messages').add({
+      sender: 'System',
+      message: 'Payment received! The event is now confirmed and booked.',
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // 3. (Optional) Trigger other automations, like syncing to Google Calendar.
+    // await publishEventToGoogle(eventId);
+    */
+    
+    console.log(`SIMULATION: Marked event ${eventId} as 'booked' and sent a system chat message.`);
+
+    return {
+      success: true,
+      message: `Successfully processed deposit for event ${eventId}.`,
+    };
+  }
+);
+
+
+/**
+ * WEBHOOK FLOW: Contract Signed (e.g., from an e-sign provider)
+ * This flow would be triggered by a webhook when a client signs their contract.
+ */
+export const handleContractSignedWebhookFlow = ai.defineFlow(
+  {
+    name: 'handleContractSignedWebhookFlow',
+    inputSchema: z.object({
+      eventId: z.string(),
+      signedPdfUrl: z.string().url().describe("A temporary URL to download the signed PDF from."),
+    }),
+    outputSchema: z.object({ success: z.boolean(), message: z.string() }),
+  },
+  async ({ eventId, signedPdfUrl }) => {
+    console.log(`Webhook received: Contract signed for event ${eventId}.`);
+
+    // In a real implementation:
+    /*
+    // 1. Download the signed PDF from the temporary URL.
+    const response = await fetch(signedPdfUrl);
+    const pdfBuffer = await response.buffer();
+
+    // 2. Upload the signed PDF to Firebase Storage.
+    const filePath = `events/${eventId}/contracts/signed-contract-${new Date().toISOString()}.pdf`;
+    const file = storage.file(filePath);
+    await file.save(pdfBuffer, { contentType: 'application/pdf' });
+
+    // 3. Save a reference to the signed contract in Firestore.
+    await db.collection('events').doc(eventId).collection('files').add({
+      name: 'Signed Contract',
+      type: 'contract',
+      status: 'signed',
+      path: filePath,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // 4. Post a system message to the event's chat.
+    await db.collection('chats').doc(eventId).collection('messages').add({
+        sender: 'System',
+        message: 'The contract has been successfully signed by the client.',
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    */
+
+    console.log(`SIMULATION: Saved signed contract for event ${eventId} from ${signedPdfUrl}.`);
+    
+    return {
+      success: true,
+      message: `Successfully processed signed contract for event ${eventId}.`,
+    };
+  }
+);
+
+
+/**
+ * SCHEDULED FLOW: Delete Expired Photos
  * This flow is designed to be run on a schedule (e.g., daily) by a service like Cloud Scheduler.
  * It queries for events where the galleryExpirationDate is in the past, then deletes
  * the associated photos from Firebase Storage and cleans up the event data.
@@ -61,17 +175,17 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
     for (const doc of expiredEventsSnapshot.docs) {
       const event = doc.data();
       const eventId = doc.id;
-      const folderPath = `events/${eventId}/`;
+      const folderPath = `events/${eventId}/guest-uploads/`;
 
       console.log(`Processing expired event: ${eventId}`);
 
-      // 1. Delete all files in the event's Firebase Storage folder.
+      // 1. Delete all files in the event's guest upload folder in Firebase Storage.
       const [files] = await storage.getFiles({ prefix: folderPath });
       for (const file of files) {
         await file.delete();
         deletedPhotosCount++;
       }
-      console.log(`Deleted ${files.length} photos for event ${eventId}.`);
+      console.log(`Deleted ${files.length} guest photos for event ${eventId}.`);
 
       // 2. Update the event document in Firestore to mark it as archived.
       // This prevents the flow from processing it again.
@@ -98,9 +212,10 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
 
 
 /**
+ * SCHEDULED FLOW: Notify on Gallery Visibility
  * This flow is designed to be run on a schedule (e.g., every hour or daily).
  * It queries for events where the galleryVisibilityDate has just been reached and sends
- * a notification to the client (e.g., via email).
+ * a notification to the client (e.g., via email or push notification).
  */
 export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
   {

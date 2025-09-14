@@ -72,16 +72,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await firebaseSignOut(auth);
-    router.push('/');
+    // Redirect to the appropriate login page based on the current portal
+    if (pathname.startsWith('/admin')) {
+      router.push('/admin/login');
+    } else if (pathname.startsWith('/app')) {
+      router.push('/app/login');
+    } else {
+      router.push('/');
+    }
   };
-
-  const isAuthRoute = pathname.startsWith('/admin') || pathname.startsWith('/app');
-
-  // If we are loading and it's a protected route, show nothing to prevent flicker.
-  // Public routes can render immediately.
-  if (loading && isAuthRoute) {
-    return null;
-  }
   
   return (
     <AuthContext.Provider value={{ user, isAdmin, loading, signOut }}>

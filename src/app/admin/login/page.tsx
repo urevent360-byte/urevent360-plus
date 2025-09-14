@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: 'admin@urevent360.com',
-      password: 'password'
+      password: ''
     }
   });
 

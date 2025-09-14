@@ -52,7 +52,7 @@ export default function HostLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "client@urevent360.com",
-      password: "password"
+      password: ""
     }
   });
   

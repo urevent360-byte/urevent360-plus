@@ -86,40 +86,40 @@
   },
   "crm": {
     "title": {
-        "en": "CRM & Leads",
-        "es": "CRM y Prospectos"
+      "en": "CRM & Leads",
+      "es": "CRM y Prospectos"
     },
     "allInquiries": {
-        "en": "All Inquiries",
-        "es": "Todas las solicitudes"
+      "en": "All Inquiries",
+      "es": "Todas las solicitudes"
     },
     "viewEditLead": {
-        "en": "View/Edit Lead",
-        "es": "Ver/Editar lead"
+      "en": "View/Edit Lead",
+      "es": "Ver/Editar lead"
     },
     "generateUploadQr": {
-        "en": "Generate Upload QR",
-        "es": "Generar QR de carga"
+      "en": "Generate Upload QR",
+      "es": "Generar QR de carga"
     },
     "addPhotoboothLink": {
-        "en": "Add Photo Booth Link",
-        "es": "Añadir enlace del photo booth"
+      "en": "Add Photo Booth Link",
+      "es": "Añadir enlace del photo booth"
     },
     "manageEventSettings": {
-        "en": "Manage Event Settings",
-        "es": "Ajustes del evento"
+      "en": "Manage Event Settings",
+      "es": "Ajustes del evento"
     },
     "sendQuote": {
-        "en": "Send Quote",
-        "es": "Enviar cotización"
+      "en": "Send Quote",
+      "es": "Enviar cotización"
     },
     "markAccepted": {
-        "en": "Mark Accepted",
-        "es": "Marcar como aceptado"
+      "en": "Mark Accepted",
+      "es": "Marcar como aceptado"
     },
     "convertToProject": {
-        "en": "Convert to Project",
-        "es": "Convertir a proyecto"
+      "en": "Convert to Project",
+      "es": "Convertir a proyecto"
     }
   },
   "event": {
@@ -283,6 +283,68 @@
       "upcoming": {
         "en": "Upcoming",
         "es": "Próximo"
+      }
+    }
+  },
+  "cal": {
+    "view": {
+      "month": {
+        "en": "Month",
+        "es": "Mes"
+      },
+      "week": {
+        "en": "Week",
+        "es": "Semana"
+      },
+      "day": {
+        "en": "Day",
+        "es": "Día"
+      },
+      "list": {
+        "en": "List",
+        "es": "Lista"
+      }
+    },
+    "btn": {
+      "today": {
+        "en": "Today",
+        "es": "Hoy"
+      }
+    },
+    "filters": {
+      "booked": {
+        "en": "Booked",
+        "es": "Confirmados"
+      },
+      "tentative": {
+        "en": "Tentative",
+        "es": "Tentativos"
+      },
+      "timelineItems": {
+        "en": "Timeline Items",
+        "es": "Ítems del cronograma"
+      }
+    },
+    "sync": {
+      "google": {
+        "connected": {
+          "en": "Google Connected",
+          "es": "Google conectado"
+        },
+        "notConnected": {
+          "en": "Not Connected",
+          "es": "No conectado"
+        },
+        "syncNow": {
+          "en": "Sync now",
+          "es": "Sincronizar ahora"
+        }
+      }
+    },
+    "ics": {
+      "copied": {
+        "en": "Link copied",
+        "es": "Enlace copiado"
       }
     }
   }

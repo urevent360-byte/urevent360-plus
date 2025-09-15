@@ -114,6 +114,13 @@ function LeadDetailClient({ initialLead }: { initialLead: Lead }) {
                             <span>Total:</span>
                             <span>${total.toFixed(2)}</span>
                         </div>
+                         <div className="mt-6 flex justify-end gap-2">
+                            <Button variant="outline"><Mail /> Send Quote</Button>
+                            <Button onClick={handleConvert} disabled={isConverting}>
+                                {isConverting ? 'Converting...' : 'Convert to Project'}
+                                <ArrowRight />
+                             </Button>
+                         </div>
                     </CardContent>
                 </Card>
             </div>
@@ -145,14 +152,9 @@ function LeadDetailClient({ initialLead }: { initialLead: Lead }) {
 
                  <Card>
                     <CardHeader>
-                        <CardTitle>Actions</CardTitle>
+                        <CardTitle>Manual Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                         <Button className="w-full" onClick={handleConvert} disabled={isConverting}>
-                            {isConverting ? 'Converting...' : 'Convert to Project'}
-                            <ArrowRight />
-                         </Button>
-                         <Button variant="outline" className="w-full"><Mail /> Send Quote</Button>
                          <div className="grid grid-cols-2 gap-2">
                             <Button variant="outline" className="w-full"><Check /> Mark Accepted</Button>
                             <Button variant="destructive" className="w-full"><X /> Mark Rejected</Button>

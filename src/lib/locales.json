@@ -181,5 +181,51 @@
       "en": "My Services",
       "es": "Mis servicios"
     }
+  },
+  "billing": {
+    "title": {
+      "en": "Billing & Payments",
+      "es": "Facturación y pagos"
+    },
+    "paymentDueSoon": {
+      "en": "Payment Due Soon",
+      "es": "Pago próximo"
+    },
+    "viewInvoice": {
+      "en": "View Invoice",
+      "es": "Ver factura"
+    },
+    "viewDownload": {
+      "en": "View/Download",
+      "es": "Ver/Descargar"
+    },
+    "payNow": {
+      "en": "Pay Now",
+      "es": "Pagar ahora"
+    },
+    "payRemaining": {
+      "en": "Pay Remaining Balance",
+      "es": "Pagar saldo pendiente"
+    },
+    "total": {
+      "en": "Total",
+      "es": "Total"
+    },
+    "depositReceived": {
+      "en": "Deposit Received",
+      "es": "Depósito recibido"
+    },
+    "remaining": {
+      "en": "Remaining",
+      "es": "Restante"
+    },
+    "dueDate": {
+      "en": "Due Date",
+      "es": "Fecha límite"
+    },
+    "history": {
+      "en": "Payment History",
+      "es": "Historial de pagos"
+    }
   }
 }

@@ -2,7 +2,7 @@
 'use client';
 
 import { getEvent } from '@/lib/data-adapter';
-import { notFound, useParams, useRouter } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { use, useState, useEffect } from 'react';
 import type { Event, FileRecord } from '@/lib/data-adapter';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
@@ -62,20 +62,18 @@ function AdminBillingTab({ event, setEvent }: { event: Event, setEvent: (event: 
                 <CardDescription>Create and manage invoices. The host cannot see this tab.</CardDescription>
             </CardHeader>
             <CardContent>
-                {event.status === 'quote_requested' && (
+                {event.status === 'quote_requested' ? (
                     <div className="text-center p-8 border-dashed border-2 rounded-lg">
                         <p className="mb-4 text-muted-foreground">This event is ready for an invoice.</p>
                         <Button onClick={handleCreateInvoice}>Create Invoice</Button>
                     </div>
-                )}
-                 {event.status === 'contract_sent' && (
+                ) : event.status === 'contract_sent' ? (
                     <div className="text-center p-8 border-dashed border-2 rounded-lg">
                         <p className="mb-4 text-muted-foreground">The contract has been sent. Create an invoice to proceed.</p>
                         <Button onClick={handleCreateInvoice}>Create Invoice</Button>
                     </div>
-                )}
-                {event.status === 'invoice_sent' || event.status === 'deposit_due' || event.status === 'booked' || event.status === 'completed' ? (
-                    <div className="p-4 bg-green-50 text-green-800 rounded-lg">
+                ) : (event.status === 'invoice_sent' || event.status === 'deposit_due' || event.status === 'booked' || event.status === 'completed') ? (
+                     <div className="p-4 bg-green-50 text-green-800 rounded-lg">
                         <h4 className="font-bold">Invoice Sent!</h4>
                         <p>The client can now view the invoice and pay the deposit in their portal.</p>
                         <p className="text-sm mt-2">QuickBooks URL (simulated): `https://quickbooks.intuit.com/inv-123`</p>
@@ -236,6 +234,7 @@ function AdminGallerySettingsTab({event, setEvent}: {event: Event, setEvent: (ev
                                 <p className="text-xs text-muted-foreground">Date when guest photos will be auto-purged.</p>
                             </div>
                         </div>
+                         <Button onClick={handleSave}>Save Gallery Settings</Button>
                     </CardContent>
                 </Card>
 
@@ -261,7 +260,6 @@ function AdminGallerySettingsTab({event, setEvent}: {event: Event, setEvent: (ev
                         <Button variant="secondary" onClick={() => navigator.clipboard.writeText(qrUrl)}>Copy URL</Button>
                     </CardContent>
                 </Card>
-                <Button onClick={handleSave} className="w-full">Save Gallery Settings</Button>
             </div>
         </div>
     );

@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
+import { Button } from '../ui/button';
+import { Calendar, Itinerary, QrCode } from 'lucide-react';
+import Link from 'next/link';
 
 type EventProfileShellProps = {
   event: Event;
@@ -20,10 +23,10 @@ const adminTabs = [
   { value: 'billing', label: 'Billing' },
   { value: 'timeline', label: 'Timeline' },
   { value: 'files', label: 'Files' },
-  { value: 'gallery', label: 'Gallery/QR' },
+  { value: 'gallery', label: 'Gallery' },
   { value: 'music', label: 'Music' },
   { value: 'communication', label: 'Communication' },
-  { value: 'my-services', label: 'My Services' },
+  { value: 'my-services', label: 'Services' },
 ];
 
 const hostTabs = [
@@ -64,23 +67,32 @@ export function EventProfileShell({ event, role, children, isLoading = false }: 
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Project: {event.eventName}</CardTitle>
-          <CardDescription>
-            Client: {event.clientName} | Event Date: {format(new Date(event.eventDate), 'PPP')} | Status: <span className="capitalize font-medium">{event.status.replace('_', ' ')}</span>
-          </CardDescription>
-        </CardHeader>
-      </Card>
+        <Card>
+            <CardHeader className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div>
+                    <CardTitle>Project: {event.eventName}</CardTitle>
+                    <CardDescription>
+                        Client: {event.clientName} | Event Date: {format(new Date(event.eventDate), 'PPP')} | Status: <span className="capitalize font-medium">{event.status.replace('_', ' ')}</span>
+                    </CardDescription>
+                </div>
+                <div className="flex flex-shrink-0 gap-2">
+                    <Button variant="outline" size="sm" asChild><Link href="/admin/calendar"><Calendar /> Itinerary</Link></Button>
+                    <Button variant="outline" size="sm"><QrCode /> Guest QR</Button>
+                    <Button variant="outline" size="sm">Change Event</Button>
+                </div>
+            </CardHeader>
+        </Card>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-4 md:grid-cols-4 lg:grid-cols-8">
             {tabs.map(tab => (
                 <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
             ))}
         </TabsList>
         
-        {children}
+        <div className="mt-4">
+          {children}
+        </div>
         
       </Tabs>
     </div>

@@ -1,4 +1,5 @@
 
+
 /**
  * @fileoverview Data adapter for fetching application data.
  * This file provides a layer of abstraction for data fetching.
@@ -59,10 +60,10 @@ export type FileRecord = {
 const MOCK_LEADS: Lead[] = [
     { 
         id: 'lead-123',
-        hostEmail: 'john.doe@example.com',
+        hostEmail: 'client@urevent360.com',
         hostName: 'John Doe',
         name: 'John Doe',
-        email: 'john.doe@example.com',
+        email: 'client@urevent360.com',
         requestedServices: ['360 Photo Booth', 'Cold Sparklers'],
         eventDraft: {
             eventName: 'Johns Quinceañera',
@@ -76,14 +77,14 @@ const MOCK_LEADS: Lead[] = [
     },
     { 
         id: 'lead-456',
-        hostEmail: 'jane.smith@example.com',
-        hostName: 'Jane Smith',
-        name: 'Jane Smith',
-        email: 'jane.smith@example.com',
+        hostEmail: 'david@example.com',
+        hostName: 'David Lee',
+        name: 'David Lee',
+        email: 'david@example.com',
         requestedServices: ['Magic Mirror'],
         eventDraft: {
-            eventName: 'Smith & Co Product Launch',
-            eventDate: new Date('2024-11-01T12:00:00').toISOString(),
+            eventName: 'Lee Corporate Gala',
+            eventDate: new Date('2024-07-20T12:00:00').toISOString(),
         },
         status: 'converted',
         eventId: 'evt-456',
@@ -96,15 +97,15 @@ const MOCK_EVENTS: Event[] = [
     {
         id: 'evt-456',
         hostId: 'client-123',
-        clientName: 'Jane Smith',
-        eventName: 'Smith & Co Product Launch',
-        eventDate: new Date('2024-11-01T12:00:00').toISOString(),
+        clientName: 'David Lee',
+        eventName: 'Lee Corporate Gala',
+        eventDate: new Date('2024-07-20T12:00:00').toISOString(),
         status: 'booked',
         confirmedAt: new Date().toISOString(),
         contractSigned: true,
         photoboothLink: 'https://photos.app.goo.gl/sample1',
-        galleryVisibilityDate: new Date('2024-11-02T12:00:00').toISOString(),
-        galleryExpirationDate: new Date('2025-05-01T12:00:00').toISOString(),
+        galleryVisibilityDate: new Date('2024-07-21T12:00:00').toISOString(),
+        galleryExpirationDate: new Date('2025-01-20T12:00:00').toISOString(),
     },
     {
         id: 'evt-789',

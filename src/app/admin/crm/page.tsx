@@ -69,7 +69,7 @@ export default function CrmPage() {
 
   const filteredLeads = leads.filter(lead => filter === 'all' || lead.status === filter);
   
-  const handleActionClick = (eventId: string, action: 'qr' | 'link' | 'settings') => {
+  const handleActionClick = (eventId: string) => {
       toast({
           title: 'Action Redirect',
           description: `This action should be performed on the event management page. Redirecting...`,
@@ -146,11 +146,11 @@ export default function CrmPage() {
                                         {lead.eventId && (
                                           <>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!, 'qr')}>
+                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!)}>
                                                 <QrCode className="mr-2 h-4 w-4" />
                                                 Generate Upload QR
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!, 'link')}>
+                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!)}>
                                                 <LinkIcon className="mr-2 h-4 w-4" />
                                                 Set Photo Booth Link
                                             </DropdownMenuItem>

@@ -7,7 +7,6 @@ import { use, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { User, Calendar, FileText, ArrowRight, Check, X, Mail } from 'lucide-react';
@@ -64,6 +63,22 @@ function LeadDetailClient({ initialLead }: { initialLead: Lead }) {
     };
     
     return (
+        <>
+        <div className="flex items-center justify-between mb-8">
+            <div>
+                <h1 className="text-3xl font-bold tracking-tight">Lead: {lead.name}</h1>
+                <p className="text-muted-foreground">Manage this inquiry and convert it to a project.</p>
+            </div>
+            <div className="flex items-center gap-2">
+                <Button variant="outline"><Mail className="mr-2"/> Send Quote</Button>
+                <Button variant="outline"><Check className="mr-2"/> Mark Accepted</Button>
+                <Button onClick={handleConvert} disabled={isConverting}>
+                    {isConverting ? 'Converting...' : 'Convert to Project'}
+                    <ArrowRight className="ml-2"/>
+                </Button>
+            </div>
+        </div>
+
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content: Quote Builder */}
             <div className="lg:col-span-2">
@@ -114,13 +129,6 @@ function LeadDetailClient({ initialLead }: { initialLead: Lead }) {
                             <span>Total:</span>
                             <span>${total.toFixed(2)}</span>
                         </div>
-                         <div className="mt-6 flex justify-end gap-2">
-                            <Button variant="outline"><Mail /> Send Quote</Button>
-                            <Button onClick={handleConvert} disabled={isConverting}>
-                                {isConverting ? 'Converting...' : 'Convert to Project'}
-                                <ArrowRight />
-                             </Button>
-                         </div>
                     </CardContent>
                 </Card>
             </div>
@@ -149,20 +157,17 @@ function LeadDetailClient({ initialLead }: { initialLead: Lead }) {
                         )}
                     </CardContent>
                 </Card>
-
-                 <Card>
+                <Card>
                     <CardHeader>
                         <CardTitle>Manual Actions</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-3">
-                         <div className="grid grid-cols-2 gap-2">
-                            <Button variant="outline" className="w-full"><Check /> Mark Accepted</Button>
-                            <Button variant="destructive" className="w-full"><X /> Mark Rejected</Button>
-                         </div>
-                    </CardContent>
+                     <CardContent className="grid grid-cols-2 gap-2">
+                        <Button variant="destructive" className="w-full"><X className="mr-2" /> Mark Rejected</Button>
+                     </CardContent>
                 </Card>
             </div>
         </div>
+        </>
     )
 }
 

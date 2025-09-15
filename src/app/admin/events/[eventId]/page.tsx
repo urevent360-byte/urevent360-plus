@@ -247,7 +247,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
             <TabsContent value="communication">
-                <EventChat role="admin" />
+                <EventChat eventId={eventId} role="admin" />
             </TabsContent>
              <TabsContent value="my-services">
                  <Card>

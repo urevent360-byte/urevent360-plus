@@ -226,7 +226,7 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
             <TabsContent value="communication">
-                <EventChat role="host" />
+                 <EventChat eventId={eventId} role="host" />
             </TabsContent>
              <TabsContent value="my-services">
                  <Card>

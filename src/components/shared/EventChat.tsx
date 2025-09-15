@@ -5,33 +5,48 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Send, Bot, User, Info, CheckCircle, FileText, BadgeDollarSign } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Send, Bot, User, Info, CheckCircle, FileText, BadgeDollarSign, Loader2 } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { listMessages, sendMessage, type ChatMessage } from '@/lib/data-adapter';
+import { useToast } from '@/hooks/use-toast';
 
-type Message = {
-    sender: 'user' | 'admin' | 'system';
-    text: string;
-    timestamp: string;
-    icon?: React.ReactNode;
+const systemIcons: Record<string, React.ReactNode> = {
+    'Invoice created.': <BadgeDollarSign />,
+    'Contract sent to client.': <FileText />,
+    'Contract signed by client.': <CheckCircle />,
+    'Deposit paid by client. Portal is now unlocked.': <CheckCircle />,
+    'Event created from lead.': <Info />,
 };
 
-const placeholderMessages: Message[] = [
-    { sender: 'system', text: 'Event created from lead.', timestamp: '2024-07-30T10:00:00Z', icon: <Info /> },
-    { sender: 'admin', text: 'Hi! I\'ve sent over the contract and invoice for you to review.', timestamp: '2024-07-30T10:05:00Z' },
-    { sender: 'system', text: 'Contract sent to client.', timestamp: '2024-07-30T10:05:10Z', icon: <FileText /> },
-    { sender: 'system', text: 'Invoice created.', timestamp: '2024-07-30T10:05:20Z', icon: <BadgeDollarSign /> },
-    { sender: 'user', text: 'Great, thanks! I will review it shortly.', timestamp: '2024-07-30T10:15:00Z' },
-    { sender: 'user', text: 'I\'ve signed the contract and paid the deposit!', timestamp: '2024-07-30T11:30:00Z' },
-    { sender: 'system', text: 'Contract signed by client.', timestamp: '2024-07-30T11:30:05Z', icon: <CheckCircle /> },
-    { sender: 'system', text: 'Deposit paid by client. Portal is now unlocked.', timestamp: '2024-07-30T11:30:15Z', icon: <CheckCircle /> },
-];
+const getSystemIcon = (text: string) => {
+    return systemIcons[text] || <Info />;
+};
 
-export function EventChat({ role }: { role: 'admin' | 'host' }) {
-    const [messages, setMessages] = useState<Message[]>(placeholderMessages);
+
+export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 'host' }) {
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const chatContentRef = useRef<HTMLDivElement>(null);
+    const { toast } = useToast();
+
+    const fetchMessages = async () => {
+        setIsLoading(true);
+        try {
+            const fetchedMessages = await listMessages(eventId);
+            setMessages(fetchedMessages);
+        } catch (error) {
+            toast({ title: "Error", description: "Could not load chat messages.", variant: "destructive" });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+    }, [eventId]);
 
     useEffect(() => {
         if (chatContentRef.current) {
@@ -39,23 +54,35 @@ export function EventChat({ role }: { role: 'admin' | 'host' }) {
         }
     }, [messages]);
 
-    const handleSendMessage = () => {
+    const handleSendMessage = async () => {
         if (input.trim() === '') return;
 
-        const newMessage: Message = {
+        const newMessage: ChatMessage = {
             sender: role === 'admin' ? 'admin' : 'user',
             text: input,
             timestamp: new Date().toISOString(),
         };
 
-        setMessages(prev => [...prev, newMessage]);
+        const optimisticMessages = [...messages, newMessage];
+        setMessages(optimisticMessages);
+        const currentInput = input;
         setInput('');
+        
+        try {
+            await sendMessage(eventId, newMessage);
+            // Optional: refetch messages to confirm, or trust the optimistic update
+            // await fetchMessages(); 
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to send message.", variant: "destructive" });
+            // Revert optimistic update
+            setMessages(messages);
+            setInput(currentInput);
+        }
     };
     
-    // Determine which name and avatar to show for admin/user
     const senderDetails = {
-        admin: { name: 'Admin', avatar: '/avatars/admin.png' },
-        user: { name: 'Client', avatar: '/avatars/client.png' }
+        admin: { name: 'Admin' },
+        user: { name: 'Client' }
     };
 
     return (
@@ -65,14 +92,18 @@ export function EventChat({ role }: { role: 'admin' | 'host' }) {
                 <CardDescription>This is the central chat for this event. Messages and system notifications will appear here.</CardDescription>
             </CardHeader>
             <CardContent ref={chatContentRef} className="flex-grow overflow-y-auto p-4 space-y-4 bg-muted/20">
-                {messages.map((msg, index) => {
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-full">
+                        <Loader2 className="animate-spin text-muted-foreground" />
+                    </div>
+                ) : messages.map((msg, index) => {
                     const isCurrentUser = (role === 'admin' && msg.sender === 'admin') || (role === 'host' && msg.sender === 'user');
 
                     if (msg.sender === 'system') {
                         return (
                              <div key={index} className="flex items-center justify-center gap-2 text-xs text-muted-foreground my-4">
                                 <div className="h-px flex-grow bg-border"></div>
-                                {msg.icon}
+                                {getSystemIcon(msg.text)}
                                 <span>{msg.text}</span>
                                 <span className="text-xs">({format(new Date(msg.timestamp), 'p')})</span>
                                 <div className="h-px flex-grow bg-border"></div>
@@ -112,6 +143,11 @@ export function EventChat({ role }: { role: 'admin' | 'host' }) {
                         </div>
                     );
                 })}
+                 {!isLoading && messages.length === 0 && (
+                    <div className="text-center text-muted-foreground pt-16">
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
+                )}
             </CardContent>
             <div className="p-4 border-t">
                 <div className="flex items-center gap-2">

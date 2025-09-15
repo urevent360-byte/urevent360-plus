@@ -401,5 +401,39 @@
       "en": "Will be removed on",
       "es": "Se eliminará el"
     }
+  },
+  "music": {
+    "title": {
+      "en": "Music Preferences",
+      "es": "Preferencias musicales"
+    },
+    "connectSpotify": {
+      "en": "Connect Spotify",
+      "es": "Conectar Spotify"
+    },
+    "searchSongs": {
+      "en": "Search songs…",
+      "es": "Buscar canciones…"
+    },
+    "addSong": {
+      "en": "Add Song",
+      "es": "Añadir canción"
+    },
+    "mustPlay": {
+      "en": "Must-play",
+      "es": "Tocar sí o sí"
+    },
+    "doNotPlay": {
+      "en": "Do-not-play",
+      "es": "No tocar"
+    },
+    "remove": {
+      "en": "Remove",
+      "es": "Quitar"
+    },
+    "saveList": {
+      "en": "Save Playlist",
+      "es": "Guardar lista"
+    }
   }
 }

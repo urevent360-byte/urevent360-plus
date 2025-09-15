@@ -353,9 +353,3 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
     return <AdminEventDetailClient eventId={params.eventId} />;
 }
-
-    
-
-    
-
-    

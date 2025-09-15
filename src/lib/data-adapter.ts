@@ -660,7 +660,3 @@ export async function sendMessage(eventId: string, msg: ChatMessage): Promise<vo
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
 }
-
-    
-
-    

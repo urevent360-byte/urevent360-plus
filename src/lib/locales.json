@@ -524,5 +524,47 @@
         "es": "Eliminar"
       }
     }
+  },
+  "toast": {
+    "saved": {
+      "en": "Saved successfully",
+      "es": "Guardado correctamente"
+    },
+    "updated": {
+      "en": "Updated",
+      "es": "Actualizado"
+    },
+    "converted": {
+      "en": "Lead converted to project",
+      "es": "Lead convertido a proyecto"
+    },
+    "invoiceCreated": {
+      "en": "Invoice created & sent",
+      "es": "Factura creada y enviada"
+    },
+    "contractSigned": {
+      "en": "Contract signed",
+      "es": "Contrato firmado"
+    },
+    "paymentReceived": {
+      "en": "Payment received",
+      "es": "Pago recibido"
+    },
+    "googleConnected": {
+      "en": "Google connected",
+      "es": "Google conectado"
+    },
+    "googleDisconnected": {
+      "en": "Google disconnected",
+      "es": "Google desconectado"
+    },
+    "syncComplete": {
+      "en": "Sync complete",
+      "es": "Sincronización completa"
+    },
+    "syncFailed": {
+      "en": "Sync failed",
+      "es": "Error de sincronización"
+    }
   }
 }

@@ -203,7 +203,7 @@ let MOCK_EVENTS: Event[] = [
         confirmedAt: new Date().toISOString(),
         contractSigned: true,
         photoboothLink: 'https://photos.app.goo.gl/sample1',
-        galleryVisibilityDate: add(new Date(), { days: -1 }).toISOString(),
+        galleryVisibilityDate: add(new Date(), { days: 10 }).toISOString(),
         galleryExpirationDate: add(new Date(), { months: 6 }).toISOString(),
     },
      {
@@ -242,7 +242,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
     ]
 };
 
-const MOCK_TIMELINE: Record<string, TimelineItem[]> = {
+let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     'evt-456': [
         { id: 'tl-1', title: 'DJ Setup', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', status: 'completed', isSyncedToGoogle: true },
         { id: 'tl-2', title: 'Magic Mirror Opens', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', status: 'completed', isSyncedToGoogle: true },

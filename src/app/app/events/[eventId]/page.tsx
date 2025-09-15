@@ -355,5 +355,3 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
 export default function AppEventDetailPage({ params }: { params: { eventId: string } }) {
   return <AppEventDetailClient eventId={params.eventId} />;
 }
-
-    

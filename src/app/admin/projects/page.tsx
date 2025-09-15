@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { format, startOfWeek, addDays, getWeek } from 'date-fns';
+import { format, startOfWeek, addDays, getWeek, isSameDay } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
@@ -27,7 +27,7 @@ const placeholderProjects: Project[] = [
     { id: 'evt-123', clientName: 'John Doe', eventName: "John's Quinceañera", eventDate: new Date('2024-10-15'), status: 'planning', services: ['360 Photo Booth', 'Cold Sparklers'], team: ['Alex', 'Maria'] },
     { id: 'evt-456', clientName: 'David Lee', eventName: "Lee Corporate Gala", eventDate: new Date('2024-07-20'), status: 'completed', services: ['Magic Mirror'], team: ['Alex'] },
     { id: 'evt-789', clientName: 'Jane Smith', eventName: "Smith Wedding", eventDate: new Date('2024-11-01'), status: 'booked', services: ['Photo Booth Printer'], team: ['Carlos'] },
-    { id: 'evt-test-this-week', clientName: 'Test Client', eventName: "Weekly Test Event", eventDate: addDays(new Date(), 2), status: 'active', services: ['Projector'], team: ['Maria'] },
+    { id: 'evt-test-this-week', clientName: 'Test Client', eventName: "Weekly Test Event", eventDate: addDays(startOfWeek(new Date(), { weekStartsOn: 1 }), 2), status: 'active', services: ['Projector'], team: ['Maria'] },
 ];
 
 
@@ -60,7 +60,7 @@ export default function ProjectsPage() {
     const projectsByDay: Record<string, Project[]> = {};
     weekDates.forEach(date => {
         const dateString = format(date, 'yyyy-MM-dd');
-        projectsByDay[dateString] = filteredProjects.filter(p => format(p.eventDate, 'yyyy-MM-dd') === dateString);
+        projectsByDay[dateString] = filteredProjects.filter(p => isSameDay(p.eventDate, date));
     });
 
     const totalProjectsThisWeek = Object.values(projectsByDay).reduce((acc, dayProjects) => acc + dayProjects.length, 0);
@@ -125,39 +125,42 @@ export default function ProjectsPage() {
                     {weekDates.map(date => {
                         const dateString = format(date, 'yyyy-MM-dd');
                         const dayProjects = projectsByDay[dateString];
-                        if (dayProjects.length === 0) return null;
-
+                        
                         return (
                             <div key={dateString}>
                                 <h3 className="font-semibold text-lg mb-2 border-b pb-1">{format(date, 'EEEE, MMMM d')}</h3>
-                                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                                {dayProjects.map(project => (
-                                     <Card key={project.id}>
-                                         <CardHeader>
-                                             <CardTitle className="text-base truncate">{project.eventName}</CardTitle>
-                                             <CardDescription>{project.clientName}</CardDescription>
-                                         </CardHeader>
-                                         <CardContent className="space-y-3">
-                                            <Badge variant="outline" className="capitalize">{project.status.replace('_', ' ')}</Badge>
-                                             <div className="text-sm space-y-1">
-                                                 <p className="font-medium">Services:</p>
-                                                 <div className="flex flex-wrap gap-1">
-                                                     {project.services.map(s => <Badge key={s} variant="secondary">{s}</Badge>)}
-                                                 </div>
-                                             </div>
-                                             <div className="text-sm space-y-1">
-                                                 <p className="font-medium">Team:</p>
-                                                 <div className="flex flex-wrap gap-1">
-                                                     {project.team.map(t => <Badge key={t} variant="secondary" className="bg-blue-100 text-blue-800">{t}</Badge>)}
-                                                 </div>
-                                             </div>
-                                             <Button asChild variant="link" className="p-0 h-auto">
-                                                <Link href={`/admin/events/${project.id}`}>View Project Details</Link>
-                                             </Button>
-                                         </CardContent>
-                                     </Card>
-                                ))}
-                                </div>
+                                {dayProjects.length > 0 ? (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                                        {dayProjects.map(project => (
+                                            <Card key={project.id}>
+                                                <CardHeader>
+                                                    <CardTitle className="text-base truncate">{project.eventName}</CardTitle>
+                                                    <CardDescription>{project.clientName}</CardDescription>
+                                                </CardHeader>
+                                                <CardContent className="space-y-3">
+                                                    <Badge variant="outline" className="capitalize">{project.status.replace('_', ' ')}</Badge>
+                                                    <div className="text-sm space-y-1">
+                                                        <p className="font-medium">Services:</p>
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {project.services.map(s => <Badge key={s} variant="secondary">{s}</Badge>)}
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-sm space-y-1">
+                                                        <p className="font-medium">Team:</p>
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {project.team.map(t => <Badge key={t} variant="secondary" className="bg-blue-100 text-blue-800">{t}</Badge>)}
+                                                        </div>
+                                                    </div>
+                                                    <Button asChild variant="link" className="p-0 h-auto">
+                                                        <Link href={`/admin/events/${project.id}`}>View Project Details</Link>
+                                                    </Button>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-sm text-muted-foreground">No projects scheduled for this day.</p>
+                                )}
                             </div>
                         )
                     })}
@@ -169,3 +172,5 @@ export default function ProjectsPage() {
         </div>
     );
 }
+
+    

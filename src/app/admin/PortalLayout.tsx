@@ -50,7 +50,7 @@ export default function AdminPortalLayout({
               <SidebarMenuButton asChild>
                 <Link href="/admin/projects">
                   <Briefcase />
-                  Projects
+                  Projects (Weekly)
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -58,7 +58,7 @@ export default function AdminPortalLayout({
               <SidebarMenuButton asChild>
                 <Link href="/admin/events">
                   <FolderKanban />
-                  All Events
+                  Events (List View)
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -152,3 +152,5 @@ export default function AdminPortalLayout({
     </SidebarProvider>
   );
 }
+
+    

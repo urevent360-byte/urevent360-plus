@@ -7,10 +7,10 @@ import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { PartyPopper, CheckCircle2, MoreHorizontal } from 'lucide-react';
+import { PartyPopper, CheckCircle2, MoreHorizontal, Clock, Hourglass, FileText, AlertTriangle, XCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-type Status = 'confirmed' | 'completed';
+type Status = 'booked' | 'completed' | 'quote_requested' | 'contract_sent' | 'invoice_sent' | 'deposit_due' | 'canceled';
 
 const placeholderEvents = [
     {
@@ -18,7 +18,7 @@ const placeholderEvents = [
         clientName: 'John Doe',
         serviceName: '360 Photo Booth',
         eventDate: new Date('2024-08-25T18:00:00'),
-        status: 'confirmed' as Status
+        status: 'booked' as Status
     },
     {
         id: 'event2',
@@ -32,8 +32,15 @@ const placeholderEvents = [
         clientName: 'John Doe',
         serviceName: 'Cold Sparklers',
         eventDate: new Date('2024-08-25T21:00:00'),
-        status: 'confirmed' as Status
+        status: 'booked' as Status
     },
+    {
+        id: 'event4',
+        clientName: 'New Client',
+        serviceName: 'La Hora Loca',
+        eventDate: new Date('2024-09-10T21:00:00'),
+        status: 'quote_requested' as Status
+    }
 ];
 
 const statusDetails: Record<Status, {
@@ -42,8 +49,32 @@ const statusDetails: Record<Status, {
     badge: string;
     calendar: string;
 }> = {
-    confirmed: {
-        label: { en: 'Confirmed', es: 'Confirmado' },
+    quote_requested: {
+        label: { en: 'Quote Requested', es: 'Cotización Solicitada' },
+        icon: <FileText className="mr-2 h-4 w-4 text-gray-500" />,
+        badge: 'bg-gray-500/20 text-gray-700 border-gray-500/30 hover:bg-gray-500/30',
+        calendar: 'bg-gray-500/30 text-gray-700'
+    },
+    contract_sent: {
+        label: { en: 'Contract Sent', es: 'Contrato Enviado' },
+        icon: <FileText className="mr-2 h-4 w-4 text-yellow-500" />,
+        badge: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30 hover:bg-yellow-500/30',
+        calendar: 'bg-yellow-500/30 text-yellow-700'
+    },
+     invoice_sent: {
+        label: { en: 'Invoice Sent', es: 'Factura Enviada' },
+        icon: <FileText className="mr-2 h-4 w-4 text-orange-500" />,
+        badge: 'bg-orange-500/20 text-orange-700 border-orange-500/30 hover:bg-orange-500/30',
+        calendar: 'bg-orange-500/30 text-orange-700'
+    },
+    deposit_due: {
+        label: { en: 'Deposit Due', es: 'Depósito Pendiente' },
+        icon: <Hourglass className="mr-2 h-4 w-4 text-purple-500" />,
+        badge: 'bg-purple-500/20 text-purple-700 border-purple-500/30 hover:bg-purple-500/30',
+        calendar: 'bg-purple-500/30 text-purple-700'
+    },
+    booked: {
+        label: { en: 'Booked', es: 'Reservado' },
         icon: <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />,
         badge: 'bg-green-500/20 text-green-700 border-green-500/30 hover:bg-green-500/30',
         calendar: 'bg-green-500/30 text-green-700'
@@ -54,13 +85,19 @@ const statusDetails: Record<Status, {
         badge: 'bg-blue-500/20 text-blue-700 border-blue-500/30 hover:bg-blue-500/30',
         calendar: 'bg-blue-500/30 text-blue-700'
     },
+    canceled: {
+        label: { en: 'Canceled', es: 'Cancelado' },
+        icon: <XCircle className="mr-2 h-4 w-4 text-red-500" />,
+        badge: 'bg-red-500/20 text-red-700 border-red-500/30 hover:bg-red-500/30',
+        calendar: 'bg-red-500/30 text-red-700'
+    },
 };
 
 export default function CalendarPage() {
     const [date, setDate] = useState<Date | undefined>(new Date());
     const [language, setLanguage] = useState<'en' | 'es'>('en');
     
-    const upcomingEvents = placeholderEvents.filter(b => b.status === 'confirmed');
+    const upcomingEvents = placeholderEvents.filter(b => b.status !== 'completed');
     const pastEvents = placeholderEvents.filter(b => b.status === 'completed');
 
     const EventList = ({ title, events }: { title: string, events: typeof placeholderEvents }) => (
@@ -135,11 +172,11 @@ export default function CalendarPage() {
                                 onSelect={setDate}
                                 className="rounded-md"
                                 modifiers={{
-                                    confirmed: getEventDates('confirmed'),
+                                    booked: getEventDates('booked'),
                                     completed: getEventDates('completed'),
                                 }}
                                 modifiersClassNames={{
-                                    confirmed: `font-bold ${statusDetails.confirmed.calendar} rounded-md`,
+                                    booked: `font-bold ${statusDetails.booked.calendar} rounded-md`,
                                     completed: `font-bold ${statusDetails.completed.calendar} rounded-md`,
                                 }}
                             />

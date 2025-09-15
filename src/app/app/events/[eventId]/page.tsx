@@ -8,10 +8,19 @@ import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import type { Event, FileRecord } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, CreditCard, Lock, PartyPopper, CheckCircle } from 'lucide-react';
+import { FileText, CreditCard, Lock, PartyPopper, CheckCircle, ExternalLink, Circle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
+
+// MOCK DATA for Timeline - should be the same as admin view
+const timelineItems = [
+    { id: 1, time: '6:00 PM', description: 'Photo Booth Setup Begins', status: 'approved', synced: false },
+    { id: 2, time: '7:00 PM', description: 'Photo Booth Opens', status: 'approved', synced: true },
+    { id: 3, time: '9:00 PM', description: 'Hora Loca Performance', status: 'pending', synced: false },
+    { id: 4, time: '10:00 PM', description: 'Cold Sparklers for Cake Cutting', status: 'approved', synced: false },
+    { id: 5, time: '11:00 PM', description: 'Photo Booth Closes', status: 'approved', synced: true },
+];
 
 function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivate: () => void; onSign: () => void; }) {
     const { toast } = useToast();
@@ -29,7 +38,6 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
             return;
         }
         toast({ title: 'Payment Simulated', description: 'Redirecting to payment provider...' });
-        // In a real app, a webhook would update the status. Here, we simulate it.
         setTimeout(() => {
             setHasPaid(true);
             toast({ title: 'Deposit Paid!', description: 'Your deposit has been successfully processed.'});
@@ -41,12 +49,11 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
              toast({ title: 'Contract not ready', description: 'Admin has not sent the contract yet.', variant: 'destructive' });
              return;
         }
-        onSign(); // This will update the file status to "signed"
+        onSign(); 
         toast({ title: 'Contract Signed!', description: 'Thank you for signing the contract.' });
     };
 
     useEffect(() => {
-        // Automatically activate if both conditions are met
         if(hasPaid && event.contractSigned) {
             onActivate();
         }
@@ -119,9 +126,42 @@ function HostFilesTab({ files }: { files: FileRecord[] }) {
                     </div>
                 )}
             </CardContent>
-    )
+        </Card>
+    );
 }
 
+function HostTimelineTab() {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Event Timeline</CardTitle>
+                <CardDescription>Review the schedule for your event. Contact us for any changes.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    {timelineItems.map(item => (
+                         <Card key={item.id} className="p-4 flex items-center justify-between">
+                            <div>
+                                <span className="font-bold mr-4">{item.time}</span>
+                                <span>{item.description}</span>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm">
+                                {item.status === 'approved' ? (
+                                    <span className="text-green-600 flex items-center gap-1"><CheckCircle/>Approved</span>
+                                ) : (
+                                    <span className="text-yellow-600">Pending Approval</span>
+                                )}
+                                {item.synced && (
+                                     <span className="text-blue-600 flex items-center gap-1"><Circle className="fill-blue-500 text-blue-500"/> On Calendar</span>
+                                )}
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 function EventProfileLoader() {
     return (
@@ -144,7 +184,6 @@ function EventProfileLoader() {
     )
 }
 
-// Main Page Component
 export default function AppEventDetailPage() {
   const params = useParams();
   const eventId = params.eventId as string;
@@ -158,7 +197,6 @@ export default function AppEventDetailPage() {
   useEffect(() => {
     if (initialEventData) {
         setEvent(initialEventData);
-        // Simulate fetching files based on event status
         if (initialEventData.status === 'contract_sent' || initialEventData.status === 'invoice_sent' || initialEventData.status === 'deposit_due') {
             setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'pending_signature', url: '/placeholder-contract.pdf' }]);
         } else if (initialEventData.status === 'booked' || initialEventData.status === 'completed') {
@@ -192,21 +230,20 @@ export default function AppEventDetailPage() {
     notFound();
   }
   
-  // A 'booked' or 'completed' event is considered activated.
   const isActivated = event.status === 'booked' || event.status === 'completed';
 
   return (
     <div>
         {isActivated ? (
             <EventProfileShell event={event} role="host">
-                <TabsContent value="details"><Card><CardHeader><CardTitle>Event Details</CardTitle></CardHeader><CardContent><p>Details about the event will be managed here.</p></CardContent></Card></TabsContent>
-                <TabsContent value="timeline"><Card><CardHeader><CardTitle>Event Timeline</CardTitle></CardHeader><CardContent><p>Review your event timeline here.</p></CardContent></Card></TabsContent>
+                <TabsContent value="details"><Card><CardHeader><CardTitle>Event Details</CardTitle></CardHeader><CardContent><p>Review your event's core details here. Contact us for any changes.</p></CardContent></Card></TabsContent>
+                <TabsContent value="timeline"><HostTimelineTab /></TabsContent>
                 <TabsContent value="files"><HostFilesTab files={files} /></TabsContent>
-                <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery</CardTitle></CardHeader><CardContent><p>Access your event photo gallery here.</p></CardContent></Card></TabsContent>
-                <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle></CardHeader><CardContent><p>Share this QR code with your guests to allow them to upload photos.</p></CardContent></Card></TabsContent>
-                <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle></CardHeader><CardContent><p>Submit your music requests and do-not-play list.</p></CardContent></Card></TabsContent>
-                <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle></CardHeader><CardContent><p>Chat with us about your event.</p></CardContent></Card></TabsContent>
-                <TabsContent value="my-services"><Card><CardHeader><CardTitle>My Services</CardTitle></CardHeader><CardContent><p>Review your booked services and request add-ons.</p></CardContent></Card></TabsContent>
+                <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery</CardTitle><CardDescription>Access your official photos and community uploads.</CardDescription></CardHeader><CardContent><p>Access your event photo gallery here once it becomes available after the event date.</p></CardContent></Card></TabsContent>
+                <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Share this to let guests upload photos.</CardDescription></CardHeader><CardContent><p>Share this QR code with your guests to allow them to upload photos to the community gallery.</p></CardContent></Card></TabsContent>
+                <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Submit your music preferences.</CardDescription></CardHeader><CardContent><p>Submit your music requests and do-not-play list for the DJ.</p></CardContent></Card></TabsContent>
+                <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>Chat directly with our team.</CardDescription></CardHeader><CardContent><p>Chat with us about your event. This is the best place for quick questions.</p></CardContent></Card></TabsContent>
+                <TabsContent value="my-services"><Card><CardHeader><CardTitle>My Services</CardTitle><CardDescription>Review your booked services and request add-ons.</CardDescription></CardHeader><CardContent><p>Review your booked services and request add-ons.</p></CardContent></Card></TabsContent>
             </EventProfileShell>
         ) : (
             <ActivationGate event={event} onActivate={handleActivate} onSign={handleSignContract} />
@@ -214,5 +251,3 @@ export default function AppEventDetailPage() {
     </div>
   );
 }
-
-    

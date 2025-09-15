@@ -11,7 +11,18 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
-import { FileText, UploadCloud, CheckCircle } from 'lucide-react';
+import { FileText, UploadCloud, CheckCircle, Check, Shield, Circle, ExternalLink } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+
+// MOCK DATA for Timeline
+const timelineItems = [
+    { id: 1, time: '6:00 PM', description: 'Photo Booth Setup Begins', status: 'approved', synced: false },
+    { id: 2, time: '7:00 PM', description: 'Photo Booth Opens', status: 'approved', synced: true },
+    { id: 3, time: '9:00 PM', description: 'Hora Loca Performance', status: 'pending', synced: false },
+    { id: 4, time: '10:00 PM', description: 'Cold Sparklers for Cake Cutting', status: 'approved', synced: false },
+    { id: 5, time: '11:00 PM', description: 'Photo Booth Closes', status: 'approved', synced: true },
+];
 
 function AdminBillingTab({ event, setEvent }: { event: Event, setEvent: (event: Event) => void }) {
     const { toast } = useToast();
@@ -61,8 +72,6 @@ function AdminFilesTab({ files, setFiles, event, setEvent }: { files: FileRecord
     const { toast } = useToast();
     
     const handleSendContract = () => {
-        // In a real app, this would involve selecting a template.
-        // For now, we'll just add a placeholder contract to the list.
         const newFile: FileRecord = {
             id: `file-${Date.now()}`,
             name: 'Event Contract',
@@ -114,6 +123,49 @@ function AdminFilesTab({ files, setFiles, event, setEvent }: { files: FileRecord
     );
 }
 
+function AdminTimelineTab() {
+    const { toast } = useToast();
+    const [items, setItems] = useState(timelineItems);
+
+    const handleSync = (itemId: number) => {
+        setItems(items.map(item => item.id === itemId ? { ...item, synced: true } : item));
+        toast({ title: 'Synced!', description: 'Item has been synced to Google Calendar.' });
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Event Timeline</CardTitle>
+                <CardDescription>Approve timeline items and sync them to Google Calendar.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    {items.map(item => (
+                        <Card key={item.id} className="p-4 flex items-center justify-between">
+                            <div>
+                                <span className="font-bold mr-4">{item.time}</span>
+                                <span>{item.description}</span>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                {item.status === 'pending' ? (
+                                    <Button variant="outline" size="sm"><Check className="mr-2" />Approve</Button>
+                                ) : (
+                                    <span className="text-sm text-green-600 flex items-center gap-1"><CheckCircle/>Approved</span>
+                                )}
+                                <div className="flex items-center space-x-2">
+                                    <Switch id={`sync-${item.id}`} checked={item.synced} onCheckedChange={() => handleSync(item.id)} />
+                                    <Label htmlFor={`sync-${item.id}`} className="flex items-center gap-1">
+                                        {item.synced ? <><Circle className="fill-blue-500 text-blue-500"/> Synced</> : 'Sync'}
+                                    </Label>
+                                </div>
+                            </div>
+                        </Card>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
 
 function EventProfileLoader() {
     return (
@@ -148,7 +200,6 @@ export default function AdminEventDetailPage() {
     useEffect(() => {
         if (initialEventData) {
             setEvent(initialEventData);
-            // Simulate fetching files for the event
             if (initialEventData.status === 'booked' || initialEventData.status === 'completed' || initialEventData.status === 'deposit_due') {
                 setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'signed', url: '/placeholder-contract.pdf' }]);
             } else if (initialEventData.status === 'contract_sent' || initialEventData.status === 'invoice_sent') {
@@ -169,20 +220,20 @@ export default function AdminEventDetailPage() {
     return (
         <EventProfileShell event={event} role="admin">
             <TabsContent value="details">
-                <Card><CardHeader><CardTitle>Event Details</CardTitle></CardHeader><CardContent><p>Details about the event will be managed here.</p></CardContent></Card>
+                <Card><CardHeader><CardTitle>Event Details</CardTitle><CardDescription>Manage general event information.</CardDescription></CardHeader><CardContent><p>This section will contain forms to edit the event name, date, client details, and other core information.</p></CardContent></Card>
             </TabsContent>
             <TabsContent value="billing">
                 <AdminBillingTab event={event} setEvent={setEvent} />
             </TabsContent>
-            <TabsContent value="timeline"><Card><CardHeader><CardTitle>Event Timeline</CardTitle></CardHeader><CardContent><p>Admins can approve timeline items and sync them to Google Calendar.</p></CardContent></Card></TabsContent>
+            <TabsContent value="timeline"><AdminTimelineTab /></TabsContent>
             <TabsContent value="files">
                 <AdminFilesTab files={files} setFiles={setFiles} event={event} setEvent={setEvent} />
             </TabsContent>
-            <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery Settings</CardTitle></CardHeader><CardContent><p>Configure photo booth album URLs, QR code settings, and gallery visibility windows.</p></CardContent></Card></TabsContent>
-            <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle></CardHeader><CardContent><p>Generate and display the QR code for guest photo uploads.</p></CardContent></Card></TabsContent>
-            <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle></CardHeader><CardContent><p>Manage music requests and do-not-play lists.</p></CardContent></Card></TabsContent>
-            <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle></CardHeader><CardContent><p>A dedicated chat for this event between the admin and the host.</p></CardContent></Card></TabsContent>
-            <TabsContent value="my-services"><Card><CardHeader><CardTitle>Requested Services</CardTitle></CardHeader><CardContent><p>Admin can approve additional service requests from the host. Approved services are then added to the invoice.</p></CardContent></Card></TabsContent>
+            <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery Settings</CardTitle><CardDescription>Configure photo booth album URLs and QR code settings.</CardDescription></CardHeader><CardContent><p>Configure photo booth album URLs, QR code settings, and gallery visibility windows.</p></CardContent></Card></TabsContent>
+            <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Generate and display the QR code for guest photo uploads.</CardDescription></CardHeader><CardContent><p>This tab will feature a large, printable QR code that links to the guest photo upload page for this event.</p></CardContent></Card></TabsContent>
+            <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Review the client's music requests.</CardDescription></CardHeader><CardContent><p>Manage music requests and do-not-play lists submitted by the client.</p></CardContent></Card></TabsContent>
+            <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>A dedicated chat for this event.</CardDescription></CardHeader><CardContent><p>A dedicated chat for this event between the admin and the host.</p></CardContent></Card></TabsContent>
+            <TabsContent value="my-services"><Card><CardHeader><CardTitle>Requested Services</CardTitle><CardDescription>Approve or modify the services for this event.</CardDescription></CardHeader><CardContent><p>Admin can approve additional service requests from the host. Approved services are then added to the invoice.</p></CardContent></Card></TabsContent>
         </EventProfileShell>
     );
 }

@@ -160,8 +160,8 @@ export default function CalendarPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-2 space-y-8">
-                   <EventList title="Upcoming Events" events={upcomingEvents} />
-                   <EventList title="Past Events" events={pastEvents} />
+                   <EventList title={language === 'en' ? "Upcoming Events" : "Eventos Próximos"} events={upcomingEvents} />
+                   <EventList title={language === 'en' ? "Past Events" : "Eventos Pasados"} events={pastEvents} />
                 </div>
                 <div className="lg:col-span-1">
                      <Card>
@@ -184,7 +184,7 @@ export default function CalendarPage() {
                     </Card>
                     <Card className="mt-4">
                         <CardHeader>
-                            <CardTitle>Legend</CardTitle>
+                            <CardTitle>{language === 'en' ? "Legend" : "Leyenda"}</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-2 text-sm">
                            {Object.entries(statusDetails).map(([status, details]) => (

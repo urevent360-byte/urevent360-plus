@@ -240,6 +240,12 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                     <CardContent><p>TODO: Build admin gallery controls (set Photo Booth link, manage guest uploads).</p></CardContent>
                 </Card>
             </TabsContent>
+             <TabsContent value="guest-qr">
+                <Card>
+                    <CardHeader><CardTitle>Guest Upload QR Code</CardTitle></CardHeader>
+                    <CardContent><p>TODO: Build QR code generator and manager for guest photo uploads.</p></CardContent>
+                </Card>
+            </TabsContent>
              <TabsContent value="music">
                 <Card>
                     <CardHeader><CardTitle>Music Playlist</CardTitle></CardHeader>

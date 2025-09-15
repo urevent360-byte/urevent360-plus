@@ -26,9 +26,10 @@ const adminTabs = [
   { value: 'timeline', label: 'Timeline' },
   { value: 'files', label: 'Files' },
   { value: 'gallery', label: 'Gallery' },
+  { value: 'guest-qr', label: 'Guest QR' },
   { value: 'music', label: 'Music' },
   { value: 'communication', label: 'Communication' },
-  { value: 'my-services', label: 'Services' },
+  { value: 'my-services', label: 'My Services' },
 ];
 
 const hostTabs = [
@@ -89,7 +90,7 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
         </Card>
 
       <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 md:grid-cols-4 lg:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-4 md:grid-cols-5 lg:grid-cols-9">
             {tabs.map(tab => (
                 <TabsTrigger key={tab.value} value={tab.value} disabled={isLocked && tab.value !== 'details'}>{tab.label}</TabsTrigger>
             ))}

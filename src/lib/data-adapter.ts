@@ -80,6 +80,22 @@ const TimelineItemSchema = z.object({
 });
 export type TimelineItem = z.infer<typeof TimelineItemSchema>;
 
+const AddonSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string(),
+  image: z.string(),
+});
+export type Addon = z.infer<typeof AddonSchema>;
+
+const RequestedServiceSchema = z.object({
+    id: z.string(),
+    eventId: z.string(),
+    serviceName: z.string(),
+    status: z.enum(['requested', 'approved', 'rejected']),
+});
+export type RequestedService = z.infer<typeof RequestedServiceSchema>;
+
 
 // --- Mock Data ---
 
@@ -194,6 +210,17 @@ const MOCK_TIMELINE: Record<string, TimelineItem[]> = {
         { id: 'tl-5', title: '360 Booth & Sparklers', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', status: 'upcoming', isSyncedToGoogle: false },
     ]
 };
+
+const MOCK_ADDONS: Addon[] = [
+    { id: 'addon-1', name: 'Extra Hour of Service', description: 'Extend the fun for one more hour.', image: 'https://picsum.photos/seed/addon1/400/300' },
+    { id: 'addon-2', name: 'Custom Prop Set', description: 'Props tailored to your event theme.', image: 'https://picsum.photos/seed/addon2/400/300' },
+    { id: 'addon-3', name: 'Guest Book Station', description: 'A station for guests to leave photo strips and messages.', image: 'https://picsum.photos/seed/addon3/400/300' },
+    { id: 'addon-4', name: 'Live Slideshow Screen', description: 'A large screen displaying photos in real-time.', image: 'https://picsum.photos/seed/addon4/400/300' },
+];
+
+let MOCK_REQUESTED_SERVICES: RequestedService[] = [
+    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested' }
+];
 
 // --- Data Adapter API ---
 // For now, all functions use mock data. We'll add TODOs for Firestore integration.
@@ -494,27 +521,67 @@ export async function getGuestUploads(eventId: string): Promise<any[]> {
 // === Services Adapter ===
 export async function listSelectedServices(eventId: string): Promise<any[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
-    console.log(`(Mock) Fetching selected services for event ${eventId}`);
-    return [{ id: 'svc-1', name: '360 Photo Booth', status: 'Booked' }];
+    if (DATA_SOURCE === 'mock') {
+        const lead = MOCK_LEADS.find(l => l.eventId === eventId);
+        if (lead) {
+            return lead.requestedServices.map(name => ({ id: `svc-${name.replace(/\s+/g, '-')}`, name: name, status: 'Booked' }));
+        }
+        return [{ id: 'svc-1', name: '360 Photo Booth', status: 'Booked' }];
+    }
+    // TODO: Implement Firestore query
+    throw new Error('Firestore not implemented');
 }
 
-export async function listAddons(): Promise<any[]> {
+export async function listAddons(): Promise<Addon[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
-    console.log(`(Mock) Fetching available add-ons`);
-    return [
-        { id: 'addon-1', name: 'Extra Hour', price: 150 },
-        { id: 'addon-2', name: 'Custom Props', price: 100 },
-    ];
+     if (DATA_SOURCE === 'mock') {
+        return MOCK_ADDONS;
+    }
+    // TODO: Implement Firestore query
+    throw new Error('Firestore not implemented');
 }
 
-export async function requestAddons(eventId: string, items: any[]): Promise<void> {
+export async function requestAddons(eventId: string, items: string[]): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log(`(Mock) Requested add-ons for event ${eventId}`, items);
+    if (DATA_SOURCE === 'mock') {
+        items.forEach(itemName => {
+            const newRequest: RequestedService = {
+                id: `req-${Math.random().toString(36).substring(7)}`,
+                eventId,
+                serviceName: itemName,
+                status: 'requested',
+            };
+            MOCK_REQUESTED_SERVICES.push(newRequest);
+        });
+        console.log(`(Mock) Requested add-ons for event ${eventId}:`, items);
+    }
+    // TODO: Implement Firestore write
+    throw new Error('Firestore not implemented');
+}
+
+export async function listRequestedServices(eventId: string): Promise<RequestedService[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_REQUESTED_SERVICES.filter(req => req.eventId === eventId);
+    }
+    // TODO: Implement Firestore query
+    throw new Error('Firestore not implemented');
 }
 
 export async function approveServiceRequest(eventId: string, requestId: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    console.log(`(Mock) Approved service request ${requestId} for event ${eventId}`);
+    if (DATA_SOURCE === 'mock') {
+        const request = MOCK_REQUESTED_SERVICES.find(req => req.id === requestId && req.eventId === eventId);
+        if (request) {
+            request.status = 'approved';
+            console.log(`(Mock) Approved service request ${requestId} for event ${eventId}`);
+        } else {
+            console.warn(`(Mock) Could not find service request ${requestId} to approve.`);
+        }
+        return;
+    }
+    // TODO: Implement Firestore update
+    throw new Error('Firestore not implemented');
 }
 
 // === Chat Adapter ===

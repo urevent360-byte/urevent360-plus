@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, RequestedService } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
@@ -20,6 +20,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+    const [requestedServices, setRequestedServices] = useState<RequestedService[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
@@ -29,14 +30,16 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles, fetchedTimeline] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests] = await Promise.all([
             getEvent(eventId),
             listFiles(eventId),
-            listTimeline(eventId)
+            listTimeline(eventId),
+            listRequestedServices(eventId)
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
         setTimeline(fetchedTimeline);
+        setRequestedServices(fetchedRequests);
         setIsLoading(false);
     }
 
@@ -97,6 +100,16 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
         const fetchedTimeline = await listTimeline(eventId);
         setTimeline(fetchedTimeline);
     };
+
+    const handleApproveRequest = async (requestId: string) => {
+        if (!event) return;
+        await approveServiceRequest(eventId, requestId);
+        toast({
+            title: "Service Approved",
+            description: "The service request has been approved and can now be added to an invoice.",
+        });
+        await fetchEventData();
+    }
 
     return (
         <EventProfileShell
@@ -238,8 +251,45 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             </TabsContent>
              <TabsContent value="my-services">
                  <Card>
-                    <CardHeader><CardTitle>Service & Add-on Management</CardTitle></CardHeader>
-                    <CardContent><p>TODO: View booked services and approve requested add-ons.</p></CardContent>
+                    <CardHeader>
+                        <CardTitle>Service & Add-on Management</CardTitle>
+                        <CardDescription>Review and approve requested add-on services from the client.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Service Name</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {requestedServices.map((req) => (
+                                    <TableRow key={req.id}>
+                                        <TableCell className="font-medium">{req.serviceName}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={req.status === 'approved' ? 'default' : 'outline'} className="capitalize">{req.status}</Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            {req.status === 'requested' && (
+                                                <Button size="sm" onClick={() => handleApproveRequest(req.id)}>
+                                                    <Check className="mr-2" />
+                                                    Approve
+                                                </Button>
+                                            )}
+                                             {req.status === 'approved' && (
+                                                <Button size="sm" variant="secondary">
+                                                    Add to Invoice
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                         {requestedServices.length === 0 && <p className="text-center text-muted-foreground p-8">No add-on services have been requested for this event.</p>}
+                    </CardContent>
                 </Card>
             </TabsContent>
         </EventProfileShell>

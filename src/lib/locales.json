@@ -143,5 +143,43 @@
       "en": "Guest QR",
       "es": "QR para invitados"
     }
+  },
+  "tabs": {
+    "details": {
+      "en": "Details",
+      "es": "Detalles"
+    },
+    "billing": {
+      "en": "Billing",
+      "es": "Pagos"
+    },
+    "timeline": {
+      "en": "Timeline",
+      "es": "Cronograma"
+    },
+    "files": {
+      "en": "Files",
+      "es": "Archivos"
+    },
+    "gallery": {
+      "en": "Gallery",
+      "es": "Galería"
+    },
+    "guestQr": {
+      "en": "Guest QR",
+      "es": "QR de invitados"
+    },
+    "music": {
+      "en": "Music",
+      "es": "Música"
+    },
+    "communication": {
+      "en": "Communication",
+      "es": "Comunicación"
+    },
+    "myServices": {
+      "en": "My Services",
+      "es": "Mis servicios"
+    }
   }
 }

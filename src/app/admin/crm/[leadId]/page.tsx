@@ -79,7 +79,21 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
     };
 
     if (isLoading) {
-        return <p>Loading lead details...</p>;
+        return (
+            <div className="space-y-6">
+                <Skeleton className="h-10 w-48" />
+                <Skeleton className="h-8 w-1/4" />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-1 space-y-8">
+                        <Skeleton className="h-48" />
+                        <Skeleton className="h-48" />
+                    </div>
+                    <div className="lg:col-span-2">
+                        <Skeleton className="h-96" />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (!lead) {
@@ -197,3 +211,5 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
 export default function AdminLeadDetailPage({ params }: { params: { leadId: string } }) {
   return <LeadDetailClient leadId={params.leadId} />;
 }
+
+    

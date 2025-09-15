@@ -37,5 +37,51 @@
       "en": "Loading…",
       "es": "Cargando…"
     }
+  },
+  "status": {
+    "new": {
+      "en": "New",
+      "es": "Nuevo"
+    },
+    "contacted": {
+      "en": "Contacted",
+      "es": "Contactado"
+    },
+    "follow_up": {
+      "en": "Follow-up",
+      "es": "Seguimiento"
+    },
+    "converted": {
+      "en": "Converted",
+      "es": "Convertido"
+    },
+    "archived": {
+      "en": "Archived",
+      "es": "Archivado"
+    },
+    "quote_requested": {
+      "en": "Quote Requested",
+      "es": "Cotización solicitada"
+    },
+    "invoice_sent": {
+      "en": "Invoice Sent",
+      "es": "Factura enviada"
+    },
+    "deposit_due": {
+      "en": "Deposit Due",
+      "es": "Depósito pendiente"
+    },
+    "booked": {
+      "en": "Booked",
+      "es": "Confirmado"
+    },
+    "completed": {
+      "en": "Completed",
+      "es": "Completado"
+    },
+    "canceled": {
+      "en": "Canceled",
+      "es": "Cancelado"
+    }
   }
 }

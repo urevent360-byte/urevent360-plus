@@ -83,5 +83,43 @@
       "en": "Canceled",
       "es": "Cancelado"
     }
+  },
+  "crm": {
+    "title": {
+        "en": "CRM & Leads",
+        "es": "CRM y Prospectos"
+    },
+    "allInquiries": {
+        "en": "All Inquiries",
+        "es": "Todas las solicitudes"
+    },
+    "viewEditLead": {
+        "en": "View/Edit Lead",
+        "es": "Ver/Editar lead"
+    },
+    "generateUploadQr": {
+        "en": "Generate Upload QR",
+        "es": "Generar QR de carga"
+    },
+    "addPhotoboothLink": {
+        "en": "Add Photo Booth Link",
+        "es": "Añadir enlace del photo booth"
+    },
+    "manageEventSettings": {
+        "en": "Manage Event Settings",
+        "es": "Ajustes del evento"
+    },
+    "sendQuote": {
+        "en": "Send Quote",
+        "es": "Enviar cotización"
+    },
+    "markAccepted": {
+        "en": "Mark Accepted",
+        "es": "Marcar como aceptado"
+    },
+    "convertToProject": {
+        "en": "Convert to Project",
+        "es": "Convertir a proyecto"
+    }
   }
 }

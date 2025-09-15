@@ -3,17 +3,21 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent } from '@/lib/data-adapter';
-import type { Event } from '@/lib/data-adapter';
+import { getEvent, markContractSigned, listFiles } from '@/lib/data-adapter';
+import type { Event, FileRecord } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Lock } from 'lucide-react';
+import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download } from 'lucide-react';
 import Link from 'next/link';
+import { useToast } from '@/hooks/use-toast';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
 
-function ActivationGate() {
+function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { onSign: () => void, onPay: () => void, signing: boolean, paying: boolean, contractSigned?: boolean }) {
     return (
         <Card>
             <CardHeader className="text-center">
@@ -24,8 +28,14 @@ function ActivationGate() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                <Button>Sign Contract</Button>
-                <Button>Pay Deposit Invoice</Button>
+                <Button onClick={onSign} disabled={signing || contractSigned}>
+                    {signing ? <Loader2 className="mr-2 animate-spin"/> : <FileSignature className="mr-2"/>}
+                    {contractSigned ? 'Contract Signed' : 'Sign Contract'}
+                </Button>
+                <Button onClick={onPay} disabled={paying}>
+                     {paying ? <Loader2 className="mr-2 animate-spin"/> : <BadgeDollarSign className="mr-2"/>}
+                    Pay Deposit Invoice
+                </Button>
             </CardContent>
         </Card>
     );
@@ -34,22 +44,56 @@ function ActivationGate() {
 
 function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
+    const [files, setFiles] = useState<FileRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSigning, setIsSigning] = useState(false);
     const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'details');
+    const { toast } = useToast();
+
+    async function fetchEventData() {
+        setIsLoading(true);
+        const [fetchedEvent, fetchedFiles] = await Promise.all([
+            getEvent(eventId),
+            listFiles(eventId)
+        ]);
+        setEvent(fetchedEvent || null);
+        setFiles(fetchedFiles);
+        setIsLoading(false);
+    }
 
     useEffect(() => {
-        async function fetchEvent() {
-            setIsLoading(true);
-            const fetchedEvent = await getEvent(eventId);
-            setEvent(fetchedEvent || null);
-            setIsLoading(false);
-        }
-        fetchEvent();
+        fetchEventData();
     }, [eventId]);
     
     // The "booked" status unlocks the portal for the host.
     const isLocked = event?.status !== 'booked';
+
+    const handleSignContract = async () => {
+        if (!event) return;
+        setIsSigning(true);
+        try {
+            await markContractSigned(event.id);
+            toast({
+                title: "Contract Signed!",
+                description: "Thank you! Your portal will unlock once the deposit is paid.",
+            });
+            // Refetch data to update UI
+            await fetchEventData();
+        } catch (error) {
+            toast({ title: "Error", description: "Failed to sign contract.", variant: "destructive" });
+        } finally {
+            setIsSigning(false);
+        }
+    };
+    
+    const handlePayDeposit = async () => {
+        toast({
+            title: "Simulating Payment...",
+            description: "You are being redirected to a mock payment page.",
+        });
+        // In a real app, this would redirect to a payment gateway.
+    };
 
     if (isLoading) {
         // Show a loading state while we fetch event data
@@ -71,7 +115,13 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
     }
 
     if (isLocked) {
-        return <ActivationGate />;
+        return <ActivationGate 
+            onSign={handleSignContract}
+            onPay={handlePayDeposit}
+            signing={isSigning}
+            paying={false} // Placeholder
+            contractSigned={event.contractSigned}
+        />;
     }
 
     return (
@@ -98,9 +148,36 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
              <TabsContent value="files">
-                <Card>
-                    <CardHeader><CardTitle>My Files</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Display contracts and other shared files.</p></CardContent>
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>My Files</CardTitle>
+                        <CardDescription>Download contracts, invoices, and other important documents.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {files.map(file => (
+                                    <TableRow key={file.id}>
+                                        <TableCell className="font-medium flex items-center gap-2"><File size={16} />{file.name}</TableCell>
+                                        <TableCell><Badge variant="secondary">{file.type}</Badge></TableCell>
+                                        <TableCell>{format(new Date(file.timestamp), 'PPp')}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="icon"><Download size={16} /></Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                         {files.length === 0 && <p className="text-center text-muted-foreground p-8">No files have been shared with you yet.</p>}
+                    </CardContent>
                 </Card>
             </TabsContent>
             <TabsContent value="gallery">

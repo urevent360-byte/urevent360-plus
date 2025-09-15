@@ -167,10 +167,13 @@ let MOCK_EVENTS: Event[] = [
     },
 ];
 
-const MOCK_FILES: Record<string, FileRecord[]> = {
+let MOCK_FILES: Record<string, FileRecord[]> = {
     'evt-456': [
         { id: 'file-1', name: 'Signed Contract - Lee Gala.pdf', type: 'contract', status: 'signed', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
         { id: 'file-2', name: 'Invoice-001.pdf', type: 'invoice', status: 'active', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
+    ],
+    'evt-789': [
+         { id: 'file-3', name: 'Invoice-002.pdf', type: 'invoice', status: 'active', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
     ]
 };
 
@@ -366,10 +369,37 @@ export async function uploadFile(eventId: string, meta: any): Promise<void> {
     console.log(`(Mock) Uploaded file for event ${eventId}`, meta);
 }
 
-export async function markContractSigned(eventId: string, fileMeta: any): Promise<void> {
+export async function markContractSigned(eventId: string): Promise<FileRecord> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    // TODO: Update event and file status in Firestore
+    const event = MOCK_EVENTS.find(e => e.id === eventId);
+    if (!event) throw new Error('Event not found');
+    
+    event.contractSigned = true;
+
+    // If invoice is sent, move to deposit_due. Otherwise, maybe contract_sent.
+    if (event.status === 'invoice_sent') {
+        event.status = 'deposit_due';
+    } else if (event.status === 'quote_requested') {
+        event.status = 'contract_sent';
+    }
+
+    const newFile: FileRecord = {
+        id: `file-${Math.random().toString(36).substring(7)}`,
+        name: `Signed Contract - ${event.eventName}.pdf`,
+        type: 'contract',
+        status: 'signed',
+        url: '#',
+        uploadedBy: 'host',
+        timestamp: new Date().toISOString(),
+    };
+
+    if (!MOCK_FILES[eventId]) {
+        MOCK_FILES[eventId] = [];
+    }
+    MOCK_FILES[eventId].push(newFile);
+    
     console.log(`(Mock) Contract marked as signed for event ${eventId}`);
+    return newFile;
 }
 
 // === Timeline Adapter ===

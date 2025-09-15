@@ -3,18 +3,22 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice } from '@/lib/data-adapter';
-import type { Event } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles } from '@/lib/data-adapter';
+import type { Event, FileRecord } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
+import { Loader2, File, Download } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { format } from 'date-fns';
+import { Badge } from '@/components/ui/badge';
 
 
 function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
+    const [files, setFiles] = useState<FileRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const searchParams = useSearchParams();
@@ -22,13 +26,17 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const { toast } = useToast();
 
     useEffect(() => {
-        async function fetchEvent() {
+        async function fetchEventData() {
             setIsLoading(true);
-            const fetchedEvent = await getEvent(eventId);
+            const [fetchedEvent, fetchedFiles] = await Promise.all([
+                getEvent(eventId),
+                listFiles(eventId)
+            ]);
             setEvent(fetchedEvent || null);
+            setFiles(fetchedFiles);
             setIsLoading(false);
         }
-        fetchEvent();
+        fetchEventData();
     }, [eventId]);
 
     const handleCreateInvoice = async () => {
@@ -93,8 +101,39 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             </TabsContent>
              <TabsContent value="files">
                 <Card>
-                    <CardHeader><CardTitle>File Management</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Build admin file manager (contracts, invoices, etc.).</p></CardContent>
+                    <CardHeader>
+                        <CardTitle>File Management</CardTitle>
+                        <CardDescription>View and manage all files associated with this event.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Name</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Uploaded By</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {files.map(file => (
+                                    <TableRow key={file.id}>
+                                        <TableCell className="font-medium flex items-center gap-2"><File size={16} />{file.name}</TableCell>
+                                        <TableCell><Badge variant="secondary">{file.type}</Badge></TableCell>
+                                        <TableCell><Badge variant={file.status === 'signed' ? 'default' : 'outline'}>{file.status.replace('_', ' ')}</Badge></TableCell>
+                                        <TableCell className="capitalize">{file.uploadedBy}</TableCell>
+                                        <TableCell>{format(new Date(file.timestamp), 'PPp')}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="icon"><Download size={16} /></Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                         {files.length === 0 && <p className="text-center text-muted-foreground p-8">No files have been uploaded for this event yet.</p>}
+                    </CardContent>
                 </Card>
             </TabsContent>
             <TabsContent value="gallery">

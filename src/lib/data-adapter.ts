@@ -203,7 +203,7 @@ let MOCK_EVENTS: Event[] = [
         confirmedAt: new Date().toISOString(),
         contractSigned: true,
         photoboothLink: 'https://photos.app.goo.gl/sample1',
-        galleryVisibilityDate: add(new Date(), { days: 10 }).toISOString(),
+        galleryVisibilityDate: add(new Date(), { days: -1 }).toISOString(),
         galleryExpirationDate: add(new Date(), { months: 6 }).toISOString(),
     },
      {
@@ -704,5 +704,3 @@ export async function saveMusicPlaylist(eventId: string, playlist: MusicPlaylist
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
 }
-
-    

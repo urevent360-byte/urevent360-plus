@@ -347,5 +347,59 @@
         "es": "Enlace copiado"
       }
     }
+  },
+  "gallery": {
+    "title": {
+      "en": "My Gallery",
+      "es": "Mi galería"
+    },
+    "photoBooth": {
+      "en": "Photo Booth Album",
+      "es": "Álbum del photo booth"
+    },
+    "viewAlbum": {
+      "en": "View Photo Booth Album",
+      "es": "Ver álbum del photo booth"
+    },
+    "guestUploads": {
+      "en": "Guest Uploads",
+      "es": "Fotos de invitados"
+    },
+    "viewGuestPhotos": {
+      "en": "View Guest Photos",
+      "es": "Ver fotos de invitados"
+    },
+    "showGuestUploads": {
+      "en": "Show Guest Uploads",
+      "es": "Mostrar fotos de invitados"
+    },
+    "openQrMgr": {
+      "en": "Open QR Manager",
+      "es": "Abrir gestor de QR"
+    },
+    "shareGuestQr": {
+      "en": "Share Guest QR",
+      "es": "Compartir QR de invitados"
+    },
+    "downloadAll": {
+      "en": "Download All (ZIP)",
+      "es": "Descargar todo (ZIP)"
+    },
+    "availOn": {
+      "en": "Available on",
+      "es": "Disponible el"
+    },
+    "visibleFor": {
+      "en": "Visible for",
+      "es": "Visible por"
+    },
+    "days": {
+      "en": "days",
+      "es": "días"
+    },
+    "removedOn": {
+      "en": "Will be removed on",
+      "es": "Se eliminará el"
+    }
   }
 }

@@ -227,5 +227,27 @@
       "en": "Payment History",
       "es": "Historial de pagos"
     }
+  },
+  "contract": {
+    "title": {
+      "en": "Contract",
+      "es": "Contrato"
+    },
+    "sign": {
+      "en": "Sign Contract",
+      "es": "Firmar contrato"
+    },
+    "signed": {
+      "en": "Contract Signed",
+      "es": "Contrato firmado"
+    },
+    "awaiting": {
+      "en": "Awaiting Signature",
+      "es": "En espera de firma"
+    },
+    "view": {
+      "en": "View Contract",
+      "es": "Ver contrato"
+    }
   }
 }

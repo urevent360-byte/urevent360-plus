@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, markContractSigned, listFiles } from '@/lib/data-adapter';
-import type { Event, FileRecord } from '@/lib/data-adapter';
+import { getEvent, markContractSigned, listFiles, listTimeline } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download } from 'lucide-react';
+import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -45,6 +45,7 @@ function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { on
 function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
+    const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSigning, setIsSigning] = useState(false);
     const searchParams = useSearchParams();
@@ -53,12 +54,14 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline] = await Promise.all([
             getEvent(eventId),
-            listFiles(eventId)
+            listFiles(eventId),
+            listTimeline(eventId)
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
+        setTimeline(fetchedTimeline);
         setIsLoading(false);
     }
 
@@ -143,8 +146,38 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
             </TabsContent>
             <TabsContent value="timeline">
                 <Card>
-                    <CardHeader><CardTitle>My Event Timeline</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Display the event timeline. Allow time change requests.</p></CardContent>
+                     <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>My Event Timeline</CardTitle>
+                             <CardDescription>This is the official schedule. Please review and contact us for any changes.</CardDescription>
+                        </div>
+                        <Button variant="outline">Request Time Change</Button>
+                    </CardHeader>
+                     <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Item</TableHead>
+                                    <TableHead className="text-right">Synced to Calendar</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {timeline.map(item => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-mono text-sm">
+                                            {format(new Date(item.startTime), 'p')} - {format(new Date(item.endTime), 'p')}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{item.title}</TableCell>
+                                        <TableCell className="text-right">
+                                            {item.isSyncedToGoogle && <CheckCircle className="inline-block text-green-500" size={16} />}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                         {timeline.length === 0 && <p className="text-center text-muted-foreground p-8">The event timeline has not been published yet.</p>}
+                    </CardContent>
                 </Card>
             </TabsContent>
              <TabsContent value="files">

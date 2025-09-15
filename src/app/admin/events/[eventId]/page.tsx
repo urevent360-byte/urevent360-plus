@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid } from '@/lib/data-adapter';
-import type { Event, FileRecord } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
+    const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
@@ -28,12 +29,14 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline] = await Promise.all([
             getEvent(eventId),
-            listFiles(eventId)
+            listFiles(eventId),
+            listTimeline(eventId)
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
+        setTimeline(fetchedTimeline);
         setIsLoading(false);
     }
 
@@ -82,6 +85,18 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             setIsSimulatingPayment(false);
         }
     }
+    
+     const handleSyncToGoogle = async (itemId: string | 'all') => {
+        if (!event) return;
+        await toggleSyncToGoogle(event.id, itemId);
+        toast({
+            title: "Syncing to Google...",
+            description: "The selected timeline items are being synced.",
+        });
+        // Refetch to show updated sync status
+        const fetchedTimeline = await listTimeline(eventId);
+        setTimeline(fetchedTimeline);
+    };
 
     return (
         <EventProfileShell
@@ -125,8 +140,48 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             </TabsContent>
             <TabsContent value="timeline">
                 <Card>
-                    <CardHeader><CardTitle>Timeline Management</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Build admin timeline editor with approval and sync controls.</p></CardContent>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Timeline Management</CardTitle>
+                            <CardDescription>Approve items and sync the schedule to Google Calendar.</CardDescription>
+                        </div>
+                        <Button onClick={() => handleSyncToGoogle('all')}>Sync All to Google</Button>
+                    </CardHeader>
+                     <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Item</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {timeline.map(item => (
+                                    <TableRow key={item.id}>
+                                        <TableCell className="font-mono text-sm">
+                                            {format(new Date(item.startTime), 'p')} - {format(new Date(item.endTime), 'p')}
+                                        </TableCell>
+                                        <TableCell className="font-medium">{item.title}</TableCell>
+                                        <TableCell>
+                                            <Badge variant={item.isSyncedToGoogle ? 'default' : 'secondary'} className="gap-1">
+                                                {item.isSyncedToGoogle ? <CheckCircle size={14} /> : <Circle size={14}/>}
+                                                {item.isSyncedToGoogle ? 'Synced' : 'Not Synced'}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                             <Button variant="ghost" size="sm"><Check className="mr-2" />Approve</Button>
+                                             <Button variant="ghost" size="sm" onClick={() => handleSyncToGoogle(item.id)}>
+                                                 <LinkIcon className="mr-2" />Sync Item
+                                             </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                         {timeline.length === 0 && <p className="text-center text-muted-foreground p-8">No timeline items have been added for this event yet.</p>}
+                    </CardContent>
                 </Card>
             </TabsContent>
              <TabsContent value="files">

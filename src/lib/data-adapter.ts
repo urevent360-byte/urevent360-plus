@@ -187,6 +187,11 @@ const MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     'evt-456': [
         { id: 'tl-1', title: 'DJ Setup', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', status: 'completed', isSyncedToGoogle: true },
         { id: 'tl-2', title: 'Magic Mirror Opens', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', status: 'completed', isSyncedToGoogle: true },
+        { id: 'tl-3', title: 'Dinner Service', startTime: '2024-07-20T19:00:00Z', endTime: '2024-07-20T20:00:00Z', status: 'completed', isSyncedToGoogle: false },
+    ],
+    'evt-123': [
+        { id: 'tl-4', title: 'Grand Entrance', startTime: '2024-10-15T18:30:00Z', endTime: '2024-10-15T18:45:00Z', status: 'upcoming', isSyncedToGoogle: false },
+        { id: 'tl-5', title: '360 Booth & Sparklers', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', status: 'upcoming', isSyncedToGoogle: false },
     ]
 };
 
@@ -445,7 +450,20 @@ export async function approveItem(eventId: string, itemId: string): Promise<void
 
 export async function toggleSyncToGoogle(eventId: string, itemId: string | 'all'): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 800));
-    console.log(`(Mock) Toggled Google Sync for item(s) ${itemId} in event ${eventId}`);
+     if (DATA_SOURCE === 'mock') {
+        if (!MOCK_TIMELINE[eventId]) return;
+
+        if (itemId === 'all') {
+            MOCK_TIMELINE[eventId].forEach(item => item.isSyncedToGoogle = true);
+            console.log(`(Mock) Synced all items for event ${eventId} to Google.`);
+        } else {
+            const item = MOCK_TIMELINE[eventId].find(i => i.id === itemId);
+            if (item) {
+                item.isSyncedToGoogle = !item.isSyncedToGoogle;
+                console.log(`(Mock) Toggled Google Sync for item ${itemId} in event ${eventId} to ${item.isSyncedToGoogle}`);
+            }
+        }
+    }
 }
 
 // === Gallery Adapter ===

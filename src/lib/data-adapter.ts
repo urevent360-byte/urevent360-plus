@@ -347,6 +347,32 @@ export async function getInvoice(eventId: string): Promise<any> {
     return { id: 'inv-001', total: 2500, paid: 500, due: 2000 };
 }
 
+export async function simulateDepositPaid(eventId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(e => e.id === eventId);
+        if (!event) throw new Error("Event not found");
+
+        if (MOCK_PAYMENTS[eventId]) {
+            const payment = MOCK_PAYMENTS[eventId].find(p => p.status === 'unpaid');
+            if (payment) {
+                payment.status = 'paid';
+                payment.method = 'credit_card'; // Simulate CC payment
+                payment.timestamp = new Date().toISOString();
+            }
+        }
+        
+        event.status = 'booked';
+        event.confirmedAt = new Date().toISOString();
+
+        console.log(`(Mock) Deposit payment simulated for event ${eventId}. Status is now 'booked'.`);
+        return;
+    }
+    // TODO: Implement real webhook logic
+    throw new Error('Firestore not implemented');
+}
+
+
 export async function registerPaymentWebhook(payload: any): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 100));
     // TODO: Handle webhook from payment processor

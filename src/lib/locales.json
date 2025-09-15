@@ -249,5 +249,41 @@
       "en": "View Contract",
       "es": "Ver contrato"
     }
+  },
+  "timeline": {
+    "title": {
+      "en": "Timeline & Performance Plan",
+      "es": "Cronograma y ejecución"
+    },
+    "openFull": {
+      "en": "Open Full Timeline",
+      "es": "Abrir cronograma completo"
+    },
+    "syncToCalendar": {
+      "en": "Sync to Calendar",
+      "es": "Sincronizar con calendario"
+    },
+    "requestChange": {
+      "en": "Request Time Change",
+      "es": "Solicitar cambio de horario"
+    },
+    "addItem": {
+      "en": "Add Item",
+      "es": "Añadir ítem"
+    },
+    "status": {
+      "completed": {
+        "en": "Completed",
+        "es": "Completado"
+      },
+      "in_progress": {
+        "en": "In Progress",
+        "es": "En progreso"
+      },
+      "upcoming": {
+        "en": "Upcoming",
+        "es": "Próximo"
+      }
+    }
   }
 }

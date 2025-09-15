@@ -3,18 +3,20 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent } from '@/lib/data-adapter';
+import { getEvent, createInvoice } from '@/lib/data-adapter';
 import type { Event } from '@/lib/data-adapter';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from 'lucide-react';
 
 
 function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const searchParams = useSearchParams();
     const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'details');
     const { toast } = useToast();
@@ -31,12 +33,24 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     const handleCreateInvoice = async () => {
         if (!event) return;
-        // Mock action
-        toast({
-            title: "Invoice Created",
-            description: "An invoice has been created and sent to the client.",
-        });
-        setEvent({ ...event, status: 'invoice_sent' });
+        setIsCreatingInvoice(true);
+        try {
+            await createInvoice(event.id);
+            const updatedEvent = await getEvent(event.id); // Re-fetch to get updated status
+            setEvent(updatedEvent || null);
+            toast({
+                title: "Invoice Created",
+                description: "An invoice has been simulated and the event status is now 'Invoice Sent'.",
+            });
+        } catch (error) {
+             toast({
+                title: "Error",
+                description: "Failed to create invoice.",
+                variant: "destructive"
+            });
+        } finally {
+            setIsCreatingInvoice(false);
+        }
     }
 
     return (
@@ -57,12 +71,17 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                  <Card>
                     <CardHeader>
                         <CardTitle>Billing Management</CardTitle>
+                        <CardDescription>Manage invoices, track payments, and view financial summaries for this event.</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p>Manage invoices, track payments, and view financial summaries for this event.</p>
-                        <Button onClick={handleCreateInvoice} disabled={event?.status !== 'quote_requested'}>
+                        <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
+                        <Button onClick={handleCreateInvoice} disabled={event?.status !== 'quote_requested' || isCreatingInvoice}>
+                            {isCreatingInvoice ? <Loader2 className="mr-2 animate-spin" /> : null}
                             Create Invoice
                         </Button>
+                         <p className="text-sm text-muted-foreground">
+                            This action will mark the event status as "Invoice Sent" and generate a placeholder invoice for the client.
+                        </p>
                     </CardContent>
                 </Card>
             </TabsContent>

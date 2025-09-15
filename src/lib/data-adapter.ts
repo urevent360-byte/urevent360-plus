@@ -134,7 +134,7 @@ const MOCK_LEADS: Lead[] = [
     },
 ];
 
-const MOCK_EVENTS: Event[] = [
+let MOCK_EVENTS: Event[] = [
     {
         id: 'evt-123',
         hostId: 'user-johndoe',
@@ -174,7 +174,7 @@ const MOCK_FILES: Record<string, FileRecord[]> = {
     ]
 };
 
-const MOCK_PAYMENTS: Record<string, Payment[]> = {
+let MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-456': [
         { id: 'pay-1', invoiceId: 'inv-001', amount: 500, status: 'paid', method: 'credit_card', timestamp: new Date().toISOString(), quickbooksUrl: '#' },
     ]
@@ -307,8 +307,34 @@ export async function getEventTabs(eventId: string): Promise<any> {
 // === Payments Adapter ===
 export async function createInvoice(eventId: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    // TODO: Implement actual invoice creation (e.g., with QuickBooks API)
-    console.log(`(Mock) Invoice created for event ${eventId}`);
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(e => e.id === eventId);
+        if (event) {
+            event.status = 'invoice_sent';
+            
+            const newPayment: Payment = {
+                id: `pay-${Math.random().toString(36).substring(7)}`,
+                invoiceId: `inv-${eventId.slice(4)}`,
+                amount: 2500, // Placeholder amount
+                status: 'unpaid',
+                method: '',
+                timestamp: new Date().toISOString(),
+                quickbooksUrl: '#'
+            };
+
+            if (!MOCK_PAYMENTS[eventId]) {
+                MOCK_PAYMENTS[eventId] = [];
+            }
+            MOCK_PAYMENTS[eventId].push(newPayment);
+
+            console.log(`(Mock) Invoice created for event ${eventId}. Event status updated to 'invoice_sent'.`);
+        } else {
+            throw new Error('Event not found');
+        }
+        return;
+    }
+    // TODO: Implement actual invoice creation (e.g., with QuickBooks API and Firestore updates)
+    throw new Error('Firestore not implemented');
 }
 
 export async function getInvoice(eventId: string): Promise<any> {

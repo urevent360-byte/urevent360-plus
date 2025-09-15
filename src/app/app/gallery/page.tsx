@@ -9,7 +9,7 @@ import { useAuth } from '@/contexts/AuthProvider';
 import { getEvent } from '@/lib/data-adapter';
 import type { Event } from '@/lib/data-adapter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { format, isPast } from 'date-fns';
+import { format, isPast, isFuture } from 'date-fns';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { PartyPopper, Clock, Download } from 'lucide-react';
 import Image from 'next/image';
@@ -52,8 +52,8 @@ function GalleryLoader() {
 
 export default function AppGalleryPage() {
     const { user } = useAuth();
-    // In a real app, we'd fetch the user's *active* event. Here we hardcode an ID.
-    const eventId = 'evt-456';
+    // In a real app, we'd fetch the user's *active* event. Here we hardcode an ID for a booked event.
+    const eventId = 'evt-456'; 
     const [event, setEvent] = useState<Event | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -95,7 +95,7 @@ export default function AppGalleryPage() {
                 </div>
             </div>
             
-            {!isGalleryVisible && event.galleryVisibilityDate && (
+            {!isGalleryVisible && event.galleryVisibilityDate && isFuture(new Date(event.galleryVisibilityDate)) && (
                 <Alert className="mb-8">
                     <Clock className="h-4 w-4" />
                     <AlertTitle>Your Gallery is Almost Ready!</AlertTitle>

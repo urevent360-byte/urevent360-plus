@@ -2,7 +2,7 @@
 'use client';
 
 import { getEvent } from '@/lib/data-adapter';
-import { notFound, useParams } from 'next/navigation';
+import { notFound, useParams, useRouter } from 'next/navigation';
 import { use, useState, useEffect } from 'react';
 import type { Event, FileRecord } from '@/lib/data-adapter';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
@@ -11,9 +11,12 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
-import { FileText, UploadCloud, CheckCircle, Check, Shield, Circle, ExternalLink } from 'lucide-react';
+import { FileText, UploadCloud, CheckCircle, Check, Circle, ExternalLink, Calendar as CalendarIcon, Link as LinkIcon, Trash2, Download } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { DatePicker } from '@/components/ui/date-picker';
+import QRCode from "qrcode.react";
 
 // MOCK DATA for Timeline
 const timelineItems = [
@@ -167,6 +170,87 @@ function AdminTimelineTab() {
     );
 }
 
+function AdminGallerySettingsTab({event, setEvent}: {event: Event, setEvent: (event: Event) => void}) {
+     const { toast } = useToast();
+
+    const handleSave = () => {
+        toast({
+            title: 'Settings Saved',
+            description: 'Gallery settings have been updated for this event.',
+        });
+    };
+
+    const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/upload/${event.id}` : '';
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Gallery Configuration</CardTitle>
+                        <CardDescription>Set up the photo booth album and visibility dates for the client.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-2">
+                            <Label htmlFor="album-url" className="flex items-center gap-2"><LinkIcon /> Photo Booth Album URL</Label>
+                            <Input
+                                id="album-url"
+                                placeholder="https://photos.google.com/album/..."
+                                value={event.photoboothLink || ''}
+                                onChange={(e) => setEvent({ ...event, photoboothLink: e.target.value })}
+                            />
+                            <p className="text-xs text-muted-foreground">Paste the public URL of the main album (e.g., from Google Photos).</p>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label className="flex items-center gap-2"><CalendarIcon /> Gallery Visibility Date</Label>
+                                <DatePicker 
+                                    date={event.galleryVisibilityDate ? new Date(event.galleryVisibilityDate) : undefined} 
+                                    onDateChange={(date) => setEvent({ ...event, galleryVisibilityDate: date?.toISOString() })}
+                                />
+                                <p className="text-xs text-muted-foreground">Date when the client can see the gallery.</p>
+                            </div>
+                             <div className="space-y-2">
+                                <Label className="flex items-center gap-2 text-destructive"><Trash2 /> Gallery Expiration Date</Label>
+                                 <DatePicker 
+                                    date={event.galleryExpirationDate ? new Date(event.galleryExpirationDate) : undefined}
+                                    onDateChange={(date) => setEvent({ ...event, galleryExpirationDate: date?.toISOString() })}
+                                 />
+                                <p className="text-xs text-muted-foreground">Date when guest photos will be auto-purged.</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                 <Card>
+                    <CardHeader>
+                        <CardTitle>Guest Uploads</CardTitle>
+                        <CardDescription>Manage photos uploaded by guests.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                         <Button variant="outline"><Download className="mr-2" /> Download All as ZIP</Button>
+                         <p className="text-sm text-muted-foreground mt-4">A grid of guest-uploaded photos will appear here for moderation.</p>
+                    </CardContent>
+                </Card>
+            </div>
+             <div className="space-y-8">
+                 <Card>
+                    <CardHeader className="text-center">
+                        <CardTitle>Guest Upload QR Code</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center gap-4">
+                         <QRCode value={qrUrl} size={192} level="H" includeMargin />
+                        <p className="text-xs text-muted-foreground text-center">Guests can scan this to upload photos directly to the event gallery.</p>
+                        <Button variant="secondary" onClick={() => navigator.clipboard.writeText(qrUrl)}>Copy URL</Button>
+                    </CardContent>
+                </Card>
+                <Button onClick={handleSave} className="w-full">Save Gallery Settings</Button>
+            </div>
+        </div>
+    );
+}
+
+
 function EventProfileLoader() {
     return (
         <div className="space-y-6">
@@ -229,8 +313,9 @@ export default function AdminEventDetailPage() {
             <TabsContent value="files">
                 <AdminFilesTab files={files} setFiles={setFiles} event={event} setEvent={setEvent} />
             </TabsContent>
-            <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery Settings</CardTitle><CardDescription>Configure photo booth album URLs and QR code settings.</CardDescription></CardHeader><CardContent><p>Configure photo booth album URLs, QR code settings, and gallery visibility windows.</p></CardContent></Card></TabsContent>
-            <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Generate and display the QR code for guest photo uploads.</CardDescription></CardHeader><CardContent><p>This tab will feature a large, printable QR code that links to the guest photo upload page for this event.</p></CardContent></Card></TabsContent>
+            <TabsContent value="gallery">
+                <AdminGallerySettingsTab event={event} setEvent={setEvent} />
+            </TabsContent>
             <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Review the client's music requests.</CardDescription></CardHeader><CardContent><p>Manage music requests and do-not-play lists submitted by the client.</p></CardContent></Card></TabsContent>
             <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>A dedicated chat for this event.</CardDescription></CardHeader><CardContent><p>A dedicated chat for this event between the admin and the host.</p></CardContent></Card></TabsContent>
             <TabsContent value="my-services"><Card><CardHeader><CardTitle>Requested Services</CardTitle><CardDescription>Approve or modify the services for this event.</CardDescription></CardHeader><CardContent><p>Admin can approve additional service requests from the host. Approved services are then added to the invoice.</p></CardContent></Card></TabsContent>

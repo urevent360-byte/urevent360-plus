@@ -20,17 +20,26 @@ const adminTabs = [
   { value: 'billing', label: 'Billing' },
   { value: 'timeline', label: 'Timeline' },
   { value: 'files', label: 'Files' },
-  { value: 'gallery', label: 'Gallery' },
-  { value: 'guest-qr', label: 'Guest QR' },
+  { value: 'gallery', label: 'Gallery/QR' },
   { value: 'music', label: 'Music' },
   { value: 'communication', label: 'Communication' },
   { value: 'my-services', label: 'My Services' },
 ];
 
+const hostTabs = [
+  { value: 'details', label: 'Details' },
+  { value: 'timeline', label: 'Timeline' },
+  { value: 'files', label: 'Files' },
+  { value: 'gallery', label: 'My Gallery' },
+  { value: 'music', label: 'Music' },
+  { value: 'communication', label: 'Communication' },
+  { value: 'my-services', label: 'My Services' },
+]
+
 export function EventProfileShell({ event, role, children, isLoading = false }: EventProfileShellProps) {
     const [activeTab, setActiveTab] = useState('details');
 
-    const tabs = role === 'admin' ? adminTabs : adminTabs.filter(tab => tab.value !== 'billing');
+    const tabs = role === 'admin' ? adminTabs : hostTabs;
 
     if (isLoading) {
         return (
@@ -65,7 +74,7 @@ export function EventProfileShell({ event, role, children, isLoading = false }: 
       </Card>
 
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-4 lg:grid-cols-8">
             {tabs.map(tab => (
                 <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
             ))}
@@ -77,5 +86,3 @@ export function EventProfileShell({ event, role, children, isLoading = false }: 
     </div>
   );
 }
-
-    

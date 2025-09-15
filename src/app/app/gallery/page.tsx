@@ -1,32 +1,109 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthProvider';
+import { getEvent } from '@/lib/data-adapter';
+import type { Event } from '@/lib/data-adapter';
+import { Skeleton } from '@/components/ui/skeleton';
+import { format, isPast } from 'date-fns';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { PartyPopper, Clock, Download } from 'lucide-react';
+import Image from 'next/image';
 
-// In a real app, this would be fetched based on the logged-in user
-const eventData = {
-    photoboothLink: 'https://photos.app.goo.gl/sample1',
-    galleryVisibilityDate: new Date('2024-09-25'),
-    communityUploads: [
-        { url: 'https://picsum.photos/seed/guest1/400/300', alt: 'Guest photo 1' },
-        { url: 'https://picsum.photos/seed/guest2/400/300', alt: 'Guest photo 2' },
-        { url: 'https://picsum.photos/seed/guest3/400/300', alt: 'Guest photo 3' },
-    ]
-};
+const guestUploads = [
+    { url: 'https://picsum.photos/seed/guest1/400/300', alt: 'Guest photo 1' },
+    { url: 'https://picsum.photos/seed/guest2/400/300', alt: 'Guest photo 2' },
+    { url: 'https://picsum.photos/seed/guest3/400/300', alt: 'Guest photo 3' },
+    { url: 'https://picsum.photos/seed/guest4/400/300', alt: 'Guest photo 4' },
+    { url: 'https://picsum.photos/seed/guest5/400/300', alt: 'Guest photo 5' },
+    { url: 'https://picsum.photos/seed/guest6/400/300', alt: 'Guest photo 6' },
+];
+
+function GalleryLoader() {
+    return (
+        <div className="space-y-8">
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-10 w-40" />
+                </CardContent>
+            </Card>
+            <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                    <Skeleton className="h-4 w-3/4" />
+                </CardHeader>
+                <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {[...Array(4)].map((_, i) => <Skeleton key={i} className="aspect-square" />)}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}
 
 export default function AppGalleryPage() {
-    const isGalleryVisible = new Date() > eventData.galleryVisibilityDate;
+    const { user } = useAuth();
+    // In a real app, we'd fetch the user's *active* event. Here we hardcode an ID.
+    const eventId = 'evt-456';
+    const [event, setEvent] = useState<Event | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchEvent() {
+            if (user) {
+                setIsLoading(true);
+                const fetchedEvent = await getEvent(eventId);
+                if (fetchedEvent) {
+                    setEvent(fetchedEvent);
+                }
+                setIsLoading(false);
+            }
+        }
+        fetchEvent();
+    }, [user]);
+
+    if (isLoading) {
+        return <GalleryLoader />;
+    }
+
+    if (!event) {
+        return (
+            <Alert variant="destructive">
+                <AlertTitle>Event Not Found</AlertTitle>
+                <AlertDescription>We couldn't find gallery information for your event.</AlertDescription>
+            </Alert>
+        )
+    }
+
+    const isGalleryVisible = event.galleryVisibilityDate ? isPast(new Date(event.galleryVisibilityDate)) : false;
 
     return (
         <div>
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">My Event Gallery</h1>
-                    <p className="text-muted-foreground">Access your professional photos and guest uploads.</p>
+                    <p className="text-muted-foreground">Access your professional photos and guest uploads for "{event.eventName}".</p>
                 </div>
             </div>
+            
+            {!isGalleryVisible && event.galleryVisibilityDate && (
+                <Alert className="mb-8">
+                    <Clock className="h-4 w-4" />
+                    <AlertTitle>Your Gallery is Almost Ready!</AlertTitle>
+                    <AlertDescription>
+                        Your photos and videos will become available on {format(new Date(event.galleryVisibilityDate), 'PPP')}.
+                    </AlertDescription>
+                </Alert>
+            )}
 
             <div className="space-y-8">
                 <Card>
@@ -35,13 +112,16 @@ export default function AppGalleryPage() {
                         <CardDescription>Photos and videos taken by our professional equipment.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {isGalleryVisible ? (
+                        {isGalleryVisible && event.photoboothLink ? (
                              <Button asChild>
-                                <Link href={eventData.photoboothLink} target="_blank">View Album</Link>
+                                <Link href={event.photoboothLink} target="_blank">
+                                    <PartyPopper className="mr-2" />
+                                    View Official Album
+                                </Link>
                             </Button>
                         ) : (
                             <p className="text-muted-foreground">
-                                Your official album will be available on {eventData.galleryVisibilityDate.toLocaleDateString()}.
+                                {isGalleryVisible ? "The official album link has not been added by the admin yet." : "This link will appear here once the gallery is visible."}
                             </p>
                         )}
                     </CardContent>
@@ -54,16 +134,33 @@ export default function AppGalleryPage() {
                     </CardHeader>
                     <CardContent>
                          {isGalleryVisible ? (
-                            <div>
-                                <p className="text-muted-foreground mb-4">This feature will show a grid of all photos uploaded by guests via the event's QR code.</p>
-                                <p className="text-muted-foreground">Coming soon.</p>
-                            </div>
+                             <>
+                                {guestUploads.length > 0 ? (
+                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                        {guestUploads.map((photo, index) => (
+                                            <div key={index} className="aspect-video relative rounded-lg overflow-hidden">
+                                                <Image src={photo.url} alt={photo.alt} fill className="object-cover" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p className="text-muted-foreground">No community photos have been uploaded yet.</p>
+                                )}
+                             </>
                         ) : (
                             <p className="text-muted-foreground">
-                                Community photos will be available on {eventData.galleryVisibilityDate.toLocaleDateString()}.
+                                Community photos will be available here once your gallery is visible.
                             </p>
                         )}
                     </CardContent>
+                     {isGalleryVisible && guestUploads.length > 0 && (
+                        <CardFooter>
+                            <Button variant="secondary">
+                                <Download className="mr-2" />
+                                Download All as ZIP
+                            </Button>
+                        </CardFooter>
+                    )}
                 </Card>
             </div>
         </div>

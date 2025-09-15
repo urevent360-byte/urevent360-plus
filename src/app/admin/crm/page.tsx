@@ -21,13 +21,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import QRCode from "qrcode.react";
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'quote_sent' | 'accepted' | 'converted' | 'rejected';
 
@@ -38,17 +36,16 @@ type Lead = {
     date: string;
     status: Status;
     eventId: string | null;
-    photoboothLink: string | null;
 };
 
 const placeholderLeads: Lead[] = [
-    { id: 'lead1', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-john-doe-2024', photoboothLink: 'https://photos.app.goo.gl/sample1' },
-    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'quote_sent', eventId: null, photoboothLink: null },
-    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: null, photoboothLink: null },
-    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: null, photoboothLink: null },
-    { id: 'lead5', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'rejected', eventId: null, photoboothLink: null },
-    { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'contacted', eventId: null, photoboothLink: null },
-    { id: 'lead7', name: 'Chris Green', email: 'chris@example.com', date: '2024-09-20', status: 'accepted', eventId: null, photoboothLink: null },
+    { id: 'lead-123', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-lead-123' },
+    { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'quote_sent', eventId: null },
+    { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: null },
+    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: null },
+    { id: 'lead-456', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'converted', eventId: 'evt-456' },
+    { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'contacted', eventId: null },
+    { id: 'lead7', name: 'Chris Green', email: 'chris@example.com', date: '2024-09-20', status: 'accepted', eventId: null },
 ];
 
 const statusColors: Record<Status, string> = {
@@ -64,34 +61,20 @@ const statusColors: Record<Status, string> = {
 const allStatuses: Status[] = ['new', 'contacted', 'follow-up', 'quote_sent', 'accepted', 'converted', 'rejected'];
 
 export default function CrmPage() {
-  const [leads, setLeads] = useState<Lead[]>(placeholderLeads);
+  const [leads] = useState<Lead[]>(placeholderLeads);
   const [filter, setFilter] = useState<Status | 'all'>('all');
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
-  const [linkModalState, setLinkModalState] = useState<{ isOpen: boolean; leadId: string | null, currentLink: string }>({ isOpen: false, leadId: null, currentLink: '' });
-
   const { toast } = useToast();
+  const router = useRouter();
 
   const filteredLeads = leads.filter(lead => filter === 'all' || lead.status === filter);
   
-  const generateQrCode = (eventId: string) => {
-    const url = `${window.location.origin}/upload/${eventId}`;
-    setQrCodeData({ url, eventId });
-  };
-  
-  const handleSaveLink = () => {
-    if (!linkModalState.leadId) return;
-
-    // In a real app, this would update events/{eventId}.photoBoothAlbumUrl in Firestore.
-    // For this prototype, we'll just update the local state.
-    setLeads(prevLeads => prevLeads.map(lead => 
-      lead.id === linkModalState.leadId ? { ...lead, photoboothLink: linkModalState.currentLink } : lead
-    ));
-
-    toast({
-      title: 'Link Saved!',
-      description: 'The photo booth album link has been updated for the event.',
-    });
-    setLinkModalState({ isOpen: false, leadId: null, currentLink: '' });
+  const handleActionClick = (eventId: string, action: 'qr' | 'link' | 'settings') => {
+      toast({
+          title: 'Action Redirect',
+          description: `This action should be performed on the event management page. Redirecting...`,
+      });
+      router.push(`/admin/events/${eventId}`);
   };
 
 
@@ -163,11 +146,11 @@ export default function CrmPage() {
                                         {lead.eventId && (
                                           <>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem onClick={() => generateQrCode(lead.eventId!)}>
+                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!, 'qr')}>
                                                 <QrCode className="mr-2 h-4 w-4" />
                                                 Generate Upload QR
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => setLinkModalState({ isOpen: true, leadId: lead.id, currentLink: lead.photoboothLink || '' })}>
+                                            <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!, 'link')}>
                                                 <LinkIcon className="mr-2 h-4 w-4" />
                                                 Set Photo Booth Link
                                             </DropdownMenuItem>
@@ -194,7 +177,7 @@ export default function CrmPage() {
                 <DialogHeader>
                     <DialogTitle>Event Photo Upload QR Code</DialogTitle>
                     <DialogDescription>
-                        This generates a unique QR code for guests to upload photos to the event gallery for <span className="font-bold">"{qrCodeData?.eventId}"</span>. This action modifies the event itself.
+                        This generates a unique QR code for guests to upload photos to the event gallery for <span className="font-bold">"{qrCodeData?.eventId}"</span>. This action should now be performed on the Event Management page.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-center p-4">
@@ -207,34 +190,6 @@ export default function CrmPage() {
                         />
                     )}
                 </div>
-            </DialogContent>
-        </Dialog>
-        
-        <Dialog open={linkModalState.isOpen} onOpenChange={(isOpen) => !isOpen && setLinkModalState({ isOpen: false, leadId: null, currentLink: '' })}>
-            <DialogContent className="sm:max-w-lg">
-                <DialogHeader>
-                    <DialogTitle>Set Photo Booth Album Link</DialogTitle>
-                    <DialogDescription>
-                        Paste the public URL for the external photo booth album (e.g., Google Photos). This updates the <span className="font-bold">event's</span> record, not the lead.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="photobooth-link" className="text-right">
-                            Album URL
-                        </Label>
-                        <Input
-                            id="photobooth-link"
-                            value={linkModalState.currentLink}
-                            onChange={(e) => setLinkModalState(prev => ({...prev, currentLink: e.target.value}))}
-                            className="col-span-3"
-                            placeholder="https://..."
-                        />
-                    </div>
-                </div>
-                <DialogFooter>
-                    <Button onClick={handleSaveLink}>Save Link</Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
 

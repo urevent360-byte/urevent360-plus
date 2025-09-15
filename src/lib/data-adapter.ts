@@ -39,6 +39,9 @@ const EventSchema = z.object({
     status: z.enum(['quote_requested', 'contract_sent', 'invoice_sent', 'deposit_due', 'booked', 'completed', 'canceled']),
     confirmedAt: z.string().optional(),
     contractSigned: z.boolean().optional(),
+    photoboothLink: z.string().optional(),
+    galleryVisibilityDate: z.string().optional(),
+    galleryExpirationDate: z.string().optional(),
 });
 export type Event = z.infer<typeof EventSchema>;
 
@@ -66,7 +69,8 @@ const MOCK_LEADS: Lead[] = [
             eventDate: new Date('2024-10-15T18:00:00').toISOString(),
             notes: 'Wants the new props.'
         },
-        status: 'quote_sent',
+        status: 'converted',
+        eventId: 'evt-lead-123',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
     },
@@ -98,6 +102,9 @@ const MOCK_EVENTS: Event[] = [
         status: 'booked',
         confirmedAt: new Date().toISOString(),
         contractSigned: true,
+        photoboothLink: 'https://photos.app.goo.gl/sample1',
+        galleryVisibilityDate: new Date('2024-11-02T12:00:00').toISOString(),
+        galleryExpirationDate: new Date('2025-05-01T12:00:00').toISOString(),
     },
     {
         id: 'evt-789',
@@ -137,6 +144,7 @@ export async function getLead(leadId: string): Promise<Lead | undefined> {
 export async function getEvent(eventId: string): Promise<Event | undefined> {
     await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network latency
     if (DATA_SOURCE === 'mock') {
+        // In a real app, you might fetch and merge data here. For mock, we'll just return it.
         return MOCK_EVENTS.find(event => event.id === eventId);
     }
     // TODO: Implement Firestore fetching logic
@@ -187,5 +195,3 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
     // TODO: Implement Firestore transaction logic
     throw new Error('Firestore not implemented');
 }
-
-    

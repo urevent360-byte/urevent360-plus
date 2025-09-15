@@ -17,10 +17,10 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
     const { toast } = useToast();
     const [hasPaid, setHasPaid] = useState(false);
     
-    const contractSent = event.status === 'contract_sent' || event.status === 'invoice_sent';
+    const contractSent = event.status === 'contract_sent' || event.status === 'invoice_sent' || event.status === 'deposit_due';
 
     const handlePay = () => {
-        if (event.status !== 'invoice_sent') {
+        if (event.status !== 'invoice_sent' && event.status !== 'deposit_due') {
             toast({
                 title: 'Invoice Not Ready',
                 description: 'The admin has not sent the invoice yet.',
@@ -29,7 +29,11 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
             return;
         }
         toast({ title: 'Payment Simulated', description: 'Redirecting to payment provider...' });
-        setHasPaid(true);
+        // In a real app, a webhook would update the status. Here, we simulate it.
+        setTimeout(() => {
+            setHasPaid(true);
+            toast({ title: 'Deposit Paid!', description: 'Your deposit has been successfully processed.'});
+        }, 1500);
     };
 
     const handleSign = () => {
@@ -42,10 +46,11 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
     };
 
     useEffect(() => {
-        if(hasPaid && event.status === 'invoice_sent' && event.contractSigned) {
+        // Automatically activate if both conditions are met
+        if(hasPaid && event.contractSigned) {
             onActivate();
         }
-    }, [hasPaid, event, onActivate]);
+    }, [hasPaid, event.contractSigned, onActivate]);
 
     return (
         <Card>
@@ -59,8 +64,8 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
                     <CreditCard className="h-8 w-8 mb-3 text-primary" />
                     <h3 className="font-semibold text-lg">Step 1: Pay Deposit</h3>
                     <p className="text-sm text-muted-foreground mt-1 mb-4">Review your invoice and submit the deposit to secure your date.</p>
-                    <Button onClick={handlePay} className="w-full" disabled={event.status !== 'invoice_sent' || hasPaid}>
-                        {hasPaid ? 'Deposit Paid!' : (event.status === 'invoice_sent' ? 'View Invoice & Pay' : 'Awaiting Invoice')}
+                    <Button onClick={handlePay} className="w-full" disabled={event.status !== 'invoice_sent' && event.status !== 'deposit_due' || hasPaid}>
+                        {hasPaid ? 'Deposit Paid!' : (event.status === 'invoice_sent' || event.status === 'deposit_due' ? 'View Invoice & Pay' : 'Awaiting Invoice')}
                     </Button>
                 </Card>
                 <Card className="p-6 flex flex-col items-center text-center">
@@ -99,7 +104,7 @@ function HostFilesTab({ files }: { files: FileRecord[] }) {
                         {files.map(file => (
                             <Card key={file.id} className="p-4 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <File className="h-6 w-6 text-muted-foreground" />
+                                    <FileText className="h-6 w-6 text-muted-foreground" />
                                     <div>
                                         <p className="font-medium">{file.name}</p>
                                         <p className="text-sm capitalize text-muted-foreground">{file.type}</p>
@@ -114,7 +119,6 @@ function HostFilesTab({ files }: { files: FileRecord[] }) {
                     </div>
                 )}
             </CardContent>
-        </Card>
     )
 }
 
@@ -154,9 +158,12 @@ export default function AppEventDetailPage() {
   useEffect(() => {
     if (initialEventData) {
         setEvent(initialEventData);
-        // Simulate fetching files
-        if (initialEventData.status === 'contract_sent' || initialEventData.status === 'invoice_sent') {
+        // Simulate fetching files based on event status
+        if (initialEventData.status === 'contract_sent' || initialEventData.status === 'invoice_sent' || initialEventData.status === 'deposit_due') {
             setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'pending_signature', url: '/placeholder-contract.pdf' }]);
+        } else if (initialEventData.status === 'booked' || initialEventData.status === 'completed') {
+            setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'signed', url: '/placeholder-contract.pdf' }]);
+            setEvent(prev => prev ? { ...prev, contractSigned: true } : null);
         }
         setIsLoading(false);
     }
@@ -184,8 +191,9 @@ export default function AppEventDetailPage() {
   if (!event) {
     notFound();
   }
-
-  const isActivated = event.status === 'booked';
+  
+  // A 'booked' or 'completed' event is considered activated.
+  const isActivated = event.status === 'booked' || event.status === 'completed';
 
   return (
     <div>

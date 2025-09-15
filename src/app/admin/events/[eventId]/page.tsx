@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
-import { File, UploadCloud, CheckCircle } from 'lucide-react';
+import { FileText, UploadCloud, CheckCircle } from 'lucide-react';
 
 function AdminBillingTab({ event, setEvent }: { event: Event, setEvent: (event: Event) => void }) {
     const { toast } = useToast();
@@ -43,14 +43,13 @@ function AdminBillingTab({ event, setEvent }: { event: Event, setEvent: (event: 
                         <Button onClick={handleCreateInvoice}>Create Invoice</Button>
                     </div>
                 )}
-                {event.status === 'invoice_sent' && (
+                {event.status === 'invoice_sent' || event.status === 'deposit_due' || event.status === 'booked' || event.status === 'completed' ? (
                     <div className="p-4 bg-green-50 text-green-800 rounded-lg">
                         <h4 className="font-bold">Invoice Sent!</h4>
                         <p>The client can now view the invoice and pay the deposit in their portal.</p>
                         <p className="text-sm mt-2">QuickBooks URL (simulated): `https://quickbooks.intuit.com/inv-123`</p>
                     </div>
-                )}
-                 {event.status !== 'quote_requested' && event.status !== 'invoice_sent' && event.status !== 'contract_sent' && (
+                ) : (
                      <p>Invoices can be created once a quote is requested.</p>
                 )}
             </CardContent>
@@ -71,7 +70,7 @@ function AdminFilesTab({ files, setFiles, event, setEvent }: { files: FileRecord
             status: 'pending_signature',
             url: '/placeholder-contract.pdf',
         };
-        setFiles([newFile]);
+        setFiles([newFile, ...files]);
         setEvent({...event, status: 'contract_sent' });
         toast({
             title: 'Contract Sent!',
@@ -96,7 +95,7 @@ function AdminFilesTab({ files, setFiles, event, setEvent }: { files: FileRecord
                         {files.map(file => (
                             <Card key={file.id} className="p-4 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <File className="h-6 w-6 text-muted-foreground" />
+                                    <FileText className="h-6 w-6 text-muted-foreground" />
                                     <div>
                                         <p className="font-medium">{file.name}</p>
                                         <p className="text-sm capitalize text-muted-foreground">{file.type}</p>
@@ -142,7 +141,7 @@ export default function AdminEventDetailPage() {
     const eventId = params.eventId as string;
     const initialEventData = use(getEvent(eventId));
 
-    const [event, setEvent] = useState<Event | null>(initialEventData || null);
+    const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -150,8 +149,10 @@ export default function AdminEventDetailPage() {
         if (initialEventData) {
             setEvent(initialEventData);
             // Simulate fetching files for the event
-            if (initialEventData.status === 'booked' || initialEventData.status === 'completed') {
+            if (initialEventData.status === 'booked' || initialEventData.status === 'completed' || initialEventData.status === 'deposit_due') {
                 setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'signed', url: '/placeholder-contract.pdf' }]);
+            } else if (initialEventData.status === 'contract_sent' || initialEventData.status === 'invoice_sent') {
+                setFiles([{ id: 'file-1', name: 'Event Contract', type: 'contract', status: 'pending_signature', url: '/placeholder-contract.pdf' }]);
             }
             setIsLoading(false);
         }
@@ -185,5 +186,3 @@ export default function AdminEventDetailPage() {
         </EventProfileShell>
     );
 }
-
-    

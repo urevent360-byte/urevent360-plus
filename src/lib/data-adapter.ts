@@ -123,6 +123,7 @@ const MOCK_EVENTS: Event[] = [
 const DATA_SOURCE: 'mock' | 'firestore' = 'mock';
 
 export async function getLead(leadId: string): Promise<Lead | undefined> {
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network latency
     if (DATA_SOURCE === 'mock') {
         return MOCK_LEADS.find(lead => lead.id === leadId);
     }
@@ -134,6 +135,7 @@ export async function getLead(leadId: string): Promise<Lead | undefined> {
 }
 
 export async function getEvent(eventId: string): Promise<Event | undefined> {
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network latency
     if (DATA_SOURCE === 'mock') {
         return MOCK_EVENTS.find(event => event.id === eventId);
     }
@@ -142,6 +144,7 @@ export async function getEvent(eventId: string): Promise<Event | undefined> {
 }
 
 export async function listHostEvents(hostId: string): Promise<Event[]> {
+    await new Promise(resolve => setTimeout(resolve, 300)); // Simulate network latency
     if (DATA_SOURCE === 'mock') {
         return MOCK_EVENTS.filter(event => event.hostId === hostId);
     }
@@ -150,6 +153,7 @@ export async function listHostEvents(hostId: string): Promise<Event[]> {
 }
 
 export async function convertLeadToEvent(leadId: string): Promise<{ eventId: string }> {
+     await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate async operation
      if (DATA_SOURCE === 'mock') {
         const lead = MOCK_LEADS.find(l => l.id === leadId);
         if (!lead) throw new Error('Lead not found');

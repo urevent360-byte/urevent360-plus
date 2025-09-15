@@ -25,7 +25,7 @@ const LeadSchema = z.object({
         notes: z.string().optional(),
     }),
     status: z.enum(['new', 'contacted', 'follow_up', 'quote_sent', 'accepted', 'rejected', 'converted']),
-    eventId: z.string().optional(),
+    eventId: z.string().nullable(),
     createdAt: z.string(),
     updatedAt: z.string(),
 });
@@ -72,7 +72,7 @@ const MOCK_LEADS: Lead[] = [
         },
         status: 'converted',
         eventId: 'evt-lead-123',
-        createdAt: new Date().toISOString(),
+        createdAt: new Date('2024-08-25').toISOString(),
         updatedAt: new Date().toISOString(),
     },
     { 
@@ -88,7 +88,22 @@ const MOCK_LEADS: Lead[] = [
         },
         status: 'converted',
         eventId: 'evt-456',
-        createdAt: new Date().toISOString(),
+        createdAt: new Date('2024-07-20').toISOString(),
+        updatedAt: new Date().toISOString(),
+    },
+     { 
+        id: 'lead2',
+        hostEmail: 'jane@example.com',
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+        requestedServices: ['Photo Booth Printer'],
+        eventDraft: {
+            eventName: 'Smith Wedding',
+            eventDate: new Date('2024-11-01').toISOString(),
+        },
+        status: 'quote_sent',
+        eventId: null,
+        createdAt: new Date('2024-07-29').toISOString(),
         updatedAt: new Date().toISOString(),
     },
 ];

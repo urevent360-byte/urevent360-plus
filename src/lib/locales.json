@@ -472,5 +472,57 @@
       "en": "Send Quote Request",
       "es": "Enviar solicitud de cotización"
     }
+  },
+  "files": {
+    "title": {
+      "en": "Files & Uploads",
+      "es": "Archivos y cargas"
+    },
+    "uploadFile": {
+      "en": "Upload File",
+      "es": "Subir archivo"
+    },
+    "type": {
+      "invoice": {
+        "en": "Invoice",
+        "es": "Factura"
+      },
+      "contract": {
+        "en": "Contract",
+        "es": "Contrato"
+      },
+      "audio": {
+        "en": "Audio",
+        "es": "Audio"
+      },
+      "other": {
+        "en": "Other",
+        "es": "Otro"
+      }
+    },
+    "uploadedBy": {
+      "admin": {
+        "en": "Admin",
+        "es": "Admin"
+      },
+      "host": {
+        "en": "Host",
+        "es": "Cliente"
+      }
+    },
+    "actions": {
+      "download": {
+        "en": "Download",
+        "es": "Descargar"
+      },
+      "share": {
+        "en": "Share",
+        "es": "Compartir"
+      },
+      "delete": {
+        "en": "Delete",
+        "es": "Eliminar"
+      }
+    }
   }
 }

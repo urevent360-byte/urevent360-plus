@@ -8,10 +8,11 @@ import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import type { Event, FileRecord } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, CreditCard, Lock, PartyPopper, CheckCircle, ExternalLink, Circle } from 'lucide-react';
+import { FileText, CreditCard, Lock, PartyPopper, CheckCircle, ExternalLink, Circle, PlusCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
 
 // MOCK DATA for Timeline - should be the same as admin view
 const timelineItems = [
@@ -21,6 +22,21 @@ const timelineItems = [
     { id: 4, time: '10:00 PM', description: 'Cold Sparklers for Cake Cutting', status: 'approved', synced: false },
     { id: 5, time: '11:00 PM', description: 'Photo Booth Closes', status: 'approved', synced: true },
 ];
+
+const initialServices = [
+    { name: '360 Photo Booth', status: 'approved' },
+    { name: 'Cold Sparklers', status: 'approved' },
+    { name: 'Dance on the Clouds', status: 'requested' },
+];
+
+const availableAddons = [
+    'Magic Mirror',
+    'La Hora Loca with LED Robot',
+    'Projector (Slideshows & Videos)',
+    'Monogram Projector',
+    'LED Screens Wall',
+];
+
 
 function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivate: () => void; onSign: () => void; }) {
     const { toast } = useToast();
@@ -71,8 +87,8 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
                     <CreditCard className="h-8 w-8 mb-3 text-primary" />
                     <h3 className="font-semibold text-lg">Step 1: Pay Deposit</h3>
                     <p className="text-sm text-muted-foreground mt-1 mb-4">Review your invoice and submit the deposit to secure your date.</p>
-                    <Button onClick={handlePay} className="w-full" disabled={event.status !== 'invoice_sent' && event.status !== 'deposit_due' || hasPaid}>
-                        {hasPaid ? 'Deposit Paid!' : (event.status === 'invoice_sent' || event.status === 'deposit_due' ? 'View Invoice & Pay' : 'Awaiting Invoice')}
+                    <Button onClick={handlePay} className="w-full" disabled={(event.status !== 'invoice_sent' && event.status !== 'deposit_due') || hasPaid}>
+                        {hasPaid ? <><CheckCircle className="mr-2"/>Deposit Paid!</> : (event.status === 'invoice_sent' || event.status === 'deposit_due' ? 'View Invoice & Pay' : 'Awaiting Invoice')}
                     </Button>
                 </Card>
                 <Card className="p-6 flex flex-col items-center text-center">
@@ -80,7 +96,7 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
                     <h3 className="font-semibold text-lg">Step 2: Sign Contract</h3>
                     <p className="text-sm text-muted-foreground mt-1 mb-4">Review and e-sign the event contract to finalize the agreement.</p>
                     <Button onClick={handleSign} className="w-full" disabled={!contractSent || event.contractSigned}>
-                         {event.contractSigned ? 'Contract Signed!' : 'Review & Sign Contract'}
+                         {event.contractSigned ? <><CheckCircle className="mr-2"/>Contract Signed!</> : 'Review & Sign Contract'}
                     </Button>
                 </Card>
                 {(hasPaid && event.contractSigned) && (
@@ -160,6 +176,71 @@ function HostTimelineTab() {
                 </div>
             </CardContent>
         </Card>
+    );
+}
+
+function HostServicesTab() {
+    const { toast } = useToast();
+    const [services, setServices] = useState(initialServices);
+
+    const handleRequestAddon = (serviceName: string) => {
+        if (!services.some(s => s.name === serviceName)) {
+            setServices([...services, { name: serviceName, status: 'requested' }]);
+            toast({
+                title: 'Service Requested',
+                description: `We've sent a request for ${serviceName} to the admin.`,
+            });
+        }
+    };
+
+    const currentAddons = services.map(s => s.name);
+    const unrequestedAddons = availableAddons.filter(a => !currentAddons.includes(a));
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Your Services</CardTitle>
+                    <CardDescription>The current services confirmed for your event.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {services.map(service => (
+                            <Card key={service.name} className="p-4 flex items-center justify-between bg-muted/50">
+                                <p className="font-medium">{service.name}</p>
+                                <Badge variant={service.status === 'approved' ? 'default' : 'outline'} className="capitalize">
+                                     {service.status === 'requested' && <Clock className="mr-1 h-3 w-3"/>}
+                                    {service.status}
+                                </Badge>
+                            </Card>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+
+             <Card>
+                <CardHeader>
+                    <CardTitle>Request Add-ons</CardTitle>
+                    <CardDescription>Enhance your event with more services.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {unrequestedAddons.length > 0 ? (
+                        <div className="space-y-2">
+                            {unrequestedAddons.map(addon => (
+                                 <Card key={addon} className="p-3 flex items-center justify-between">
+                                    <p className="font-medium text-sm">{addon}</p>
+                                    <Button size="sm" variant="ghost" onClick={() => handleRequestAddon(addon)}>
+                                        <PlusCircle className="mr-2"/> Request
+                                    </Button>
+                                 </Card>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-muted-foreground text-center py-8">You've requested all available add-ons.</p>
+                    )}
+                </CardContent>
+            </Card>
+        </div>
     );
 }
 
@@ -243,7 +324,7 @@ export default function AppEventDetailPage() {
                 <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Share this to let guests upload photos.</CardDescription></CardHeader><CardContent><p>Share this QR code with your guests to allow them to upload photos to the community gallery.</p></CardContent></Card></TabsContent>
                 <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Submit your music preferences.</CardDescription></CardHeader><CardContent><p>Submit your music requests and do-not-play list for the DJ.</p></CardContent></Card></TabsContent>
                 <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>Chat directly with our team.</CardDescription></CardHeader><CardContent><p>Chat with us about your event. This is the best place for quick questions.</p></CardContent></Card></TabsContent>
-                <TabsContent value="my-services"><Card><CardHeader><CardTitle>My Services</CardTitle><CardDescription>Review your booked services and request add-ons.</CardDescription></CardHeader><CardContent><p>Review your booked services and request add-ons.</p></CardContent></Card></TabsContent>
+                <TabsContent value="my-services"><HostServicesTab /></TabsContent>
             </EventProfileShell>
         ) : (
             <ActivationGate event={event} onActivate={handleActivate} onSign={handleSignContract} />

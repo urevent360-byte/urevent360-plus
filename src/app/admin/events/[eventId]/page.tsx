@@ -11,12 +11,13 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
-import { FileText, UploadCloud, CheckCircle, Check, Circle, ExternalLink, Calendar as CalendarIcon, Link as LinkIcon, Trash2, Download } from 'lucide-react';
+import { FileText, UploadCloud, CheckCircle, Check, Circle, ExternalLink, Calendar as CalendarIcon, Link as LinkIcon, Trash2, Download, PlusCircle, XCircle } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
 import QRCode from "qrcode.react";
+import { Badge } from '@/components/ui/badge';
 
 // MOCK DATA for Timeline
 const timelineItems = [
@@ -26,6 +27,21 @@ const timelineItems = [
     { id: 4, time: '10:00 PM', description: 'Cold Sparklers for Cake Cutting', status: 'approved', synced: false },
     { id: 5, time: '11:00 PM', description: 'Photo Booth Closes', status: 'approved', synced: true },
 ];
+
+const initialServices = [
+    { name: '360 Photo Booth', status: 'approved' },
+    { name: 'Cold Sparklers', status: 'approved' },
+    { name: 'Dance on the Clouds', status: 'requested' },
+];
+
+const availableAddons = [
+    'Magic Mirror',
+    'La Hora Loca with LED Robot',
+    'Projector (Slideshows & Videos)',
+    'Monogram Projector',
+    'LED Screens Wall',
+];
+
 
 function AdminBillingTab({ event, setEvent }: { event: Event, setEvent: (event: Event) => void }) {
     const { toast } = useToast();
@@ -250,6 +266,73 @@ function AdminGallerySettingsTab({event, setEvent}: {event: Event, setEvent: (ev
     );
 }
 
+function AdminServicesTab() {
+    const { toast } = useToast();
+    const [services, setServices] = useState(initialServices);
+
+    const handleApproval = (serviceName: string, newStatus: 'approved' | 'rejected') => {
+        setServices(services.map(s => s.name === serviceName ? { ...s, status: newStatus } : s));
+        toast({
+            title: `Service ${newStatus === 'approved' ? 'Approved' : 'Rejected'}`,
+            description: `${serviceName} has been updated.`,
+        });
+    };
+
+    const requestedServices = services.filter(s => s.status === 'requested');
+    const activeServices = services.filter(s => s.status !== 'requested');
+
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Requested Add-ons</CardTitle>
+                    <CardDescription>Approve or reject services requested by the client.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    {requestedServices.length > 0 ? (
+                        <div className="space-y-4">
+                            {requestedServices.map(service => (
+                                <Card key={service.name} className="p-4 flex items-center justify-between">
+                                    <p className="font-medium">{service.name}</p>
+                                    <div className="flex gap-2">
+                                        <Button size="sm" onClick={() => handleApproval(service.name, 'approved')}>
+                                            <Check /> Approve
+                                        </Button>
+                                        <Button size="sm" variant="destructive" onClick={() => handleApproval(service.name, 'rejected')}>
+                                            <XCircle /> Reject
+                                        </Button>
+                                    </div>
+                                </Card>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-muted-foreground text-center py-8">No pending requests from the client.</p>
+                    )}
+                </CardContent>
+            </Card>
+            <Card>
+                 <CardHeader>
+                    <CardTitle>Active Services</CardTitle>
+                    <CardDescription>Services that are part of this event's package.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                     <div className="space-y-4">
+                        {activeServices.map(service => (
+                            <Card key={service.name} className="p-4 flex items-center justify-between bg-muted/50">
+                                <p className="font-medium">{service.name}</p>
+                                <Badge variant={service.status === 'approved' ? 'default' : 'destructive'} className="capitalize">
+                                    {service.status}
+                                </Badge>
+                            </Card>
+                        ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-4">Approved add-ons can now be added to the invoice.</p>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}
+
 
 function EventProfileLoader() {
     return (
@@ -318,7 +401,8 @@ export default function AdminEventDetailPage() {
             </TabsContent>
             <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Review the client's music requests.</CardDescription></CardHeader><CardContent><p>Manage music requests and do-not-play lists submitted by the client.</p></CardContent></Card></TabsContent>
             <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>A dedicated chat for this event.</CardDescription></CardHeader><CardContent><p>A dedicated chat for this event between the admin and the host.</p></CardContent></Card></TabsContent>
-            <TabsContent value="my-services"><Card><CardHeader><CardTitle>Requested Services</CardTitle><CardDescription>Approve or modify the services for this event.</CardDescription></CardHeader><CardContent><p>Admin can approve additional service requests from the host. Approved services are then added to the invoice.</p></CardContent></Card></TabsContent>
+            <TabsContent value="my-services"><AdminServicesTab /></TabsContent>
         </EventProfileShell>
     );
 }
+

@@ -43,7 +43,7 @@ function ActivationGate({ event, onActivate, onSign }: { event: Event; onActivat
     const { toast } = useToast();
     const [hasPaid, setHasPaid] = useState(false);
     
-    const contractSent = event.status === 'contract_sent' || event.status === 'invoice_sent' || event.status === 'deposit_due';
+    const contractSent = event.status === 'contract_sent' || event.status === 'invoice_sent' || event.status === 'deposit_due' || event.status === 'booked';
 
     const handlePay = () => {
         if (event.status !== 'invoice_sent' && event.status !== 'deposit_due') {
@@ -296,12 +296,16 @@ export default function AppEventDetailPage() {
 
   const handleActivate = () => {
     setIsLoading(true);
-    setEvent(prev => prev ? { ...prev, status: 'booked' } : null);
-    toast({
-        title: "Portal Unlocked!",
-        description: "Welcome to your event dashboard."
-    })
-    setTimeout(() => setIsLoading(false), 500); 
+    // This would typically be an API call to update the backend
+    // For now, we simulate the state change and a webhook-like update
+    setTimeout(() => {
+        setEvent(prev => prev ? { ...prev, status: 'booked' } : null);
+        toast({
+            title: "Portal Unlocked!",
+            description: "Welcome to your event dashboard."
+        })
+        setIsLoading(false); 
+    }, 1000);
   };
 
   if (isLoading) {
@@ -322,7 +326,6 @@ export default function AppEventDetailPage() {
                 <TabsContent value="timeline"><HostTimelineTab /></TabsContent>
                 <TabsContent value="files"><HostFilesTab files={files} /></TabsContent>
                 <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery</CardTitle><CardDescription>Access your official photos and community uploads.</CardDescription></CardHeader><CardContent><p>Access your event photo gallery here once it becomes available after the event date.</p></CardContent></Card></TabsContent>
-                <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Share this to let guests upload photos.</CardDescription></CardHeader><CardContent><p>Share this QR code with your guests to allow them to upload photos to the community gallery.</p></CardContent></Card></TabsContent>
                 <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Submit your music preferences.</CardDescription></CardHeader><CardContent><p>Submit your music requests and do-not-play list for the DJ.</p></CardContent></Card></TabsContent>
                 <TabsContent value="communication"><EventChat role="host" /></TabsContent>
                 <TabsContent value="my-services"><HostServicesTab /></TabsContent>

@@ -97,6 +97,14 @@ const MOCK_EVENTS: Event[] = [
         eventDate: new Date('2025-02-20T19:00:00').toISOString(),
         status: 'deposit_due',
     },
+     {
+        id: 'evt-lead-123',
+        hostId: 'client-456',
+        clientName: 'John Doe',
+        eventName: 'Johns Quinceañera',
+        eventDate: new Date('2024-10-15T18:00:00').toISOString(),
+        status: 'quote_requested',
+    },
 ];
 
 
@@ -135,13 +143,30 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
      if (DATA_SOURCE === 'mock') {
         const lead = MOCK_LEADS.find(l => l.id === leadId);
         if (!lead) throw new Error('Lead not found');
+        
+        // Use existing eventId if it has been converted before
         if (lead.eventId) return { eventId: lead.eventId };
 
-        const newEventId = `evt-${leadId.split('-')[1]}`;
-        console.log(`Simulating conversion of lead ${leadId} to new event ${newEventId}`);
-        // In a real scenario, you'd create a new document in the 'events' collection.
+        const newEventId = `evt-${leadId}`;
+        
+        const existingEvent = MOCK_EVENTS.find(e => e.id === newEventId);
+        if (!existingEvent) {
+             const newEvent: Event = {
+                id: newEventId,
+                hostId: 'client-temp-id', // In a real app, this would be the actual client ID
+                clientName: lead.name,
+                eventName: lead.eventDraft.eventName,
+                eventDate: lead.eventDraft.eventDate,
+                status: 'quote_requested',
+            };
+            MOCK_EVENTS.push(newEvent);
+        }
+
         lead.status = 'converted';
         lead.eventId = newEventId;
+        
+        console.log(`Simulating conversion of lead ${leadId} to event ${newEventId}`);
+        
         return { eventId: newEventId };
     }
     // TODO: Implement Firestore transaction logic

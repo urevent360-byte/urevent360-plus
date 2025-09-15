@@ -382,6 +382,14 @@ export async function getEventTabs(eventId: string): Promise<any> {
 
 
 // === Payments Adapter ===
+export async function listPayments(eventId: string): Promise<Payment[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_PAYMENTS[eventId] || [];
+    }
+    throw new Error('Firestore not implemented');
+}
+
 export async function createInvoice(eventId: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
     if (DATA_SOURCE === 'mock') {
@@ -652,3 +660,5 @@ export async function sendMessage(eventId: string, msg: ChatMessage): Promise<vo
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
 }
+
+    

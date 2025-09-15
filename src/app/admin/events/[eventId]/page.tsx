@@ -1,16 +1,17 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem, RequestedService } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, RequestedService, Payment } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +22,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [requestedServices, setRequestedServices] = useState<RequestedService[]>([]);
+    const [payments, setPayments] = useState<Payment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
@@ -30,16 +32,18 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments] = await Promise.all([
             getEvent(eventId),
             listFiles(eventId),
             listTimeline(eventId),
-            listRequestedServices(eventId)
+            listRequestedServices(eventId),
+            listPayments(eventId)
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
         setTimeline(fetchedTimeline);
         setRequestedServices(fetchedRequests);
+        setPayments(fetchedPayments);
         setIsLoading(false);
     }
 
@@ -52,7 +56,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
         setIsCreatingInvoice(true);
         try {
             await createInvoice(event.id);
-            await fetchEventData(); // Refetch to get updated status
+            await fetchEventData(); // Refetch to get updated status and payments
             toast({
                 title: "Invoice Created",
                 description: "An invoice has been simulated and the event status is now 'Invoice Sent'.",
@@ -131,23 +135,65 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                         <CardTitle>Billing Management</CardTitle>
                         <CardDescription>Manage invoices, track payments, and view financial summaries for this event.</CardDescription>
                     </CardHeader>
-                    <CardContent className="space-y-4">
-                        <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
-                        <div className="flex gap-4 items-center">
-                            <Button onClick={handleCreateInvoice} disabled={!event || event.status !== 'quote_requested' || isCreatingInvoice}>
-                                {isCreatingInvoice ? <Loader2 className="mr-2 animate-spin" /> : null}
-                                Create Invoice
-                            </Button>
-                            {event?.status === 'invoice_sent' && (
-                                <Button onClick={handleSimulatePayment} disabled={isSimulatingPayment} variant="secondary">
-                                    {isSimulatingPayment ? <Loader2 className="mr-2 animate-spin" /> : <DollarSign className="mr-2" />}
-                                    Simulate Deposit Payment
+                    <CardContent className="space-y-6">
+                        <div className="space-y-2">
+                            <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
+                            <div className="flex gap-4 items-center">
+                                <Button onClick={handleCreateInvoice} disabled={!event || event.status !== 'quote_requested' || isCreatingInvoice}>
+                                    {isCreatingInvoice ? <Loader2 className="mr-2 animate-spin" /> : null}
+                                    Create Invoice
                                 </Button>
-                            )}
+                                {event?.status === 'invoice_sent' && (
+                                    <Button onClick={handleSimulatePayment} disabled={isSimulatingPayment} variant="secondary">
+                                        {isSimulatingPayment ? <Loader2 className="mr-2 animate-spin" /> : <DollarSign className="mr-2" />}
+                                        Simulate Deposit Payment
+                                    </Button>
+                                )}
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                "Create Invoice" will mark the event status as "Invoice Sent". Use "Simulate Deposit Payment" for testing the host portal unlock.
+                            </p>
                         </div>
-                         <p className="text-sm text-muted-foreground">
-                            "Create Invoice" will mark the event status as "Invoice Sent". Use "Simulate Deposit Payment" for testing the host portal unlock.
-                        </p>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Payment History</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Invoice ID</TableHead>
+                                            <TableHead>Amount</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Method</TableHead>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead className="text-right">Actions</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {payments.map(payment => (
+                                            <TableRow key={payment.id}>
+                                                <TableCell className="font-medium">{payment.invoiceId}</TableCell>
+                                                <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                                                <TableCell><Badge variant={payment.status === 'paid' ? 'default' : 'destructive'} className="capitalize">{payment.status}</Badge></TableCell>
+                                                <TableCell className="capitalize">{payment.method || 'N/A'}</TableCell>
+                                                <TableCell>{format(new Date(payment.timestamp), 'PPp')}</TableCell>
+                                                <TableCell className="text-right">
+                                                    {payment.quickbooksUrl && (
+                                                        <Button variant="ghost" size="sm" asChild>
+                                                            <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
+                                                                View on QuickBooks <ExternalLink className="ml-2 h-4 w-4" />
+                                                            </a>
+                                                        </Button>
+                                                    )}
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                                {payments.length === 0 && <p className="text-center text-muted-foreground p-8">No invoices or payments have been recorded for this event yet.</p>}
+                            </CardContent>
+                        </Card>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -306,3 +352,5 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
     return <AdminEventDetailClient eventId={params.eventId} />;
 }
+
+    

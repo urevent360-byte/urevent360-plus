@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
 import QRCode from "qrcode.react";
 import { Badge } from '@/components/ui/badge';
+import { EventChat } from '@/components/shared/EventChat';
 
 // MOCK DATA for Timeline
 const timelineItems = [
@@ -400,9 +401,8 @@ export default function AdminEventDetailPage() {
                 <AdminGallerySettingsTab event={event} setEvent={setEvent} />
             </TabsContent>
             <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Review the client's music requests.</CardDescription></CardHeader><CardContent><p>Manage music requests and do-not-play lists submitted by the client.</p></CardContent></Card></TabsContent>
-            <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>A dedicated chat for this event.</CardDescription></CardHeader><CardContent><p>A dedicated chat for this event between the admin and the host.</p></CardContent></Card></TabsContent>
+            <TabsContent value="communication"><EventChat role="admin" /></TabsContent>
             <TabsContent value="my-services"><AdminServicesTab /></TabsContent>
         </EventProfileShell>
     );
 }
-

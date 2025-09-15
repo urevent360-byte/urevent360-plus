@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TabsContent } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { EventChat } from '@/components/shared/EventChat';
 
 // MOCK DATA for Timeline - should be the same as admin view
 const timelineItems = [
@@ -323,7 +324,7 @@ export default function AppEventDetailPage() {
                 <TabsContent value="gallery"><Card><CardHeader><CardTitle>Gallery</CardTitle><CardDescription>Access your official photos and community uploads.</CardDescription></CardHeader><CardContent><p>Access your event photo gallery here once it becomes available after the event date.</p></CardContent></Card></TabsContent>
                 <TabsContent value="guest-qr"><Card><CardHeader><CardTitle>Guest Upload QR Code</CardTitle><CardDescription>Share this to let guests upload photos.</CardDescription></CardHeader><CardContent><p>Share this QR code with your guests to allow them to upload photos to the community gallery.</p></CardContent></Card></TabsContent>
                 <TabsContent value="music"><Card><CardHeader><CardTitle>Music Playlist</CardTitle><CardDescription>Submit your music preferences.</CardDescription></CardHeader><CardContent><p>Submit your music requests and do-not-play list for the DJ.</p></CardContent></Card></TabsContent>
-                <TabsContent value="communication"><Card><CardHeader><CardTitle>Communication</CardTitle><CardDescription>Chat directly with our team.</CardDescription></CardHeader><CardContent><p>Chat with us about your event. This is the best place for quick questions.</p></CardContent></Card></TabsContent>
+                <TabsContent value="communication"><EventChat role="host" /></TabsContent>
                 <TabsContent value="my-services"><HostServicesTab /></TabsContent>
             </EventProfileShell>
         ) : (

@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { format, startOfWeek, addDays, getWeek, getYear } from 'date-fns';
+import { format, startOfWeek, addDays, getWeek } from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 
-type EventStatus = 'planning' | 'active' | 'completed' | 'on-hold';
+type EventStatus = 'planning' | 'active' | 'completed' | 'on-hold' | 'booked';
 
 type Project = {
     id: string;
@@ -22,17 +22,17 @@ type Project = {
     team: string[]; // Placeholder for team members assigned
 };
 
+// Updated placeholder data for projects
 const placeholderProjects: Project[] = [
-    { id: 'evt-john-doe-2024', clientName: 'John Doe', eventName: "John's Quinceañera", eventDate: new Date('2024-08-25'), status: 'planning', services: ['360 Photo Booth', 'Cold Sparklers'], team: ['Alex', 'Maria'] },
-    { id: 'evt-david-lee-2024', clientName: 'David Lee', eventName: "Lee Corporate Gala", eventDate: new Date('2024-07-20'), status: 'completed', services: ['Magic Mirror'], team: ['Alex'] },
-    { id: 'evt-maria-garcia-2024', clientName: 'Maria Garcia', eventName: "Garcia Wedding", eventDate: new Date(), status: 'active', services: ['La Hora Loca', 'Dance on the Clouds'], team: ['Carlos', 'Maria'] },
-    { id: 'evt-jane-smith-2024', clientName: 'Jane Smith', eventName: "Smith & Co Product Launch", eventDate: new Date('2024-10-01'), status: 'on-hold', services: ['LED Screens Wall'], team: ['Alex', 'Carlos'] },
-    // Add another project for this week to test grouping
+    { id: 'evt-123', clientName: 'John Doe', eventName: "John's Quinceañera", eventDate: new Date('2024-10-15'), status: 'planning', services: ['360 Photo Booth', 'Cold Sparklers'], team: ['Alex', 'Maria'] },
+    { id: 'evt-456', clientName: 'David Lee', eventName: "Lee Corporate Gala", eventDate: new Date('2024-07-20'), status: 'completed', services: ['Magic Mirror'], team: ['Alex'] },
+    { id: 'evt-789', clientName: 'Jane Smith', eventName: "Smith Wedding", eventDate: new Date('2024-11-01'), status: 'booked', services: ['Photo Booth Printer'], team: ['Carlos'] },
     { id: 'evt-test-this-week', clientName: 'Test Client', eventName: "Weekly Test Event", eventDate: addDays(new Date(), 2), status: 'active', services: ['Projector'], team: ['Maria'] },
 ];
 
+
 const allServices = [...new Set(placeholderProjects.flatMap(p => p.services))];
-const allStatuses: EventStatus[] = ['planning', 'active', 'completed', 'on-hold'];
+const allStatuses: EventStatus[] = ['planning', 'active', 'completed', 'on-hold', 'booked'];
 const allTeamMembers = [...new Set(placeholderProjects.flatMap(p => p.team))];
 
 export default function ProjectsPage() {

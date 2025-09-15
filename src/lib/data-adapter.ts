@@ -155,6 +155,21 @@ const MOCK_LEADS: Lead[] = [
         createdAt: new Date('2024-07-29').toISOString(),
         updatedAt: new Date().toISOString(),
     },
+     { 
+        id: 'lead-new',
+        hostEmail: 'new@example.com',
+        name: 'New Client',
+        email: 'new@example.com',
+        requestedServices: ['La Hora Loca with LED Robot'],
+        eventDraft: {
+            eventName: 'Big Birthday Bash',
+            eventDate: new Date('2024-12-01').toISOString(),
+        },
+        status: 'new',
+        eventId: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+    },
 ];
 
 let MOCK_EVENTS: Event[] = [
@@ -187,6 +202,15 @@ let MOCK_EVENTS: Event[] = [
         eventDate: new Date('2024-11-01').toISOString(),
         status: 'deposit_due', // This one is waiting for deposit
         contractSigned: true,
+    },
+     {
+        id: 'evt-new',
+        hostId: 'user-newclient',
+        clientName: 'New Client',
+        eventName: 'Big Birthday Bash',
+        eventDate: new Date('2024-12-01').toISOString(),
+        status: 'quote_requested',
+        contractSigned: false,
     },
 ];
 

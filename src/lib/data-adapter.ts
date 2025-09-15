@@ -179,7 +179,7 @@ let MOCK_EVENTS: Event[] = [
         clientName: 'John Doe',
         eventName: 'Johns Quinceañera',
         eventDate: new Date('2024-10-15T18:00:00').toISOString(),
-        status: 'quote_requested', // Starts as quote_requested
+        status: 'invoice_sent', // Starts as quote_requested
     },
     {
         id: 'evt-456',
@@ -395,7 +395,7 @@ export async function createInvoice(eventId: string): Promise<void> {
     if (DATA_SOURCE === 'mock') {
         const event = MOCK_EVENTS.find(e => e.id === eventId);
         if (event) {
-            event.status = 'invoice_sent';
+            event.status = event.contractSigned ? 'deposit_due' : 'invoice_sent';
             
             const newPayment: Payment = {
                 id: `pay-${Math.random().toString(36).substring(7)}`,
@@ -413,7 +413,7 @@ export async function createInvoice(eventId: string): Promise<void> {
             MOCK_PAYMENTS[eventId].push(newPayment);
 
             await sendMessage(eventId, { sender: 'system', text: 'Invoice created.', timestamp: new Date().toISOString() });
-            console.log(`(Mock) Invoice created for event ${eventId}. Event status updated to 'invoice_sent'.`);
+            console.log(`(Mock) Invoice created for event ${eventId}. Event status updated.`);
         } else {
             throw new Error('Event not found');
         }
@@ -660,5 +660,7 @@ export async function sendMessage(eventId: string, msg: ChatMessage): Promise<vo
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
 }
+
+    
 
     

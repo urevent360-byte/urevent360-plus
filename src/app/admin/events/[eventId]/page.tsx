@@ -139,11 +139,11 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                         <div className="space-y-2">
                             <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
                             <div className="flex gap-4 items-center">
-                                <Button onClick={handleCreateInvoice} disabled={!event || event.status !== 'quote_requested' || isCreatingInvoice}>
+                                <Button onClick={handleCreateInvoice} disabled={!event || !['quote_requested', 'contract_sent'].includes(event.status) || isCreatingInvoice}>
                                     {isCreatingInvoice ? <Loader2 className="mr-2 animate-spin" /> : null}
                                     Create Invoice
                                 </Button>
-                                {event?.status === 'invoice_sent' && (
+                                {['invoice_sent', 'deposit_due'].includes(event?.status || '') && (
                                     <Button onClick={handleSimulatePayment} disabled={isSimulatingPayment} variant="secondary">
                                         {isSimulatingPayment ? <Loader2 className="mr-2 animate-spin" /> : <DollarSign className="mr-2" />}
                                         Simulate Deposit Payment
@@ -151,7 +151,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                                 )}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                "Create Invoice" will mark the event status as "Invoice Sent". Use "Simulate Deposit Payment" for testing the host portal unlock.
+                                Use "Simulate Deposit Payment" to mark the deposit as paid and unlock the host portal.
                             </p>
                         </div>
                         <Card>
@@ -352,6 +352,8 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
     return <AdminEventDetailClient eventId={params.eventId} />;
 }
+
+    
 
     
 

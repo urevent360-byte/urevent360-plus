@@ -1,0 +1,41 @@
+
+{
+  "ui": {
+    "save": {
+      "en": "Save",
+      "es": "Guardar"
+    },
+    "cancel": {
+      "en": "Cancel",
+      "es": "Cancelar"
+    },
+    "edit": {
+      "en": "Edit",
+      "es": "Editar"
+    },
+    "close": {
+      "en": "Close",
+      "es": "Cerrar"
+    },
+    "back": {
+      "en": "Back",
+      "es": "Atrás"
+    },
+    "delete": {
+      "en": "Delete",
+      "es": "Eliminar"
+    },
+    "confirm": {
+      "en": "Confirm",
+      "es": "Confirmar"
+    },
+    "more": {
+      "en": "More",
+      "es": "Más"
+    },
+    "loading": {
+      "en": "Loading…",
+      "es": "Cargando…"
+    }
+  }
+}

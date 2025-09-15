@@ -11,7 +11,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, QrCode } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -266,7 +266,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                                     <TableRow key={file.id}>
                                         <TableCell className="font-medium flex items-center gap-2"><File size={16} />{file.name}</TableCell>
                                         <TableCell><Badge variant="secondary">{file.type}</Badge></TableCell>
-                                        <TableCell><Badge variant={file.status === 'signed' ? 'default' : 'outline'}>{file.status.replace('_', ' ')}</Badge></TableCell>
+                                        <TableCell><Badge variant={file.status === 'signed' ? 'default' : 'outline'} className="capitalize">{file.status.replace('_', ' ')}</Badge></TableCell>
                                         <TableCell className="capitalize">{file.uploadedBy}</TableCell>
                                         <TableCell>{format(new Date(file.timestamp), 'PPp')}</TableCell>
                                         <TableCell className="text-right">
@@ -352,5 +352,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
     return <AdminEventDetailClient eventId={params.eventId} />;
 }
+
+    
 
     

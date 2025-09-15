@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,7 +11,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Link as LinkIcon } from 'lucide-react';
+import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -242,3 +243,5 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
 export default function AppEventDetailPage({ params }: { params: { eventId: string } }) {
   return <AppEventDetailClient eventId={params.eventId} />;
 }
+
+    

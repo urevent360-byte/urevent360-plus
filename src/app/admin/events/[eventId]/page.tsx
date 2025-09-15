@@ -5,14 +5,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem, RequestedService, Payment } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, QrCode } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,8 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
     const [requestedServices, setRequestedServices] = useState<RequestedService[]>([]);
     const [payments, setPayments] = useState<Payment[]>([]);
+    const [mustPlay, setMustPlay] = useState<Song[]>([]);
+    const [doNotPlay, setDoNotPlay] = useState<Song[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
@@ -33,18 +35,23 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments, musicPlaylist] = await Promise.all([
             getEvent(eventId),
             listFiles(eventId),
             listTimeline(eventId),
             listRequestedServices(eventId),
-            listPayments(eventId)
+            listPayments(eventId),
+            getMusicPlaylist(eventId)
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
         setTimeline(fetchedTimeline);
         setRequestedServices(fetchedRequests);
         setPayments(fetchedPayments);
+        if (musicPlaylist) {
+            setMustPlay(musicPlaylist.mustPlay);
+            setDoNotPlay(musicPlaylist.doNotPlay);
+        }
         setIsLoading(false);
     }
 
@@ -115,6 +122,25 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
         });
         await fetchEventData();
     }
+
+    const SongList = ({ title, songs, icon }: { title: string, songs: Song[], icon: React.ReactNode }) => (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">{icon} {title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                {songs.length > 0 ? (
+                    <ul className="space-y-2 text-sm text-muted-foreground">
+                        {songs.map((song, index) => (
+                            <li key={index} className="border-b pb-2">{song.title} - <span className="italic">{song.artist}</span></li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-sm text-muted-foreground">This list is empty.</p>
+                )}
+            </CardContent>
+        </Card>
+    );
 
     return (
         <EventProfileShell
@@ -295,8 +321,14 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             </TabsContent>
              <TabsContent value="music">
                 <Card>
-                    <CardHeader><CardTitle>Music Playlist</CardTitle></CardHeader>
-                    <CardContent><p>TODO: View client's music selections.</p></CardContent>
+                    <CardHeader>
+                        <CardTitle>Client's Music Preferences</CardTitle>
+                        <CardDescription>This is a read-only view of the song lists curated by the client.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <SongList title="Must-Play List" songs={mustPlay} icon={<Music />} />
+                        <SongList title="Do-Not-Play List" songs={doNotPlay} icon={<Ban />} />
+                    </CardContent>
                 </Card>
             </TabsContent>
             <TabsContent value="communication">
@@ -353,3 +385,5 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
     return <AdminEventDetailClient eventId={params.eventId} />;
 }
+
+    

@@ -5,19 +5,20 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, markContractSigned, listFiles, listTimeline } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem } from '@/lib/data-adapter';
+import { getEvent, markContractSigned, listFiles, listTimeline, getMusicPlaylist, saveMusicPlaylist } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, Song } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle } from 'lucide-react';
+import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Music, Plus, Ban, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import { Input } from '@/components/ui/input';
 
 function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { onSign: () => void, onPay: () => void, signing: boolean, paying: boolean, contractSigned?: boolean }) {
     return (
@@ -43,6 +44,123 @@ function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { on
     );
 }
 
+function MusicPreferences({ eventId }: { eventId: string }) {
+    const [mustPlay, setMustPlay] = useState<Song[]>([]);
+    const [doNotPlay, setDoNotPlay] = useState<Song[]>([]);
+    const [newSongTitle, setNewSongTitle] = useState('');
+    const [newSongArtist, setNewSongArtist] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+    const { toast } = useToast();
+
+    useEffect(() => {
+        async function fetchPlaylist() {
+            const playlist = await getMusicPlaylist(eventId);
+            if (playlist) {
+                setMustPlay(playlist.mustPlay);
+                setDoNotPlay(playlist.doNotPlay);
+            }
+        }
+        fetchPlaylist();
+    }, [eventId]);
+
+    const handleAddSong = (list: 'mustPlay' | 'doNotPlay') => {
+        if (!newSongTitle || !newSongArtist) {
+            toast({ title: 'Missing Info', description: 'Please enter both song title and artist.', variant: 'destructive' });
+            return;
+        }
+        const newSong: Song = { title: newSongTitle, artist: newSongArtist };
+        if (list === 'mustPlay') {
+            setMustPlay(prev => [...prev, newSong]);
+        } else {
+            setDoNotPlay(prev => [...prev, newSong]);
+        }
+        setNewSongTitle('');
+        setNewSongArtist('');
+    };
+
+    const handleRemoveSong = (list: 'mustPlay' | 'doNotPlay', index: number) => {
+        if (list === 'mustPlay') {
+            setMustPlay(prev => prev.filter((_, i) => i !== index));
+        } else {
+            setDoNotPlay(prev => prev.filter((_, i) => i !== index));
+        }
+    };
+    
+    const handleSave = async () => {
+        setIsSaving(true);
+        await saveMusicPlaylist(eventId, { mustPlay, doNotPlay });
+        setIsSaving(false);
+        toast({ title: 'Playlist Saved!', description: 'Your music preferences have been updated.' });
+    };
+
+    const SongList = ({ title, songs, onRemove, icon }: { title: string, songs: Song[], onRemove: (index: number) => void, icon: React.ReactNode }) => (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2">{icon} {title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+                {songs.length > 0 ? (
+                    <ul className="space-y-2">
+                        {songs.map((song, index) => (
+                            <li key={index} className="flex items-center justify-between text-sm border-b pb-2">
+                                <div>
+                                    <p className="font-medium">{song.title}</p>
+                                    <p className="text-muted-foreground italic">{song.artist}</p>
+                                </div>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onRemove(index)}>
+                                    <Trash2 className="h-4 w-4" />
+                                </Button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-sm text-center text-muted-foreground py-4">This list is empty.</p>
+                )}
+            </CardContent>
+        </Card>
+    );
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>Music Preferences</CardTitle>
+                <CardDescription>Curate the soundtrack for your event. Add songs to your "Must-Play" and "Do-Not-Play" lists.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="border p-4 rounded-lg space-y-4">
+                     <h3 className="font-semibold">Add a Song</h3>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <Input 
+                            placeholder="Song Title" 
+                            value={newSongTitle} 
+                            onChange={e => setNewSongTitle(e.target.value)}
+                        />
+                        <Input 
+                            placeholder="Artist" 
+                            value={newSongArtist} 
+                            onChange={e => setNewSongArtist(e.target.value)}
+                        />
+                     </div>
+                     <div className="flex gap-2">
+                        <Button variant="outline" onClick={() => handleAddSong('mustPlay')}><Plus className="mr-2"/> Add to Must-Play</Button>
+                        <Button variant="outline" onClick={() => handleAddSong('doNotPlay')}><Ban className="mr-2"/> Add to Do-Not-Play</Button>
+                     </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <SongList title="Must-Play" songs={mustPlay} onRemove={(index) => handleRemoveSong('mustPlay', index)} icon={<Music/>} />
+                    <SongList title="Do-Not-Play" songs={doNotPlay} onRemove={(index) => handleRemoveSong('doNotPlay', index)} icon={<Ban/>} />
+                </div>
+            </CardContent>
+            <CardContent>
+                <Button onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 animate-spin"/> : null}
+                    Save Music Preferences
+                </Button>
+            </CardContent>
+        </Card>
+    );
+}
 
 function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
@@ -71,7 +189,6 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
         fetchEventData();
     }, [eventId]);
     
-    // The "booked" status unlocks the portal for the host.
     const isLocked = event?.status !== 'booked';
 
     const handleSignContract = async () => {
@@ -83,7 +200,6 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
                 title: "Contract Signed!",
                 description: "Thank you! Your portal will unlock once the deposit is paid.",
             });
-            // Refetch data to update UI
             await fetchEventData();
         } catch (error) {
             toast({ title: "Error", description: "Failed to sign contract.", variant: "destructive" });
@@ -97,11 +213,9 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
             title: "Simulating Payment...",
             description: "You are being redirected to a mock payment page.",
         });
-        // In a real app, this would redirect to a payment gateway.
     };
 
     if (isLoading) {
-        // Show a loading state while we fetch event data
         return (
              <EventProfileShell
                 event={null}
@@ -222,10 +336,7 @@ function AppEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
              <TabsContent value="music">
-                <Card>
-                    <CardHeader><CardTitle>My Music Playlist</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Build music preference lists (Must Play / Do Not Play).</p></CardContent>
-                </Card>
+                <MusicPreferences eventId={eventId} />
             </TabsContent>
             <TabsContent value="communication">
                  <EventChat eventId={eventId} role="host" />

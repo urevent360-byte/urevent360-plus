@@ -103,6 +103,18 @@ export const ChatMessageSchema = z.object({
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+export const SongSchema = z.object({
+    title: z.string(),
+    artist: z.string(),
+});
+export type Song = z.infer<typeof SongSchema>;
+
+export const MusicPlaylistSchema = z.object({
+    mustPlay: z.array(SongSchema),
+    doNotPlay: z.array(SongSchema),
+});
+export type MusicPlaylist = z.infer<typeof MusicPlaylistSchema>;
+
 
 // --- Mock Data ---
 
@@ -262,6 +274,18 @@ let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
     'evt-456': [
          { sender: 'system', text: 'Event created from lead.', timestamp: new Date('2024-07-28T10:00:00Z').toISOString() },
     ]
+};
+
+let MOCK_MUSIC_PLAYLISTS: Record<string, MusicPlaylist> = {
+    'evt-456': {
+        mustPlay: [
+            { title: 'Don\'t Stop Me Now', artist: 'Queen' },
+            { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars' },
+        ],
+        doNotPlay: [
+            { title: 'Chicken Dance', artist: 'Werner Thomas' },
+        ]
+    }
 };
 
 // --- Data Adapter API ---
@@ -660,3 +684,25 @@ export async function sendMessage(eventId: string, msg: ChatMessage): Promise<vo
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
 }
+
+// === Music Adapter ===
+export async function getMusicPlaylist(eventId: string): Promise<MusicPlaylist | null> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_MUSIC_PLAYLISTS[eventId] || { mustPlay: [], doNotPlay: [] };
+    }
+    // TODO: Implement Firestore query
+    throw new Error('Firestore not implemented');
+}
+
+export async function saveMusicPlaylist(eventId: string, playlist: MusicPlaylist): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        MOCK_MUSIC_PLAYLISTS[eventId] = playlist;
+        console.log(`(Mock) Saved music playlist for event ${eventId}`, playlist);
+    }
+    // TODO: Implement Firestore write
+    throw new Error('Firestore not implemented');
+}
+
+    

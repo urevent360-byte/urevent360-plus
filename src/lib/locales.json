@@ -1,4 +1,3 @@
-
 {
   "ui": {
     "save": {
@@ -82,6 +81,22 @@
     "canceled": {
       "en": "Canceled",
       "es": "Cancelado"
+    },
+    "requested": {
+      "en": "Requested",
+      "es": "Solicitado"
+    },
+    "approved": {
+      "en": "Approved",
+      "es": "Aprobado"
+    },
+    "rejected": {
+      "en": "Rejected",
+      "es": "Rechazado"
+    },
+    "invoiced": {
+      "en": "Added to Invoice",
+      "es": "Añadido a la factura"
     }
   },
   "crm": {
@@ -434,6 +449,28 @@
     "saveList": {
       "en": "Save Playlist",
       "es": "Guardar lista"
+    }
+  },
+  "services": {
+    "title": {
+      "en": "My Services",
+      "es": "Mis servicios"
+    },
+    "booked": {
+      "en": "Booked Services",
+      "es": "Servicios contratados"
+    },
+    "requestAddons": {
+      "en": "Request add-ons",
+      "es": "Solicitar adicionales"
+    },
+    "addToCart": {
+      "en": "Add to Cart",
+      "es": "Añadir al carrito"
+    },
+    "sendQuoteRequest": {
+      "en": "Send Quote Request",
+      "es": "Enviar solicitud de cotización"
     }
   }
 }

@@ -121,5 +121,27 @@
         "en": "Convert to Project",
         "es": "Convertir a proyecto"
     }
+  },
+  "event": {
+    "changeEvent": {
+      "en": "Change Event",
+      "es": "Cambiar evento"
+    },
+    "unpin": {
+      "en": "Unpin",
+      "es": "Desanclar"
+    },
+    "openCalendar": {
+      "en": "Open Calendar",
+      "es": "Abrir calendario"
+    },
+    "itinerary": {
+      "en": "Itinerary",
+      "es": "Itinerario"
+    },
+    "guestQr": {
+      "en": "Guest QR",
+      "es": "QR para invitados"
+    }
   }
 }

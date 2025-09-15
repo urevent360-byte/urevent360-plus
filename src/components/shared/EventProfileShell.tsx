@@ -28,6 +28,7 @@ const adminTabs = [
 ];
 
 export function EventProfileShell({ event, role, children, isLoading = false }: EventProfileShellProps) {
+    const [activeTab, setActiveTab] = useState('details');
 
     const tabs = role === 'admin' ? adminTabs : adminTabs.filter(tab => tab.value !== 'billing');
 
@@ -63,7 +64,7 @@ export function EventProfileShell({ event, role, children, isLoading = false }: 
         </CardHeader>
       </Card>
 
-      <Tabs defaultValue="details" className="w-full">
+      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
             {tabs.map(tab => (
                 <TabsTrigger key={tab.value} value={tab.value}>{tab.label}</TabsTrigger>
@@ -76,3 +77,5 @@ export function EventProfileShell({ event, role, children, isLoading = false }: 
     </div>
   );
 }
+
+    

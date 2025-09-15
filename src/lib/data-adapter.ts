@@ -36,10 +36,19 @@ const EventSchema = z.object({
     clientName: z.string(),
     eventName: z.string(),
     eventDate: z.string(),
-    status: z.enum(['quote_requested', 'invoice_sent', 'deposit_due', 'booked', 'completed', 'canceled']),
+    status: z.enum(['quote_requested', 'contract_sent', 'invoice_sent', 'deposit_due', 'booked', 'completed', 'canceled']),
     confirmedAt: z.string().optional(),
+    contractSigned: z.boolean().optional(),
 });
 export type Event = z.infer<typeof EventSchema>;
+
+export type FileRecord = {
+    id: string;
+    name: string;
+    type: 'contract' | 'invoice' | 'other';
+    status: 'pending_signature' | 'signed' | 'active';
+    url: string; // URL to the file in Cloud Storage
+};
 
 
 // --- Mock Data ---
@@ -87,7 +96,8 @@ const MOCK_EVENTS: Event[] = [
         eventName: 'Smith & Co Product Launch',
         eventDate: new Date('2024-11-01T12:00:00').toISOString(),
         status: 'booked',
-        confirmedAt: new Date().toISOString()
+        confirmedAt: new Date().toISOString(),
+        contractSigned: true,
     },
     {
         id: 'evt-789',
@@ -158,6 +168,7 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
                 eventName: lead.eventDraft.eventName,
                 eventDate: lead.eventDraft.eventDate,
                 status: 'quote_requested',
+                contractSigned: false,
             };
             MOCK_EVENTS.push(newEvent);
         }
@@ -172,3 +183,5 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
     // TODO: Implement Firestore transaction logic
     throw new Error('Firestore not implemented');
 }
+
+    

@@ -112,8 +112,7 @@ const placeholderServicesData: any = {
     },
 };
 
-function ServiceDetailClient({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+function ServiceDetailClient({ slug }: { slug: string }) {
     const service = placeholderServicesData[slug];
     const { toast } = useToast();
     const { addToCart } = useCart();
@@ -205,6 +204,7 @@ function ServiceDetailClient({ params }: { params: { slug: string } }) {
     );
 }
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-    return <ServiceDetailClient params={params} />;
+export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    return <ServiceDetailClient slug={slug} />;
 }

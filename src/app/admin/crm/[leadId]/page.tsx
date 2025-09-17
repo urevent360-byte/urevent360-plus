@@ -16,7 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
-function LeadDetailClient({ leadId }: { leadId: string }) {
+function LeadDetailClient({ params }: { params: { leadId: string } }) {
+    const { leadId } = params;
     const [lead, setLead] = useState<Lead | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isConverting, setIsConverting] = useState(false);
@@ -209,7 +210,5 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
 }
 
 export default function AdminLeadDetailPage({ params }: { params: { leadId: string } }) {
-  return <LeadDetailClient leadId={params.leadId} />;
+  return <LeadDetailClient params={params} />;
 }
-
-    

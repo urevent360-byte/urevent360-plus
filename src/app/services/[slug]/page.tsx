@@ -114,7 +114,8 @@ const placeholderServicesData: any = {
 
 
 export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-    const service = placeholderServicesData[params.slug];
+    const { slug } = params;
+    const service = placeholderServicesData[slug];
     const { toast } = useToast();
     const { addToCart } = useCart();
 

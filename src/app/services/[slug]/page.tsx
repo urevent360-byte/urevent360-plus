@@ -112,8 +112,7 @@ const placeholderServicesData: any = {
     },
 };
 
-
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+function ServiceDetailClient({ params }: { params: { slug: string } }) {
     const { slug } = params;
     const service = placeholderServicesData[slug];
     const { toast } = useToast();
@@ -204,4 +203,8 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
             )}
         </div>
     );
+}
+
+export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+    return <ServiceDetailClient params={params} />;
 }

@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -8,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { UploadCloud, FileImage, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-export default function PhotoUploadPage({ params }: { params: { eventId: string } }) {
+function PhotoUploadClient({ params }: { params: { eventId: string } }) {
     const { eventId } = params;
     const { toast } = useToast();
     const [files, setFiles] = useState<File[]>([]);
@@ -120,4 +121,9 @@ export default function PhotoUploadPage({ params }: { params: { eventId: string 
             </Card>
         </div>
     );
+}
+
+
+export default function PhotoUploadPage({ params }: { params: { eventId: string } }) {
+    return <PhotoUploadClient params={params} />;
 }

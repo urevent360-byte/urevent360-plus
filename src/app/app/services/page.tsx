@@ -17,7 +17,7 @@ const eventId = 'evt-456'; // Hardcoded for prototype
 
 export default function AppServicesPage() {
     const [bookedServices, setBookedServices] = useState<any[]>([]);
-    const [addons, setAddons] = useState<Addon[]>([]);
+    const [availableAddons, setAvailableAddons] = useState<Addon[]>([]);
     const [cart, setCart] = useState<Addon[]>([]);
     const { toast } = useToast();
     const { user } = useAuth();
@@ -25,12 +25,16 @@ export default function AppServicesPage() {
     useEffect(() => {
         async function fetchData() {
             if (!user) return;
-            const [services, availableAddons] = await Promise.all([
+            const [services, allAddons] = await Promise.all([
                 listSelectedServices(eventId),
-                listAddons()
+                listAddons() // This now fetches all main services
             ]);
+            
+            const bookedServiceNames = services.map(s => s.name);
+            const unbookedAddons = allAddons.filter(addon => !bookedServiceNames.includes(addon.name));
+
             setBookedServices(services);
-            setAddons(availableAddons);
+            setAvailableAddons(unbookedAddons);
         }
         fetchData();
     }, [user]);
@@ -50,6 +54,9 @@ export default function AppServicesPage() {
             title: 'Request Sent!',
             description: 'Your request for additional services has been sent to the admin for approval.'
         });
+        
+        // Remove the requested items from the available addons list
+        setAvailableAddons(prev => prev.filter(addon => !cart.some(cartItem => cartItem.id === addon.id)));
         setCart([]);
     };
     
@@ -98,7 +105,7 @@ export default function AppServicesPage() {
                         <CardDescription>Enhance your event by requesting additional services. No charges will be made until you approve the updated quote.</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {addons.map(addon => {
+                        {availableAddons.map(addon => {
                             const isInCart = cart.some(item => item.id === addon.id);
                             return (
                                 <Card key={addon.id} className="overflow-hidden">

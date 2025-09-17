@@ -254,11 +254,43 @@ let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     ]
 };
 
-const MOCK_ADDONS: Addon[] = [
-    { id: 'addon-1', name: 'Extra Hour of Service', description: 'Extend the fun for one more hour.', image: 'https://picsum.photos/seed/addon1/400/300' },
-    { id: 'addon-2', name: 'Custom Prop Set', description: 'Props tailored to your event theme.', image: 'https://picsum.photos/seed/addon2/400/300' },
-    { id: 'addon-3', name: 'Guest Book Station', description: 'A station for guests to leave photo strips and messages.', image: 'https://picsum.photos/seed/addon3/400/300' },
-    { id: 'addon-4', name: 'Live Slideshow Screen', description: 'A large screen displaying photos in real-time.', image: 'https://picsum.photos/seed/addon4/400/300' },
+const MOCK_MAIN_SERVICES = [
+    { 
+        id: 'svc-360-photo-booth',
+        name: '360 Photo Booth',
+        description: 'A modern platform where guests can record dynamic, slow-motion videos with a rotating camera.',
+        image: 'https://picsum.photos/seed/service1/800/600',
+    },
+    { 
+        id: 'svc-photo-booth-printer',
+        name: 'Photo Booth Printer',
+        description: 'Receive glossy, high-quality photo strips instantly with custom logos and designs.',
+        image: 'https://picsum.photos/seed/service2/800/600',
+    },
+    {
+        id: 'svc-magic-mirror',
+        name: 'Magic Mirror',
+        description: 'An interactive, full-length mirror that takes amazing selfies with fun animations.',
+        image: 'https://picsum.photos/seed/service3/800/600',
+    },
+    { 
+        id: 'svc-la-hora-loca-led-robot',
+        name: 'La Hora Loca with LED Robot',
+        description: 'An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.',
+        image: 'https://picsum.photos/seed/service4/800/600',
+    },
+    { 
+        id: 'svc-cold-sparklers',
+        name: 'Cold Sparklers',
+        description: 'Create a stunning, safe pyrotechnic-like effect for magical moments without heat or smoke.',
+        image: 'https://picsum.photos/seed/service5/800/600',
+    },
+    { 
+        id: 'svc-dance-on-the-clouds',
+        name: 'Dance on the Clouds',
+        description: 'A dreamy, thick cloud effect that covers the dance floor for a fairy-tale first dance.',
+        image: 'https://picsum.photos/seed/service6/800/600',
+    },
 ];
 
 let MOCK_REQUESTED_SERVICES: RequestedService[] = [
@@ -603,7 +635,7 @@ export async function listSelectedServices(eventId: string): Promise<any[]> {
         if (lead) {
             return lead.requestedServices.map(name => ({ id: `svc-${name.replace(/\s+/g, '-')}`, name: name, status: 'Booked' }));
         }
-        return [{ id: 'svc-1', name: '360 Photo Booth', status: 'Booked' }];
+        return [{ id: 'svc-magic-mirror', name: 'Magic Mirror', status: 'Booked' }];
     }
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');
@@ -612,7 +644,7 @@ export async function listSelectedServices(eventId: string): Promise<any[]> {
 export async function listAddons(): Promise<Addon[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
      if (DATA_SOURCE === 'mock') {
-        return MOCK_ADDONS;
+        return MOCK_MAIN_SERVICES;
     }
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');

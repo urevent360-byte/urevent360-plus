@@ -18,8 +18,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 
 
-function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
-    const { eventId } = params;
+function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -384,5 +383,5 @@ function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
 
 
 export default function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
-    return <AdminEventDetailClient params={params} />;
+    return <AdminEventDetailClient eventId={params.eventId} />;
 }

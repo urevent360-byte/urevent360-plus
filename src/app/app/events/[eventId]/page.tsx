@@ -162,8 +162,7 @@ function MusicPreferences({ eventId }: { eventId: string }) {
     );
 }
 
-function AppEventDetailClient({ params }: { params: { eventId: string } }) {
-    const { eventId } = params;
+function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -354,5 +353,5 @@ function AppEventDetailClient({ params }: { params: { eventId: string } }) {
 
 
 export default function AppEventDetailPage({ params }: { params: { eventId: string } }) {
-  return <AppEventDetailClient params={params} />;
+  return <AppEventDetailClient eventId={params.eventId} />;
 }

@@ -82,7 +82,7 @@ export default function AppServicesPage() {
                                     </div>
                                     <div className="flex justify-start md:justify-end gap-2">
                                         <Button variant="outline" size="sm" asChild>
-                                            <Link href={`/app/events/${eventId}?tab=timeline`}>View Timeline</Link>
+                                            <Link href={`/app/events/${eventId}?tab=my-services`}>Manage Service</Link>
                                         </Button>
                                     </div>
                                 </CardContent>

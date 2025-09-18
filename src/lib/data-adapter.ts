@@ -882,6 +882,43 @@ export async function getGuestUploads(eventId: string, options?: { page?: number
     return [];
 }
 
+// === QR Adapter ===
+export async function regenerateQrToken(eventId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const event = MOCK_EVENTS.find(e => e.id === eventId);
+    if (event && event.qrUpload) {
+        event.qrUpload.token = `evt-${Math.random().toString(36).substring(2, 9)}`;
+        console.log(`(Mock) Regenerated QR token for event ${eventId} to ${event.qrUpload.token}`);
+    }
+}
+
+export async function pauseQr(eventId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const event = MOCK_EVENTS.find(e => e.id === eventId);
+    if (event && event.qrUpload) {
+        event.qrUpload.status = 'paused';
+        console.log(`(Mock) Paused QR for event ${eventId}`);
+    }
+}
+
+export async function activateQr(eventId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const event = MOCK_EVENTS.find(e => e.id === eventId);
+    if (event && event.qrUpload) {
+        event.qrUpload.status = 'active';
+        console.log(`(Mock) Activated QR for event ${eventId}`);
+    }
+}
+
+export async function expireQrNow(eventId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const event = MOCK_EVENTS.find(e => e.id === eventId);
+    if (event && event.qrUpload) {
+        event.qrUpload.status = 'expired';
+        console.log(`(Mock) Expired QR for event ${eventId}`);
+    }
+}
+
 // === Services Adapter ===
 export async function listSelectedServices(eventId: string): Promise<any[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -1048,8 +1085,3 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
-
-
-
-
-  

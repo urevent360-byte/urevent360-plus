@@ -249,5 +249,3 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
         </div>
     );
 }
-
-  

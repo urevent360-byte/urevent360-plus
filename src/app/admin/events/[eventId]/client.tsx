@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest, regenerateQrToken, pauseQr, activateQr, expireQrNow } from '@/lib/data-adapter';
 import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song, ChangeRequest } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
@@ -161,14 +161,36 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
 
     const guestUploadUrl = event?.qrUpload?.token ? `${window.location.origin}/upload/${event.qrUpload.token}` : null;
 
-    const handleQrAction = (action: string) => {
-        toast({
-            title: `QR Action: ${action}`,
-            description: "This action has been simulated."
-        });
-        // In a real app, you would call the data-adapter here and refetch.
-        // e.g., pauseQr(eventId).then(fetchEventData);
-    }
+    const handleQrAction = async (action: 'regenerate' | 'pause' | 'activate' | 'expire') => {
+        if (!event) return;
+        let toastTitle = '';
+        let toastDescription = '';
+    
+        try {
+            if (action === 'regenerate') {
+                await regenerateQrToken(eventId);
+                toastTitle = 'QR Token Regenerated';
+                toastDescription = 'A new QR code and link have been generated. The old ones are now invalid.';
+            } else if (action === 'pause') {
+                await pauseQr(eventId);
+                toastTitle = 'QR Paused';
+                toastDescription = 'Guest uploads are now paused.';
+            } else if (action === 'activate') {
+                await activateQr(eventId);
+                toastTitle = 'QR Activated';
+                toastDescription = 'Guest uploads are now active.';
+            } else if (action === 'expire') {
+                await expireQrNow(eventId);
+                toastTitle = 'QR Expired';
+                toastDescription = 'The QR code has been manually expired.';
+            }
+            
+            toast({ title: toastTitle, description: toastDescription });
+            await fetchEventData(); // Refetch to show the updated QR state
+        } catch (error) {
+            toast({ title: "Error", description: `Failed to perform action: ${action}`, variant: "destructive" });
+        }
+    };
 
     return (
         <EventProfileShell
@@ -406,7 +428,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                         level={"H"}
                                         includeMargin={true}
                                     />
-                                    <Button variant="outline" className="mt-4" onClick={() => handleQrAction('Download QR')}>Download QR</Button>
+                                    <Button variant="outline" className="mt-4" >Download QR</Button>
                                 </div>
                                 <div className="space-y-4">
                                      <Alert>
@@ -432,19 +454,19 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                                 </span>
                                             </div>
                                             <div className="flex gap-2 pt-2 border-t">
-                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('Activate')}><Play className="mr-2"/>Activate</Button>
-                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('Pause')}><Pause className="mr-2"/>Pause</Button>
-                                                <Button variant="destructive" size="sm" onClick={() => handleQrAction('Expire Now')}><CalendarOff className="mr-2"/>Expire Now</Button>
+                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('activate')}><Play className="mr-2"/>Activate</Button>
+                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('pause')}><Pause className="mr-2"/>Pause</Button>
+                                                <Button variant="destructive" size="sm" onClick={() => handleQrAction('expire')}><CalendarOff className="mr-2"/>Expire Now</Button>
                                             </div>
                                         </CardContent>
                                     </Card>
-                                     <Button variant="secondary" className="w-full" onClick={() => handleQrAction('Regenerate Token')}>Regenerate QR Token</Button>
+                                     <Button variant="secondary" className="w-full" onClick={() => handleQrAction('regenerate')}>Regenerate QR Token</Button>
                                 </div>
                             </>
                         ) : (
                             <div className="md:col-span-2 text-center py-12 text-muted-foreground">
                                 <p>No QR Code token has been generated for this event yet.</p>
-                                <Button className="mt-4" onClick={() => handleQrAction('Generate Token')}>Generate QR Token</Button>
+                                <Button className="mt-4" onClick={() => handleQrAction('regenerate')}>Generate QR Token</Button>
                             </div>
                         )}
                     </CardContent>

@@ -1,6 +1,7 @@
+import * as React from 'react';
 import AppEventDetailClient from './client';
 
-export default async function AppEventDetailPage({ params }: { params: { eventId: string } }) {
-  const { eventId } = params;
+export default function AppEventDetailPage({ params }: { params: Promise<{ eventId: string }> }) {
+  const { eventId } = React.use(params);
   return <AppEventDetailClient eventId={eventId} />;
 }

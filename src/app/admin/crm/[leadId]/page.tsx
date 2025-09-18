@@ -17,6 +17,8 @@ import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import locales from '@/lib/locales.json';
+import * as React from 'react';
 
 function LeadDetailClient({ leadId }: { leadId: string }) {
     const [lead, setLead] = useState<Lead | null>(null);
@@ -25,6 +27,7 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
     const [quotePrices, setQuotePrices] = useState<Record<string, number>>({});
     const router = useRouter();
     const { toast } = useToast();
+    const [language, setLanguage] = useState<'en' | 'es'>('en');
 
     useEffect(() => {
         async function fetchLead() {
@@ -117,14 +120,14 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                 </div>
                  <div className="flex gap-2">
                     <Button variant="outline" onClick={handleSendQuote} disabled={lead.status === 'converted'}>
-                        <Send className="mr-2" /> Send Quote
+                        <Send className="mr-2" /> {locales.crm.sendQuote[language]}
                     </Button>
                      <Button variant="outline" onClick={handleMarkAccepted} disabled={!['quote_sent'].includes(lead.status)}>
-                        <Check className="mr-2" /> Mark Accepted
+                        <Check className="mr-2" /> {locales.crm.markAccepted[language]}
                     </Button>
                     <Button onClick={handleConvertToProject} disabled={isConverting || !['accepted'].includes(lead.status)}>
                         {isConverting ? <Loader2 className="mr-2 animate-spin" /> : <Box className="mr-2" />}
-                        Convert to Project
+                        {locales.crm.convertToProject[language]}
                     </Button>
                 </div>
             </div>
@@ -151,7 +154,7 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                         <CardContent className="text-sm space-y-2">
                             <p><strong>Name:</strong> {lead.name}</p>
                             <p><strong>Email:</strong> {lead.email}</p>
-                             <p><strong>Status:</strong> <span className="capitalize font-medium p-1 rounded-md bg-secondary text-secondary-foreground">{lead.status.replace('_', ' ')}</span></p>
+                             <p><strong>Status:</strong> <span className="capitalize font-medium p-1 rounded-md bg-secondary text-secondary-foreground">{locales.status[lead.status as keyof typeof locales.status][language]}</span></p>
                         </CardContent>
                     </Card>
                      <Card>
@@ -159,8 +162,8 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                             <CardTitle className="flex items-center gap-2"><Calendar /> Event Draft</CardTitle>
                         </CardHeader>
                         <CardContent className="text-sm space-y-2">
-                            <p><strong>Event Name:</strong> {lead.eventDraft.eventName}</p>
-                            <p><strong>Proposed Date:</strong> {format(new Date(lead.eventDraft.eventDate), 'PPP')}</p>
+                            <p><strong>Event Name:</strong> {lead.eventDraft.name}</p>
+                            <p><strong>Proposed Date:</strong> {format(new Date(lead.eventDraft.date), 'PPP')}</p>
                             {lead.eventDraft.notes && <p><strong>Notes:</strong> {lead.eventDraft.notes}</p>}
                         </CardContent>
                     </Card>
@@ -210,7 +213,7 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
     )
 }
 
-export default async function AdminLeadDetailPage({ params }: { params: { leadId: string } }) {
-  const { leadId } = params;
+export default function AdminLeadDetailPage({ params }: { params: Promise<{ leadId: string }> }) {
+  const { leadId } = React.use(params);
   return <LeadDetailClient leadId={leadId} />;
 }

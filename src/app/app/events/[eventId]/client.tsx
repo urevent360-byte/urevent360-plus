@@ -163,8 +163,7 @@ function MusicPreferences({ eventId }: { eventId: string }) {
     );
 }
 
-export default function AppEventDetailClient({ params }: { params: { eventId: string } }) {
-    const { eventId } = params;
+export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);

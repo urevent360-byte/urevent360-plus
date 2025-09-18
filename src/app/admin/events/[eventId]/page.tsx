@@ -3,6 +3,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest } from '@/lib/data-adapter';
 import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song, ChangeRequest } from '@/lib/data-adapter';
@@ -501,6 +502,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 }
 
 
-export default async function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
-    return <AdminEventDetailClient eventId={params.eventId} />;
+export default function AdminEventDetailPage({ params }: { params: Promise<{ eventId: string }> }) {
+    const { eventId } = React.use(params);
+    return <AdminEventDetailClient eventId={eventId} />;
 }

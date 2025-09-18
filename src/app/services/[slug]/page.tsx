@@ -13,6 +13,7 @@ import { Tag, ShoppingCart, Video } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
+import * as React from 'react';
 
 // In a real app, this data would come from a CMS or database.
 const placeholderServicesData: any = {
@@ -204,7 +205,7 @@ function ServiceDetailClient({ slug }: { slug: string }) {
     );
 }
 
-export default async function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-    const { slug } = await params;
+export default function ServiceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = React.use(params);
     return <ServiceDetailClient slug={slug} />;
 }

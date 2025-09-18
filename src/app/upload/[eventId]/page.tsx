@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UploadCloud, FileImage, X, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import * as React from 'react';
 
 function PhotoUploadClient({ eventId }: { eventId: string }) {
     const { toast } = useToast();
@@ -123,7 +124,7 @@ function PhotoUploadClient({ eventId }: { eventId: string }) {
 }
 
 
-export default async function PhotoUploadPage({ params }: { params: Promise<{ eventId: string }> }) {
-    const { eventId } = await params;
+export default function PhotoUploadPage({ params }: { params: Promise<{ eventId: string }> }) {
+    const { eventId } = React.use(params);
     return <PhotoUploadClient eventId={eventId} />;
 }

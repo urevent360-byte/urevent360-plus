@@ -340,7 +340,7 @@ let MOCK_EVENTS: Event[] = [
         photoboothLink: 'https://photos.app.goo.gl/sample1',
         galleryPolicy: { releaseDelayDays: 1, visibilityWindowDays: 90, autoPurgeDays: 180 },
         qrUpload: {
-            token: 'xyz-abc-123',
+            token: 'evt-456',
             status: 'active',
             expiresAt: add(new Date(), { days: 30 }).toISOString(),
         },
@@ -463,12 +463,12 @@ let MOCK_CHANGE_REQUESTS: Record<string, ChangeRequest[]> = {
     ]
 };
 
-const MOCK_GUEST_UPLOADS: Record<string, { url: string; alt: string }[]> = {
+const MOCK_GUEST_UPLOADS: Record<string, { url: string; alt: string; thumbUrl: string }[]> = {
     'evt-456': [
-        { url: 'https://picsum.photos/seed/guest1/400/300', alt: 'Guest photo 1' },
-        { url: 'https://picsum.photos/seed/guest2/400/300', alt: 'Guest photo 2' },
-        { url: 'https://picsum.photos/seed/guest3/400/300', alt: 'Guest photo 3' },
-        { url: 'https://picsum.photos/seed/guest4/400/300', alt: 'Guest photo 4' },
+        { url: 'https://picsum.photos/seed/guest1/800/600', alt: 'Guest photo 1', thumbUrl: 'https://picsum.photos/seed/guest1/400/300' },
+        { url: 'https://picsum.photos/seed/guest2/800/600', alt: 'Guest photo 2', thumbUrl: 'https://picsum.photos/seed/guest2/400/300' },
+        { url: 'https://picsum.photos/seed/guest3/800/600', alt: 'Guest photo 3', thumbUrl: 'https://picsum.photos/seed/guest3/400/300' },
+        { url: 'https://picsum.photos/seed/guest4/800/600', alt: 'Guest photo 4', thumbUrl: 'https://picsum.photos/seed/guest4/400/300' },
     ]
 };
 
@@ -633,6 +633,24 @@ export async function getEvent(eventId: string): Promise<Event | undefined> {
     // TODO: Implement Firestore fetching logic
     throw new Error('Firestore not implemented');
 }
+
+export async function getEventByToken(token: string): Promise<Event | undefined> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(event => event.qrUpload?.token === token);
+        if (!event) return undefined;
+        // Same derived date logic as getEvent
+        const galleryVisibilityDate = event.galleryPolicy ? add(new Date(event.eventDate), { days: event.galleryPolicy.releaseDelayDays }).toISOString() : undefined;
+        const galleryExpirationDate = event.galleryPolicy && galleryVisibilityDate ? add(new Date(galleryVisibilityDate), { days: event.galleryPolicy.visibilityWindowDays }).toISOString() : undefined;
+        return {
+            ...event,
+            galleryVisibilityDate,
+            galleryExpirationDate,
+        };
+    }
+    throw new Error('Firestore not implemented');
+}
+
 
 export async function listHostEvents(hostId: string): Promise<Event[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -853,13 +871,15 @@ export async function setPhotoBoothLink(eventId: string, url: string): Promise<v
     }
 }
 
-export async function getGuestUploads(eventId: string): Promise<any[]> {
+export async function getGuestUploads(eventId: string, options?: { page?: number, limit?: number }): Promise<any[]> {
     await new Promise(resolve => setTimeout(resolve, 400));
     if (DATA_SOURCE === 'mock') {
+        // In a real implementation, you'd use the options for pagination in your Firestore query.
+        // e.g., .orderBy('uploadedAt', 'desc').limit(options.limit || 20).startAfter(lastVisible)
+        console.log(`(Mock) Fetching guest uploads for event ${eventId} with options:`, options);
         return MOCK_GUEST_UPLOADS[eventId] || [];
     }
-    console.log(`(Mock) Fetching guest uploads for event ${eventId}`);
-    return []; // Return empty for now
+    return [];
 }
 
 // === Services Adapter ===
@@ -1030,3 +1050,6 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
 }
 
 
+
+
+  

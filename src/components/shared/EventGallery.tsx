@@ -26,6 +26,7 @@ type EventGalleryProps = {
 type GuestUpload = {
     url: string;
     alt: string;
+    thumbUrl: string;
 };
 
 function GalleryLoader() {
@@ -183,7 +184,7 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                 </CardHeader>
                 <CardContent className="grid md:grid-cols-2 gap-6 items-start">
                      <div className="space-y-4">
-                        <Button variant="outline" asChild><Link href={`/app/events/${event.id}?tab=guest-qr`}><GitMerge className="mr-2"/> Open QR Manager</Link></Button>
+                        <Button variant="outline" asChild><Link href={role === 'admin' ? `/admin/events/${event.id}?tab=guest-qr` : `/app/events/${event.id}?tab=guest-qr`}><GitMerge className="mr-2"/> Open QR Manager</Link></Button>
                         <Button variant="outline"><Download className="mr-2"/> Download All (ZIP)</Button>
                         {role === 'admin' && (
                              <Button variant="destructive"><Trash2 className="mr-2"/> Purge Now</Button>
@@ -219,7 +220,7 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                         {guestUploads.map((photo, index) => (
                                             <div key={index} className="group aspect-video relative rounded-lg overflow-hidden shadow-md">
-                                                <Image src={photo.url} alt={photo.alt} fill className="object-cover" />
+                                                <Image src={photo.thumbUrl} alt={photo.alt} fill className="object-cover" />
                                                 <Badge variant="secondary" className="absolute bottom-2 left-2">Guest</Badge>
                                             </div>
                                         ))}
@@ -232,12 +233,12 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                              <Alert className="text-center">
                                 <Clock className="h-4 w-4" />
                                 <AlertTitle>
-                                    {isFuture(new Date(event.galleryVisibilityDate!)) ? "Guest Gallery Not Yet Visible" : "Guest Gallery Has Expired"}
+                                    {event.galleryVisibilityDate && isFuture(new Date(event.galleryVisibilityDate)) ? "Guest Gallery Not Yet Visible" : "Guest Gallery Has Expired"}
                                 </AlertTitle>
                                 <AlertDescription>
-                                    {isFuture(new Date(event.galleryVisibilityDate!))
-                                        ? `Photos from your guests will appear here starting ${format(new Date(event.galleryVisibilityDate!), 'PPP')}.`
-                                        : `The viewing window for guest photos ended on ${format(new Date(event.galleryExpirationDate!), 'PPP')}.`
+                                    {event.galleryVisibilityDate && isFuture(new Date(event.galleryVisibilityDate))
+                                        ? `Photos from your guests will appear here starting ${format(new Date(event.galleryVisibilityDate), 'PPP')}.`
+                                        : (event.galleryExpirationDate ? `The viewing window for guest photos ended on ${format(new Date(event.galleryExpirationDate), 'PPP')}.` : 'The gallery viewing window has passed.')
                                     }
                                 </AlertDescription>
                             </Alert>
@@ -248,3 +249,5 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
         </div>
     );
 }
+
+  

@@ -1,22 +1,40 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { UploadCloud, FileImage, X, Loader2 } from 'lucide-react';
+import { UploadCloud, FileImage, X, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getEvent, type Event } from '@/lib/data-adapter'; // Assuming getEvent can find event by token for mock
 
 export default function PhotoUploadClient({ eventId }: { eventId: string }) {
     const { toast } = useToast();
+    const [event, setEvent] = useState<Event | null>(null);
+    const [validationState, setValidationState] = useState<'validating' | 'valid' | 'invalid'>('validating');
     const [files, setFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+    const [uploadComplete, setUploadComplete] = useState(false);
+
+    useEffect(() => {
+        async function validateToken() {
+            // In a real app, you'd have a getEventByToken function.
+            // For this mock, we'll assume eventId is the token and also the ID.
+            const fetchedEvent = await getEvent(eventId);
+            if (fetchedEvent && fetchedEvent.qrUpload?.status === 'active') {
+                setEvent(fetchedEvent);
+                setValidationState('valid');
+            } else {
+                setValidationState('invalid');
+            }
+        }
+        validateToken();
+    }, [eventId]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             const newFiles = Array.from(event.target.files);
-            // You can add validation here (e.g., file type, size)
             setFiles(prev => [...prev, ...newFiles]);
         }
     };
@@ -42,13 +60,62 @@ export default function PhotoUploadClient({ eventId }: { eventId: string }) {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate upload delay
 
         setIsUploading(false);
-        setFiles([]);
-
-        toast({
-            title: 'Upload Successful!',
-            description: 'Your photos have been added to the event gallery.',
-        });
+        setUploadComplete(true);
     };
+
+    if (validationState === 'validating') {
+        return (
+            <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
+                <Card className="max-w-2xl w-full shadow-xl">
+                    <CardHeader className="text-center">
+                        <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
+                            Validating Link...
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex justify-center items-center h-48">
+                         <Loader2 className="h-12 w-12 animate-spin text-muted-foreground" />
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    if (validationState === 'invalid' || !event) {
+         return (
+            <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
+                <Card className="max-w-2xl w-full shadow-xl">
+                    <CardHeader className="text-center">
+                        <CardTitle className="font-headline text-3xl md:text-4xl text-destructive flex items-center justify-center gap-2">
+                            <AlertTriangle />
+                            Link Invalid or Expired
+                        </CardTitle>
+                        <CardDescription className="text-lg">
+                            This photo upload link is no longer active. Please contact the event host for a new link.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        );
+    }
+    
+    if (uploadComplete) {
+         return (
+            <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
+                <Card className="max-w-2xl w-full shadow-xl">
+                    <CardHeader className="text-center">
+                         <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                        <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
+                            Upload Successful!
+                        </CardTitle>
+                        <CardDescription className="text-lg">
+                            Thank you for sharing your photos for the <span className="font-bold">{event.eventName}</span> event.
+                        </CardDescription>
+                    </CardHeader>
+                </Card>
+            </div>
+        );
+    }
+
 
     return (
         <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center">
@@ -58,7 +125,7 @@ export default function PhotoUploadClient({ eventId }: { eventId: string }) {
                         Upload Photos
                     </CardTitle>
                     <CardDescription className="text-lg">
-                        Add photos to the gallery for event: <span className="font-bold">{eventId}</span>
+                        Add your photos to the gallery for the <span className="font-bold">{event.eventName}</span> event.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -120,3 +187,4 @@ export default function PhotoUploadClient({ eventId }: { eventId: string }) {
         </div>
     );
 }
+

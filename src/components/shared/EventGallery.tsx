@@ -100,6 +100,8 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
     }
     
     const isGalleryVisible = event.galleryVisibilityDate ? isPast(new Date(event.galleryVisibilityDate)) : false;
+    const isGalleryActive = isGalleryVisible && (event.galleryExpirationDate ? isFuture(new Date(event.galleryExpirationDate)) : true);
+
 
     return (
         <div className="space-y-8">
@@ -211,7 +213,7 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                         <CardDescription>Photos uploaded by the host and their guests.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {isGalleryVisible || role === 'admin' ? (
+                        {isGalleryActive || role === 'admin' ? (
                             <>
                                 {guestUploads.length > 0 ? (
                                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -227,9 +229,18 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                                 )}
                             </>
                         ) : (
-                            <p className="text-muted-foreground text-center py-8">
-                                Guest photos will be available here starting {event.galleryVisibilityDate ? format(new Date(event.galleryVisibilityDate), 'PPP') : 'soon'}.
-                            </p>
+                             <Alert className="text-center">
+                                <Clock className="h-4 w-4" />
+                                <AlertTitle>
+                                    {isFuture(new Date(event.galleryVisibilityDate!)) ? "Guest Gallery Not Yet Visible" : "Guest Gallery Has Expired"}
+                                </AlertTitle>
+                                <AlertDescription>
+                                    {isFuture(new Date(event.galleryVisibilityDate!))
+                                        ? `Photos from your guests will appear here starting ${format(new Date(event.galleryVisibilityDate!), 'PPP')}.`
+                                        : `The viewing window for guest photos ended on ${format(new Date(event.galleryExpirationDate!), 'PPP')}.`
+                                    }
+                                </AlertDescription>
+                            </Alert>
                         )}
                     </CardContent>
                 </Card>

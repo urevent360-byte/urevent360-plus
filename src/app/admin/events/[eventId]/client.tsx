@@ -166,6 +166,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
             title: `QR Action: ${action}`,
             description: "This action has been simulated."
         });
+        // In a real app, you would call the data-adapter here and refetch.
+        // e.g., pauseQr(eventId).then(fetchEventData);
     }
 
     return (

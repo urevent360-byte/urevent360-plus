@@ -448,5 +448,3 @@ export default async function AdminEventDetailPage({ params }: { params: { event
     const { eventId } = params;
     return <AdminEventDetailClient eventId={eventId} />;
 }
-
-    

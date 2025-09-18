@@ -746,7 +746,14 @@ export async function markContractSigned(eventId: string): Promise<FileRecord> {
 export async function listTimeline(eventId: string): Promise<TimelineItem[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_TIMELINE[eventId] || [];
+        const timeline = MOCK_TIMELINE[eventId] || [];
+        // Hack for legacy UI
+        return timeline.map(t => ({
+            ...t,
+            startTime: t.start,
+            endTime: t.end,
+            isSyncedToGoogle: t.syncToGoogle
+        }));
     }
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');
@@ -763,13 +770,17 @@ export async function toggleSyncToGoogle(eventId: string, itemId: string | 'all'
         if (!MOCK_TIMELINE[eventId]) return;
 
         if (itemId === 'all') {
-            MOCK_TIMELINE[eventId].forEach(item => item.isSyncedToGoogle = true);
+            MOCK_TIMELINE[eventId].forEach(item => {
+                item.syncToGoogle = true;
+                item.isSyncedToGoogle = true;
+            });
             console.log(`(Mock) Synced all items for event ${eventId} to Google.`);
         } else {
             const item = MOCK_TIMELINE[eventId].find(i => i.id === itemId);
             if (item) {
-                item.isSyncedToGoogle = !item.isSyncedToGoogle;
-                console.log(`(Mock) Toggled Google Sync for item ${itemId} in event ${eventId} to ${item.isSyncedToGoogle}`);
+                item.syncToGoogle = !item.syncToGoogle;
+                item.isSyncedToGoogle = item.syncToGoogle;
+                console.log(`(Mock) Toggled Google Sync for item ${itemId} in event ${eventId} to ${item.syncToGoogle}`);
             }
         }
     }
@@ -963,5 +974,3 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
-
-    

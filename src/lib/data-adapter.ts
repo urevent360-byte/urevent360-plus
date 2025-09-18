@@ -184,6 +184,16 @@ export const MusicPlaylistSchema = z.object({
 });
 export type MusicPlaylist = z.infer<typeof MusicPlaylistSchema>;
 
+const ChangeRequestSchema = z.object({
+    id: z.string(),
+    proposedPatch: z.record(z.any()),
+    submittedBy: z.string(),
+    submittedAt: z.string(),
+    status: z.enum(['pending', 'approved', 'rejected']),
+    reason: z.string().optional(),
+});
+export type ChangeRequest = z.infer<typeof ChangeRequestSchema>;
+
 
 // --- Mock Data ---
 
@@ -416,6 +426,18 @@ let MOCK_MUSIC_PLAYLISTS: Record<string, MusicPlaylist> = {
             { title: 'Chicken Dance', artist: 'Werner Thomas' },
         ]
     }
+};
+
+let MOCK_CHANGE_REQUESTS: Record<string, ChangeRequest[]> = {
+    'evt-123': [
+        {
+            id: 'cr-1',
+            proposedPatch: { timeWindow: '7 PM - 1 AM', notes: 'Party extended!' },
+            submittedBy: 'user-johndoe',
+            submittedAt: new Date().toISOString(),
+            status: 'pending',
+        }
+    ]
 };
 
 // --- Data Adapter API ---
@@ -885,6 +907,61 @@ export async function saveMusicPlaylist(eventId: string, playlist: MusicPlaylist
     }
     // TODO: Implement Firestore write
     throw new Error('Firestore not implemented');
+}
+
+
+// === Change Request Adapter ===
+export async function createChangeRequest(eventId: string, proposedPatch: Record<string, any>): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        if (!MOCK_CHANGE_REQUESTS[eventId]) {
+            MOCK_CHANGE_REQUESTS[eventId] = [];
+        }
+        const newRequest: ChangeRequest = {
+            id: `cr-${Math.random().toString(36).substring(7)}`,
+            proposedPatch,
+            submittedBy: 'host', // Assuming host is the one requesting
+            submittedAt: new Date().toISOString(),
+            status: 'pending',
+        };
+        MOCK_CHANGE_REQUESTS[eventId].push(newRequest);
+        console.log(`(Mock) Created change request for event ${eventId}`, newRequest);
+    }
+}
+
+export async function listChangeRequests(eventId: string): Promise<ChangeRequest[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_CHANGE_REQUESTS[eventId] || [];
+    }
+    throw new Error('Firestore not implemented');
+}
+
+export async function approveChangeRequest(eventId: string, requestId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(e => e.id === eventId);
+        const request = MOCK_CHANGE_REQUESTS[eventId]?.find(r => r.id === requestId);
+        if (event && request) {
+            // Apply the patch
+            Object.assign(event, request.proposedPatch);
+            request.status = 'approved';
+            event.audit.lastUpdatedAt = new Date().toISOString();
+            event.audit.lastUpdatedBy = 'admin';
+            console.log(`(Mock) Approved and applied change request ${requestId} for event ${eventId}`);
+        }
+    }
+}
+
+export async function rejectChangeRequest(eventId: string, requestId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        const request = MOCK_CHANGE_REQUESTS[eventId]?.find(r => r.id === requestId);
+        if (request) {
+            request.status = 'rejected';
+            console.log(`(Mock) Rejected change request ${requestId} for event ${eventId}`);
+        }
+    }
 }
 
     

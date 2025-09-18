@@ -4,17 +4,18 @@
 
 import { useState, useEffect } from 'react';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song, ChangeRequest } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban, GitPullRequest, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 
 function AdminEventDetailClient({ eventId }: { eventId: string }) {
@@ -25,6 +26,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [payments, setPayments] = useState<Payment[]>([]);
     const [mustPlay, setMustPlay] = useState<Song[]>([]);
     const [doNotPlay, setDoNotPlay] = useState<Song[]>([]);
+    const [changeRequests, setChangeRequests] = useState<ChangeRequest[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
@@ -33,19 +35,21 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments, musicPlaylist] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments, musicPlaylist, fetchedChanges] = await Promise.all([
             getEvent(eventId),
             listFiles(eventId),
             listTimeline(eventId),
             listRequestedServices(eventId),
             listPayments(eventId),
-            getMusicPlaylist(eventId)
+            getMusicPlaylist(eventId),
+            listChangeRequests(eventId),
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
         setTimeline(fetchedTimeline);
         setRequestedServices(fetchedRequests);
         setPayments(fetchedPayments);
+        setChangeRequests(fetchedChanges);
         if (musicPlaylist) {
             setMustPlay(musicPlaylist.mustPlay);
             setDoNotPlay(musicPlaylist.doNotPlay);
@@ -121,6 +125,18 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
         await fetchEventData();
     }
 
+    const handleApproveChange = async (requestId: string) => {
+        await approveChangeRequest(eventId, requestId);
+        toast({ title: 'Change Approved!', description: 'The event details have been updated.' });
+        await fetchEventData();
+    };
+
+    const handleRejectChange = async (requestId: string) => {
+        await rejectChangeRequest(eventId, requestId);
+        toast({ title: 'Change Rejected', description: 'The request has been marked as rejected.', variant: 'destructive' });
+        await fetchEventData();
+    };
+
     const SongList = ({ title, songs, icon }: { title: string, songs: Song[], icon: React.ReactNode }) => (
         <Card>
             <CardHeader>
@@ -149,10 +165,58 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
             onTabChange={setActiveTab}
         >
              <TabsContent value="details">
-                <Card>
-                    <CardHeader><CardTitle>Admin Details</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Admin-specific event details and settings.</p></CardContent>
-                </Card>
+                 <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Admin Controls & Event Info</CardTitle>
+                             <CardDescription>
+                                Key details about the event. The host sees this information in their portal.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                                <div><strong>Project Number:</strong> {event?.projectNumber}</div>
+                                <div><strong>Event Type:</strong> {event?.type}</div>
+                                <div><strong>Guest Count:</strong> {event?.guestCount}</div>
+                                <div><strong>Time Zone:</strong> {event?.timeZone}</div>
+                                <div><strong>Venue:</strong> {event?.venue.name}, {event?.venue.address}</div>
+                                <div><strong>On-site Contact:</strong> {event?.onsiteContact.name} ({event?.onsiteContact.phone})</div>
+                                <div className="md:col-span-2"><strong>Host Email:</strong> {event?.hostEmail}</div>
+                             </div>
+                        </CardContent>
+                    </Card>
+
+                     {changeRequests.length > 0 && (
+                        <Card>
+                             <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><GitPullRequest/> Host Change Requests</CardTitle>
+                                <CardDescription>The host has requested the following changes. Approve or reject them.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                {changeRequests.map(req => (
+                                    <Alert key={req.id} variant={req.status === 'rejected' ? 'destructive' : 'default'}>
+                                        <AlertTitle className="flex justify-between items-center">
+                                            <span>Request from {format(new Date(req.submittedAt), 'PPP')} - <Badge variant="outline" className="capitalize">{req.status}</Badge></span>
+                                            {req.status === 'pending' && (
+                                                <div className="flex gap-2">
+                                                    <Button size="sm" variant="secondary" onClick={() => handleApproveChange(req.id)}><ThumbsUp className="mr-2"/>Approve</Button>
+                                                    <Button size="sm" variant="destructive" onClick={() => handleRejectChange(req.id)}><ThumbsDown className="mr-2"/>Reject</Button>
+                                                </div>
+                                            )}
+                                        </AlertTitle>
+                                        <AlertDescription>
+                                            <ul className="list-disc list-inside mt-2">
+                                               {Object.entries(req.proposedPatch).map(([key, value]) => (
+                                                    <li key={key}><strong>{key}:</strong> {String(value)}</li>
+                                               ))}
+                                            </ul>
+                                        </AlertDescription>
+                                    </Alert>
+                                ))}
+                            </CardContent>
+                        </Card>
+                     )}
+                 </div>
             </TabsContent>
             <TabsContent value="billing">
                  <Card>
@@ -200,7 +264,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                                             <TableRow key={payment.id}>
                                                 <TableCell className="font-medium">{payment.invoiceId}</TableCell>
                                                 <TableCell>${payment.amount.toFixed(2)}</TableCell>
-                                                <TableCell><Badge variant={payment.status === 'paid' ? 'default' : 'destructive'} className="capitalize">{payment.status}</Badge></TableCell>
+                                                <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
                                                 <TableCell className="capitalize">{payment.method || 'N/A'}</TableCell>
                                                 <TableCell>{format(new Date(payment.timestamp), 'PPp')}</TableCell>
                                                 <TableCell className="text-right">
@@ -384,3 +448,5 @@ export default async function AdminEventDetailPage({ params }: { params: { event
     const { eventId } = params;
     return <AdminEventDetailClient eventId={eventId} />;
 }
+
+    

@@ -1,10 +1,11 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, markContractSigned, listFiles, listTimeline, getMusicPlaylist, saveMusicPlaylist } from '@/lib/data-adapter';
+import { getEvent, markContractSigned, listFiles, listTimeline, getMusicPlaylist, saveMusicPlaylist, createChangeRequest } from '@/lib/data-adapter';
 import type { Event, FileRecord, TimelineItem, Song } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
@@ -214,6 +215,21 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         });
     };
 
+    const handleRequestChange = async () => {
+        if (!event) return;
+        // In a real app, this would open a modal form.
+        // For this simulation, we'll create a predefined change request.
+        const proposedPatch = {
+            timeWindow: '7 PM - 1 AM',
+            notes: 'We need to extend the party by one hour.',
+        };
+        await createChangeRequest(eventId, proposedPatch);
+        toast({
+            title: 'Change Request Sent',
+            description: 'Your request has been sent to the admin for review.',
+        });
+    };
+
     if (isLoading) {
         return (
              <EventProfileShell
@@ -252,10 +268,25 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
             isLocked={isLocked}
         >
              <TabsContent value="details">
-                <Card>
-                    <CardHeader><CardTitle>Event Details</CardTitle></CardHeader>
+                 <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Event Details</CardTitle>
+                            <CardDescription>
+                                Key information about your event. Contact us for any changes.
+                            </CardDescription>
+                        </div>
+                        <Button variant="outline" onClick={handleRequestChange}>Request Edit</Button>
+                    </CardHeader>
                     <CardContent>
-                        <p>Hello, {event.clientName}! Here you can view the core details of your event.</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                            <div><strong>Event Type:</strong> {event.type}</div>
+                            <div><strong>Guest Count:</strong> {event.guestCount}</div>
+                            <div><strong>Time Window:</strong> {event.timeWindow}</div>
+                            <div><strong>Time Zone:</strong> {event.timeZone}</div>
+                            <div className="md:col-span-2"><strong>Venue:</strong> {event.venue.name}, {event.venue.address}</div>
+                            <div className="md:col-span-2"><strong>On-site Contact:</strong> {event.onsiteContact.name} ({event.onsiteContact.phone})</div>
+                        </div>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -266,7 +297,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                             <CardTitle>My Event Timeline</CardTitle>
                              <CardDescription>This is the official schedule. Please review and contact us for any changes.</CardDescription>
                         </div>
-                        <Button variant="outline">Request Time Change</Button>
+                        <Button variant="outline" onClick={handleRequestChange}>Request Time Change</Button>
                     </CardHeader>
                      <CardContent>
                         <Table>

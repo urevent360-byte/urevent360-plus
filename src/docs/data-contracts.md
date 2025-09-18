@@ -1,3 +1,4 @@
+
 # Data Contracts & Firestore Collections
 
 This document outlines the data structures for the main Firestore collections used in the UREVENT 360 PLUS platform.
@@ -90,6 +91,15 @@ Represents a confirmed and booked event.
     - **releaseDelayDays** (number)
     - **visibilityWindowDays** (number)
     - **autoPurgeDays** (number)
+- **qrUpload** (map, optional):
+    - **token** (string)
+    - **status** (string): 'active', 'paused', 'expired'
+    - **expiresAt** (timestamp, optional)
+    - **maxFilesPerDevice** (number, optional)
+    - **allowedTypes** (array of strings, optional)
+- **design** (map, optional):
+    - **status** (string): 'pending', 'sent', 'approved', 'changes_requested'
+    - **previewUrl** (string, optional)
 - **audit** (map):
     - **createdBy** (string)
     - **createdAt** (timestamp)
@@ -135,3 +145,14 @@ The chronological plan for the event day.
     - **syncToGoogle** (boolean)
     - **approvalStatus** (string)
     - **gcalEventId** (string, optional)
+
+#### `guestUploads`
+References to media uploaded by guests.
+- **`guestUploads/{uploadId}`**
+    - **fileName** (string)
+    - **contentType** (string)
+    - **size** (number)
+    - **uploadedAt** (timestamp)
+    - **thumbUrl** (string, optional)
+    - **downloadUrl** (string)
+    - **uploaderTag** (string): 'guest' or a specific identifier

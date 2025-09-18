@@ -11,16 +11,16 @@ import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban, GitPullRequest, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban, GitPullRequest, ThumbsUp, ThumbsDown, QrCode, Pause, Play, CalendarOff } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { EventGallery } from '@/components/shared/EventGallery';
+import QRCode from "qrcode.react";
 
 
-function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
-    const { eventId } = params;
+function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -157,6 +157,8 @@ function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
             </CardContent>
         </Card>
     );
+
+    const guestUploadUrl = event?.qrUpload?.token ? `${window.location.origin}/upload/${event.qrUpload.token}` : null;
 
     return (
         <EventProfileShell
@@ -380,8 +382,60 @@ function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
             </TabsContent>
              <TabsContent value="guest-qr">
                 <Card>
-                    <CardHeader><CardTitle>Guest Upload QR Code</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Build QR code generator and manager for guest photo uploads.</p></CardContent>
+                    <CardHeader>
+                        <CardTitle>Guest Upload QR Code</CardTitle>
+                        <CardDescription>Manage the QR code guests use to upload their photos to the community gallery.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid md:grid-cols-2 gap-8 items-start">
+                        {guestUploadUrl ? (
+                            <>
+                                <div className="flex items-center justify-center p-4 border rounded-lg">
+                                    <QRCode
+                                        value={guestUploadUrl}
+                                        size={256}
+                                        level={"H"}
+                                        includeMargin={true}
+                                    />
+                                </div>
+                                <div className="space-y-4">
+                                     <Alert>
+                                        <QrCode className="h-4 w-4" />
+                                        <AlertTitle>Shareable Link</AlertTitle>
+                                        <AlertDescription>
+                                            <Input readOnly value={guestUploadUrl} className="mt-2 text-xs" />
+                                        </AlertDescription>
+                                    </Alert>
+                                     <Card>
+                                        <CardHeader>
+                                            <CardTitle className="text-lg">QR Status & Controls</CardTitle>
+                                        </CardHeader>
+                                        <CardContent className="space-y-3">
+                                            <div className="flex items-center justify-between">
+                                                <span>Status:</span>
+                                                <Badge variant={event?.qrUpload?.status === 'active' ? 'default' : 'secondary'} className="capitalize">{event?.qrUpload?.status}</Badge>
+                                            </div>
+                                             <div className="flex items-center justify-between">
+                                                <span>Expires:</span>
+                                                <span className="text-sm text-muted-foreground">
+                                                    {event?.qrUpload?.expiresAt ? format(new Date(event.qrUpload.expiresAt), 'PPP p') : 'Never'}
+                                                </span>
+                                            </div>
+                                            <div className="flex gap-2 pt-2 border-t">
+                                                <Button variant="outline" size="sm"><Play className="mr-2"/>Activate</Button>
+                                                <Button variant="outline" size="sm"><Pause className="mr-2"/>Pause</Button>
+                                                <Button variant="destructive" size="sm"><CalendarOff className="mr-2"/>Expire Now</Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="md:col-span-2 text-center py-12 text-muted-foreground">
+                                <p>No QR Code token has been generated for this event yet.</p>
+                                <Button className="mt-4">Generate QR Token</Button>
+                            </div>
+                        )}
+                    </CardContent>
                 </Card>
             </TabsContent>
              <TabsContent value="music">
@@ -448,5 +502,5 @@ function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
 
 
 export default async function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
-    return <AdminEventDetailClient params={params} />;
+    return <AdminEventDetailClient eventId={params.eventId} />;
 }

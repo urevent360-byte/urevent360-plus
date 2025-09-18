@@ -81,7 +81,18 @@ const EventSchema = z.object({
     galleryPolicy: z.object({
         releaseDelayDays: z.number(),
         visibilityWindowDays: z.number(),
-        autoPurgeDays: z.number(),
+        autoPurgeDays: z.number().optional(),
+    }).optional(),
+    qrUpload: z.object({
+        token: z.string(),
+        status: z.enum(['active', 'paused', 'expired']),
+        expiresAt: z.string().optional(),
+        maxFilesPerDevice: z.number().optional(),
+        allowedTypes: z.array(z.string()).optional(),
+    }).optional(),
+    design: z.object({
+        status: z.enum(['pending', 'sent', 'approved', 'changes_requested']),
+        previewUrl: z.string().optional(),
     }).optional(),
     audit: z.object({
         createdBy: z.string(),
@@ -325,6 +336,15 @@ let MOCK_EVENTS: Event[] = [
         confirmedAt: new Date().toISOString(),
         photoboothLink: 'https://photos.app.goo.gl/sample1',
         galleryPolicy: { releaseDelayDays: 1, visibilityWindowDays: 90, autoPurgeDays: 180 },
+        qrUpload: {
+            token: 'xyz-abc-123',
+            status: 'active',
+            expiresAt: add(new Date(), { days: 30 }).toISOString(),
+        },
+        design: {
+            status: 'approved',
+            previewUrl: 'https://picsum.photos/seed/design/400/300'
+        },
         audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'David Lee',
         eventName: 'Lee Corporate Gala',
@@ -1003,3 +1023,4 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
+

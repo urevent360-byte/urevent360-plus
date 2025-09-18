@@ -258,14 +258,18 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         return <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>Event not found.</AlertDescription></Alert>;
     }
 
-    if (isLocked && activeTab !== 'billing') {
-        return <ActivationGate 
-            onSign={handleSignContract}
-            onPay={handlePayDeposit}
-            signing={isSigning}
-            paying={false} // Placeholder
-            contractSigned={event.contractSigned}
-        />;
+    if (isLocked && !['details', 'billing'].includes(activeTab)) {
+        return (
+             <EventProfileShell event={event} role="host" isLoading={false} activeTab={activeTab} onTabChange={setActiveTab} isLocked={isLocked}>
+                 <ActivationGate 
+                    onSign={handleSignContract}
+                    onPay={handlePayDeposit}
+                    signing={isSigning}
+                    paying={false} // Placeholder
+                    contractSigned={event.contractSigned}
+                />
+            </EventProfileShell>
+        );
     }
 
     return (
@@ -420,7 +424,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                  <EventGallery 
                     role="host"
                     event={event}
-                    onLinkChange={() => {}}
+                    onLinkChange={fetchEventData}
                  />
             </TabsContent>
              <TabsContent value="music">

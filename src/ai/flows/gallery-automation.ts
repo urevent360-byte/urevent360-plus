@@ -304,5 +304,3 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
     };
   }
 );
-
-    

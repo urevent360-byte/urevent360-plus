@@ -202,25 +202,19 @@
       "en": "Billing & Payments",
       "es": "Facturación y Pagos"
     },
-    "paymentDueSoon": {
-      "en": "Payment Due Soon",
-      "es": "Pago Próximo a Vencer"
+    "banner": {
+      "dueSoon": {
+        "en": "Payment Due Soon",
+        "es": "Pago Próximo a Vencer"
+      }
     },
-    "viewInvoice": {
-      "en": "View Invoice",
-      "es": "Ver Factura"
-    },
-    "viewDownload": {
-      "en": "View/Download",
-      "es": "Ver/Descargar"
+    "viewDetails": {
+      "en": "View Details",
+      "es": "Ver Detalles"
     },
     "payNow": {
       "en": "Pay Now",
       "es": "Pagar Ahora"
-    },
-    "payRemaining": {
-      "en": "Pay Remaining Balance",
-      "es": "Pagar Saldo Restante"
     },
     "paidInFull": {
       "en": "Paid in Full",
@@ -230,17 +224,19 @@
       "en": "Deposit Received",
       "es": "Depósito Recibido"
     },
-    "total": {
-      "en": "Total",
-      "es": "Total"
-    },
-    "deposit": {
-      "en": "Deposit",
-      "es": "Depósito"
-    },
-    "remaining": {
-      "en": "Remaining",
-      "es": "Restante"
+    "totals": {
+      "total": {
+        "en": "Total",
+        "es": "Total"
+      },
+      "deposit": {
+        "en": "Deposit",
+        "es": "Depósito"
+      },
+      "remaining": {
+        "en": "Remaining",
+        "es": "Restante"
+      }
     },
     "dueDate": {
       "en": "Due Date",

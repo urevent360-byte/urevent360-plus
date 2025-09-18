@@ -16,6 +16,7 @@ import type { Lead } from '@/lib/data-adapter';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 function LeadDetailClient({ leadId }: { leadId: string }) {
     const [lead, setLead] = useState<Lead | null>(null);
@@ -121,12 +122,25 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                      <Button variant="outline" onClick={handleMarkAccepted} disabled={!['quote_sent'].includes(lead.status)}>
                         <Check className="mr-2" /> Mark Accepted
                     </Button>
-                    <Button onClick={handleConvertToProject} disabled={isConverting || !['accepted', 'converted'].includes(lead.status)}>
+                    <Button onClick={handleConvertToProject} disabled={isConverting || !['accepted'].includes(lead.status)}>
                         {isConverting ? <Loader2 className="mr-2 animate-spin" /> : <Box className="mr-2" />}
-                        {lead.status === 'converted' ? 'View Project' : 'Convert to Project'}
+                        Convert to Project
                     </Button>
                 </div>
             </div>
+            
+            {lead.status === 'converted' && lead.eventId && (
+                <Alert>
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>Lead Already Converted</AlertTitle>
+                    <AlertDescription>
+                        This lead has already been converted into a project.
+                        <Button variant="link" className="p-0 pl-1 h-auto" asChild>
+                           <Link href={`/admin/events/${lead.eventId}`}>View the project here.</Link>
+                        </Button>
+                    </AlertDescription>
+                </Alert>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                 <div className="lg:col-span-1 space-y-8">
@@ -190,19 +204,6 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                             </Table>
                         </CardContent>
                     </Card>
-                    {lead.status === 'converted' && lead.eventId && (
-                        <Card className="mt-4 border-green-500">
-                             <CardHeader>
-                                <CardTitle className="text-green-600 flex items-center gap-2"><Info /> Already Converted</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p>This lead has been converted to Event ID: <span className="font-bold">{lead.eventId}</span>.</p>
-                                <Button size="sm" className="mt-2" onClick={() => router.push(`/admin/events/${lead.eventId}`)}>
-                                    Go to Project Page
-                                </Button>
-                            </CardContent>
-                        </Card>
-                    )}
                 </div>
             </div>
         </div>

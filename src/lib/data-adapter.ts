@@ -554,6 +554,21 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
                 contractSigned: false,
             };
             MOCK_EVENTS.push(newEvent);
+
+            if (!MOCK_REQUESTED_SERVICES[newEventId as any]) {
+                MOCK_REQUESTED_SERVICES[newEventId as any] = [];
+            }
+            lead.requestedServices.forEach(s => {
+                (MOCK_REQUESTED_SERVICES as any).push({
+                    id: `req-${Math.random().toString(36).substring(7)}`,
+                    eventId: newEventId,
+                    serviceName: s.title,
+                    status: 'selected',
+                    title: s.title,
+                    qty: s.qty,
+                    notes: s.notes,
+                });
+            });
         }
 
         lead.status = 'converted';
@@ -854,7 +869,7 @@ export async function requestAddons(eventId: string, items: string[]): Promise<v
 export async function listRequestedServices(eventId: string): Promise<RequestedService[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_REQUESTED_SERVICES.filter(req => req.eventId === eventId);
+        return (MOCK_REQUESTED_SERVICES as any).filter((req: any) => req.eventId === eventId);
     }
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');

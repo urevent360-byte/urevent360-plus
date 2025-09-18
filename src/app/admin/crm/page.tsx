@@ -26,6 +26,7 @@ import QRCode from "qrcode.react";
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import locales from '@/lib/locales.json';
 
 type Status = 'new' | 'contacted' | 'follow-up' | 'quote_sent' | 'accepted' | 'converted' | 'rejected';
 
@@ -66,6 +67,7 @@ export default function CrmPage() {
   const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
 
   const filteredLeads = leads.filter(lead => filter === 'all' || lead.status === filter);
   
@@ -82,14 +84,18 @@ export default function CrmPage() {
     <div>
         <div className="flex items-center justify-between mb-8">
             <div>
-                <h1 className="text-3xl font-bold tracking-tight">CRM & Leads</h1>
+                <h1 className="text-3xl font-bold tracking-tight">{locales.crm.title[language]}</h1>
                 <p className="text-muted-foreground">Manage client inquiries and converted events.</p>
+            </div>
+             <div className="flex items-center gap-2">
+                <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => setLanguage('en')}>EN</Button>
+                <Button variant={language === 'es' ? 'default' : 'outline'} onClick={() => setLanguage('es')}>ES</Button>
             </div>
         </div>
 
         <Card>
             <CardHeader>
-                <CardTitle>All Inquiries</CardTitle>
+                <CardTitle>{locales.crm.allInquiries[language]}</CardTitle>
                 <CardDescription>A list of all leads from the contact form. Converted events have QR and Photo Booth link capabilities.</CardDescription>
                 <div className="flex items-center gap-2 pt-4 flex-wrap">
                     <Button variant={filter === 'all' ? 'default' : 'outline'} onClick={() => setFilter('all')}>All</Button>
@@ -100,7 +106,7 @@ export default function CrmPage() {
                             onClick={() => setFilter(status)}
                             className="capitalize"
                         >
-                            {status.replace('_', ' ')}
+                            {locales.status[status as keyof typeof locales.status][language]}
                         </Button>
                     ))}
                 </div>
@@ -125,7 +131,7 @@ export default function CrmPage() {
                             <TableCell>{lead.date}</TableCell>
                             <TableCell>
                                 <Badge className={`${statusColors[lead.status as Status]} text-white capitalize hover:${statusColors[lead.status as Status]}`}>
-                                    {lead.status.replace('_', ' ')}
+                                    {locales.status[lead.status as keyof typeof locales.status][language]}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">
@@ -140,7 +146,7 @@ export default function CrmPage() {
                                         <DropdownMenuItem asChild>
                                             <Link href={`/admin/crm/${lead.id}`}>
                                                 <Edit className="mr-2 h-4 w-4" />
-                                                View/Edit Lead
+                                                {locales.crm.viewEditLead[language]}
                                             </Link>
                                         </DropdownMenuItem>
                                         {lead.eventId && (
@@ -148,16 +154,16 @@ export default function CrmPage() {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!)}>
                                                 <QrCode className="mr-2 h-4 w-4" />
-                                                Generate Upload QR
+                                                {locales.crm.generateUploadQr[language]}
                                             </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => handleActionClick(lead.eventId!)}>
                                                 <LinkIcon className="mr-2 h-4 w-4" />
-                                                Set Photo Booth Link
+                                                {locales.crm.addPhotoboothLink[language]}
                                             </DropdownMenuItem>
                                              <DropdownMenuItem asChild>
                                                 <Link href={`/admin/events/${lead.eventId}`}>
                                                     <CalendarCog className="mr-2 h-4 w-4" />
-                                                    Manage Event Settings
+                                                    {locales.crm.manageEventSettings[language]}
                                                 </Link>
                                             </DropdownMenuItem>
                                           </>

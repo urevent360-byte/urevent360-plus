@@ -31,8 +31,8 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
             const fetchedLead = await getLead(leadId);
             if (fetchedLead) {
                 setLead(fetchedLead);
-                const initialPrices = fetchedLead.requestedServices.reduce((acc, service) => {
-                    acc[service] = 0;
+                const initialPrices = (fetchedLead.requestedServices || []).reduce((acc, service) => {
+                    acc[service as string] = 0;
                     return acc;
                 }, {} as Record<string, number>);
                 setQuotePrices(initialPrices);
@@ -166,7 +166,7 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {lead.requestedServices.map(service => (
+                                    {(lead.requestedServices as string[]).map(service => (
                                         <TableRow key={service}>
                                             <TableCell className="font-medium">{service}</TableCell>
                                             <TableCell className="text-right">
@@ -209,7 +209,7 @@ function LeadDetailClient({ leadId }: { leadId: string }) {
     )
 }
 
-export default async function AdminLeadDetailPage({ params }: { params: Promise<{ leadId: string }> }) {
-  const { leadId } = await params;
+export default async function AdminLeadDetailPage({ params }: { params: { leadId: string } }) {
+  const { leadId } = params;
   return <LeadDetailClient leadId={leadId} />;
 }

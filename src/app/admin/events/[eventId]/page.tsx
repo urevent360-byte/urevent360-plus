@@ -1,8 +1,8 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist } from '@/lib/data-adapter';
 import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song } from '@/lib/data-adapter';
@@ -28,8 +28,7 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
     const [isSimulatingPayment, setIsSimulatingPayment] = useState(false);
-    const searchParams = useSearchParams();
-    const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'details');
+    const [activeTab, setActiveTab] = useState('details');
     const { toast } = useToast();
 
     async function fetchEventData() {
@@ -382,5 +381,6 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
 
 export default async function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
-    return <AdminEventDetailClient eventId={params.eventId} />;
+    const { eventId } = params;
+    return <AdminEventDetailClient eventId={eventId} />;
 }

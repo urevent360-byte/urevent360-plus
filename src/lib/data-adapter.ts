@@ -187,12 +187,12 @@ export type MusicPlaylist = z.infer<typeof MusicPlaylistSchema>;
 
 // --- Mock Data ---
 
-const MOCK_LEADS: Lead[] = [
+let MOCK_LEADS: Lead[] = [
     { 
         id: 'lead-123',
         hostId: 'user-johndoe',
         hostEmail: 'client@urevent360.com',
-        status: 'converted',
+        status: 'new_request',
         eventDraft: {
             name: 'Johns Quinceañera',
             type: 'Quinceañera',
@@ -213,7 +213,7 @@ const MOCK_LEADS: Lead[] = [
             { serviceId: '360-photo-booth', title: '360 Photo Booth', qty: 1 },
             { serviceId: 'cold-sparklers', title: 'Cold Sparklers', qty: 4 }
         ],
-        eventId: 'evt-123',
+        eventId: null,
         createdAt: new Date('2024-08-25').toISOString(),
         updatedAt: new Date().toISOString(),
         // Legacy
@@ -250,6 +250,33 @@ const MOCK_LEADS: Lead[] = [
         name: 'David Lee',
         email: 'david@example.com',
     },
+     { 
+        id: 'lead-789',
+        hostId: 'user-janesmith',
+        hostEmail: 'jane@example.com',
+        status: 'quote_sent',
+        eventDraft: {
+            name: 'Smith Wedding',
+            type: 'Wedding',
+            guestCount: 100,
+            date: new Date('2024-11-01T00:00:00.000Z').toISOString(),
+            timeWindow: '5 PM - 10 PM',
+            timeZone: 'America/New_York',
+            venueName: 'The Botanical Gardens',
+            address: '789 Flower Ave',
+            city: 'Tampa',
+            state: 'FL',
+            zip: '33602',
+            onsiteContactName: 'Jane Smith',
+            onsiteContactPhone: '555-9012',
+        },
+        requestedServices: [{serviceId: "photo-booth-printer", title: "Photo Booth Printer", qty: 1}],
+        eventId: null,
+        createdAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
+        updatedAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
+        name: 'Jane Smith',
+        email: 'jane@example.com',
+    },
 ];
 
 let MOCK_EVENTS: Event[] = [
@@ -266,7 +293,7 @@ let MOCK_EVENTS: Event[] = [
         timeZone: 'America/New_York',
         venue: { name: 'The Grand Ballroom', address: '123 Main St', city: 'Orlando', state: 'FL', zip: '32801' },
         onsiteContact: { name: 'John Doe', phone: '555-1234' },
-        status: 'invoice_sent',
+        status: 'quote_requested',
         audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'John Doe',
         eventName: 'Johns Quinceañera',

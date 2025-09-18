@@ -307,37 +307,43 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                         <CardDescription>Review your invoices and payment history.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Invoice ID</TableHead>
-                                    <TableHead>Amount</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead>Due Date</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {payments.map(payment => (
-                                    <TableRow key={payment.id}>
-                                        <TableCell className="font-medium">{payment.invoiceId}</TableCell>
-                                        <TableCell>${payment.total.toFixed(2)}</TableCell>
-                                        <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
-                                        <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
-                                        <TableCell className="text-right">
-                                            {payment.quickbooksUrl && (
-                                                <Button variant="ghost" size="sm" asChild>
-                                                    <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
-                                                        View Invoice <ExternalLink className="ml-2 h-4 w-4" />
-                                                    </a>
-                                                </Button>
-                                            )}
-                                        </TableCell>
+                        {payments.length === 0 ? (
+                             <p className="text-center text-muted-foreground p-8">Waiting for invoice from our team.</p>
+                        ) : (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Invoice ID</TableHead>
+                                        <TableHead>Amount</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead>Due Date</TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                        {payments.length === 0 && <p className="text-center text-muted-foreground p-8">No invoices have been issued for this event yet.</p>}
+                                </TableHeader>
+                                <TableBody>
+                                    {payments.map(payment => (
+                                        <TableRow key={payment.id}>
+                                            <TableCell className="font-medium">{payment.invoiceId}</TableCell>
+                                            <TableCell>${payment.total.toFixed(2)}</TableCell>
+                                            <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
+                                            <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
+                                            <TableCell className="text-right">
+                                                {payment.status !== 'paid_in_full' && payment.quickbooksUrl && (
+                                                    <Button asChild>
+                                                        <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
+                                                            Pay Now <ExternalLink className="ml-2 h-4 w-4" />
+                                                        </a>
+                                                    </Button>
+                                                )}
+                                                 {payment.status === 'paid_in_full' && (
+                                                    <span className="text-sm text-green-600 font-semibold">Paid in Full</span>
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        )}
                     </CardContent>
                 </Card>
             </TabsContent>

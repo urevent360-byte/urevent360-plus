@@ -200,15 +200,15 @@
   "billing": {
     "title": {
       "en": "Billing & Payments",
-      "es": "Facturación y pagos"
+      "es": "Facturación y Pagos"
     },
     "paymentDueSoon": {
       "en": "Payment Due Soon",
-      "es": "Pago próximo"
+      "es": "Pago Próximo a Vencer"
     },
     "viewInvoice": {
       "en": "View Invoice",
-      "es": "Ver factura"
+      "es": "Ver Factura"
     },
     "viewDownload": {
       "en": "View/Download",
@@ -216,19 +216,27 @@
     },
     "payNow": {
       "en": "Pay Now",
-      "es": "Pagar ahora"
+      "es": "Pagar Ahora"
     },
     "payRemaining": {
       "en": "Pay Remaining Balance",
-      "es": "Pagar saldo pendiente"
+      "es": "Pagar Saldo Restante"
+    },
+    "paidInFull": {
+      "en": "Paid in Full",
+      "es": "Pagado en su Totalidad"
+    },
+    "depositReceived": {
+      "en": "Deposit Received",
+      "es": "Depósito Recibido"
     },
     "total": {
       "en": "Total",
       "es": "Total"
     },
-    "depositReceived": {
-      "en": "Deposit Received",
-      "es": "Depósito recibido"
+    "deposit": {
+      "en": "Deposit",
+      "es": "Depósito"
     },
     "remaining": {
       "en": "Remaining",
@@ -236,11 +244,39 @@
     },
     "dueDate": {
       "en": "Due Date",
-      "es": "Fecha límite"
+      "es": "Fecha de Vencimiento"
     },
     "history": {
-      "en": "Payment History",
-      "es": "Historial de pagos"
+      "title": {
+        "en": "Payment History",
+        "es": "Historial de Pagos"
+      },
+      "method": {
+        "en": "Method",
+        "es": "Método"
+      },
+      "amount": {
+        "en": "Amount",
+        "es": "Monto"
+      },
+      "date": {
+        "en": "Date",
+        "es": "Fecha"
+      }
+    },
+    "admin": {
+      "create": {
+        "en": "Create Invoice",
+        "es": "Crear Factura"
+      },
+      "update": {
+        "en": "Update Invoice",
+        "es": "Actualizar Factura"
+      },
+      "replace": {
+        "en": "Replace Invoice",
+        "es": "Reemplazar Factura"
+      }
     }
   },
   "contract": {

@@ -15,33 +15,84 @@ import { format, add } from 'date-fns';
 
 const LeadSchema = z.object({
     id: z.string(),
+    hostId: z.string().optional(),
     hostEmail: z.string().email(),
-    hostName: z.string().optional(),
-    name: z.string(), // Derived from hostName or a default
-    email: z.string().email(), // Same as hostEmail
-    requestedServices: z.array(z.string()),
+    status: z.enum(['new_request', 'quote_sent', 'accepted', 'rejected', 'converted']),
     eventDraft: z.object({
-        eventName: z.string(),
-        eventDate: z.string(),
+        name: z.string(),
+        type: z.string(),
+        guestCount: z.number(),
+        date: z.string(),
+        timeWindow: z.string(),
+        timeZone: z.string(),
+        venueName: z.string(),
+        address: z.string(),
+        city: z.string(),
+        state: z.string(),
+        zip: z.string(),
+        onsiteContactName: z.string(),
+        onsiteContactPhone: z.string(),
         notes: z.string().optional(),
     }),
-    status: z.enum(['new', 'contacted', 'follow-up', 'quote_sent', 'accepted', 'rejected', 'converted']),
+    requestedServices: z.array(z.object({
+        serviceId: z.string(),
+        title: z.string(),
+        qty: z.number(),
+        notes: z.string().optional(),
+    })),
     eventId: z.string().nullable(),
     createdAt: z.string(),
     updatedAt: z.string(),
+    // Legacy fields for compatibility with UI components
+    name: z.string(), 
+    email: z.string().email(),
 });
 export type Lead = z.infer<typeof LeadSchema>;
 
 const EventSchema = z.object({
     id: z.string(),
     hostId: z.string(),
+    hostEmail: z.string(),
+    projectNumber: z.string(),
+    name: z.string(),
+    type: z.string(),
+    guestCount: z.number(),
+    eventDate: z.string(),
+    timeWindow: z.string(),
+    timeZone: z.string(),
+    venue: z.object({
+        name: z.string(),
+        address: z.string(),
+        city: z.string(),
+        state: z.string(),
+        zip: z.string(),
+    }),
+    onsiteContact: z.object({
+        name: z.string(),
+        phone: z.string(),
+    }),
+    status: z.enum(['quote_requested', 'invoice_sent', 'deposit_due', 'booked', 'completed', 'canceled']),
+    confirmedAt: z.string().optional(),
+    google: z.object({
+        connected: z.boolean(),
+        gcalEventId: z.string().optional(),
+    }).optional(),
+    photoboothLink: z.string().optional(),
+    galleryPolicy: z.object({
+        releaseDelayDays: z.number(),
+        visibilityWindowDays: z.number(),
+        autoPurgeDays: z.number(),
+    }).optional(),
+    audit: z.object({
+        createdBy: z.string(),
+        createdAt: z.string(),
+        lastUpdatedBy: z.string(),
+        lastUpdatedAt: z.string(),
+    }),
+    // Legacy fields for UI component compatibility
     clientName: z.string(),
     eventName: z.string(),
-    eventDate: z.string(),
-    status: z.enum(['quote_requested', 'contract_sent', 'invoice_sent', 'deposit_due', 'booked', 'completed', 'canceled']),
-    confirmedAt: z.string().optional(),
     contractSigned: z.boolean().optional(),
-    photoboothLink: z.string().optional(),
     galleryVisibilityDate: z.string().optional(),
     galleryExpirationDate: z.string().optional(),
 });
@@ -50,10 +101,13 @@ export type Event = z.infer<typeof EventSchema>;
 const FileRecordSchema = z.object({
     id: z.string(),
     name: z.string(),
-    type: z.enum(['contract', 'invoice', 'audio', 'other']),
-    status: z.enum(['pending_signature', 'signed', 'active']),
-    url: z.string(),
+    type: z.enum(['invoice', 'contract', 'other', 'audio']),
     uploadedBy: z.enum(['admin', 'host']),
+    status: z.enum(['paid', 'signed', 'none']),
+    storagePath: z.string(),
+    createdAt: z.string(),
+    // Legacy fields for UI
+    url: z.string(),
     timestamp: z.string(),
 });
 export type FileRecord = z.infer<typeof FileRecordSchema>;
@@ -61,21 +115,32 @@ export type FileRecord = z.infer<typeof FileRecordSchema>;
 const PaymentSchema = z.object({
     id: z.string(),
     invoiceId: z.string(),
+    quickbooksUrl: z.string().optional(),
+    status: z.enum(['unpaid', 'deposit_paid', 'paid_in_full']),
+    history: z.array(z.object({
+        status: z.string(),
+        timestamp: z.string(),
+    })).optional(),
+    // Legacy fields for UI
     amount: z.number(),
-    status: z.enum(['paid', 'unpaid', 'overdue']),
     method: z.enum(['credit_card', 'bank_transfer', '']),
     timestamp: z.string(),
-    quickbooksUrl: z.string().optional(),
 });
 export type Payment = z.infer<typeof PaymentSchema>;
 
 const TimelineItemSchema = z.object({
     id: z.string(),
+    start: z.string(),
+    end: z.string(),
     title: z.string(),
+    notes: z.string().optional(),
+    status: z.string(),
+    syncToGoogle: z.boolean(),
+    approvalStatus: z.string(),
+    gcalEventId: z.string().optional(),
+    // Legacy fields for UI
     startTime: z.string(),
     endTime: z.string(),
-    notes: z.string().optional(),
-    status: z.enum(['upcoming', 'in_progress', 'completed']),
     isSyncedToGoogle: z.boolean(),
 });
 export type TimelineItem = z.infer<typeof TimelineItemSchema>;
@@ -90,9 +155,13 @@ export type Addon = z.infer<typeof AddonSchema>;
 
 const RequestedServiceSchema = z.object({
     id: z.string(),
+    title: z.string(),
+    qty: z.number(),
+    notes: z.string().optional(),
+    status: z.enum(['selected', 'requested', 'approved', 'rejected']),
+    // Legacy
     eventId: z.string(),
     serviceName: z.string(),
-    status: z.enum(['requested', 'approved', 'rejected']),
 });
 export type RequestedService = z.infer<typeof RequestedServiceSchema>;
 
@@ -121,66 +190,65 @@ export type MusicPlaylist = z.infer<typeof MusicPlaylistSchema>;
 const MOCK_LEADS: Lead[] = [
     { 
         id: 'lead-123',
+        hostId: 'user-johndoe',
         hostEmail: 'client@urevent360.com',
-        hostName: 'John Doe',
-        name: 'John Doe',
-        email: 'client@urevent360.com',
-        requestedServices: ['360 Photo Booth', 'Cold Sparklers'],
+        status: 'converted',
         eventDraft: {
-            eventName: 'Johns Quinceañera',
-            eventDate: new Date('2024-10-15T18:00:00').toISOString(),
+            name: 'Johns Quinceañera',
+            type: 'Quinceañera',
+            guestCount: 150,
+            date: new Date('2024-10-15T18:00:00').toISOString(),
+            timeWindow: '6 PM - 12 AM',
+            timeZone: 'Eastern Standard Time',
+            venueName: 'The Grand Ballroom',
+            address: '123 Main St',
+            city: 'Orlando',
+            state: 'FL',
+            zip: '32801',
+            onsiteContactName: 'John Doe',
+            onsiteContactPhone: '555-1234',
             notes: 'Wants the new props.'
         },
-        status: 'converted',
+        requestedServices: [
+            { serviceId: '360-photo-booth', title: '360 Photo Booth', qty: 1 },
+            { serviceId: 'cold-sparklers', title: 'Cold Sparklers', qty: 4 }
+        ],
         eventId: 'evt-123',
         createdAt: new Date('2024-08-25').toISOString(),
         updatedAt: new Date().toISOString(),
+        // Legacy
+        name: 'John Doe',
+        email: 'client@urevent360.com',
     },
     { 
         id: 'lead-456',
+        hostId: 'user-davidlee',
         hostEmail: 'david@example.com',
-        hostName: 'David Lee',
-        name: 'David Lee',
-        email: 'david@example.com',
-        requestedServices: ['Magic Mirror'],
-        eventDraft: {
-            eventName: 'Lee Corporate Gala',
-            eventDate: new Date('2024-07-20T12:00:00').toISOString(),
-        },
         status: 'converted',
+        eventDraft: {
+            name: 'Lee Corporate Gala',
+            type: 'Corporate',
+            guestCount: 300,
+            date: new Date('2024-07-20T12:00:00').toISOString(),
+            timeWindow: '7 PM - 11 PM',
+            timeZone: 'Eastern Standard Time',
+            venueName: 'The Ritz',
+            address: '456 Grand Ave',
+            city: 'Miami',
+            state: 'FL',
+            zip: '33101',
+            onsiteContactName: 'David Lee',
+            onsiteContactPhone: '555-5678',
+        },
+        requestedServices: [
+            { serviceId: 'magic-mirror', title: 'Magic Mirror', qty: 1 }
+        ],
         eventId: 'evt-456',
         createdAt: new Date('2024-07-20').toISOString(),
         updatedAt: new Date().toISOString(),
-    },
-     { 
-        id: 'lead-789',
-        hostEmail: 'jane@example.com',
-        name: 'Jane Smith',
-        email: 'jane@example.com',
-        requestedServices: ['Photo Booth Printer'],
-        eventDraft: {
-            eventName: 'Smith Wedding',
-            eventDate: new Date('2024-11-01').toISOString(),
-        },
-        status: 'quote_sent',
-        eventId: null,
-        createdAt: new Date('2024-07-29').toISOString(),
-        updatedAt: new Date().toISOString(),
-    },
-     { 
-        id: 'lead-new',
-        hostEmail: 'new@example.com',
-        name: 'New Client',
-        email: 'new@example.com',
-        requestedServices: ['La Hora Loca with LED Robot'],
-        eventDraft: {
-            eventName: 'Big Birthday Bash',
-            eventDate: new Date('2024-12-01').toISOString(),
-        },
-        status: 'new',
-        eventId: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        // Legacy
+        name: 'David Lee',
+        email: 'david@example.com',
     },
 ];
 
@@ -188,69 +256,72 @@ let MOCK_EVENTS: Event[] = [
     {
         id: 'evt-123',
         hostId: 'user-johndoe',
+        hostEmail: 'client@urevent360.com',
+        projectNumber: 'EVT-24001',
+        name: 'Johns Quinceañera',
+        type: 'Quinceañera',
+        guestCount: 150,
+        eventDate: new Date('2024-10-15T18:00:00').toISOString(),
+        timeWindow: '6 PM - 12 AM',
+        timeZone: 'America/New_York',
+        venue: { name: 'The Grand Ballroom', address: '123 Main St', city: 'Orlando', state: 'FL', zip: '32801' },
+        onsiteContact: { name: 'John Doe', phone: '555-1234' },
+        status: 'invoice_sent',
+        audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'John Doe',
         eventName: 'Johns Quinceañera',
-        eventDate: new Date('2024-10-15T18:00:00').toISOString(),
-        status: 'invoice_sent', // Starts as quote_requested
     },
     {
         id: 'evt-456',
         hostId: 'user-davidlee',
+        hostEmail: 'david@example.com',
+        projectNumber: 'EVT-24002',
+        name: 'Lee Corporate Gala',
+        type: 'Corporate',
+        guestCount: 300,
+        eventDate: new Date('2024-07-20T12:00:00').toISOString(),
+        timeWindow: '7 PM - 11 PM',
+        timeZone: 'America/New_York',
+        venue: { name: 'The Ritz', address: '456 Grand Ave', city: 'Miami', state: 'FL', zip: '33101' },
+        onsiteContact: { name: 'David Lee', phone: '555-5678' },
+        status: 'booked',
+        confirmedAt: new Date().toISOString(),
+        photoboothLink: 'https://photos.app.goo.gl/sample1',
+        galleryPolicy: { releaseDelayDays: 1, visibilityWindowDays: 90, autoPurgeDays: 180 },
+        audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'David Lee',
         eventName: 'Lee Corporate Gala',
-        eventDate: new Date('2024-07-20T12:00:00').toISOString(),
-        status: 'booked', // This event is fully booked and active
-        confirmedAt: new Date().toISOString(),
         contractSigned: true,
-        photoboothLink: 'https://photos.app.goo.gl/sample1',
         galleryVisibilityDate: add(new Date(), { days: 10 }).toISOString(),
         galleryExpirationDate: add(new Date(), { months: 6 }).toISOString(),
-    },
-     {
-        id: 'evt-789',
-        hostId: 'user-janesmith',
-        clientName: 'Jane Smith',
-        eventName: 'Smith Wedding',
-        eventDate: new Date('2024-11-01').toISOString(),
-        status: 'deposit_due', // This one is waiting for deposit
-        contractSigned: true,
-    },
-     {
-        id: 'evt-new',
-        hostId: 'user-newclient',
-        clientName: 'New Client',
-        eventName: 'Big Birthday Bash',
-        eventDate: new Date('2024-12-01').toISOString(),
-        status: 'quote_requested',
-        contractSigned: false,
     },
 ];
 
 let MOCK_FILES: Record<string, FileRecord[]> = {
     'evt-456': [
-        { id: 'file-1', name: 'Signed Contract - Lee Gala.pdf', type: 'contract', status: 'signed', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
-        { id: 'file-2', name: 'Invoice-001.pdf', type: 'invoice', status: 'active', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
+        { id: 'file-1', name: 'Signed Contract - Lee Gala.pdf', type: 'contract', status: 'signed', uploadedBy: 'admin', storagePath: 'events/evt-456/contract.pdf', createdAt: new Date().toISOString(), url: '#', timestamp: new Date().toISOString() },
+        { id: 'file-2', name: 'Invoice-001.pdf', type: 'invoice', status: 'paid', uploadedBy: 'admin', storagePath: 'events/evt-456/invoice.pdf', createdAt: new Date().toISOString(), url: '#', timestamp: new Date().toISOString() },
     ],
     'evt-789': [
-         { id: 'file-3', name: 'Invoice-002.pdf', type: 'invoice', status: 'active', url: '#', uploadedBy: 'admin', timestamp: new Date().toISOString() },
+         { id: 'file-3', name: 'Invoice-002.pdf', type: 'invoice', status: 'none', uploadedBy: 'admin', storagePath: 'events/evt-789/invoice.pdf', createdAt: new Date().toISOString(), url: '#', timestamp: new Date().toISOString() },
     ]
 };
 
 let MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-456': [
-        { id: 'pay-1', invoiceId: 'inv-001', amount: 500, status: 'paid', method: 'credit_card', timestamp: new Date().toISOString(), quickbooksUrl: '#' },
+        { id: 'pay-1', invoiceId: 'inv-001', status: 'paid_in_full', quickbooksUrl: '#', amount: 500, method: 'credit_card', timestamp: new Date().toISOString() },
     ]
 };
 
 let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     'evt-456': [
-        { id: 'tl-1', title: 'DJ Setup', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', status: 'completed', isSyncedToGoogle: true },
-        { id: 'tl-2', title: 'Magic Mirror Opens', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', status: 'completed', isSyncedToGoogle: true },
-        { id: 'tl-3', title: 'Dinner Service', startTime: '2024-07-20T19:00:00Z', endTime: '2024-07-20T20:00:00Z', status: 'completed', isSyncedToGoogle: false },
+        { id: 'tl-1', start: '2024-07-20T17:00:00Z', end: '2024-07-20T18:00:00Z', title: 'DJ Setup', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', isSyncedToGoogle: true },
+        { id: 'tl-2', start: '2024-07-20T18:00:00Z', end: '2024-07-20T22:00:00Z', title: 'Magic Mirror Opens', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', isSyncedToGoogle: true },
+        { id: 'tl-3', start: '2024-07-20T19:00:00Z', end: '2024-07-20T20:00:00Z', title: 'Dinner Service', status: 'completed', syncToGoogle: false, approvalStatus: 'approved', startTime: '2024-07-20T19:00:00Z', endTime: '2024-07-20T20:00:00Z', isSyncedToGoogle: false },
     ],
     'evt-123': [
-        { id: 'tl-4', title: 'Grand Entrance', startTime: '2024-10-15T18:30:00Z', endTime: '2024-10-15T18:45:00Z', status: 'upcoming', isSyncedToGoogle: false },
-        { id: 'tl-5', title: '360 Booth & Sparklers', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', status: 'upcoming', isSyncedToGoogle: false },
+        { id: 'tl-4', start: '2024-10-15T18:30:00Z', end: '2024-10-15T18:45:00Z', title: 'Grand Entrance', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T18:30:00Z', endTime: '2024-10-15T18:45:00Z', isSyncedToGoogle: false },
+        { id: 'tl-5', start: '2024-10-15T19:00:00Z', end: '2024-10-15T23:00:00Z', title: '360 Booth & Sparklers', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', isSyncedToGoogle: false },
     ]
 };
 
@@ -294,7 +365,7 @@ const MOCK_MAIN_SERVICES = [
 ];
 
 let MOCK_REQUESTED_SERVICES: RequestedService[] = [
-    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested' }
+    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested', title: 'Guest Book Station', qty: 1 }
 ];
 
 let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
@@ -330,7 +401,12 @@ const DATA_SOURCE: 'mock' | 'firestore' = 'mock';
 export async function getLeads(): Promise<Lead[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_LEADS;
+        // This is a hack to make the lead list work with the old UI
+        const legacyLeads: any = MOCK_LEADS.map(lead => ({
+            ...lead,
+            date: format(new Date(lead.createdAt), 'yyyy-MM-dd'),
+        }));
+        return legacyLeads;
     }
     // TODO: Implement Firestore fetching logic
     throw new Error('Firestore not implemented');
@@ -339,7 +415,19 @@ export async function getLeads(): Promise<Lead[]> {
 export async function getLead(leadId: string): Promise<Lead | undefined> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_LEADS.find(lead => lead.id === leadId);
+        const lead = MOCK_LEADS.find(l => l.id === leadId);
+        if (!lead) return undefined;
+        // Hack for UI compatibility
+        const legacyLead: any = {
+            ...lead,
+            requestedServices: lead.requestedServices.map(s => s.title),
+            eventDraft: {
+                ...lead.eventDraft,
+                eventName: lead.eventDraft.name,
+                eventDate: lead.eventDraft.date,
+            }
+        };
+        return legacyLead;
     }
     // TODO: Implement Firestore fetching logic
     throw new Error('Firestore not implemented');
@@ -384,11 +472,36 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
         if (!existingEvent) {
              const newEvent: Event = {
                 id: newEventId,
-                hostId: `user-${lead.name.toLowerCase().replace(' ', '')}`,
-                clientName: lead.hostName || lead.name,
-                eventName: lead.eventDraft.eventName,
-                eventDate: lead.eventDraft.eventDate,
+                hostId: lead.hostId || `user-${lead.hostEmail.split('@')[0]}`,
+                hostEmail: lead.hostEmail,
+                projectNumber: `EVT-24${Math.floor(Math.random() * 900) + 100}`,
+                name: lead.eventDraft.name,
+                type: lead.eventDraft.type,
+                guestCount: lead.eventDraft.guestCount,
+                eventDate: lead.eventDraft.date,
+                timeWindow: lead.eventDraft.timeWindow,
+                timeZone: lead.eventDraft.timeZone,
+                venue: {
+                    name: lead.eventDraft.venueName,
+                    address: lead.eventDraft.address,
+                    city: lead.eventDraft.city,
+                    state: lead.eventDraft.state,
+                    zip: lead.eventDraft.zip,
+                },
+                onsiteContact: {
+                    name: lead.eventDraft.onsiteContactName,
+                    phone: lead.eventDraft.onsiteContactPhone,
+                },
                 status: 'quote_requested',
+                audit: {
+                    createdBy: 'admin',
+                    createdAt: new Date().toISOString(),
+                    lastUpdatedBy: 'admin',
+                    lastUpdatedAt: new Date().toISOString(),
+                },
+                // Legacy fields
+                clientName: lead.name,
+                eventName: lead.eventDraft.name,
                 contractSigned: false,
             };
             MOCK_EVENTS.push(newEvent);
@@ -409,7 +522,15 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
 export async function getEvent(eventId: string): Promise<Event | undefined> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_EVENTS.find(event => event.id === eventId);
+        const event = MOCK_EVENTS.find(event => event.id === eventId);
+        if (!event) return undefined;
+
+        // Hack to make UI work with old data structure
+        return {
+            ...event,
+            galleryVisibilityDate: event.galleryPolicy ? add(new Date(), { days: event.galleryPolicy.releaseDelayDays }).toISOString() : undefined,
+            galleryExpirationDate: event.galleryPolicy ? add(new Date(), { days: event.galleryPolicy.autoPurgeDays }).toISOString() : undefined,
+        };
     }
     // TODO: Implement Firestore fetching logic
     throw new Error('Firestore not implemented');
@@ -456,11 +577,12 @@ export async function createInvoice(eventId: string): Promise<void> {
             const newPayment: Payment = {
                 id: `pay-${Math.random().toString(36).substring(7)}`,
                 invoiceId: `inv-${eventId.slice(4)}`,
-                amount: 2500, // Placeholder amount
                 status: 'unpaid',
+                quickbooksUrl: '#',
+                // legacy
+                amount: 2500, // Placeholder amount
                 method: '',
                 timestamp: new Date().toISOString(),
-                quickbooksUrl: '#'
             };
 
             if (!MOCK_PAYMENTS[eventId]) {
@@ -495,9 +617,9 @@ export async function simulateDepositPaid(eventId: string): Promise<void> {
         if (MOCK_PAYMENTS[eventId]) {
             const payment = MOCK_PAYMENTS[eventId].find(p => p.status === 'unpaid');
             if (payment) {
-                payment.status = 'paid';
-                payment.method = 'credit_card'; // Simulate CC payment
-                payment.timestamp = new Date().toISOString();
+                payment.status = 'deposit_paid';
+                 if (!payment.history) payment.history = [];
+                payment.history.push({ status: 'deposit_paid', timestamp: new Date().toISOString() });
             }
         }
         
@@ -551,11 +673,13 @@ export async function markContractSigned(eventId: string): Promise<FileRecord> {
 
     const newFile: FileRecord = {
         id: `file-${Math.random().toString(36).substring(7)}`,
-        name: `Signed Contract - ${event.eventName}.pdf`,
+        name: `Signed Contract - ${event.name}.pdf`,
         type: 'contract',
         status: 'signed',
-        url: '#',
         uploadedBy: 'host',
+        storagePath: `events/${eventId}/signed-contract.pdf`,
+        createdAt: new Date().toISOString(),
+        url: '#',
         timestamp: new Date().toISOString(),
     };
 
@@ -606,10 +730,7 @@ export async function toggleSyncToGoogle(eventId: string, itemId: string | 'all'
 export async function getGalleryPolicy(eventId: string): Promise<any> {
     await new Promise(resolve => setTimeout(resolve, 300));
     const event = MOCK_EVENTS.find(e => e.id === eventId);
-    return {
-        visibilityDate: event?.galleryVisibilityDate,
-        expirationDate: event?.galleryExpirationDate,
-    };
+    return event?.galleryPolicy;
 }
 
 export async function setPhotoBoothLink(eventId: string, url: string): Promise<void> {
@@ -633,7 +754,7 @@ export async function listSelectedServices(eventId: string): Promise<any[]> {
     if (DATA_SOURCE === 'mock') {
         const lead = MOCK_LEADS.find(l => l.eventId === eventId);
         if (lead) {
-            return lead.requestedServices.map(name => ({ id: `svc-${name.replace(/\s+/g, '-')}`, name: name, status: 'Booked' }));
+            return lead.requestedServices.map(s => ({ id: `svc-${s.serviceId}`, name: s.title, status: 'Booked' }));
         }
         return [{ id: 'svc-magic-mirror', name: 'Magic Mirror', status: 'Booked' }];
     }
@@ -659,6 +780,8 @@ export async function requestAddons(eventId: string, items: string[]): Promise<v
                 eventId,
                 serviceName: itemName,
                 status: 'requested',
+                title: itemName,
+                qty: 1,
             };
             MOCK_REQUESTED_SERVICES.push(newRequest);
         });

@@ -392,7 +392,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
             isActive: true,
             // legacy
             amount: 2500, 
-            method: 'credit_card', 
+            method: '', 
             timestamp: new Date().toISOString() 
         },
     ]
@@ -720,7 +720,7 @@ export async function createInvoice(eventId: string): Promise<void> {
     if (DATA_SOURCE === 'mock') {
         const event = MOCK_EVENTS.find(e => e.id === eventId);
         if (event) {
-            event.status = event.contractSigned ? 'deposit_due' : 'invoice_sent';
+            event.status = 'invoice_sent';
             
             const newPayment: Payment = {
                 id: `pay-${Math.random().toString(36).substring(7)}`,
@@ -831,8 +831,6 @@ export async function markContractSigned(eventId: string): Promise<FileRecord> {
     // If invoice is sent, move to deposit_due. Otherwise, maybe contract_sent.
     if (event.status === 'invoice_sent') {
         event.status = 'deposit_due';
-    } else if (event.status === 'quote_requested') {
-        event.status = 'contract_sent';
     }
 
     const newFile: FileRecord = {

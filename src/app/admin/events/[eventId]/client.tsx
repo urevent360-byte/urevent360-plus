@@ -264,7 +264,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                         <div className="space-y-2">
                             <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
                             <div className="flex gap-4 items-center">
-                                <Button onClick={handleCreateInvoice} disabled={!event || !['quote_requested', 'contract_sent'].includes(event.status) || isCreatingInvoice}>
+                                <Button onClick={handleCreateInvoice} disabled={!event || !['quote_requested'].includes(event.status) || isCreatingInvoice}>
                                     {isCreatingInvoice ? <Loader2 className="mr-2 animate-spin" /> : null}
                                     Create Invoice
                                 </Button>
@@ -276,7 +276,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                 )}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                Use "Simulate Deposit Payment" to mark the deposit as paid and unlock the host portal.
+                                Use "Simulate Deposit Payment" to mark the deposit as paid and unlock the host portal. This action also moves the event status to 'Booked'.
                             </p>
                         </div>
                         <Card>

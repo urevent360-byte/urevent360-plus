@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { EventGallery } from '@/components/shared/EventGallery';
 import QRCode from "qrcode.react";
+import { Input } from '@/components/ui/input';
 
 
 export default function AdminEventDetailClient({ eventId }: { eventId: string }) {
@@ -159,6 +160,13 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     );
 
     const guestUploadUrl = event?.qrUpload?.token ? `${window.location.origin}/upload/${event.qrUpload.token}` : null;
+
+    const handleQrAction = (action: string) => {
+        toast({
+            title: `QR Action: ${action}`,
+            description: "This action has been simulated."
+        });
+    }
 
     return (
         <EventProfileShell
@@ -389,13 +397,14 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                     <CardContent className="grid md:grid-cols-2 gap-8 items-start">
                         {guestUploadUrl ? (
                             <>
-                                <div className="flex items-center justify-center p-4 border rounded-lg">
+                                <div className="flex flex-col items-center justify-center p-4 border rounded-lg">
                                     <QRCode
                                         value={guestUploadUrl}
                                         size={256}
                                         level={"H"}
                                         includeMargin={true}
                                     />
+                                    <Button variant="outline" className="mt-4" onClick={() => handleQrAction('Download QR')}>Download QR</Button>
                                 </div>
                                 <div className="space-y-4">
                                      <Alert>
@@ -421,18 +430,19 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                                 </span>
                                             </div>
                                             <div className="flex gap-2 pt-2 border-t">
-                                                <Button variant="outline" size="sm"><Play className="mr-2"/>Activate</Button>
-                                                <Button variant="outline" size="sm"><Pause className="mr-2"/>Pause</Button>
-                                                <Button variant="destructive" size="sm"><CalendarOff className="mr-2"/>Expire Now</Button>
+                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('Activate')}><Play className="mr-2"/>Activate</Button>
+                                                <Button variant="outline" size="sm" onClick={() => handleQrAction('Pause')}><Pause className="mr-2"/>Pause</Button>
+                                                <Button variant="destructive" size="sm" onClick={() => handleQrAction('Expire Now')}><CalendarOff className="mr-2"/>Expire Now</Button>
                                             </div>
                                         </CardContent>
                                     </Card>
+                                     <Button variant="secondary" className="w-full" onClick={() => handleQrAction('Regenerate Token')}>Regenerate QR Token</Button>
                                 </div>
                             </>
                         ) : (
                             <div className="md:col-span-2 text-center py-12 text-muted-foreground">
                                 <p>No QR Code token has been generated for this event yet.</p>
-                                <Button className="mt-4">Generate QR Token</Button>
+                                <Button className="mt-4" onClick={() => handleQrAction('Generate Token')}>Generate QR Token</Button>
                             </div>
                         )}
                     </CardContent>

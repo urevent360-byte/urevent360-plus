@@ -318,6 +318,9 @@ let MOCK_EVENTS: Event[] = [
         audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'John Doe',
         eventName: 'Johns Quinceañera',
+        galleryPolicy: { releaseDelayDays: 1, visibilityWindowDays: 30 },
+        galleryVisibilityDate: add(new Date('2024-10-15'), {days: 1}).toISOString(),
+        galleryExpirationDate: add(new Date('2024-10-15'), {days: 31}).toISOString()
     },
     {
         id: 'evt-456',
@@ -349,8 +352,8 @@ let MOCK_EVENTS: Event[] = [
         clientName: 'David Lee',
         eventName: 'Lee Corporate Gala',
         contractSigned: true,
-        galleryVisibilityDate: add(new Date(), { days: 10 }).toISOString(),
-        galleryExpirationDate: add(new Date(), { months: 6 }).toISOString(),
+        galleryVisibilityDate: add(new Date('2024-07-20'), {days: 1}).toISOString(),
+        galleryExpirationDate: add(new Date('2024-07-20'), {days: 91}).toISOString(),
     },
 ];
 
@@ -618,11 +621,13 @@ export async function getEvent(eventId: string): Promise<Event | undefined> {
         const event = MOCK_EVENTS.find(event => event.id === eventId);
         if (!event) return undefined;
 
-        // Hack to make UI work with old data structure
+        const galleryVisibilityDate = event.galleryPolicy ? add(new Date(event.eventDate), { days: event.galleryPolicy.releaseDelayDays }).toISOString() : undefined;
+        const galleryExpirationDate = event.galleryPolicy && galleryVisibilityDate ? add(new Date(galleryVisibilityDate), { days: event.galleryPolicy.visibilityWindowDays }).toISOString() : undefined;
+        
         return {
             ...event,
-            galleryVisibilityDate: event.galleryPolicy ? add(new Date(), { days: event.galleryPolicy.releaseDelayDays }).toISOString() : undefined,
-            galleryExpirationDate: event.galleryPolicy ? add(new Date(), { days: event.galleryPolicy.autoPurgeDays }).toISOString() : undefined,
+            galleryVisibilityDate,
+            galleryExpirationDate,
         };
     }
     // TODO: Implement Firestore fetching logic
@@ -1023,4 +1028,5 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
+
 

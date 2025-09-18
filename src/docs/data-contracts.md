@@ -157,3 +157,62 @@ References to media uploaded by guests.
     - **downloadUrl** (string)
     - **uploaderTag** (string): 'guest' or a specific identifier
 
+## Security Rules Summary
+
+This section outlines the Firestore security rules logic to be implemented.
+
+```firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'Super Admin';
+    }
+
+    // Helper function to check if user is the host of an event
+    function isHost(eventId) {
+      return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
+    }
+
+    // Admins can read and write to all collections
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+    
+    // Hosts can read their own user profile
+    match /users/{uid} {
+        allow read: if request.auth.uid == uid;
+        allow write: if request.auth.uid == uid; // Allow users to update their own profile
+    }
+
+    // Events can only be read by the assigned host or an admin
+    match /events/{eventId} {
+      allow read: if isHost(eventId) || isAdmin();
+      // Only admins can write directly to events. Hosts must use change requests.
+      allow write: if isAdmin();
+    }
+
+    // Hosts can read subcollections of their own events
+    match /events/{eventId}/{subcollection}/{document=**} {
+       allow read: if isHost(eventId);
+    }
+    
+    // Hosts can create change requests for their events
+    match /events/{eventId}/changeRequests/{requestId} {
+        allow create: if isHost(eventId);
+        // Only admins can update (approve/reject) change requests
+        allow update: if isAdmin();
+    }
+
+    // Guest Uploads: Public can create, but only if the event's QR status is active
+    match /events/{eventId}/guestUploads/{uploadId} {
+      allow read: if isHost(eventId) || isAdmin(); // Only host and admin can read uploads
+      allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
+      // Only admins should be able to delete
+      allow delete: if isAdmin();
+    }
+  }
+}
+```

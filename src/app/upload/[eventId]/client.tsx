@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UploadCloud, FileImage, X, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { getEvent, type Event } from '@/lib/data-adapter'; // Assuming getEvent can find event by token for mock
+import { getEventByToken, type Event } from '@/lib/data-adapter';
 
 export default function PhotoUploadClient({ eventId }: { eventId: string }) {
     const { toast } = useToast();
@@ -21,7 +21,7 @@ export default function PhotoUploadClient({ eventId }: { eventId: string }) {
         async function validateToken() {
             // In a real app, you'd have a getEventByToken function.
             // For this mock, we'll assume eventId is the token and also the ID.
-            const fetchedEvent = await getEvent(eventId);
+            const fetchedEvent = await getEventByToken(eventId);
             if (fetchedEvent && fetchedEvent.qrUpload?.status === 'active') {
                 setEvent(fetchedEvent);
                 setValidationState('valid');

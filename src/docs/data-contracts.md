@@ -90,7 +90,7 @@ Represents a confirmed and booked event.
 - **galleryPolicy** (map, optional):
     - **releaseDelayDays** (number)
     - **visibilityWindowDays** (number)
-    - **autoPurgeDays** (number)
+    - **autoPurgeDays** (number, optional)
 - **qrUpload** (map, optional):
     - **token** (string)
     - **status** (string): 'active', 'paused', 'expired'
@@ -156,3 +156,4 @@ References to media uploaded by guests.
     - **thumbUrl** (string, optional)
     - **downloadUrl** (string)
     - **uploaderTag** (string): 'guest' or a specific identifier
+

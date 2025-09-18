@@ -290,8 +290,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                             <TableHead>Invoice ID</TableHead>
                                             <TableHead>Amount</TableHead>
                                             <TableHead>Status</TableHead>
-                                            <TableHead>Method</TableHead>
-                                            <TableHead>Date</TableHead>
+                                            <TableHead>Due Date</TableHead>
                                             <TableHead className="text-right">Actions</TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -299,10 +298,9 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                         {payments.map(payment => (
                                             <TableRow key={payment.id}>
                                                 <TableCell className="font-medium">{payment.invoiceId}</TableCell>
-                                                <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                                                <TableCell>${payment.total.toFixed(2)}</TableCell>
                                                 <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
-                                                <TableCell className="capitalize">{payment.method || 'N/A'}</TableCell>
-                                                <TableCell>{format(new Date(payment.timestamp), 'PPp')}</TableCell>
+                                                <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
                                                 <TableCell className="text-right">
                                                     {payment.quickbooksUrl && (
                                                         <Button variant="ghost" size="sm" asChild>

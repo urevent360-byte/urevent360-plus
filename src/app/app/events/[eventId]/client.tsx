@@ -213,10 +213,16 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     };
     
     const handlePayDeposit = async () => {
-        toast({
-            title: "Simulating Payment...",
-            description: "You are being redirected to a mock payment page.",
-        });
+        const activeInvoice = payments.find(p => p.isActive);
+        if (activeInvoice && activeInvoice.quickbooksUrl) {
+            window.open(activeInvoice.quickbooksUrl, '_blank');
+        } else {
+            toast({
+                title: "No Invoice Found",
+                description: "There is no active invoice ready for payment. Please contact us.",
+                variant: "destructive"
+            });
+        }
     };
 
     const handleRequestChange = async () => {
@@ -307,7 +313,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                                     <TableHead>Invoice ID</TableHead>
                                     <TableHead>Amount</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Date</TableHead>
+                                    <TableHead>Due Date</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -315,9 +321,9 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                                 {payments.map(payment => (
                                     <TableRow key={payment.id}>
                                         <TableCell className="font-medium">{payment.invoiceId}</TableCell>
-                                        <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                                        <TableCell>${payment.total.toFixed(2)}</TableCell>
                                         <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
-                                        <TableCell>{format(new Date(payment.timestamp), 'PPp')}</TableCell>
+                                        <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
                                         <TableCell className="text-right">
                                             {payment.quickbooksUrl && (
                                                 <Button variant="ghost" size="sm" asChild>

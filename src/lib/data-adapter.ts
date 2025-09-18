@@ -125,13 +125,23 @@ export type FileRecord = z.infer<typeof FileRecordSchema>;
 
 const PaymentSchema = z.object({
     id: z.string(),
+    isActive: z.boolean(),
     invoiceId: z.string(),
     quickbooksUrl: z.string().optional(),
-    status: z.enum(['unpaid', 'deposit_paid', 'paid_in_full']),
+    total: z.number(),
+    depositRequired: z.number(),
+    depositPaid: z.number(),
+    remaining: z.number(),
+    dueDate: z.string(),
+    status: z.enum(['unpaid', 'deposit_paid', 'paid_in_full', 'void']),
     history: z.array(z.object({
-        status: z.string(),
-        timestamp: z.string(),
+        ts: z.string(),
+        method: z.string(),
+        amount: z.number(),
+        note: z.string(),
+        qbPaymentId: z.string(),
     })).optional(),
+    pdfUrl: z.string().optional(),
     // Legacy fields for UI
     amount: z.number(),
     method: z.enum(['credit_card', 'bank_transfer', '']),
@@ -369,7 +379,22 @@ let MOCK_FILES: Record<string, FileRecord[]> = {
 
 let MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-456': [
-        { id: 'pay-1', invoiceId: 'inv-001', status: 'paid_in_full', quickbooksUrl: '#', amount: 500, method: 'credit_card', timestamp: new Date().toISOString() },
+        { 
+            id: 'pay-1', 
+            invoiceId: 'inv-001', 
+            status: 'paid_in_full', 
+            quickbooksUrl: '#', 
+            total: 2500, 
+            depositRequired: 500,
+            depositPaid: 500,
+            remaining: 0,
+            dueDate: new Date('2024-07-15').toISOString(),
+            isActive: true,
+            // legacy
+            amount: 2500, 
+            method: 'credit_card', 
+            timestamp: new Date().toISOString() 
+        },
     ]
 };
 
@@ -678,7 +703,14 @@ export async function getEventTabs(eventId: string): Promise<any> {
 export async function listPayments(eventId: string): Promise<Payment[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        return MOCK_PAYMENTS[eventId] || [];
+        const payments = MOCK_PAYMENTS[eventId] || [];
+        // Hack for UI compatibility
+        return payments.map(p => ({
+            ...p,
+            amount: p.total,
+            method: '', // Legacy field, not in new model
+            timestamp: p.dueDate
+        }));
     }
     throw new Error('Firestore not implemented');
 }
@@ -692,11 +724,17 @@ export async function createInvoice(eventId: string): Promise<void> {
             
             const newPayment: Payment = {
                 id: `pay-${Math.random().toString(36).substring(7)}`,
+                isActive: true,
                 invoiceId: `inv-${eventId.slice(4)}`,
                 status: 'unpaid',
                 quickbooksUrl: '#',
+                total: 2500, // Placeholder
+                depositRequired: 500, // Placeholder
+                depositPaid: 0,
+                remaining: 2500,
+                dueDate: add(new Date(), {days: 15}).toISOString(),
                 // legacy
-                amount: 2500, // Placeholder amount
+                amount: 2500,
                 method: '',
                 timestamp: new Date().toISOString(),
             };
@@ -704,6 +742,8 @@ export async function createInvoice(eventId: string): Promise<void> {
             if (!MOCK_PAYMENTS[eventId]) {
                 MOCK_PAYMENTS[eventId] = [];
             }
+            // Deactivate old invoices
+            MOCK_PAYMENTS[eventId].forEach(p => p.isActive = false);
             MOCK_PAYMENTS[eventId].push(newPayment);
 
             await sendMessage(eventId, { sender: 'system', text: 'Invoice created.', timestamp: new Date().toISOString() });
@@ -731,11 +771,19 @@ export async function simulateDepositPaid(eventId: string): Promise<void> {
         if (!event) throw new Error("Event not found");
 
         if (MOCK_PAYMENTS[eventId]) {
-            const payment = MOCK_PAYMENTS[eventId].find(p => p.status === 'unpaid');
+            const payment = MOCK_PAYMENTS[eventId].find(p => p.status === 'unpaid' && p.isActive);
             if (payment) {
                 payment.status = 'deposit_paid';
+                payment.depositPaid = payment.depositRequired;
+                payment.remaining = payment.total - payment.depositPaid;
                  if (!payment.history) payment.history = [];
-                payment.history.push({ status: 'deposit_paid', timestamp: new Date().toISOString() });
+                payment.history.push({ 
+                    ts: new Date().toISOString(),
+                    method: 'Simulated Card',
+                    amount: payment.depositRequired,
+                    note: 'Deposit Paid',
+                    qbPaymentId: `sim-${Math.random()}`
+                });
             }
         }
         

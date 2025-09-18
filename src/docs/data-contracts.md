@@ -1,4 +1,5 @@
 
+
 # Data Contracts & Firestore Collections
 
 This document outlines the data structures for the main Firestore collections used in the UREVENT 360 PLUS platform.
@@ -114,15 +115,28 @@ A list of all services booked for this event.
     - **title** (string)
     - **qty** (number)
     - **notes** (string, optional)
+    - **price** (number, optional): Admin-only field.
     - **status** (string): `selected`, `requested`, `approved`, `rejected`.
 
 #### `payments`
-A record of all financial transactions for this event.
+A record of all financial transactions for this event. The "current" invoice is the one with `isActive: true`.
 - **`payments/{paymentId}`**
-    - **invoiceId** (string): The ID of the invoice in the accounting system.
-    - **quickbooksUrl** (string, optional): A link to the invoice in QuickBooks.
-    - **status** (string): `unpaid`, `deposit_paid`, `paid_in_full`.
+    - **isActive** (boolean): `true` if this is the currently active invoice.
+    - **qbInvoiceId** (string): The ID of the invoice in QuickBooks.
+    - **quickbooksUrl** (string): The direct URL for the host to pay the invoice.
+    - **total** (number): The total amount of the invoice.
+    - **depositRequired** (number): The amount required for the deposit.
+    - **depositPaid** (number): The amount paid towards the deposit.
+    - **remaining** (number): The remaining balance.
+    - **dueDate** (timestamp): The due date for the payment.
+    - **status** (string): `unpaid`, `deposit_paid`, `paid_in_full`, `void`.
     - **history** (array of maps, optional): A log of payment attempts or status changes.
+        - **ts** (timestamp)
+        - **method** (string)
+        - **amount** (number)
+        - **note** (string)
+        - **qbPaymentId** (string)
+    - **pdfUrl** (string, optional): A link to the invoice PDF.
 
 #### `files`
 Stores references to all files related to the event (contracts, invoices, etc.).
@@ -216,5 +230,3 @@ service cloud.firestore {
   }
 }
 ```
-
-  

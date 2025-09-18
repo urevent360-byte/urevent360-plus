@@ -325,7 +325,7 @@ let MOCK_EVENTS: Event[] = [
         timeZone: 'America/New_York',
         venue: { name: 'The Grand Ballroom', address: '123 Main St', city: 'Orlando', state: 'FL', zip: '32801' },
         onsiteContact: { name: 'John Doe', phone: '555-1234' },
-        status: 'quote_requested',
+        status: 'invoice_sent',
         audit: { createdBy: 'admin', createdAt: new Date().toISOString(), lastUpdatedBy: 'admin', lastUpdatedAt: new Date().toISOString() },
         clientName: 'John Doe',
         eventName: 'Johns Quinceañera',
@@ -379,10 +379,27 @@ let MOCK_FILES: Record<string, FileRecord[]> = {
 };
 
 let MOCK_PAYMENTS: Record<string, Payment[]> = {
+    'evt-123': [
+        { 
+            id: 'pay-2', 
+            invoiceId: 'inv-123', 
+            status: 'unpaid', 
+            quickbooksUrl: '#', 
+            total: 3000, 
+            depositRequired: 1000,
+            depositPaid: 0,
+            remaining: 3000,
+            dueDate: add(new Date(), {days: 10}).toISOString(),
+            isActive: true,
+            amount: 3000, 
+            method: '', 
+            timestamp: new Date().toISOString() 
+        },
+    ],
     'evt-456': [
         { 
             id: 'pay-1', 
-            invoiceId: 'inv-001', 
+            invoiceId: 'inv-456', 
             status: 'paid_in_full', 
             quickbooksUrl: '#', 
             total: 2500, 
@@ -687,6 +704,27 @@ export async function listHostEvents(hostId: string): Promise<Event[]> {
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');
 }
+
+export type EventWithPayments = Event & { activePayment?: Payment };
+
+export async function listHostEventsWithPayments(hostId: string): Promise<EventWithPayments[]> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        const hostEvents = MOCK_EVENTS.filter(event => event.hostId === hostId);
+        const eventsWithPayments = hostEvents.map(event => {
+            const payments = MOCK_PAYMENTS[event.id] || [];
+            const activePayment = payments.find(p => p.isActive);
+            return {
+                ...event,
+                activePayment,
+            };
+        });
+        return eventsWithPayments;
+    }
+    // TODO: Implement efficient Firestore query (e.g., using collection group query)
+    throw new Error('Firestore not implemented');
+}
+
 
 export async function pinEvent(hostId: string, eventId: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 300));
@@ -1133,5 +1171,3 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
-
-    

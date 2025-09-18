@@ -5,14 +5,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, markContractSigned, listFiles, listTimeline, getMusicPlaylist, saveMusicPlaylist, createChangeRequest } from '@/lib/data-adapter';
-import type { Event, FileRecord, TimelineItem, Song } from '@/lib/data-adapter';
+import { getEvent, markContractSigned, listFiles, listTimeline, getMusicPlaylist, saveMusicPlaylist, createChangeRequest, listPayments } from '@/lib/data-adapter';
+import type { Event, FileRecord, TimelineItem, Song, Payment } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Music, Plus, Ban, Trash2 } from 'lucide-react';
+import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Music, Plus, Ban, Trash2, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -167,6 +167,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
+    const [payments, setPayments] = useState<Payment[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSigning, setIsSigning] = useState(false);
     const searchParams = useSearchParams();
@@ -175,14 +176,16 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
 
     async function fetchEventData() {
         setIsLoading(true);
-        const [fetchedEvent, fetchedFiles, fetchedTimeline] = await Promise.all([
+        const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedPayments] = await Promise.all([
             getEvent(eventId),
             listFiles(eventId),
-            listTimeline(eventId)
+            listTimeline(eventId),
+            listPayments(eventId),
         ]);
         setEvent(fetchedEvent || null);
         setFiles(fetchedFiles);
         setTimeline(fetchedTimeline);
+        setPayments(fetchedPayments);
         setIsLoading(false);
     }
 
@@ -249,7 +252,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         return <Alert variant="destructive"><AlertTitle>Error</AlertTitle><AlertDescription>Event not found.</AlertDescription></Alert>;
     }
 
-    if (isLocked) {
+    if (isLocked && activeTab !== 'billing') {
         return <ActivationGate 
             onSign={handleSignContract}
             onPay={handlePayDeposit}
@@ -288,6 +291,47 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                             <div className="md:col-span-2"><strong>Venue:</strong> {event.venue.name}, {event.venue.address}</div>
                             <div className="md:col-span-2"><strong>On-site Contact:</strong> {event.onsiteContact.name} ({event.onsiteContact.phone})</div>
                         </div>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+            <TabsContent value="billing">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Billing & Payments</CardTitle>
+                        <CardDescription>Review your invoices and payment history.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Invoice ID</TableHead>
+                                    <TableHead>Amount</TableHead>
+                                    <TableHead>Status</TableHead>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {payments.map(payment => (
+                                    <TableRow key={payment.id}>
+                                        <TableCell className="font-medium">{payment.invoiceId}</TableCell>
+                                        <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                                        <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
+                                        <TableCell>{format(new Date(payment.timestamp), 'PPp')}</TableCell>
+                                        <TableCell className="text-right">
+                                            {payment.quickbooksUrl && (
+                                                <Button variant="ghost" size="sm" asChild>
+                                                    <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
+                                                        View Invoice <ExternalLink className="ml-2 h-4 w-4" />
+                                                    </a>
+                                                </Button>
+                                            )}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        {payments.length === 0 && <p className="text-center text-muted-foreground p-8">No invoices have been issued for this event yet.</p>}
                     </CardContent>
                 </Card>
             </TabsContent>

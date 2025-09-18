@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthProvider';
 import { listHostEvents, type Event } from '@/lib/data-adapter';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, PlusCircle } from 'lucide-react';
 
 export default function AppMyEventsPage() {
     const { user } = useAuth();
@@ -39,8 +39,14 @@ export default function AppMyEventsPage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">My Events</h1>
-                    <p className="text-muted-foreground">Select an event to manage its details.</p>
+                    <p className="text-muted-foreground">Select an event to manage its details or create a new one.</p>
                 </div>
+                 <Button asChild>
+                    <Link href="/app/events/new">
+                        <PlusCircle className="mr-2" />
+                        Create New Event
+                    </Link>
+                </Button>
             </div>
 
             {isLoading ? (
@@ -84,7 +90,7 @@ export default function AppMyEventsPage() {
                              <div className="text-center text-muted-foreground py-12">
                                 <p>You don't have any events with us yet.</p>
                                 <Button variant="link" asChild className="mt-2">
-                                    <Link href="/contact">Request an Inquiry</Link>
+                                    <Link href="/app/events/new">Request an Inquiry</Link>
                                 </Button>
                             </div>
                         )}

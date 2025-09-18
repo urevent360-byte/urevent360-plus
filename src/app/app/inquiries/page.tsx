@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { FileText, Clock, CheckCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type InquiryStatus = 'Pending' | 'Quote Sent' | 'Confirmed';
 
@@ -58,8 +60,11 @@ export default function AppInquiriesPage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">My Inquiries</h1>
-                    <p className="text-muted-foreground">Track the status of your service inquiries.</p>
+                    <p className="text-muted-foreground">Track the status of your event inquiries.</p>
                 </div>
+                 <Button asChild>
+                    <Link href="/app/events/new">Create New Inquiry</Link>
+                </Button>
             </div>
 
             <Card>
@@ -86,6 +91,11 @@ export default function AppInquiriesPage() {
                             </CardContent>
                         </Card>
                     ))}
+                     {placeholderInquiries.length === 0 && (
+                         <div className="text-center text-muted-foreground py-12">
+                            <p>You haven't made any inquiries yet.</p>
+                         </div>
+                    )}
                 </CardContent>
             </Card>
         </div>

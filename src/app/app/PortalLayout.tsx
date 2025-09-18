@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { LayoutGrid, Briefcase, Camera, ListTree, CreditCard, User, MessageSquare, Home, Bot, FolderKanban } from 'lucide-react';
+import { LayoutGrid, Briefcase, Camera, ListTree, CreditCard, User, MessageSquare, Home, Bot, FolderKanban, PlusSquare } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
@@ -46,19 +46,19 @@ export default function AppPortalLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/app/events/new">
+                  <PlusSquare />
+                  New Event
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/services">
                   <Briefcase />
                   My Services
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/app/inquiries">
-                  <MessageSquare />
-                  Inquiries
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

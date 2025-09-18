@@ -19,6 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
+import { EventGallery } from '@/components/shared/EventGallery';
 
 function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { onSign: () => void, onPay: () => void, signing: boolean, paying: boolean, contractSigned?: boolean }) {
     return (
@@ -162,7 +163,8 @@ function MusicPreferences({ eventId }: { eventId: string }) {
     );
 }
 
-export default function AppEventDetailClient({ eventId }: { eventId: string }) {
+export default function AppEventDetailClient({ params }: { params: { eventId: string } }) {
+    const { eventId } = params;
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -360,10 +362,11 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
             <TabsContent value="gallery">
-                <Card>
-                    <CardHeader><CardTitle>My Photo Gallery</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Display photo booth link and guest uploads.</p></CardContent>
-                </Card>
+                 <EventGallery 
+                    role="host"
+                    event={event}
+                    onLinkChange={() => {}}
+                 />
             </TabsContent>
              <TabsContent value="music">
                 <MusicPreferences eventId={eventId} />

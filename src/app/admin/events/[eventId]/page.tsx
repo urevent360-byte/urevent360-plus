@@ -16,9 +16,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { EventGallery } from '@/components/shared/EventGallery';
 
 
-function AdminEventDetailClient({ eventId }: { eventId: string }) {
+function AdminEventDetailClient({ params }: { params: { eventId: string } }) {
+    const { eventId } = params;
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -370,10 +372,11 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
                 </Card>
             </TabsContent>
             <TabsContent value="gallery">
-                <Card>
-                    <CardHeader><CardTitle>Gallery Management</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Build admin gallery controls (set Photo Booth link, manage guest uploads).</p></CardContent>
-                </Card>
+                 <EventGallery 
+                    role="admin"
+                    event={event} 
+                    onLinkChange={fetchEventData}
+                 />
             </TabsContent>
              <TabsContent value="guest-qr">
                 <Card>
@@ -445,6 +448,5 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 
 
 export default async function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
-    const { eventId } = params;
-    return <AdminEventDetailClient eventId={eventId} />;
+    return <AdminEventDetailClient params={params} />;
 }

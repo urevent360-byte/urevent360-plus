@@ -440,6 +440,15 @@ let MOCK_CHANGE_REQUESTS: Record<string, ChangeRequest[]> = {
     ]
 };
 
+const MOCK_GUEST_UPLOADS: Record<string, { url: string; alt: string }[]> = {
+    'evt-456': [
+        { url: 'https://picsum.photos/seed/guest1/400/300', alt: 'Guest photo 1' },
+        { url: 'https://picsum.photos/seed/guest2/400/300', alt: 'Guest photo 2' },
+        { url: 'https://picsum.photos/seed/guest3/400/300', alt: 'Guest photo 3' },
+        { url: 'https://picsum.photos/seed/guest4/400/300', alt: 'Guest photo 4' },
+    ]
+};
+
 // --- Data Adapter API ---
 // For now, all functions use mock data. We'll add TODOs for Firestore integration.
 
@@ -810,15 +819,20 @@ export async function getGalleryPolicy(eventId: string): Promise<any> {
 
 export async function setPhotoBoothLink(eventId: string, url: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
-    const event = MOCK_EVENTS.find(e => e.id === eventId);
-    if (event) {
-        event.photoboothLink = url;
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(e => e.id === eventId);
+        if (event) {
+            event.photoboothLink = url;
+            console.log(`(Mock) Set photobooth link for event ${eventId} to ${url}`);
+        }
     }
-    console.log(`(Mock) Set photobooth link for event ${eventId} to ${url}`);
 }
 
 export async function getGuestUploads(eventId: string): Promise<any[]> {
     await new Promise(resolve => setTimeout(resolve, 400));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_GUEST_UPLOADS[eventId] || [];
+    }
     console.log(`(Mock) Fetching guest uploads for event ${eventId}`);
     return []; // Return empty for now
 }

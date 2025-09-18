@@ -349,3 +349,5 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         </EventProfileShell>
     );
 }
+
+    

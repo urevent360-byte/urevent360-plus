@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -382,7 +381,6 @@ function AdminEventDetailClient({ eventId }: { eventId: string }) {
 }
 
 
-export default async function AdminEventDetailPage({ params }: { params: Promise<{ eventId: string }> }) {
-    const { eventId } = await params;
-    return <AdminEventDetailClient eventId={eventId} />;
+export default async function AdminEventDetailPage({ params }: { params: { eventId: string } }) {
+    return <AdminEventDetailClient eventId={params.eventId} />;
 }

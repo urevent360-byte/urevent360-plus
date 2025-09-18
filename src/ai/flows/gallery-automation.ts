@@ -46,36 +46,53 @@ export const handleDepositWebhookFlow = ai.defineFlow(
       message: z.string(),
     }),
   },
-  async ({ eventId }) => {
-    console.log(`Webhook received: Deposit paid for event ${eventId}.`);
+  async ({ eventId, invoiceId }) => {
+    console.log(`Webhook received: Deposit paid for event ${eventId} via invoice ${invoiceId}.`);
 
     // In a real implementation:
     /*
     const eventRef = db.collection('events').doc(eventId);
-    const eventDoc = await eventRef.get();
+    const paymentQuery = eventRef.collection('payments').where('qbInvoiceId', '==', invoiceId);
+    
+    await db.runTransaction(async (transaction) => {
+        const eventDoc = await transaction.get(eventRef);
+        if (!eventDoc.exists) {
+            throw new Error('Event not found.');
+        }
 
-    if (!eventDoc.exists) {
-      return { success: false, message: 'Event not found.' };
-    }
+        const paymentSnapshot = await transaction.get(paymentQuery);
+        if (paymentSnapshot.empty) {
+            throw new Error('Payment record not found for invoice.');
+        }
+        const paymentRef = paymentSnapshot.docs[0].ref;
 
-    // 1. Update the event status to 'booked'.
-    await eventRef.update({
-      status: 'booked',
-      confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
+        // 1. Update the event status to 'booked'.
+        transaction.update(eventRef, {
+            status: 'booked',
+            confirmedAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+        
+        // 2. Update the payment status.
+        transaction.update(paymentRef, {
+            status: 'deposit_paid',
+            // ... update amounts based on webhook payload
+        });
+
+        // 3. Post a system message to the event's chat.
+        const chatRef = db.collection('events').doc(eventId).collection('messages').doc();
+        transaction.set(chatRef, {
+            sender: 'system',
+            text: 'Deposit paid by client. Portal is now unlocked.',
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        });
     });
-
-    // 2. Post a system message to the event's chat.
-    await db.collection('chats').doc(eventId).collection('messages').add({
-      sender: 'System',
-      message: 'Payment received! The event is now confirmed and booked.',
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    // 3. (Optional) Trigger other automations, like syncing to Google Calendar.
-    // await publishEventToGoogle(eventId);
     */
     
-    console.log(`SIMULATION: Marked event ${eventId} as 'booked' and sent a system chat message.`);
+    console.log(`SIMULATION: 
+    1. Found event ${eventId} and payment for invoice ${invoiceId}.
+    2. Updated event status to 'booked' and set 'confirmedAt'.
+    3. Updated payment status to 'deposit_paid'.
+    4. Posted system message: "Deposit paid by client. Portal is now unlocked." to the event chat.`);
 
     return {
       success: true,
@@ -117,14 +134,15 @@ export const handleContractSignedWebhookFlow = ai.defineFlow(
       name: 'Signed Contract',
       type: 'contract',
       status: 'signed',
-      path: filePath,
-      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      storagePath: filePath,
+      uploadedBy: 'host',
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
     // 4. Post a system message to the event's chat.
-    await db.collection('chats').doc(eventId).collection('messages').add({
-        sender: 'System',
-        message: 'The contract has been successfully signed by the client.',
+    await db.collection('events').doc(eventId).collection('messages').add({
+        sender: 'system',
+        text: 'Contract signed by client.',
         timestamp: admin.firestore.FieldValue.serverTimestamp(),
     });
     */
@@ -163,6 +181,9 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
     // In a real implementation, you would uncomment and use the Firebase Admin SDK.
     /*
     const now = new Date();
+    // Use the derived galleryExpirationDate, which isn't stored directly.
+    // Querying for this requires a more complex setup, maybe storing the expiration date on the event.
+    // For this example, let's assume 'galleryExpirationDate' is a stored field.
     const expiredEventsSnapshot = await db.collection('events')
       .where('galleryExpirationDate', '<=', now)
       .where('galleryArchived', '==', false) // Avoid processing already archived events
@@ -176,7 +197,7 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
     for (const doc of expiredEventsSnapshot.docs) {
       const event = doc.data();
       const eventId = doc.id;
-      const folderPath = `events/${eventId}/guest-uploads/`;
+      const folderPath = `events/${eventId}/guestUploads/`;
 
       console.log(`Processing expired event: ${eventId}`);
 
@@ -235,6 +256,7 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
     /*
     const now = new Date();
     // Query for events where visibility date is in the past and notification hasn't been sent.
+    // This requires storing 'galleryVisibilityDate' and 'galleryNotificationSent' on the event document.
     const eventsToNotifySnapshot = await db.collection('events')
         .where('galleryVisibilityDate', '<=', now)
         .where('galleryNotificationSent', '==', false)
@@ -247,7 +269,7 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
 
     for (const doc of eventsToNotifySnapshot.docs) {
         const event = doc.data();
-        const clientSnapshot = await db.collection('clients').doc(event.clientId).get();
+        const clientSnapshot = await db.collection('users').doc(event.hostId).get();
         if (!clientSnapshot.exists) continue;
 
         const client = clientSnapshot.data();
@@ -282,3 +304,5 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
     };
   }
 );
+
+    

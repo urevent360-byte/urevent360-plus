@@ -10,6 +10,7 @@
 
 import { z } from 'zod';
 import { format, add } from 'date-fns';
+import { handleDepositWebhookFlow } from '@/ai/flows/gallery-automation';
 
 // --- Data Schemas / Types ---
 
@@ -386,7 +387,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
             quickbooksUrl: '#', 
             total: 2500, 
             depositRequired: 500,
-            depositPaid: 500,
+            depositPaid: 2500,
             remaining: 0,
             dueDate: new Date('2024-07-15').toISOString(),
             isActive: true,
@@ -501,6 +502,7 @@ const MOCK_GUEST_UPLOADS: Record<string, { url: string; alt: string; thumbUrl: s
 // For now, all functions use mock data. We'll add TODOs for Firestore integration.
 
 const DATA_SOURCE: 'mock' | 'firestore' = 'mock';
+export { handleDepositWebhookFlow };
 
 // === Leads Adapter ===
 
@@ -1131,3 +1133,5 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         }
     }
 }
+
+    

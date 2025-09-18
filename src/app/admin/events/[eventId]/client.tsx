@@ -4,7 +4,7 @@
 
 import { useState, useEffect } from 'react';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest, regenerateQrToken, pauseQr, activateQr, expireQrNow } from '@/lib/data-adapter';
+import { getEvent, createInvoice, listFiles, simulateDepositPaid, listTimeline, toggleSyncToGoogle, listRequestedServices, approveServiceRequest, listPayments, getMusicPlaylist, listChangeRequests, approveChangeRequest, rejectChangeRequest, regenerateQrToken, pauseQr, activateQr, expireQrNow, handleDepositWebhookFlow } from '@/lib/data-adapter';
 import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song, ChangeRequest } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
@@ -89,16 +89,24 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
         if (!event) return;
         setIsSimulatingPayment(true);
         try {
-            await simulateDepositPaid(event.id);
-            await fetchEventData();
+            const activeInvoice = payments.find(p => p.isActive);
+            if (!activeInvoice) {
+                toast({ title: "No Active Invoice", description: "There is no active invoice to pay.", variant: "destructive" });
+                setIsSimulatingPayment(false);
+                return;
+            }
+            // This now calls the Genkit flow to simulate a webhook
+            await handleDepositWebhookFlow({ eventId: event.id, invoiceId: activeInvoice.invoiceId });
+            await simulateDepositPaid(event.id); // This function updates the local mock data
+            await fetchEventData(); // Refetch data to reflect backend changes
             toast({
-                title: "Payment Simulated",
-                description: "The deposit has been marked as paid and the event is now booked.",
+                title: "Payment Webhook Simulated",
+                description: "The deposit payment webhook has been processed. The event is now booked.",
             });
         } catch (error) {
              toast({
                 title: "Error",
-                description: "Failed to simulate payment.",
+                description: "Failed to simulate payment webhook.",
                 variant: "destructive"
             });
         } finally {
@@ -276,7 +284,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                 )}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                Use "Simulate Deposit Payment" to mark the deposit as paid and unlock the host portal. This action also moves the event status to 'Booked'.
+                                Use "Simulate Deposit Payment" to trigger the webhook that marks the deposit as paid and unlocks the host portal.
                             </p>
                         </div>
                         <Card>
@@ -531,3 +539,5 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
         </EventProfileShell>
     );
 }
+
+    

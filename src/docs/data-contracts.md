@@ -182,6 +182,7 @@ service cloud.firestore {
 
     // Helper function to check if a user is an admin
     function isAdmin() {
+      // In a real app, this would check a custom claim: request.auth.token.admin == true
       return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'Super Admin';
     }
 
@@ -218,6 +219,12 @@ service cloud.firestore {
         allow create: if isHost(eventId);
         // Only admins can update (approve/reject) change requests
         allow update: if isAdmin();
+    }
+    
+    // Payments: Hosts can read, Admins can read/write.
+    match /events/{eventId}/payments/{paymentId} {
+      allow read: if isHost(eventId) || isAdmin();
+      allow write: if isAdmin();
     }
 
     // Guest Uploads: Public can create, but only if the event's QR status is active

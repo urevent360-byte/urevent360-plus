@@ -112,7 +112,7 @@ export default function AdminPortalLayout({
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/profile">
+                <Link href="/admin/settings/profile">
                   <User />
                   My Profile
                 </Link>

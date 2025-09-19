@@ -11,10 +11,10 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User } from 'lucide-react';
+import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
-import { Label } from '../ui/label';
+import { Label } from '@/components/ui/label';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -22,6 +22,8 @@ const profileSchema = z.object({
   primaryEmail: z.string().email(),
   recoveryEmail: z.string().email({ message: "Please enter a valid email." }).or(z.literal('')).optional(),
   phone: z.string().optional(),
+  locale: z.enum(['en', 'es']),
+  timeZone: z.string(),
   notifications: z.object({
     invoices: z.boolean().default(true),
     reminders: z.boolean().default(true),
@@ -47,6 +49,8 @@ export function UserProfile({ role }: UserProfileProps) {
       primaryEmail: user?.email || '',
       phone: user?.phoneNumber || '',
       recoveryEmail: '',
+      locale: 'en',
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       notifications: {
         invoices: true,
         reminders: true,
@@ -70,10 +74,18 @@ export function UserProfile({ role }: UserProfileProps) {
       });
   }
 
+  const handleAccountDelete = () => {
+      toast({
+          title: 'Account Deletion Initiated',
+          description: 'A request to delete your account has been sent.',
+          variant: 'destructive'
+      });
+  }
+
   return (
-    <div>
+    <div className="space-y-8">
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
                     <div className="lg:col-span-2 space-y-8">
                         <Card>
@@ -136,7 +148,7 @@ export function UserProfile({ role }: UserProfileProps) {
                                             <FormControl>
                                                 <Input {...field} disabled placeholder="your.email@example.com" />
                                             </FormControl>
-                                            <FormDescription>Used for login and password reset.</FormDescription>
+                                            <FormDescription>Used for login and critical alerts.</FormDescription>
                                             <FormMessage />
                                             </FormItem>
                                         )}
@@ -150,56 +162,51 @@ export function UserProfile({ role }: UserProfileProps) {
                                             <FormControl>
                                                 <Input {...field} placeholder="personal@example.com" />
                                             </FormControl>
-                                            <FormDescription>A backup for notifications.</FormDescription>
+                                            <FormDescription>Receives copies of notifications.</FormDescription>
                                             <FormMessage />
                                             </FormItem>
                                         )}
                                     />
                                 </div>
-                                <FormField
-                                    control={form.control}
-                                    name="phone"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                        <FormLabel className="flex items-center gap-2"><Phone /> Phone Number</FormLabel>
-                                        <FormControl>
-                                            <Input {...field} placeholder="Your phone number" />
-                                        </FormControl>
-                                        <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="phone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel className="flex items-center gap-2"><Phone /> Phone Number</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} placeholder="Your phone number" />
+                                            </FormControl>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                     <FormField
+                                        control={form.control}
+                                        name="timeZone"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                            <FormLabel className="flex items-center gap-2"><Languages /> Time Zone</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+
                                 <Button type="submit">
                                     <Save className="mr-2"/>
-                                    Save Changes
+                                    Save Personal Info
                                 </Button>
                             </CardContent>
                         </Card>
                     </div>
 
                     <div className="space-y-8">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><ShieldCheck /> Security</CardTitle>
-                                <CardDescription>Manage your account security settings.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start">
-                                    <KeyRound className="mr-2"/>
-                                    Send Password Reset Email
-                                </Button>
-                                <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-                                    <div className="space-y-0.5">
-                                        <Label>Enable 2-Factor Auth</Label>
-                                        <p className="text-[0.8rem] text-muted-foreground">
-                                            Secure your account with a second factor.
-                                        </p>
-                                    </div>
-                                    <Switch />
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
+                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2"><Bell /> Notifications</CardTitle>
                                 <CardDescription>Choose what you want to be notified about.</CardDescription>
@@ -258,10 +265,46 @@ export function UserProfile({ role }: UserProfileProps) {
                                 />
                             </CardContent>
                         </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2"><ShieldCheck /> Security</CardTitle>
+                                <CardDescription>Manage your account security settings.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start">
+                                    <KeyRound className="mr-2"/>
+                                    Send Password Reset Email
+                                </Button>
+                                <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                                    <div className="space-y-0.5">
+                                        <Label>Enable 2-Factor Auth</Label>
+                                        <p className="text-[0.8rem] text-muted-foreground">
+                                            Secure your account with a second factor.
+                                        </p>
+                                    </div>
+                                    <Switch disabled />
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </div>
+                <Card className="border-destructive">
+                     <CardHeader>
+                        <CardTitle className="text-destructive flex items-center gap-2">Danger Zone</CardTitle>
+                     </CardHeader>
+                    <CardContent>
+                        <CardDescription className="mb-4">
+                           Deleting your account is a permanent action and cannot be undone.
+                        </CardDescription>
+                        <Button variant="destructive" onClick={handleAccountDelete}>
+                            <Trash2 className="mr-2"/>
+                            Delete My Account
+                        </Button>
+                    </CardContent>
+                </Card>
             </form>
         </Form>
     </div>
   );
 }
+

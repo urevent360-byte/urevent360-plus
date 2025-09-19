@@ -431,7 +431,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                 <MusicPreferences eventId={eventId} />
             </TabsContent>
             <TabsContent value="communication">
-                 <EventChat eventId={eventId} role="host" />
+                <EventChat eventId={eventId} role="host" />
             </TabsContent>
              <TabsContent value="my-services">
                  <Card>
@@ -442,3 +442,5 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         </EventProfileShell>
     );
 }
+
+    

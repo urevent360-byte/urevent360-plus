@@ -15,6 +15,7 @@ interface AuthContextType {
   isAdmin: boolean;
   loading: boolean;
   signOut: () => void;
+  updateProfile?: (profileData: { displayName?: string; photoURL?: string; }) => void;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -115,8 +116,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
   
+  const updateProfile = (profileData: { displayName?: string; photoURL?: string; }) => {
+      setUser(currentUser => {
+          if (!currentUser) return null;
+          return {
+              ...currentUser,
+              ...profileData,
+          } as User;
+      });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signOut }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, signOut, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

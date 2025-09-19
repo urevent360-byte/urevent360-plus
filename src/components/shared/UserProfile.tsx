@@ -42,7 +42,7 @@ type UserProfileProps = {
 };
 
 export function UserProfile({ role }: UserProfileProps) {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const { toast } = useToast();
   const [language, setLanguage] = useState<'en' | 'es'>('en');
 
@@ -65,6 +65,13 @@ export function UserProfile({ role }: UserProfileProps) {
   });
 
   const onSubmit = (data: ProfileFormValues) => {
+    // In a real app, this would call Firebase Auth's updateProfile and update Firestore.
+    // For this prototype, we'll simulate it by updating the auth context.
+    const newDisplayName = `${data.firstName} ${data.lastName}`.trim();
+    if (updateProfile) {
+        updateProfile({ displayName: newDisplayName });
+    }
+    
     console.log('Updating profile...', data);
     toast({
       title: locales.profile.toast.saved.title[language],
@@ -78,6 +85,7 @@ export function UserProfile({ role }: UserProfileProps) {
       return;
     }
     try {
+      // This is a real Firebase call
       await sendPasswordResetEmail(auth, user.email);
       toast({
         title: locales.profile.toast.passwordReset.title[language],
@@ -119,6 +127,8 @@ export function UserProfile({ role }: UserProfileProps) {
     toast({
         title: locales.profile.toast.photo.saving[language],
     });
+    // In a real app, you would handle file upload here.
+    // For the simulation, we'll just show a success message.
     setTimeout(() => {
          toast({
             title: locales.profile.toast.photo.saved[language],
@@ -148,7 +158,7 @@ export function UserProfile({ role }: UserProfileProps) {
                       <Avatar className="h-24 w-24">
                         <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
                         <AvatarFallback className="text-3xl">
-                          {form.getValues('firstName')?.charAt(0) || user?.email?.charAt(0)}
+                          {user?.displayName?.charAt(0) || user?.email?.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <Button variant="outline" size="icon" className="absolute bottom-0 right-0 rounded-full h-8 w-8 group-hover:bg-primary group-hover:text-primary-foreground" onClick={handleAvatarUpload} type="button" title={locales.profile.photo.upload[language]}>
@@ -200,7 +210,7 @@ export function UserProfile({ role }: UserProfileProps) {
                           <FormControl>
                             <Input {...field} disabled placeholder="your.email@example.com" />
                           </FormControl>
-                          <FormMessage />
+                           <FormMessage />
                         </FormItem>
                       )}
                     />
@@ -254,8 +264,24 @@ export function UserProfile({ role }: UserProfileProps) {
                 </CardContent>
               </Card>
             </div>
+            
+            <div className="lg:col-span-1 space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><ShieldCheck /> {locales.profile.security.title[language]}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start" type="button">
+                    <KeyRound className="mr-2" />
+                    {locales.profile.security.changePassword[language]}
+                  </Button>
+                   <Button variant="secondary" onClick={handleMfaSetup} className="w-full justify-start" type="button">
+                        <ShieldCheck className="mr-2"/>
+                        {locales.profile.security.mfa.setup[language]}
+                    </Button>
+                </CardContent>
+              </Card>
 
-            <div className="space-y-8">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2"><Bell /> {locales.profile.notifications.title[language]}</CardTitle>
@@ -305,23 +331,9 @@ export function UserProfile({ role }: UserProfileProps) {
                   />
                 </CardContent>
               </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><ShieldCheck /> {locales.profile.security.title[language]}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start" type="button">
-                    <KeyRound className="mr-2" />
-                    {locales.profile.security.changePassword[language]}
-                  </Button>
-                   <Button variant="secondary" onClick={handleMfaSetup} className="w-full justify-start" type="button">
-                        <ShieldCheck className="mr-2"/>
-                        {locales.profile.security.mfa.setup[language]}
-                    </Button>
-                </CardContent>
-              </Card>
             </div>
           </div>
+          
           <Card className="border-destructive">
             <CardHeader>
               <CardTitle className="text-destructive flex items-center gap-2">{locales.profile.danger.title[language]}</CardTitle>
@@ -341,5 +353,3 @@ export function UserProfile({ role }: UserProfileProps) {
     </div>
   );
 }
-
-    

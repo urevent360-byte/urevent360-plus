@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { EventGallery } from '@/components/shared/EventGallery';
+import { EventServices } from '@/components/shared/EventServices';
 
 function ActivationGate({ onSign, onPay, signing, paying, contractSigned }: { onSign: () => void, onPay: () => void, signing: boolean, paying: boolean, contractSigned?: boolean }) {
     return (
@@ -434,10 +435,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                 <EventChat eventId={eventId} role="host" />
             </TabsContent>
              <TabsContent value="my-services">
-                 <Card>
-                    <CardHeader><CardTitle>My Services</CardTitle></CardHeader>
-                    <CardContent><p>TODO: Show booked services and allow requesting add-ons.</p></CardContent>
-                </Card>
+                <EventServices eventId={eventId} role="host" onDataChange={fetchEventData} />
             </TabsContent>
         </EventProfileShell>
     );

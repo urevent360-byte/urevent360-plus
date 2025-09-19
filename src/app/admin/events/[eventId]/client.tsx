@@ -19,6 +19,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { EventGallery } from '@/components/shared/EventGallery';
 import QRCode from "qrcode.react";
 import { Input } from '@/components/ui/input';
+import { EventServices } from '@/components/shared/EventServices';
 
 
 export default function AdminEventDetailClient({ eventId }: { eventId: string }) {
@@ -494,47 +495,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                 <EventChat eventId={eventId} role="admin" />
             </TabsContent>
              <TabsContent value="my-services">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Service & Add-on Management</CardTitle>
-                        <CardDescription>Review and approve requested add-on services from the client.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Service Name</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">Actions</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {requestedServices.map((req) => (
-                                    <TableRow key={req.id}>
-                                        <TableCell className="font-medium">{req.serviceName}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={req.status === 'approved' ? 'default' : 'outline'} className="capitalize">{req.status}</Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            {req.status === 'requested' && (
-                                                <Button size="sm" onClick={() => handleApproveRequest(req.id)}>
-                                                    <Check className="mr-2" />
-                                                    Approve
-                                                </Button>
-                                            )}
-                                             {req.status === 'approved' && (
-                                                <Button size="sm" variant="secondary">
-                                                    Add to Invoice
-                                                </Button>
-                                            )}
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                         {requestedServices.length === 0 && <p className="text-center text-muted-foreground p-8">No add-on services have been requested for this event.</p>}
-                    </CardContent>
-                </Card>
+                 <EventServices eventId={eventId} role="admin" onDataChange={fetchEventData} />
             </TabsContent>
         </EventProfileShell>
     );

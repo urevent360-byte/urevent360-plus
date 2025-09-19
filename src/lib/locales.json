@@ -215,6 +215,14 @@
       "upload": {
         "en": "Upload Photo",
         "es": "Subir Foto"
+      },
+      "saving": {
+        "en": "Uploading...",
+        "es": "Subiendo..."
+      },
+      "saved": {
+        "en": "Avatar Updated!",
+        "es": "¡Avatar Actualizado!"
       }
     },
     "info": {
@@ -322,16 +330,6 @@
         "description": {
           "en": "Your profile information has been saved.",
           "es": "Tu información de perfil ha sido guardada."
-        }
-      },
-      "photo": {
-        "saving": {
-          "en": "Uploading...",
-          "es": "Subiendo..."
-        },
-        "saved": {
-          "en": "Avatar Updated!",
-          "es": "¡Avatar Actualizado!"
         }
       },
       "passwordReset": {
@@ -759,5 +757,3 @@
     }
   }
 }
-
-    

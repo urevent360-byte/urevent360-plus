@@ -4,19 +4,28 @@
 
 This document outlines the data structures for the main Firestore collections used in the UREVENT 360 PLUS platform.
 
-## `users/{uid}` (Host Profile)
+## `users/{uid}` (Host/Admin Profile)
 
-Stores profile information for a host user.
+Stores profile information for any user, host or admin.
 
-- **displayName** (string)
-- **email** (string)
+- **uid** (string): Matches Firebase Auth UID.
+- **displayName** (string): Full name, synced with Firebase Auth.
+- **firstName** (string)
+- **lastName** (string)
+- **primaryEmail** (string): Copied from Auth, read-only in UI.
+- **recoveryEmail** (string, nullable): For notifications; password reset always goes to primary.
 - **phone** (string, optional)
-- **photoUrl** (string, optional)
-- **org** (string, optional): The organization or company the user belongs to.
-- **preferredLanguage** (string): "en" or "es".
-- **emergencyContact** (map, optional):
-    - **name** (string)
-    - **phone** (string)
+- **photoURL** (string, nullable): Synced with Firebase Auth.
+- **locale** (string): 'en' or 'es'.
+- **timeZone** (string): IANA format, e.g., "America/New_York".
+- **notificationPrefs** (map):
+    - **invoices** (boolean)
+    - **reminders** (boolean)
+    - **gallery** (boolean)
+- **mfaEnabled** (boolean): Indicates if Multi-Factor Authentication is active.
+- **createdAt** (timestamp)
+- **updatedAt** (timestamp)
+- **deletedAt** (timestamp, nullable): For soft deletes.
 
 ## `leads/{leadId}`
 
@@ -191,49 +200,49 @@ service cloud.firestore {
       return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
     }
 
-    // Admins can read and write to all collections
+    // Admins have global read/write access.
     match /{document=**} {
-      allow read, write: if isAdmin();
+      allow write: if isAdmin();
     }
     
-    // Hosts can read their own user profile
+    // Users can read and write their own profile. Admins can read any profile.
     match /users/{uid} {
-        allow read: if request.auth.uid == uid;
-        allow write: if request.auth.uid == uid; // Allow users to update their own profile
+        allow read, write: if request.auth.uid == uid || isAdmin();
     }
 
-    // Events can only be read by the assigned host or an admin
+    // Events can only be read by the assigned host or an admin.
     match /events/{eventId} {
       allow read: if isHost(eventId) || isAdmin();
       // Only admins can write directly to events. Hosts must use change requests.
       allow write: if isAdmin();
     }
 
-    // Hosts can read subcollections of their own events
+    // Hosts can read subcollections of their own events. Admins can read any.
     match /events/{eventId}/{subcollection}/{document=**} {
-       allow read: if isHost(eventId);
+       allow read: if isHost(eventId) || isAdmin();
     }
     
-    // Hosts can create change requests for their events
+    // Hosts can create change requests for their events.
     match /events/{eventId}/changeRequests/{requestId} {
         allow create: if isHost(eventId);
-        // Only admins can update (approve/reject) change requests
+        // Only admins can update (approve/reject) change requests.
         allow update: if isAdmin();
     }
     
-    // Payments: Hosts can read, Admins can read/write.
+    // Payments: Hosts and Admins can read. Only Admins can write.
     match /events/{eventId}/payments/{paymentId} {
       allow read: if isHost(eventId) || isAdmin();
       allow write: if isAdmin();
     }
 
-    // Guest Uploads: Public can create, but only if the event's QR status is active
+    // Guest Uploads: Public can create if QR is active. Host/Admin can read. Admin can delete.
     match /events/{eventId}/guestUploads/{uploadId} {
-      allow read: if isHost(eventId) || isAdmin(); // Only host and admin can read uploads
+      allow read: if isHost(eventId) || isAdmin();
       allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
-      // Only admins should be able to delete
       allow delete: if isAdmin();
     }
   }
 }
 ```
+
+    

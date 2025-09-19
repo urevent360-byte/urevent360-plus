@@ -94,6 +94,7 @@ const EventSchema = z.object({
     design: z.object({
         status: z.enum(['pending', 'sent', 'approved', 'changes_requested']),
         previewUrl: z.string().optional(),
+        selectedDesignId: z.string().optional(),
     }).optional(),
     audit: z.object({
         createdBy: z.string(),
@@ -174,6 +175,14 @@ const AddonSchema = z.object({
   image: z.string(),
 });
 export type Addon = z.infer<typeof AddonSchema>;
+
+export const DesignProposalSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    imageUrl: z.string(),
+});
+export type DesignProposal = z.infer<typeof DesignProposalSchema>;
+
 
 const RequestedServiceSchema = z.object({
     id: z.string(),
@@ -466,6 +475,14 @@ const MOCK_MAIN_SERVICES = [
         image: 'https://picsum.photos/seed/service6/800/600',
     },
 ];
+
+let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
+    { id: 'design-1', name: 'Classic Elegance', imageUrl: 'https://picsum.photos/seed/design1/800/600' },
+    { id: 'design-2', name: 'Modern Minimalist', imageUrl: 'https://picsum.photos/seed/design2/800/600' },
+    { id: 'design-3', name: 'Festive Fiesta', imageUrl: 'https://picsum.photos/seed/design3/800/600' },
+    { id: 'design-4', name: 'Vintage Floral', imageUrl: 'https://picsum.photos/seed/design4/800/600' },
+];
+
 
 let MOCK_REQUESTED_SERVICES: RequestedService[] = [
     { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested', title: 'Guest Book Station', qty: 1 }
@@ -1168,6 +1185,32 @@ export async function rejectChangeRequest(eventId: string, requestId: string): P
         if (request) {
             request.status = 'rejected';
             console.log(`(Mock) Rejected change request ${requestId} for event ${eventId}`);
+        }
+    }
+}
+
+// === Design Adapter ===
+export async function listDesignProposals(): Promise<DesignProposal[]> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_DESIGN_PROPOSALS;
+    }
+    throw new Error('Firestore not implemented');
+}
+
+export async function approveDesign(eventId: string, designId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    if (DATA_SOURCE === 'mock') {
+        const event = MOCK_EVENTS.find(e => e.id === eventId);
+        if (event) {
+            if (!event.design) {
+                event.design = { status: 'pending' };
+            }
+            event.design.status = 'approved';
+            event.design.selectedDesignId = designId;
+            event.audit.lastUpdatedAt = new Date().toISOString();
+            event.audit.lastUpdatedBy = 'host';
+            console.log(`(Mock) Host for event ${eventId} approved design ${designId}`);
         }
     }
 }

@@ -196,8 +196,10 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                         </div>
                         <h3 className="font-semibold text-base pt-4">Photo Design</h3>
                          <div className="flex items-center gap-2">
-                             <Button variant="secondary">
-                                <Eye className="mr-2" /> View Design
+                             <Button variant="secondary" asChild>
+                                <Link href={role === 'admin' ? `/admin/designs` : `/app/designs`}>
+                                    <Eye className="mr-2" /> View Design
+                                </Link>
                              </Button>
                              {event.design?.status === 'approved' && (
                                 <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>

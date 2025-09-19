@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { LayoutGrid, Briefcase, Camera, ListTree, CreditCard, User, MessageSquare, Home, Bot, FolderKanban, PlusSquare } from 'lucide-react';
+import { LayoutGrid, Briefcase, Camera, ListTree, CreditCard, User, MessageSquare, Home, Bot, FolderKanban, PlusSquare, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
@@ -67,6 +67,14 @@ export default function AppPortalLayout({
                 <Link href="/app/timeline">
                   <ListTree />
                   Timeline
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/app/designs">
+                  <Palette />
+                  Designs
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

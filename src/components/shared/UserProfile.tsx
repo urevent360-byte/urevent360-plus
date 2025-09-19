@@ -14,6 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
+import { Label } from '../ui/label';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -262,5 +263,3 @@ export function UserProfile({ role }: UserProfileProps) {
     </div>
   );
 }
-
-    

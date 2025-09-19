@@ -14,7 +14,9 @@ import { useToast } from '@/hooks/use-toast';
 import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
-import { Label } from '@/components/ui/label';
+import { Label } from '../ui/label';
+import { auth } from '@/lib/firebase/client';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -67,19 +69,47 @@ export function UserProfile({ role }: UserProfileProps) {
     });
   };
   
-  const handlePasswordReset = () => {
-      toast({
-          title: 'Password Reset Email Sent',
-          description: 'If an account exists, you will receive an email with instructions.'
-      });
+  const handlePasswordReset = async () => {
+    if (!user?.email) {
+        toast({ title: "Error", description: "No primary email found for this user.", variant: "destructive" });
+        return;
+    }
+    try {
+        await sendPasswordResetEmail(auth, user.email);
+        toast({
+            title: 'Password Reset Email Sent',
+            description: 'If an account exists for your primary email, you will receive an email with instructions.'
+        });
+    } catch (error: any) {
+         toast({
+            title: 'Error',
+            description: 'There was a problem sending the password reset email. Please try again later.',
+            variant: "destructive"
+        });
+        console.error("Password reset error:", error);
+    }
   }
 
   const handleAccountDelete = () => {
       toast({
           title: 'Account Deletion Initiated',
-          description: 'A request to delete your account has been sent.',
+          description: 'A request to delete your account has been sent to our support team.',
           variant: 'destructive'
       });
+  }
+
+  const handleAvatarUpload = () => {
+    // Simulate file upload
+    toast({
+        title: 'Uploading...',
+        description: 'Simulating avatar upload process.',
+    });
+    setTimeout(() => {
+         toast({
+            title: 'Avatar Updated!',
+            description: 'Your new profile picture has been saved.',
+        });
+    }, 1500)
   }
 
   return (
@@ -102,7 +132,7 @@ export function UserProfile({ role }: UserProfileProps) {
                                                 {form.getValues('firstName')?.charAt(0) || user?.email?.charAt(0)}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <Button variant="outline" size="icon" className="absolute bottom-0 right-0 rounded-full h-8 w-8 group-hover:bg-primary group-hover:text-primary-foreground">
+                                        <Button variant="outline" size="icon" className="absolute bottom-0 right-0 rounded-full h-8 w-8 group-hover:bg-primary group-hover:text-primary-foreground" onClick={handleAvatarUpload} type="button">
                                             <Camera className="h-4 w-4" />
                                         </Button>
                                     </div>
@@ -271,7 +301,7 @@ export function UserProfile({ role }: UserProfileProps) {
                                 <CardDescription>Manage your account security settings.</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start">
+                                <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start" type="button">
                                     <KeyRound className="mr-2"/>
                                     Send Password Reset Email
                                 </Button>
@@ -296,7 +326,7 @@ export function UserProfile({ role }: UserProfileProps) {
                         <CardDescription className="mb-4">
                            Deleting your account is a permanent action and cannot be undone.
                         </CardDescription>
-                        <Button variant="destructive" onClick={handleAccountDelete}>
+                        <Button variant="destructive" onClick={handleAccountDelete} type="button">
                             <Trash2 className="mr-2"/>
                             Delete My Account
                         </Button>
@@ -308,3 +338,4 @@ export function UserProfile({ role }: UserProfileProps) {
   );
 }
 
+    

@@ -16,6 +16,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { PartyPopper, Clock, Download, Save, Eye, Camera, ThumbsUp, GitMerge, FileArchive, Trash2, Shield } from 'lucide-react';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
 
 type EventGalleryProps = {
     role: 'host' | 'admin';
@@ -32,11 +33,6 @@ type GuestUpload = {
 function GalleryLoader() {
     return (
         <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Skeleton className="h-48" />
-                <Skeleton className="h-48" />
-                <Skeleton className="h-48" />
-            </div>
             <Card>
                 <CardHeader>
                     <Skeleton className="h-6 w-1/2" />
@@ -44,8 +40,16 @@ function GalleryLoader() {
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {[...Array(4)].map((_, i) => <Skeleton key={i} className="aspect-video" />)}
+                        {[...Array(8)].map((_, i) => <Skeleton key={i} className="aspect-video" />)}
                     </div>
+                </CardContent>
+            </Card>
+             <Card>
+                <CardHeader>
+                    <Skeleton className="h-6 w-1/2" />
+                </CardHeader>
+                <CardContent>
+                    <Skeleton className="h-24 w-full" />
                 </CardContent>
             </Card>
         </div>
@@ -106,23 +110,23 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
 
     return (
         <div className="space-y-8">
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                 {/* Photo Booth Album Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><Camera /> Photo Booth Album</CardTitle>
-                        <CardDescription>Access the official, curated album from your event.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Official Album & Guest Uploads</CardTitle>
+                    <CardDescription>Access the curated album and photos uploaded by your guests.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div>
+                        <h3 className="font-semibold text-lg flex items-center gap-2"><Camera /> Official Photo Booth Album</h3>
+                        <p className="text-sm text-muted-foreground mb-4">This is the link to the professionally curated photo booth album.</p>
                         {role === 'admin' ? (
-                            <div className="flex flex-col gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                                 <Input
                                     placeholder="https://photos.app.goo.gl/..."
                                     value={photoBoothLink}
                                     onChange={(e) => setPhotoBoothLink(e.target.value)}
                                 />
-                                <Button onClick={handleSaveLink} disabled={isSaving}>
+                                <Button onClick={handleSaveLink} disabled={isSaving} className="flex-shrink-0">
                                     <Save className="mr-2" />
                                     {isSaving ? 'Saving...' : 'Save Link'}
                                 </Button>
@@ -135,89 +139,20 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                                     </Link>
                                 </Button>
                             ) : (
-                                <p className="text-sm text-muted-foreground">Awaiting link from Admin.</p>
+                                <p className="text-sm text-muted-foreground p-4 border rounded-md text-center">Awaiting link from Admin.</p>
                             )
                         )}
-                    </CardContent>
-                </Card>
-
-                 {/* Guest Uploads Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><PartyPopper /> Guest Uploads</CardTitle>
-                        <CardDescription>Photos taken by your guests will appear after the event.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Button variant="secondary" onClick={() => document.getElementById('guest-uploads-grid')?.scrollIntoView({ behavior: 'smooth' })}>
-                           <Eye className="mr-2" /> View Guest Photos
-                        </Button>
-                         {!isGalleryVisible && role === 'host' && event.galleryVisibilityDate && (
-                            <p className="text-xs text-muted-foreground mt-2">
-                                Available on {format(new Date(event.galleryVisibilityDate), 'MMM d, yyyy')}.
-                            </p>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Design Approval Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2"><ThumbsUp/> Photo Design</CardTitle>
-                        <CardDescription>Review and approve your custom photo strip design.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <Button variant="secondary">
-                            <Eye className="mr-2" /> View Design
-                         </Button>
-                         {event.design?.status === 'approved' && (
-                            <Badge className="ml-2">Approved</Badge>
-                         )}
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Retention Policy & Guest QR Section */}
-            <Card>
-                 <CardHeader>
-                    <CardTitle>Guest QR & Download</CardTitle>
-                    <CardDescription>Manage guest access and download all photos.</CardDescription>
-                </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6 items-start">
-                     <div className="space-y-4">
-                        <Button variant="outline" asChild><Link href={role === 'admin' ? `/admin/events/${event.id}?tab=guest-qr` : `/app/events/${event.id}?tab=guest-qr`}><GitMerge className="mr-2"/> Open QR Manager</Link></Button>
-                        <Button variant="outline"><Download className="mr-2"/> Download All (ZIP)</Button>
-                        {role === 'admin' && (
-                             <Button variant="destructive"><Trash2 className="mr-2"/> Purge Now</Button>
-                        )}
                     </div>
-                     <Alert variant="default">
-                        <Shield className="h-4 w-4"/>
-                        <AlertTitle>30-Day Retention Policy</AlertTitle>
-                        {role === 'host' && event.galleryPolicy && event.galleryVisibilityDate && event.galleryExpirationDate ? (
-                             <AlertDescription>
-                                Guest-uploaded photos are visible to you starting {event.galleryPolicy.releaseDelayDays} days after the event and will be automatically deleted on {format(new Date(event.galleryExpirationDate), 'PPP')}.
-                            </AlertDescription>
-                        ) : (
-                            <AlertDescription>
-                                Guest uploads are stored for a limited time post-event before automatic deletion. You can archive them before they are purged.
-                            </AlertDescription>
-                        )}
-                    </Alert>
-                </CardContent>
-            </Card>
+                    
+                    <Separator />
 
-            {/* Guest Uploads Grid */}
-            <div id="guest-uploads-grid">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Community Uploads Grid</CardTitle>
-                        <CardDescription>Photos uploaded by the host and their guests.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                    <div>
+                        <h3 className="font-semibold text-lg flex items-center gap-2"><PartyPopper /> Community Uploads Grid</h3>
+                         <p className="text-sm text-muted-foreground mb-4">Photos uploaded by the host and their guests.</p>
                         {isGalleryActive || role === 'admin' ? (
                             <>
                                 {guestUploads.length > 0 ? (
-                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                                         {guestUploads.map((photo, index) => (
                                             <div key={index} className="group aspect-video relative rounded-lg overflow-hidden shadow-md">
                                                 <Image src={photo.thumbUrl} alt={photo.alt} fill className="object-cover" />
@@ -243,9 +178,48 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                                 </AlertDescription>
                             </Alert>
                         )}
-                    </CardContent>
-                </Card>
-            </div>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Gallery Tools & Settings</CardTitle>
+                    <CardDescription>Manage guest access, downloads, and photo strip designs.</CardDescription>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-8 items-start">
+                    <div className="space-y-4">
+                        <h3 className="font-semibold text-base">Actions</h3>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                             <Button variant="outline" asChild><Link href={role === 'admin' ? `/admin/events/${event.id}?tab=guest-qr` : `/app/events/${event.id}?tab=guest-qr`}><GitMerge className="mr-2"/> QR Manager</Link></Button>
+                             <Button variant="outline"><Download className="mr-2"/> Download All</Button>
+                        </div>
+                        <h3 className="font-semibold text-base pt-4">Photo Design</h3>
+                         <div className="flex items-center gap-2">
+                             <Button variant="secondary">
+                                <Eye className="mr-2" /> View Design
+                             </Button>
+                             {event.design?.status === 'approved' && (
+                                <Badge className="bg-green-100 text-green-800 border-green-200">Approved</Badge>
+                             )}
+                         </div>
+                    </div>
+                     <Alert variant="default">
+                        <Shield className="h-4 w-4"/>
+                        <AlertTitle>30-Day Retention Policy</AlertTitle>
+                        {role === 'host' && event.galleryPolicy && event.galleryVisibilityDate && event.galleryExpirationDate ? (
+                             <AlertDescription>
+                                Guest-uploaded photos are visible to you starting {event.galleryPolicy.releaseDelayDays} days after the event and will be automatically deleted on {format(new Date(event.galleryExpirationDate), 'PPP')}.
+                            </AlertDescription>
+                        ) : (
+                            <AlertDescription>
+                                Guest uploads are stored for a limited time post-event before automatic deletion. You can archive them before they are purged.
+                                 {role === 'admin' && <Button variant="destructive" size="sm" className="mt-2"><Trash2 className="mr-2"/>Purge Now</Button>}
+                            </AlertDescription>
+                        )}
+                    </Alert>
+                </CardContent>
+            </Card>
         </div>
     );
 }

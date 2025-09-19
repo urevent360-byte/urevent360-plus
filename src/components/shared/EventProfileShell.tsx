@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState } from 'react';
@@ -92,11 +93,15 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
         </Card>
 
       <Tabs value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 md:grid-cols-5 lg:grid-cols-9">
-            {tabs.map(tab => (
-                <TabsTrigger key={tab.value} value={tab.value} disabled={isLocked && !['details', 'billing'].includes(tab.value)}>{tab.label}</TabsTrigger>
+        <div className="relative">
+          <TabsList className="relative grid-flow-col">
+            {tabs.map((tab) => (
+              <TabsTrigger key={tab.value} value={tab.value} disabled={isLocked && !['details', 'billing'].includes(tab.value)}>
+                {tab.label}
+              </TabsTrigger>
             ))}
-        </TabsList>
+          </TabsList>
+        </div>
         
         <div className="mt-4">
           {children}

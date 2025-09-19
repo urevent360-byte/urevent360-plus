@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Settings, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search, LogOut, FolderKanban, Palette } from 'lucide-react';
+import { Settings, LayoutGrid, Newspaper, Users, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search, LogOut, FolderKanban, Palette, User } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
@@ -112,9 +112,9 @@ export default function AdminPortalLayout({
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/users">
-                  <Users />
-                  Users
+                <Link href="/admin/profile">
+                  <User />
+                  My Profile
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

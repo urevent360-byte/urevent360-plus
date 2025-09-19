@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { listSelectedServices, listAddons, requestAddons, approveServiceRequest, type Addon, type RequestedService } from '@/lib/data-adapter';
+import { listSelectedServices, listAddons, requestAddons, approveServiceRequest, listRequestedServices, type Addon, type RequestedService } from '@/lib/data-adapter';
 import Image from 'next/image';
 import { Check, PlusCircle, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

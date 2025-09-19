@@ -112,6 +112,7 @@ export function UserProfile({ role }: UserProfileProps) {
               </CardContent>
             </Card>
           </form>
+        </Form>
       </div>
 
       <div className="space-y-8">

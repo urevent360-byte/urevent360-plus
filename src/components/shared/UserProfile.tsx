@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages } from 'lucide-react';
+import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages, Edit } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
@@ -88,6 +88,20 @@ export function UserProfile({ role }: UserProfileProps) {
         });
         console.error("Password reset error:", error);
     }
+  }
+  
+  const handleChangeEmail = () => {
+      toast({
+          title: 'Simulating Email Change',
+          description: 'In a real app, this would trigger a re-authentication and verification flow.'
+      });
+  };
+  
+  const handleMfaSetup = () => {
+       toast({
+          title: 'MFA Setup',
+          description: 'MFA configuration flow is not yet implemented.'
+      });
   }
 
   const handleAccountDelete = () => {
@@ -174,12 +188,15 @@ export function UserProfile({ role }: UserProfileProps) {
                                         name="primaryEmail"
                                         render={({ field }) => (
                                             <FormItem>
-                                            <FormLabel className="flex items-center gap-2"><Mail /> Primary Email</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled placeholder="your.email@example.com" />
-                                            </FormControl>
-                                            <FormDescription>Used for login and critical alerts.</FormDescription>
-                                            <FormMessage />
+                                                <div className="flex items-center justify-between">
+                                                    <FormLabel className="flex items-center gap-2"><Mail /> Primary Email</FormLabel>
+                                                    <Button type="button" variant="link" className="text-xs h-auto p-0" onClick={handleChangeEmail}>Change</Button>
+                                                </div>
+                                                <FormControl>
+                                                    <Input {...field} disabled placeholder="your.email@example.com" />
+                                                </FormControl>
+                                                <FormDescription>Used for login and critical alerts.</FormDescription>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -192,7 +209,7 @@ export function UserProfile({ role }: UserProfileProps) {
                                             <FormControl>
                                                 <Input {...field} placeholder="personal@example.com" />
                                             </FormControl>
-                                            <FormDescription>Receives copies of notifications.</FormDescription>
+                                             <FormDescription>Receives copies of notifications.</FormDescription>
                                             <FormMessage />
                                             </FormItem>
                                         )}
@@ -305,15 +322,10 @@ export function UserProfile({ role }: UserProfileProps) {
                                     <KeyRound className="mr-2"/>
                                     Send Password Reset Email
                                 </Button>
-                                <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
-                                    <div className="space-y-0.5">
-                                        <Label>Enable 2-Factor Auth</Label>
-                                        <p className="text-[0.8rem] text-muted-foreground">
-                                            Secure your account with a second factor.
-                                        </p>
-                                    </div>
-                                    <Switch disabled />
-                                </div>
+                                <Button variant="secondary" onClick={handleMfaSetup} className="w-full justify-start" type="button">
+                                    <ShieldCheck className="mr-2"/>
+                                    Configure 2-Factor Auth
+                                </Button>
                             </CardContent>
                         </Card>
                     </div>
@@ -337,5 +349,3 @@ export function UserProfile({ role }: UserProfileProps) {
     </div>
   );
 }
-
-    

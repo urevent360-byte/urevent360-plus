@@ -9,14 +9,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages, Edit } from 'lucide-react';
+import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { auth } from '@/lib/firebase/client';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { useState } from 'react';
+import locales from '@/lib/locales.json';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
@@ -42,6 +44,7 @@ type UserProfileProps = {
 export function UserProfile({ role }: UserProfileProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [language, setLanguage] = useState<'en' | 'es'>('en');
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -64,288 +67,279 @@ export function UserProfile({ role }: UserProfileProps) {
   const onSubmit = (data: ProfileFormValues) => {
     console.log('Updating profile...', data);
     toast({
-      title: 'Profile Updated',
-      description: 'Your profile information has been saved.',
+      title: locales.profile.toast.saved.title[language],
+      description: locales.profile.toast.saved.description[language],
     });
   };
-  
+
   const handlePasswordReset = async () => {
     if (!user?.email) {
-        toast({ title: "Error", description: "No primary email found for this user.", variant: "destructive" });
-        return;
+      toast({ title: "Error", description: "No primary email found for this user.", variant: "destructive" });
+      return;
     }
     try {
-        await sendPasswordResetEmail(auth, user.email);
-        toast({
-            title: 'Password Reset Email Sent',
-            description: 'If an account exists for your primary email, you will receive an email with instructions.'
-        });
+      await sendPasswordResetEmail(auth, user.email);
+      toast({
+        title: locales.profile.toast.passwordReset.title[language],
+        description: locales.profile.toast.passwordReset.description[language],
+      });
     } catch (error: any) {
-         toast({
-            title: 'Error',
-            description: 'There was a problem sending the password reset email. Please try again later.',
-            variant: "destructive"
-        });
-        console.error("Password reset error:", error);
+      toast({
+        title: 'Error',
+        description: 'There was a problem sending the password reset email. Please try again later.',
+        variant: "destructive"
+      });
+      console.error("Password reset error:", error);
     }
   }
-  
+
   const handleChangeEmail = () => {
-      toast({
-          title: 'Simulating Email Change',
-          description: 'In a real app, this would trigger a re-authentication and verification flow.'
-      });
+    toast({
+      title: 'Simulating Email Change',
+      description: 'In a real app, this would trigger a re-authentication and verification flow.'
+    });
   };
-  
+
   const handleMfaSetup = () => {
-       toast({
-          title: 'MFA Setup',
-          description: 'MFA configuration flow is not yet implemented.'
-      });
+    toast({
+      title: 'MFA Setup',
+      description: 'MFA configuration flow is not yet implemented.'
+    });
   }
 
   const handleAccountDelete = () => {
-      toast({
-          title: 'Account Deletion Initiated',
-          description: 'A request to delete your account has been sent to our support team.',
-          variant: 'destructive'
-      });
+    toast({
+      title: locales.profile.toast.delete.title[language],
+      description: locales.profile.toast.delete.description[language],
+      variant: 'destructive'
+    });
   }
 
   const handleAvatarUpload = () => {
-    // Simulate file upload
     toast({
-        title: 'Uploading...',
-        description: 'Simulating avatar upload process.',
+        title: locales.profile.toast.photo.saving[language],
     });
     setTimeout(() => {
          toast({
-            title: 'Avatar Updated!',
-            description: 'Your new profile picture has been saved.',
+            title: locales.profile.toast.photo.saved[language],
         });
     }, 1500)
   }
 
   return (
     <div className="space-y-8">
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                    <div className="lg:col-span-2 space-y-8">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><User /> Personal Information</CardTitle>
-                                <CardDescription>Update your name and contact details.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-6">
-                                <div className="flex flex-col items-center sm:flex-row gap-6">
-                                    <div className="relative group">
-                                        <Avatar className="h-24 w-24">
-                                            <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
-                                            <AvatarFallback className="text-3xl">
-                                                {form.getValues('firstName')?.charAt(0) || user?.email?.charAt(0)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <Button variant="outline" size="icon" className="absolute bottom-0 right-0 rounded-full h-8 w-8 group-hover:bg-primary group-hover:text-primary-foreground" onClick={handleAvatarUpload} type="button">
-                                            <Camera className="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                    <div className="grid sm:grid-cols-2 gap-6 flex-1 w-full">
-                                        <FormField
-                                            control={form.control}
-                                            name="firstName"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                <FormLabel>First Name</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="John" />
-                                                </FormControl>
-                                                <FormMessage />
-                                                </FormItem>
-                                            )}
-                                            />
-                                        <FormField
-                                            control={form.control}
-                                            name="lastName"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                <FormLabel>Last Name</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} placeholder="Doe" />
-                                                </FormControl>
-                                                <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                                
-                                <Separator />
+      <div className="flex justify-end gap-2">
+          <Button variant={language === 'en' ? 'default' : 'outline'} onClick={() => setLanguage('en')}>EN</Button>
+          <Button variant={language === 'es' ? 'default' : 'outline'} onClick={() => setLanguage('es')}>ES</Button>
+      </div>
 
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="primaryEmail"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <div className="flex items-center justify-between">
-                                                    <FormLabel className="flex items-center gap-2"><Mail /> Primary Email</FormLabel>
-                                                    <Button type="button" variant="link" className="text-xs h-auto p-0" onClick={handleChangeEmail}>Change</Button>
-                                                </div>
-                                                <FormControl>
-                                                    <Input {...field} disabled placeholder="your.email@example.com" />
-                                                </FormControl>
-                                                <FormDescription>Used for login and critical alerts.</FormDescription>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="recoveryEmail"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                            <FormLabel className="flex items-center gap-2"><Mail /> Recovery Email</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} placeholder="personal@example.com" />
-                                            </FormControl>
-                                             <FormDescription>Receives copies of notifications.</FormDescription>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="phone"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                            <FormLabel className="flex items-center gap-2"><Phone /> Phone Number</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} placeholder="Your phone number" />
-                                            </FormControl>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                     <FormField
-                                        control={form.control}
-                                        name="timeZone"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                            <FormLabel className="flex items-center gap-2"><Languages /> Time Zone</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                </div>
-
-                                <Button type="submit">
-                                    <Save className="mr-2"/>
-                                    Save Personal Info
-                                </Button>
-                            </CardContent>
-                        </Card>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <div className="lg:col-span-2 space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><User /> {locales.profile.info.title[language]}</CardTitle>
+                  <CardDescription>{locales.profile.info.subtitle[language]}</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex flex-col items-center sm:flex-row gap-6">
+                    <div className="relative group">
+                      <Avatar className="h-24 w-24">
+                        <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
+                        <AvatarFallback className="text-3xl">
+                          {form.getValues('firstName')?.charAt(0) || user?.email?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <Button variant="outline" size="icon" className="absolute bottom-0 right-0 rounded-full h-8 w-8 group-hover:bg-primary group-hover:text-primary-foreground" onClick={handleAvatarUpload} type="button" title={locales.profile.photo.upload[language]}>
+                        <Camera className="h-4 w-4" />
+                      </Button>
                     </div>
-
-                    <div className="space-y-8">
-                         <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><Bell /> Notifications</CardTitle>
-                                <CardDescription>Choose what you want to be notified about.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <FormField
-                                    control={form.control}
-                                    name="notifications.invoices"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Invoices & Payments</FormLabel>
-                                                <FormDescription className="text-xs">
-                                                    Receive updates on new invoices and payment confirmations.
-                                                </FormDescription>
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="notifications.reminders"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Event Reminders</FormLabel>
-                                                <FormDescription className="text-xs">
-                                                    Get reminders for upcoming deadlines and event dates.
-                                                </FormDescription>
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="notifications.gallery"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                                            <div className="space-y-0.5">
-                                                <FormLabel>Gallery Updates</FormLabel>
-                                                <FormDescription className="text-xs">
-                                                Be notified when your event gallery is ready.
-                                                </FormDescription>
-                                            </div>
-                                            <FormControl>
-                                                <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                            </FormControl>
-                                        </FormItem>
-                                    )}
-                                />
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2"><ShieldCheck /> Security</CardTitle>
-                                <CardDescription>Manage your account security settings.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start" type="button">
-                                    <KeyRound className="mr-2"/>
-                                    Send Password Reset Email
-                                </Button>
-                                <Button variant="secondary" onClick={handleMfaSetup} className="w-full justify-start" type="button">
-                                    <ShieldCheck className="mr-2"/>
-                                    Configure 2-Factor Auth
-                                </Button>
-                            </CardContent>
-                        </Card>
+                    <div className="grid sm:grid-cols-2 gap-6 flex-1 w-full">
+                      <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{locales.profile.info.firstName[language]}</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="John" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{locales.profile.info.lastName[language]}</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="Doe" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                </div>
-                <Card className="border-destructive">
-                     <CardHeader>
-                        <CardTitle className="text-destructive flex items-center gap-2">Danger Zone</CardTitle>
-                     </CardHeader>
-                    <CardContent>
-                        <CardDescription className="mb-4">
-                           Deleting your account is a permanent action and cannot be undone.
-                        </CardDescription>
-                        <Button variant="destructive" onClick={handleAccountDelete} type="button">
-                            <Trash2 className="mr-2"/>
-                            Delete My Account
-                        </Button>
-                    </CardContent>
-                </Card>
-            </form>
-        </Form>
+                  </div>
+
+                  <Separator />
+
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="primaryEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <div className="flex items-center justify-between">
+                            <FormLabel className="flex items-center gap-2"><Mail /> {locales.profile.recoveryEmail.primaryLabel[language]}</FormLabel>
+                            <Button type="button" variant="link" className="text-xs h-auto p-0" onClick={handleChangeEmail}>{locales.ui.change[language]}</Button>
+                          </div>
+                          <FormControl>
+                            <Input {...field} disabled placeholder="your.email@example.com" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="recoveryEmail"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2"><Mail /> {locales.profile.recoveryEmail.label[language]}</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="personal@example.com" />
+                          </FormControl>
+                           <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2"><Phone /> {locales.profile.info.phone[language]}</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Your phone number" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="timeZone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2"><Languages /> {locales.profile.info.timeZone[language]}</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <Button type="submit">
+                    <Save className="mr-2" />
+                    {locales.profile.info.save[language]}
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Bell /> {locales.profile.notifications.title[language]}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="notifications.invoices"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>{locales.profile.notifications.invoices[language]}</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="notifications.reminders"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>{locales.profile.notifications.reminders[language]}</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="notifications.gallery"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel>{locales.profile.notifications.gallery[language]}</FormLabel>
+                        </div>
+                        <FormControl>
+                          <Switch checked={field.value} onCheckedChange={field.onChange} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><ShieldCheck /> {locales.profile.security.title[language]}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button variant="secondary" onClick={handlePasswordReset} className="w-full justify-start" type="button">
+                    <KeyRound className="mr-2" />
+                    {locales.profile.security.changePassword[language]}
+                  </Button>
+                   <Button variant="secondary" onClick={handleMfaSetup} className="w-full justify-start" type="button">
+                        <ShieldCheck className="mr-2"/>
+                        {locales.profile.security.mfa.setup[language]}
+                    </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive flex items-center gap-2">{locales.profile.danger.title[language]}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CardDescription className="mb-4">
+                {locales.profile.danger.description[language]}
+              </CardDescription>
+              <Button variant="destructive" onClick={handleAccountDelete} type="button">
+                <Trash2 className="mr-2" />
+                {locales.profile.danger.delete[language]}
+              </Button>
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
     </div>
   );
 }
+
+    

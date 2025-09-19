@@ -1,3 +1,4 @@
+
 {
   "ui": {
     "save": {
@@ -11,6 +12,10 @@
     "edit": {
       "en": "Edit",
       "es": "Editar"
+    },
+    "change": {
+      "en": "Change",
+      "es": "Cambiar"
     },
     "close": {
       "en": "Close",
@@ -195,6 +200,160 @@
     "myServices": {
       "en": "My Services",
       "es": "Mis servicios"
+    }
+  },
+  "profile": {
+    "title": {
+      "en": "My Profile",
+      "es": "Mi Perfil"
+    },
+    "subtitle": {
+      "en": "Manage your account and contact information.",
+      "es": "Gestiona tu cuenta e información de contacto."
+    },
+    "photo": {
+      "upload": {
+        "en": "Upload Photo",
+        "es": "Subir Foto"
+      }
+    },
+    "info": {
+      "title": {
+        "en": "Personal Information",
+        "es": "Información Personal"
+      },
+      "subtitle": {
+        "en": "Update your name and contact details.",
+        "es": "Actualiza tu nombre y datos de contacto."
+      },
+      "firstName": {
+        "en": "First Name",
+        "es": "Nombre"
+      },
+      "lastName": {
+        "en": "Last Name",
+        "es": "Apellido"
+      },
+      "phone": {
+        "en": "Phone Number",
+        "es": "Número de Teléfono"
+      },
+      "timeZone": {
+        "en": "Time Zone",
+        "es": "Zona Horaria"
+      },
+      "language": {
+        "en": "Language",
+        "es": "Idioma"
+      },
+      "save": {
+        "en": "Save Personal Info",
+        "es": "Guardar Información Personal"
+      }
+    },
+    "security": {
+      "title": {
+        "en": "Security",
+        "es": "Seguridad"
+      },
+      "changePassword": {
+        "en": "Send Password Reset Email",
+        "es": "Enviar Email de Restablecimiento"
+      },
+      "mfa": {
+        "setup": {
+          "en": "Configure 2-Factor Auth",
+          "es": "Configurar Autenticación de 2 Factores"
+        }
+      }
+    },
+    "recoveryEmail": {
+      "label": {
+        "en": "Recovery Email",
+        "es": "Email de Recuperación"
+      },
+      "primaryLabel": {
+        "en": "Primary Email",
+        "es": "Email Principal"
+      },
+      "note": {
+        "en": "Password resets are sent to the primary email; this email receives copies of notifications and security alerts.",
+        "es": "Los restablecimientos de contraseña se envían al email principal; este email recibe copias de notificaciones y alertas de seguridad."
+      }
+    },
+    "notifications": {
+      "title": {
+        "en": "Notifications",
+        "es": "Notificaciones"
+      },
+      "invoices": {
+        "en": "Invoices & Payments",
+        "es": "Facturas y Pagos"
+      },
+      "reminders": {
+        "en": "Event Reminders",
+        "es": "Recordatorios de Eventos"
+      },
+      "gallery": {
+        "en": "Gallery Updates",
+        "es": "Actualizaciones de la Galería"
+      }
+    },
+    "danger": {
+      "title": {
+        "en": "Danger Zone",
+        "es": "Zona de Peligro"
+      },
+      "description": {
+        "en": "Deleting your account is a permanent action and cannot be undone.",
+        "es": "Eliminar tu cuenta es una acción permanente y no se puede deshacer."
+      },
+      "delete": {
+        "en": "Delete My Account",
+        "es": "Eliminar Mi Cuenta"
+      }
+    },
+    "toast": {
+      "saved": {
+        "title": {
+          "en": "Profile Updated",
+          "es": "Perfil Actualizado"
+        },
+        "description": {
+          "en": "Your profile information has been saved.",
+          "es": "Tu información de perfil ha sido guardada."
+        }
+      },
+      "photo": {
+        "saving": {
+          "en": "Uploading...",
+          "es": "Subiendo..."
+        },
+        "saved": {
+          "en": "Avatar Updated!",
+          "es": "¡Avatar Actualizado!"
+        }
+      },
+      "passwordReset": {
+        "title": {
+          "en": "Password Reset Email Sent",
+          "es": "Email de Restablecimiento Enviado"
+        },
+        "description": {
+          "en": "If an account exists, you will receive an email with instructions.",
+          "es": "Si existe una cuenta, recibirás un email con instrucciones."
+        }
+      },
+      "delete": {
+        "title": {
+          "en": "Account Deletion Initiated",
+          "es": "Iniciada la Eliminación de Cuenta"
+        },
+        "description": {
+          "en": "A request to delete your account has been sent.",
+          "es": "Se ha enviado una solicitud para eliminar tu cuenta."
+        }
+      }
     }
   },
   "billing": {
@@ -600,3 +759,5 @@
     }
   }
 }
+
+    

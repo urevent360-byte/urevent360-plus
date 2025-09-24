@@ -7,6 +7,7 @@ import { AboutContent } from '@/components/page/home/AboutContent';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
 import { Testimonials } from '@/components/page/home/Testimonials';
+import { SocialFeed } from '@/components/page/home/SocialFeed';
 import { ChatWidget } from '@/components/shared/ChatWidget';
 import fs from 'fs/promises';
 import path from 'path';
@@ -68,12 +69,19 @@ export default async function Home() {
           <AboutContent />
         </div>
       </section>
-
+      
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Testimonials />
         </div>
       </section>
+
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+          <SocialFeed />
+        </div>
+      </section>
+
       <ChatWidget />
     </div>
   );

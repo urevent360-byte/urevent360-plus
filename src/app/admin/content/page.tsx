@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Instagram } from 'lucide-react';
 import Link from 'next/link';
 
 const contentSections = [
@@ -31,6 +31,12 @@ const contentSections = [
         title: 'Branding',
         description: 'Manage your logo and hero background image.',
         link: '/admin/content/branding'
+    },
+    {
+        title: 'Social Media Feed',
+        description: 'Connect social accounts to display a feed on your landing page.',
+        link: '/admin/content/social-feed',
+        icon: <Instagram />
     }
 ];
 
@@ -48,7 +54,10 @@ export default function ContentManagementPage() {
             {contentSections.map((section) => (
                  <Card key={section.title}>
                     <CardHeader>
-                        <CardTitle>{section.title}</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                            {section.icon}
+                            {section.title}
+                        </CardTitle>
                         <CardDescription>{section.description}</CardDescription>
                     </CardHeader>
                     <CardContent>

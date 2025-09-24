@@ -2,6 +2,34 @@
 'use server';
 
 import { z } from 'zod';
+import servicesCatalog from '@/lib/services-catalog.json';
+
+const serviceIdMap = new Map<string, string>();
+servicesCatalog.services.forEach(service => {
+    const keys = [
+        service.id.toLowerCase(),
+        service.label.toLowerCase(),
+        ...(service.keywords || []).map(k => k.toLowerCase())
+    ];
+    for (const key of keys) {
+        serviceIdMap.set(key, service.id);
+    }
+});
+
+const getCanonicalServiceId = (serviceName: string): string => {
+    const lowerCaseName = serviceName.toLowerCase().trim();
+    if (serviceIdMap.has(lowerCaseName)) {
+        return serviceIdMap.get(lowerCaseName)!;
+    }
+    // Fallback for partial matches
+    for (const [key, id] of serviceIdMap.entries()) {
+        if (lowerCaseName.includes(key) || key.includes(lowerCaseName)) {
+            return id;
+        }
+    }
+    return lowerCaseName.replace(/\s+/g, '_');
+};
+
 
 const createLeadSchema = z.object({
   hostId: z.string().optional(),
@@ -31,7 +59,17 @@ const createLeadSchema = z.object({
 type CreateLeadInput = z.infer<typeof createLeadSchema>;
 
 export async function createLeadAction(data: CreateLeadInput): Promise<{ success: boolean; message?: string }> {
-  const validatedFields = createLeadSchema.safeParse(data);
+  
+  const processedServices = data.requestedServices.map(s => ({
+      ...s,
+      serviceId: getCanonicalServiceId(s.serviceId),
+      title: servicesCatalog.services.find(catSvc => catSvc.id === getCanonicalServiceId(s.serviceId))?.label || s.title
+  }));
+
+  const validatedFields = createLeadSchema.safeParse({
+      ...data,
+      requestedServices: processedServices
+  });
 
   if (!validatedFields.success) {
     console.error('Validation errors:', validatedFields.error.flatten().fieldErrors);

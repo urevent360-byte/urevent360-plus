@@ -1,3 +1,4 @@
+
 {
   "services": [
     {
@@ -15,8 +16,20 @@
       "active": true,
       "featured": true,
       "options": [],
-      "tags": ["video", "interactive", "social media"],
-      "keywords": ["360", "360 booth", "cabina 360", "plataforma 360", "video 360", "slow motion", "boomerang"],
+      "tags": [
+        "video",
+        "interactive",
+        "social media"
+      ],
+      "keywords": [
+        "360",
+        "360 booth",
+        "cabina 360",
+        "plataforma 360",
+        "video 360",
+        "slow motion",
+        "boomerang"
+      ],
       "qualifiers": [
         "How many hours of coverage do you need?",
         "Is there nearby power and a 10x10 ft open space?"
@@ -38,8 +51,17 @@
       "active": true,
       "featured": true,
       "options": [],
-      "tags": ["selfie", "interactive", "prints"],
-      "keywords": ["magic mirror", "espejo mágico", "mirror booth", "selfie mirror"],
+      "tags": [
+        "selfie",
+        "interactive",
+        "prints"
+      ],
+      "keywords": [
+        "magic mirror",
+        "espejo mágico",
+        "mirror booth",
+        "selfie mirror"
+      ],
       "qualifiers": [
         "Any custom overlay or branding on prints?",
         "Where in the venue will it be placed?"
@@ -61,8 +83,16 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["prints", "customizable", "keepsake"],
-      "keywords": ["photo printer", "instant prints", "impresiones"],
+      "tags": [
+        "prints",
+        "customizable",
+        "keepsake"
+      ],
+      "keywords": [
+        "photo printer",
+        "instant prints",
+        "impresiones"
+      ],
       "qualifiers": [
         "Do you want custom logos or messages on prints?",
         "Estimated guest count?"
@@ -84,8 +114,18 @@
       "active": true,
       "featured": true,
       "options": [],
-      "tags": ["hora loca", "performer", "high-energy"],
-      "keywords": ["hora loca", "led robot", "robot led", "animación", "co2"],
+      "tags": [
+        "hora loca",
+        "performer",
+        "high-energy"
+      ],
+      "keywords": [
+        "hora loca",
+        "led robot",
+        "robot led",
+        "animación",
+        "co2"
+      ],
       "qualifiers": [
         "What time slot should the show start and for how many minutes?",
         "Any theme preference (carnival, urban, circus)?"
@@ -107,8 +147,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["special effect", "indoor safe", "grand entrance"],
-      "keywords": ["cold sparks", "chispas frías", "indoor fireworks", "special effects"],
+      "tags": [
+        "special effect",
+        "indoor safe",
+        "grand entrance"
+      ],
+      "keywords": [
+        "cold sparks",
+        "chispas frías",
+        "indoor fireworks",
+        "special effects"
+      ],
       "qualifiers": [
         "Does the venue allow indoor cold sparks?",
         "When will you use them (entrance, first dance)?"
@@ -130,8 +179,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["special effect", "first dance", "romantic"],
-      "keywords": ["dry ice", "low fog", "humo bajo", "first dance"],
+      "tags": [
+        "special effect",
+        "first dance",
+        "romantic"
+      ],
+      "keywords": [
+        "dry ice",
+        "low fog",
+        "humo bajo",
+        "first dance"
+      ],
       "qualifiers": [
         "Is this for first dance or another moment?",
         "Venue approval for dry-ice effects?"
@@ -153,8 +211,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["lighting", "custom", "branding"],
-      "keywords": ["gobo", "monogram", "logo projection", "wedding lighting"],
+      "tags": [
+        "lighting",
+        "custom",
+        "branding"
+      ],
+      "keywords": [
+        "gobo",
+        "monogram",
+        "logo projection",
+        "wedding lighting"
+      ],
       "qualifiers": [
         "Do you have initials/logo, or should we design it?",
         "Preferred projection location (dance floor, wall)?"
@@ -176,8 +243,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["visuals", "stage design", "high impact"],
-      "keywords": ["video wall", "led wall", "stage design", "visuals"],
+      "tags": [
+        "visuals",
+        "stage design",
+        "high impact"
+      ],
+      "keywords": [
+        "video wall",
+        "led wall",
+        "stage design",
+        "visuals"
+      ],
       "qualifiers": [
         "What content will you show (video loop, live camera, slides, logos)?",
         "Preferred wall size or stage width to match?",
@@ -192,7 +268,7 @@
       "id": "champagne_hostess",
       "slug": "champagne_hostess",
       "title": "Champagne Dress Hostess",
-      "category": "Specialty Welcomes",
+      "category": "special_welcomes",
       "shortDescription": "Modelo de bienvenida con vestido/estación de copas para recepción o cóctel. Personalizable por temática.",
       "longDescription": "A glamorous hostess in a custom dress that holds dozens of champagne glasses to welcome guests. It's a unique and elegant way to start any celebration.",
       "heroImage": "https://picsum.photos/seed/champagne1/800/600",
@@ -227,7 +303,7 @@
       "id": "bridgerton_welcome",
       "slug": "bridgerton_welcome",
       "title": "Welcome Bridgerton Style",
-      "category": "Specialty Welcomes",
+      "category": "special_welcomes",
       "shortDescription": "Recepción elegante con 2 modelos que guían a los invitados. Ideal para galas y bodas.",
       "longDescription": "Elegant performers in regency-style attire who greet and escort guests, adding a touch of class. Perfect for themed weddings and upscale galas.",
       "heroImage": "https://picsum.photos/seed/bridgerton1/800/600",

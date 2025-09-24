@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Instagram } from 'lucide-react';
+import { ArrowRight, Instagram, MessageCircleQuestion } from 'lucide-react';
 import Link from 'next/link';
 
 const contentSections = [
@@ -37,6 +37,12 @@ const contentSections = [
         description: 'Connect social accounts to display a feed on your landing page.',
         link: '/admin/content/social-feed',
         icon: <Instagram />
+    },
+    {
+        title: 'AI Assistant Prompts',
+        description: 'Edit the system prompts and knowledge base for the customer-facing AI.',
+        link: '/admin/content/prompts',
+        icon: <MessageCircleQuestion />
     }
 ];
 

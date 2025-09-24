@@ -251,8 +251,8 @@ let MOCK_LEADS: Lead[] = [
             notes: 'Wants the new props.'
         },
         requestedServices: [
-            { serviceId: '360-photo-booth', title: '360 Photo Booth', qty: 1 },
-            { serviceId: 'cold-sparklers', title: 'Cold Sparklers', qty: 4 }
+            { serviceId: '360-photo-booth', title: '360 Photo Booth', qty: 1, notes:'' },
+            { serviceId: 'cold-sparklers', title: 'Cold Sparklers', qty: 4, notes: '' }
         ],
         eventId: null,
         createdAt: new Date('2024-08-25').toISOString(),
@@ -282,7 +282,7 @@ let MOCK_LEADS: Lead[] = [
             onsiteContactPhone: '555-5678',
         },
         requestedServices: [
-            { serviceId: 'magic-mirror', title: 'Magic Mirror', qty: 1 }
+            { serviceId: 'magic-mirror', title: 'Magic Mirror', qty: 1, notes:'' }
         ],
         eventId: 'evt-456',
         createdAt: new Date('2024-07-20').toISOString(),
@@ -311,7 +311,7 @@ let MOCK_LEADS: Lead[] = [
             onsiteContactName: 'Jane Smith',
             onsiteContactPhone: '555-9012',
         },
-        requestedServices: [{serviceId: "photo-booth-printer", title: "Photo Booth Printer", qty: 1}],
+        requestedServices: [{serviceId: "photo-booth-printer", title: "Photo Booth Printer", qty: 1, notes:''}],
         eventId: null,
         createdAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
         updatedAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
@@ -427,13 +427,13 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
 
 let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     'evt-456': [
-        { id: 'tl-1', start: '2024-07-20T17:00:00Z', end: '2024-07-20T18:00:00Z', title: 'DJ Setup', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', isSyncedToGoogle: true },
-        { id: 'tl-2', start: '2024-07-20T18:00:00Z', end: '2024-07-20T22:00:00Z', title: 'Magic Mirror Opens', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', isSyncedToGoogle: true },
-        { id: 'tl-3', start: '2024-07-20T19:00:00Z', end: '2024-07-20T20:00:00Z', title: 'Dinner Service', status: 'completed', syncToGoogle: false, approvalStatus: 'approved', startTime: '2024-07-20T19:00:00Z', endTime: '2024-07-20T20:00:00Z', isSyncedToGoogle: false },
+        { id: 'tl-1', start: '2024-07-20T17:00:00Z', end: '2024-07-20T18:00:00Z', title: 'DJ Setup', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', isSyncedToGoogle: true, gcalEventId:'', notes: '' },
+        { id: 'tl-2', start: '2024-07-20T18:00:00Z', end: '2024-07-20T22:00:00Z', title: 'Magic Mirror Opens', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', isSyncedToGoogle: true, gcalEventId:'', notes: '' },
+        { id: 'tl-3', start: '2024-07-20T19:00:00Z', end: '2024-07-20T20:00:00Z', title: 'Dinner Service', status: 'completed', syncToGoogle: false, approvalStatus: 'approved', startTime: '2024-07-20T19:00:00Z', endTime: '2024-07-20T20:00:00Z', isSyncedToGoogle: false, gcalEventId:'', notes: '' },
     ],
     'evt-123': [
-        { id: 'tl-4', start: '2024-10-15T18:30:00Z', end: '2024-10-15T18:45:00Z', title: 'Grand Entrance', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T18:30:00Z', endTime: '2024-10-15T18:45:00Z', isSyncedToGoogle: false },
-        { id: 'tl-5', start: '2024-10-15T19:00:00Z', end: '2024-10-15T23:00:00Z', title: '360 Booth & Sparklers', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', isSyncedToGoogle: false },
+        { id: 'tl-4', start: '2024-10-15T18:30:00Z', end: '2024-10-15T18:45:00Z', title: 'Grand Entrance', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T18:30:00Z', endTime: '2024-10-15T18:45:00Z', isSyncedToGoogle: false, gcalEventId:'', notes: '' },
+        { id: 'tl-5', start: '2024-10-15T19:00:00Z', end: '2024-10-15T23:00:00Z', title: '360 Booth & Sparklers', status: 'upcoming', syncToGoogle: false, approvalStatus: 'pending', startTime: '2024-10-15T19:00:00Z', endTime: '2024-10-15T23:00:00Z', isSyncedToGoogle: false, gcalEventId:'', notes: '' },
     ]
 };
 
@@ -485,7 +485,7 @@ let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
 
 
 let MOCK_REQUESTED_SERVICES: RequestedService[] = [
-    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested', title: 'Guest Book Station', qty: 1 }
+    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested', title: 'Guest Book Station', qty: 1, notes:'' }
 ];
 
 let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
@@ -532,11 +532,63 @@ const MOCK_GUEST_UPLOADS: Record<string, { url: string; alt: string; thumbUrl: s
     ]
 };
 
+export const defaultSystemPrompt = `You are a friendly, enthusiastic, and helpful sales representative for UREVENT 360 PLUS, an event planning and entertainment company. Your personality is professional yet approachable.
+
+Your primary goal is to act as a salesperson, encouraging users to book services by gathering the necessary information to create a lead.
+
+**Your Conversation Flow:**
+1.  **Initial Greeting & Service Info**: Greet the user warmly. Answer any questions they have about the services offered. Use the "Services Offered" section below as your knowledge base. Be concise and helpful.
+2.  **Identify Buying Intent**: If the user expresses interest in a quote, pricing, or booking, your main goal is to gather information for a lead.
+3.  **Gather Lead Information**: Politely ask for the following pieces of information, one or two at a time.
+    *   Full Name
+    *   Phone Number
+    *   The specific services they are interested in.
+    *   The planned date for the event.
+    *   The location of the event (city/state or ZIP code).
+4.  **Create the Lead**: Once you have gathered ALL the required pieces of information (name, phone, services, date, and location), you MUST use the \`createLead\` tool to submit this information.
+5.  **Confirmation**: After calling the tool, inform the user that you have all their details and that a team member will reach out to them shortly with a full quote. Thank them for their time.
+
+**Services Offered (Your Knowledge Base):**
+*   **360 Photo Booth**: Our most popular service! Guests stand on a platform while a camera circles them, creating amazing slow-motion, 360-degree videos perfect for sharing on social media.
+*   **Magic Mirror**: A fun, interactive, full-length mirror that takes high-quality selfies. Guests can sign their photos and add emojis right on the screen.
+*   **Photo Booth Printer**: Get high-quality, glossy photo prints in seconds. We can customize them with your event logo or a special message.
+*   **La Hora Loca with LED Robot**: An unforgettable hour of high-energy fun, featuring a giant dancing LED robot, samba dancers, and tons of party props to get everyone on the dance floor.
+*   **Cold Sparklers**: Create a stunning, magical moment for grand entrances or first dances with our completely safe indoor sparkler fountains. They produce no smoke or heat.
+*   **Dance on the Clouds**: A beautiful, low-lying cloud of dry ice that covers the dance floor, creating a dreamy "dancing on clouds" effect for a romantic first dance.
+*   **Projectors**: We offer high-definition projectors and screens for displaying photo slideshows, videos, or presentations.
+*   **Custom Monogram Projectors**: Project a beautiful, custom-designed monogram of your initials or logo onto the dance floor or a wall for an elegant, personalized touch.
+*   **LED Screen Walls**: Make a huge visual impact with our vibrant, seamless LED video walls, perfect for stage backdrops or dynamic visual displays.
+
+**Rules:**
+*   Never make up services or pricing.
+*   Do not ask for all the information at once. Guide the conversation naturally.
+*   Only use the \`createLead\` tool when you have all five pieces of information.
+*   If the user asks a question you don't know, politely state that you can have a human expert answer that for them once they are contacted.
+`;
+
 // --- Data Adapter API ---
 // For now, all functions use mock data. We'll add TODOs for Firestore integration.
 
 const DATA_SOURCE: 'mock' | 'firestore' = 'mock';
 export { handleDepositWebhookFlow };
+
+// === AI Adapter ===
+let MOCK_AI_SYSTEM_PROMPT = defaultSystemPrompt;
+
+export async function getSystemPrompt(): Promise<string> {
+    if (DATA_SOURCE === 'mock') {
+        return MOCK_AI_SYSTEM_PROMPT;
+    }
+    throw new Error('Firestore not implemented');
+}
+
+export async function setSystemPrompt(prompt: string): Promise<void> {
+    if (DATA_SOURCE === 'mock') {
+        MOCK_AI_SYSTEM_PROMPT = prompt;
+        return;
+    }
+    throw new Error('Firestore not implemented');
+}
 
 // === Leads Adapter ===
 
@@ -1056,6 +1108,7 @@ export async function requestAddons(eventId: string, items: string[]): Promise<v
                 status: 'requested',
                 title: itemName,
                 qty: 1,
+                notes: ''
             };
             MOCK_REQUESTED_SERVICES.push(newRequest);
         });

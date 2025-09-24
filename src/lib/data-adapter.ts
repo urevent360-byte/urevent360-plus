@@ -1,5 +1,4 @@
 
-
 /**
  * @fileoverview Data adapter for fetching application data.
  * This file provides a layer of abstraction for data fetching.
@@ -251,8 +250,8 @@ let MOCK_LEADS: Lead[] = [
             notes: 'Wants the new props.'
         },
         requestedServices: [
-            { serviceId: '360-photo-booth', title: '360 Photo Booth', qty: 1, notes:'' },
-            { serviceId: 'cold-sparklers', title: 'Cold Sparklers', qty: 4, notes: '' }
+            { serviceId: '360_booth', title: '360 Photo Booth', qty: 1, notes:'' },
+            { serviceId: 'cold_sparklers', title: 'Cold Sparklers', qty: 4, notes: '' }
         ],
         eventId: null,
         createdAt: new Date('2024-08-25').toISOString(),
@@ -282,7 +281,7 @@ let MOCK_LEADS: Lead[] = [
             onsiteContactPhone: '555-5678',
         },
         requestedServices: [
-            { serviceId: 'magic-mirror', title: 'Magic Mirror', qty: 1, notes:'' }
+            { serviceId: 'magic_mirror', title: 'Magic Mirror', qty: 1, notes:'' }
         ],
         eventId: 'evt-456',
         createdAt: new Date('2024-07-20').toISOString(),
@@ -311,7 +310,7 @@ let MOCK_LEADS: Lead[] = [
             onsiteContactName: 'Jane Smith',
             onsiteContactPhone: '555-9012',
         },
-        requestedServices: [{serviceId: "photo-booth-printer", title: "Photo Booth Printer", qty: 1, notes:''}],
+        requestedServices: [{serviceId: "printer_booth", title: "Photo Booth Printer", qty: 1, notes:''}],
         eventId: null,
         createdAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
         updatedAt: new Date('2024-07-29T00:00:00.000Z').toISOString(),
@@ -572,23 +571,6 @@ Your primary goal is to act as a salesperson, encouraging users to book services
 const DATA_SOURCE: 'mock' | 'firestore' = 'mock';
 export { handleDepositWebhookFlow };
 
-// === AI Adapter ===
-let MOCK_AI_SYSTEM_PROMPT = defaultSystemPrompt;
-
-export async function getSystemPrompt(): Promise<string> {
-    if (DATA_SOURCE === 'mock') {
-        return MOCK_AI_SYSTEM_PROMPT;
-    }
-    throw new Error('Firestore not implemented');
-}
-
-export async function setSystemPrompt(prompt: string): Promise<void> {
-    if (DATA_SOURCE === 'mock') {
-        MOCK_AI_SYSTEM_PROMPT = prompt;
-        return;
-    }
-    throw new Error('Firestore not implemented');
-}
 
 // === Leads Adapter ===
 
@@ -614,7 +596,6 @@ export async function getLead(leadId: string): Promise<Lead | undefined> {
         // Hack for UI compatibility
         const legacyLead: any = {
             ...lead,
-            requestedServices: lead.requestedServices.map(s => s.title),
             eventDraft: {
                 ...lead.eventDraft,
                 eventName: lead.eventDraft.name,

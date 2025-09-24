@@ -1,3 +1,4 @@
+
 'use client';
 
 import { create } from 'zustand';
@@ -76,7 +77,7 @@ export function InquiryModal() {
 
   useEffect(() => {
     // Sync cart items with the form's 'services' field
-    form.setValue('services', cartItems.map(item => item.name));
+    form.setValue('services', cartItems.map(item => item.slug));
   }, [cartItems, form]);
 
   async function onSubmit(data: InquiryFormValues) {
@@ -86,7 +87,7 @@ export function InquiryModal() {
         if (key === 'eventDate' && value instanceof Date) {
             formData.append(key, value.toISOString());
         } else if (key === 'services' && Array.isArray(value)) {
-            value.forEach(service => formData.append('services', service));
+            value.forEach(serviceId => formData.append('services', serviceId));
         } else if (value) {
             formData.append(key, value as string);
         }

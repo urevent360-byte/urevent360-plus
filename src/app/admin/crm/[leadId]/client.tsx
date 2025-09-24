@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, User, Calendar, FileText, Send, Check, Box, Loader2, Info } from 'lucide-react';
+import { ArrowLeft, User, Calendar, FileText, Send, Check, Box, Loader2, Info, PlusCircle } from 'lucide-react';
 import { getLead, convertLeadToEvent, sendQuote, markAccepted } from '@/lib/data-adapter';
 import type { Lead } from '@/lib/data-adapter';
 import { useToast } from '@/hooks/use-toast';
@@ -17,12 +17,20 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import locales from '@/lib/locales.json';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import servicesCatalog from '@/lib/services-catalog.json';
+
+type QuoteLineItem = {
+    id: string;
+    title: string;
+    price: number;
+};
 
 export default function LeadDetailClient({ leadId }: { leadId: string }) {
     const [lead, setLead] = useState<Lead | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isConverting, setIsConverting] = useState(false);
-    const [quotePrices, setQuotePrices] = useState<Record<string, number>>({});
+    const [quoteItems, setQuoteItems] = useState<QuoteLineItem[]>([]);
     const router = useRouter();
     const { toast } = useToast();
     const [language, setLanguage] = useState<'en' | 'es'>('en');
@@ -33,23 +41,33 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
             const fetchedLead = await getLead(leadId);
             if (fetchedLead) {
                 setLead(fetchedLead);
-                const initialPrices = (fetchedLead.requestedServices || []).reduce((acc, service) => {
-                    acc[service as string] = 0;
-                    return acc;
-                }, {} as Record<string, number>);
-                setQuotePrices(initialPrices);
+                const initialQuoteItems = (fetchedLead.requestedServices || []).map(service => {
+                    const catalogItem = servicesCatalog.services.find(s => s.id === service.serviceId);
+                    return {
+                        id: service.serviceId,
+                        title: catalogItem?.label || service.title,
+                        price: 0,
+                    };
+                });
+                setQuoteItems(initialQuoteItems);
             }
             setIsLoading(false);
         }
         fetchLead();
     }, [leadId]);
 
-    const handlePriceChange = (service: string, value: string) => {
+    const handlePriceChange = (serviceId: string, value: string) => {
         const price = Number(value) || 0;
-        setQuotePrices(prev => ({ ...prev, [service]: price }));
+        setQuoteItems(prev => prev.map(item => item.id === serviceId ? { ...item, price } : item));
+    };
+    
+    const handleAddServiceToQuote = (service: typeof servicesCatalog.services[0]) => {
+        if (!quoteItems.some(item => item.id === service.id)) {
+            setQuoteItems(prev => [...prev, { id: service.id, title: service.label, price: 0 }]);
+        }
     };
 
-    const quoteTotal = Object.values(quotePrices).reduce((sum, price) => sum + price, 0);
+    const quoteTotal = quoteItems.reduce((sum, item) => sum + item.price, 0);
 
     const handleSendQuote = async () => {
         if (!lead) return;
@@ -103,6 +121,10 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
         return <p>Lead not found.</p>;
     }
     
+    const availableServicesToAdd = servicesCatalog.services.filter(
+        s => !quoteItems.some(qi => qi.id === s.id)
+    );
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
@@ -181,16 +203,16 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {(lead.requestedServices as string[]).map(service => (
-                                        <TableRow key={service}>
-                                            <TableCell className="font-medium">{service}</TableCell>
+                                    {quoteItems.map(item => (
+                                        <TableRow key={item.id}>
+                                            <TableCell className="font-medium">{item.title}</TableCell>
                                             <TableCell className="text-right">
                                                 <Input 
                                                     type="number" 
                                                     className="text-right"
                                                     placeholder="0.00"
-                                                    value={quotePrices[service] || ''}
-                                                    onChange={(e) => handlePriceChange(service, e.target.value)}
+                                                    value={item.price || ''}
+                                                    onChange={(e) => handlePriceChange(item.id, e.target.value)}
                                                 />
                                             </TableCell>
                                         </TableRow>
@@ -203,6 +225,21 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
                                     </TableRow>
                                 </TableBody>
                             </Table>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="outline" className="mt-4">
+                                        <PlusCircle className="mr-2"/>
+                                        Add Service to Quote
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    {availableServicesToAdd.map(service => (
+                                        <DropdownMenuItem key={service.id} onClick={() => handleAddServiceToQuote(service)}>
+                                            {service.label}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </CardContent>
                     </Card>
                 </div>

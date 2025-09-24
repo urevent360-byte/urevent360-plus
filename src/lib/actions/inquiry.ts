@@ -1,6 +1,8 @@
+
 'use server';
 
 import { z } from 'zod';
+import servicesCatalog from '@/lib/services-catalog.json';
 
 const inquirySchema = z.object({
   name: z.string().min(2, 'Name is required.'),
@@ -13,7 +15,7 @@ const inquirySchema = z.object({
 });
 
 export async function submitHeroInquiryAction(formData: FormData) {
-  const services = formData.getAll('services') as string[];
+  const serviceIds = formData.getAll('services') as string[];
 
   const validatedFields = inquirySchema.safeParse({
     name: formData.get('name'),
@@ -22,7 +24,7 @@ export async function submitHeroInquiryAction(formData: FormData) {
     eventType: formData.get('eventType'),
     eventDate: formData.get('eventDate'),
     eventLocation: formData.get('eventLocation'),
-    services,
+    services: serviceIds,
   });
 
   if (!validatedFields.success) {
@@ -32,11 +34,21 @@ export async function submitHeroInquiryAction(formData: FormData) {
       message: 'Invalid form data. Please check your entries.',
     };
   }
+  
+  const requestedServices = validatedFields.data.services.map(serviceId => {
+      const service = servicesCatalog.services.find(s => s.id === serviceId);
+      return {
+          serviceId,
+          title: service?.label || serviceId,
+          qty: 1,
+          notes: 'From hero inquiry'
+      };
+  });
 
   try {
     // In a real app, you would save this to your database (e.g., Firestore)
     // to create a new lead.
-    console.log('New Hero Inquiry Lead data received:', validatedFields.data);
+    console.log('New Hero Inquiry Lead data received:', { ...validatedFields.data, requestedServices });
 
     // Simulate a database operation
     await new Promise(resolve => setTimeout(resolve, 1000));

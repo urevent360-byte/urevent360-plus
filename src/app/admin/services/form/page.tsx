@@ -25,6 +25,7 @@ import {
 import { createServiceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import servicesCatalog from '@/lib/services-catalog.json';
 
 const serviceFormSchema = z.object({
   name: z.string().min(2, 'Service name is required.'),
@@ -63,6 +64,8 @@ const existingService: ServiceFormValues = {
         { url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', alt: 'Sample video of the 360 photo booth in action' }
     ]
 };
+
+const allCategories = [...new Set(servicesCatalog.services.map(s => s.category))];
 
 export default function ServiceFormPage() {
     const isEditing = true; // Placeholder for edit mode detection
@@ -155,11 +158,10 @@ export default function ServiceFormPage() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="Photo Booth">Photo Booth</SelectItem>
-                                        <SelectItem value="Entertainment">Entertainment</SelectItem>
-                                        <SelectItem value="Special Effects">Special Effects</SelectItem>
-                                        <SelectItem value="Decor">Decor</SelectItem>
-                                        <SelectItem value="Other">Other</SelectItem>
+                                        {allCategories.map(cat => (
+                                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                                        ))}
+                                        <SelectItem value="Other">Other (New Category)</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />

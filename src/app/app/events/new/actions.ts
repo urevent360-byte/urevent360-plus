@@ -8,7 +8,7 @@ const serviceIdMap = new Map<string, string>();
 servicesCatalog.services.forEach(service => {
     const keys = [
         service.id.toLowerCase(),
-        service.label.toLowerCase(),
+        service.title.toLowerCase(),
         ...(service.keywords || []).map(k => k.toLowerCase())
     ];
     for (const key of keys) {
@@ -63,7 +63,7 @@ export async function createLeadAction(data: CreateLeadInput): Promise<{ success
   const processedServices = data.requestedServices.map(s => ({
       ...s,
       serviceId: getCanonicalServiceId(s.serviceId),
-      title: servicesCatalog.services.find(catSvc => catSvc.id === getCanonicalServiceId(s.serviceId))?.label || s.title
+      title: servicesCatalog.services.find(catSvc => catSvc.id === getCanonicalServiceId(s.serviceId))?.title || s.title
   }));
 
   const validatedFields = createLeadSchema.safeParse({

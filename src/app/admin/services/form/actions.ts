@@ -10,19 +10,23 @@ const catalogPath = path.join(process.cwd(), 'src', 'lib', 'services-catalog.jso
 
 const serviceSchema = z.object({
   id: z.string().min(2, 'ID is required and must be unique.'),
-  label: z.string().min(2, 'Service label is required.'),
+  slug: z.string().min(2, 'Slug is required.'),
+  title: z.string().min(2, 'Service title is required.'),
   category: z.string().min(1, 'Category is required.'),
   shortDescription: z.string().min(10, 'Short description must be at least 10 characters.'),
-  features: z.array(z.string()).min(1, 'At least one feature is required.'),
+  longDescription: z.string().optional(),
+  heroImage: z.string().url('A valid hero image URL is required.'),
+  galleryImages: z.array(z.string().url()).optional(),
+  active: z.boolean().default(false),
+  featured: z.boolean().default(false),
+  options: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
   keywords: z.array(z.string()).min(1, 'At least one keyword is required.'),
   qualifiers: z.array(z.string()).min(1, 'At least one qualifier question is required.'),
-  images: z.array(z.object({
-    url: z.string().url(),
-    alt: z.string().min(2, 'Alt text is required.'),
-  })).min(1, 'At least one image is required.'),
-  visible: z.boolean().default(false),
   packageCode: z.string().optional(),
   qbItem: z.string().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 });
 
 export type Service = z.infer<typeof serviceSchema>;
@@ -54,7 +58,10 @@ export async function getServiceAction(id: string): Promise<{ success: boolean; 
 }
 
 export async function upsertServiceAction(data: Service, isEditing: boolean): Promise<{ success: boolean; message?: string }> {
-  const validatedFields = serviceSchema.safeParse(data);
+  const validatedFields = serviceSchema.safeParse({
+    ...data,
+    slug: data.id, // Ensure slug is always same as id
+  });
 
   if (!validatedFields.success) {
     console.error('Validation errors:', validatedFields.error.flatten().fieldErrors);
@@ -69,10 +76,15 @@ export async function upsertServiceAction(data: Service, isEditing: boolean): Pr
     const currentCatalog = JSON.parse(currentCatalogData);
     const services = currentCatalog.services as Service[];
     const existingIndex = services.findIndex(s => s.id === validatedFields.data.id);
+    
+    const now = new Date().toISOString();
 
     if (isEditing) {
       if (existingIndex !== -1) {
-        services[existingIndex] = validatedFields.data;
+        services[existingIndex] = {
+            ...validatedFields.data,
+            updatedAt: now,
+        };
       } else {
         return { success: false, message: 'Service to update not found.' };
       }
@@ -80,7 +92,11 @@ export async function upsertServiceAction(data: Service, isEditing: boolean): Pr
       if (existingIndex !== -1) {
         return { success: false, message: 'A service with this ID already exists.' };
       }
-      services.push(validatedFields.data);
+      services.push({
+          ...validatedFields.data,
+          createdAt: now,
+          updatedAt: now,
+      });
     }
     
     currentCatalog.services = services;

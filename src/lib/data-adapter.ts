@@ -437,12 +437,12 @@ let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
 };
 
 const MOCK_MAIN_SERVICES: Addon[] = servicesCatalog.services
-    .filter(s => !s.visible)
+    .filter(s => !s.active)
     .map(s => ({
         id: s.id,
-        name: s.label,
+        name: s.title,
         description: s.shortDescription,
-        image: s.images[0]?.url || 'https://picsum.photos/seed/placeholder/800/600',
+        image: s.heroImage || 'https://picsum.photos/seed/placeholder/800/600',
     }));
 
 
@@ -1066,15 +1066,17 @@ export async function listAddons(): Promise<Addon[]> {
 export async function requestAddons(eventId: string, items: string[]): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 500));
     if (DATA_SOURCE === 'mock') {
-        items.forEach(itemName => {
-            const catalogItem = servicesCatalog.services.find(s => s.label === itemName);
+        items.forEach(itemId => {
+            const catalogItem = servicesCatalog.services.find(s => s.id === itemId);
+            if (!catalogItem) return;
+
             const newRequest: RequestedService = {
                 id: `req-${Math.random().toString(36).substring(7)}`,
                 eventId,
-                serviceName: itemName,
-                serviceId: catalogItem?.id || 'unknown',
+                serviceName: catalogItem.title,
+                serviceId: catalogItem.id,
                 status: 'requested',
-                title: itemName,
+                title: catalogItem.title,
                 qty: 1,
                 notes: ''
             };

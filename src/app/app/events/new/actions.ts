@@ -63,7 +63,7 @@ export async function createLeadAction(data: CreateLeadInput): Promise<{ success
   const processedServices = data.requestedServices.map(s => ({
       ...s,
       serviceId: getCanonicalServiceId(s.serviceId),
-      title: servicesCatalog.services.find(catSvc => catSvc.id === getCanonicalServiceId(s.serviceId))?.label || s.title
+      title: servicesCatalog.services.find(catSvc => catSvc.id === getCanonicalServiceId(s.title))?.label || s.title
   }));
 
   const validatedFields = createLeadSchema.safeParse({

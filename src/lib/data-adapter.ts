@@ -10,6 +10,7 @@
 import { z } from 'zod';
 import { format, add } from 'date-fns';
 import { handleDepositWebhookFlow } from '@/ai/flows/gallery-automation';
+import servicesCatalog from './services-catalog.json';
 
 // --- Data Schemas / Types ---
 
@@ -192,6 +193,7 @@ const RequestedServiceSchema = z.object({
     // Legacy
     eventId: z.string(),
     serviceName: z.string(),
+    serviceId: z.string(),
 });
 export type RequestedService = z.infer<typeof RequestedServiceSchema>;
 
@@ -390,6 +392,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-123': [
         { 
             id: 'pay-2', 
+            isActive: true,
             invoiceId: 'inv-123', 
             status: 'unpaid', 
             quickbooksUrl: '#', 
@@ -398,7 +401,6 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
             depositPaid: 0,
             remaining: 3000,
             dueDate: add(new Date(), {days: 10}).toISOString(),
-            isActive: true,
             amount: 3000, 
             method: '', 
             timestamp: new Date().toISOString() 
@@ -407,6 +409,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-456': [
         { 
             id: 'pay-1', 
+            isActive: true,
             invoiceId: 'inv-456', 
             status: 'paid_in_full', 
             quickbooksUrl: '#', 
@@ -415,8 +418,6 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
             depositPaid: 2500,
             remaining: 0,
             dueDate: new Date('2024-07-15').toISOString(),
-            isActive: true,
-            // legacy
             amount: 2500, 
             method: '', 
             timestamp: new Date().toISOString() 
@@ -436,44 +437,15 @@ let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     ]
 };
 
-const MOCK_MAIN_SERVICES = [
-    { 
-        id: 'svc-360-photo-booth',
-        name: '360 Photo Booth',
-        description: 'A modern platform where guests can record dynamic, slow-motion videos with a rotating camera.',
-        image: 'https://picsum.photos/seed/service1/800/600',
-    },
-    { 
-        id: 'svc-photo-booth-printer',
-        name: 'Photo Booth Printer',
-        description: 'Receive glossy, high-quality photo strips instantly with custom logos and designs.',
-        image: 'https://picsum.photos/seed/service2/800/600',
-    },
-    {
-        id: 'svc-magic-mirror',
-        name: 'Magic Mirror',
-        description: 'An interactive, full-length mirror that takes amazing selfies with fun animations.',
-        image: 'https://picsum.photos/seed/service3/800/600',
-    },
-    { 
-        id: 'svc-la-hora-loca-led-robot',
-        name: 'La Hora Loca with LED Robot',
-        description: 'An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.',
-        image: 'https://picsum.photos/seed/service4/800/600',
-    },
-    { 
-        id: 'svc-cold-sparklers',
-        name: 'Cold Sparklers',
-        description: 'Create a stunning, safe pyrotechnic-like effect for magical moments without heat or smoke.',
-        image: 'https://picsum.photos/seed/service5/800/600',
-    },
-    { 
-        id: 'svc-dance-on-the-clouds',
-        name: 'Dance on the Clouds',
-        description: 'A dreamy, thick cloud effect that covers the dance floor for a fairy-tale first dance.',
-        image: 'https://picsum.photos/seed/service6/800/600',
-    },
-];
+const MOCK_MAIN_SERVICES: Addon[] = servicesCatalog.services
+    .filter(s => !s.visible)
+    .map(s => ({
+        id: s.id,
+        name: s.label,
+        description: s.shortDescription,
+        image: s.images[0]?.url || 'https://picsum.photos/seed/placeholder/800/600',
+    }));
+
 
 let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
     { id: 'design-1', name: 'Classic Elegance', imageUrl: 'https://picsum.photos/seed/design1/800/600' },
@@ -484,7 +456,7 @@ let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
 
 
 let MOCK_REQUESTED_SERVICES: RequestedService[] = [
-    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', status: 'requested', title: 'Guest Book Station', qty: 1, notes:'' }
+    { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', serviceId: 'guest_book', status: 'requested', title: 'Guest Book Station', qty: 1, notes:'' }
 ];
 
 let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
@@ -689,6 +661,7 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
                     id: `req-${Math.random().toString(36).substring(7)}`,
                     eventId: newEventId,
                     serviceName: s.title,
+                    serviceId: s.serviceId,
                     status: 'selected',
                     title: s.title,
                     qty: s.qty,
@@ -811,6 +784,25 @@ export async function createInvoice(eventId: string): Promise<void> {
         const event = MOCK_EVENTS.find(e => e.id === eventId);
         if (event) {
             event.status = 'invoice_sent';
+
+            // Simulate building line items for QuickBooks
+            const approvedServices = MOCK_REQUESTED_SERVICES.filter(
+                s => s.eventId === eventId && (s.status === 'approved' || s.status === 'selected')
+            );
+            
+            const qbLineItems = approvedServices.map(service => {
+                const catalogItem = servicesCatalog.services.find(s => s.id === service.serviceId);
+                return {
+                    qbItem: catalogItem?.qbItem || 'Generic-Service',
+                    description: service.serviceName,
+                    qty: service.qty,
+                    price: 100 // Placeholder price
+                };
+            });
+
+            const total = qbLineItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            
+            console.log(`(Mock) Creating QuickBooks invoice for event ${eventId} with line items:`, qbLineItems);
             
             const newPayment: Payment = {
                 id: `pay-${Math.random().toString(36).substring(7)}`,
@@ -818,13 +810,13 @@ export async function createInvoice(eventId: string): Promise<void> {
                 invoiceId: `inv-${eventId.slice(4)}`,
                 status: 'unpaid',
                 quickbooksUrl: '#',
-                total: 2500, // Placeholder
-                depositRequired: 500, // Placeholder
+                total: total,
+                depositRequired: total * 0.5, // 50% deposit placeholder
                 depositPaid: 0,
-                remaining: 2500,
+                remaining: total,
                 dueDate: add(new Date(), {days: 15}).toISOString(),
                 // legacy
-                amount: 2500,
+                amount: total,
                 method: '',
                 timestamp: new Date().toISOString(),
             };
@@ -832,18 +824,16 @@ export async function createInvoice(eventId: string): Promise<void> {
             if (!MOCK_PAYMENTS[eventId]) {
                 MOCK_PAYMENTS[eventId] = [];
             }
-            // Deactivate old invoices
             MOCK_PAYMENTS[eventId].forEach(p => p.isActive = false);
             MOCK_PAYMENTS[eventId].push(newPayment);
 
             await sendMessage(eventId, { sender: 'system', text: 'Invoice created.', timestamp: new Date().toISOString() });
-            console.log(`(Mock) Invoice created for event ${eventId}. Event status updated.`);
+            console.log(`(Mock) Invoice created for event ${eventId}. Total: $${total}.`);
         } else {
             throw new Error('Event not found');
         }
         return;
     }
-    // TODO: Implement actual invoice creation (e.g., with QuickBooks API and Firestore updates)
     throw new Error('Firestore not implemented');
 }
 
@@ -1059,11 +1049,7 @@ export async function expireQrNow(eventId: string): Promise<void> {
 export async function listSelectedServices(eventId: string): Promise<any[]> {
     await new Promise(resolve => setTimeout(resolve, 300));
     if (DATA_SOURCE === 'mock') {
-        const lead = MOCK_LEADS.find(l => l.eventId === eventId);
-        if (lead) {
-            return lead.requestedServices.map(s => ({ id: `svc-${s.serviceId}`, name: s.title, status: 'Booked' }));
-        }
-        return [{ id: 'svc-magic-mirror', name: 'Magic Mirror', status: 'Booked' }];
+        return MOCK_REQUESTED_SERVICES.filter(s => s.eventId === eventId && (s.status === 'selected' || s.status === 'approved'));
     }
     // TODO: Implement Firestore query
     throw new Error('Firestore not implemented');
@@ -1082,10 +1068,12 @@ export async function requestAddons(eventId: string, items: string[]): Promise<v
     await new Promise(resolve => setTimeout(resolve, 500));
     if (DATA_SOURCE === 'mock') {
         items.forEach(itemName => {
+            const catalogItem = servicesCatalog.services.find(s => s.label === itemName);
             const newRequest: RequestedService = {
                 id: `req-${Math.random().toString(36).substring(7)}`,
                 eventId,
                 serviceName: itemName,
+                serviceId: catalogItem?.id || 'unknown',
                 status: 'requested',
                 title: itemName,
                 qty: 1,

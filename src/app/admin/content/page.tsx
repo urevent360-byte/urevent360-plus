@@ -26,6 +26,11 @@ const contentSections = [
         title: 'Footer Content',
         description: 'Manage contact information and social media links in the footer.',
         link: '/admin/content/footer'
+    },
+    {
+        title: 'Branding',
+        description: 'Manage your logo and hero background image.',
+        link: '/admin/content/branding'
     }
 ];
 

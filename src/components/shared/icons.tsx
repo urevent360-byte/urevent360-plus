@@ -1,9 +1,26 @@
-export function Logo() {
+
+'use client';
+
+import Image from 'next/image';
+
+export function Logo({ logoUrl }: { logoUrl?: string | null }) {
   return (
     <div className="flex items-center" aria-label="UREVENT 360 PLUS Home">
-      <div className="font-headline text-xl font-bold tracking-tight text-primary md:text-2xl">
-        UREVENT 360 <span className="text-accent">PLUS</span>
-      </div>
+      {logoUrl ? (
+        <Image 
+          src={logoUrl}
+          alt="UREVENT 360 PLUS Logo" 
+          width={200} 
+          height={50}
+          className="h-auto"
+          unoptimized
+          priority
+        />
+      ) : (
+        <div className="font-headline text-xl font-bold tracking-tight text-primary md:text-2xl">
+          UREVENT 360 <span className="text-accent">PLUS</span>
+        </div>
+      )}
     </div>
   );
 }

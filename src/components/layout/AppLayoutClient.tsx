@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
-export function AppLayoutClient({ children }: { children: React.ReactNode }) {
+export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
   const isAppRoute = pathname.startsWith('/app');
@@ -17,7 +17,7 @@ export function AppLayoutClient({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <Header />
+      <Header logoUrl={logoUrl} />
       <main className="flex-grow">{children}</main>
       <Footer />
     </>

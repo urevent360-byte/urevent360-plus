@@ -4,7 +4,7 @@
       "id": "360_booth",
       "label": "360 Photo Booth",
       "category": "Photo Booths",
-      "keywords": ["360", "360 booth", "cabina 360", "video 360", "slow motion"],
+      "keywords": ["360", "360 booth", "cabina 360", "plataforma 360", "video 360", "slow motion", "boomerang"],
       "packageCode": "PHT-360",
       "qbItem": "Service-360-Booth",
       "visible": true,
@@ -17,6 +17,10 @@
         "Slow-motion & boomerang effects",
         "Instant social media sharing",
         "Professional attendant"
+      ],
+      "qualifiers": [
+        "How many hours of coverage do you need?",
+        "Is there nearby power and a 10x10 ft open space?"
       ]
     },
     {
@@ -36,6 +40,10 @@
         "Voice & animated guidance",
         "On-screen signing & emojis",
         "Instant high-quality prints"
+      ],
+      "qualifiers": [
+        "Any custom overlay or branding on prints?",
+        "Where in the venue will it be placed?"
       ]
     },
     {
@@ -55,6 +63,10 @@
         "Customizable print layouts & branding",
         "Glossy or matte finish options",
         "Unlimited prints during event"
+      ],
+      "qualifiers": [
+        "Do you want custom logos or messages on prints?",
+        "Estimated guest count?"
       ]
     },
     {
@@ -74,6 +86,10 @@
         "CO₂ cannon blasts",
         "Handheld confetti cannons",
         "Party props for guests (hats, glasses)"
+      ],
+      "qualifiers": [
+        "What time slot should the show start and for how many minutes?",
+        "Any theme preference (carnival, urban, circus)?"
       ]
     },
     {
@@ -93,6 +109,10 @@
         "No smoke, no odor",
         "Adjustable height and duration",
         "Perfect for grand entrances & first dances"
+      ],
+      "qualifiers": [
+        "Does the venue allow indoor cold sparks?",
+        "When will you use them (entrance, first dance)?"
       ]
     },
     {
@@ -112,6 +132,10 @@
         "Thick, low-lying fog that stays near the floor",
         "Odorless and leaves no residue",
         "Creates a magical atmosphere"
+      ],
+      "qualifiers": [
+        "Is this for first dance or another moment?",
+        "Venue approval for dry-ice effects?"
       ]
     },
     {
@@ -131,6 +155,10 @@
         "Large projection screen (up to 120 inches)",
         "Includes all necessary cables and setup",
         "Technician available for operation"
+      ],
+       "qualifiers": [
+        "Content source (USB, laptop, streaming)?",
+        "Projection surface and approximate size?"
       ]
     },
     {
@@ -150,6 +178,10 @@
         "High-power LED light source for bright projection",
         "Can be projected on walls, floors, or ceilings",
         "Elegant and personalized touch"
+      ],
+       "qualifiers": [
+        "Do you have initials/logo, or should we design it?",
+        "Preferred projection location (dance floor, wall)?"
       ]
     },
     {
@@ -169,13 +201,18 @@
         "Customizable size and configuration",
         "Live video feed capabilities",
         "Professional technician for setup and operation"
+      ],
+       "qualifiers": [
+        "What content will you show (video loop, live camera, slides, logos)?",
+        "Preferred wall size or stage width to match?",
+        "Ground-stack or flown from venue truss?"
       ]
     },
     {
       "id": "champagne_hostess",
       "label": "Champagne Dress Hostess",
       "category": "Specialty Welcomes",
-      "keywords": ["champagne girl", "champagne lady", "chica champaña", "welcoming"],
+      "keywords": ["champagne girl", "champagne lady", "chica champaña", "welcoming", "cocktail hour"],
       "packageCode": "ENT-CHMP",
       "qbItem": "Service-Champagne-Hostess",
       "visible": false,
@@ -188,6 +225,12 @@
         "Holds up to 72 glasses of champagne",
         "Customizable attire to match event theme",
         "Perfect for cocktail hours and grand entrances"
+      ],
+      "qualifiers": [
+        "Roughly how many guests will arrive during welcome?",
+        "How long would you like the hostess to serve (e.g., 60–90 minutes)?",
+        "Shall we provide the bubbly or will the venue/caterer?",
+        "Any theme/attire to match?"
       ]
     },
     {
@@ -207,6 +250,10 @@
         "Ideal for elegant greetings and photo ops",
         "Can distribute programs or escort guests",
         "Creates a sophisticated and immersive atmosphere"
+      ],
+      "qualifiers": [
+        "Entry greeting, escorting to tables, or both?",
+        "Any specific color palette or wardrobe notes?"
       ]
     },
     {
@@ -226,6 +273,12 @@
         "Full RGB color control",
         "Dynamic and music-reactive patterns",
         "Perfect for entrances and photo backdrops"
+      ],
+      "qualifiers": [
+        "Is the tunnel for a grand entrance or a photo backdrop?",
+        "Space available (length × width) and ceiling height?",
+        "Indoor or outdoor and where are the nearest power outlets?",
+        "Static brand colors or dynamic/music-reactive looks?"
       ]
     },
     {
@@ -245,6 +298,10 @@
         "High-energy performer",
         "Excellent for photos and surprising guests",
         "Adds a hilarious and memorable element"
+      ],
+      "qualifiers": [
+        "Which character(s) are you considering?",
+        "How many additional dancers would you like?"
       ]
     },
     {
@@ -264,6 +321,10 @@
         "Colorful and eye-catching costumes",
         "Can be used for welcoming or dancing",
         "Creates a grand, festive atmosphere"
+      ],
+      "qualifiers": [
+        "Will they greet guests, perform, or both?",
+        "Any costume color/theme to match?"
       ]
     },
     {
@@ -283,6 +344,10 @@
         "Interactive and engaging entertainment",
         "Perfect for pre-event mingling",
         "Sets a fun and whimsical tone"
+      ],
+       "qualifiers": [
+        "Entry welcome vs roaming interaction?",
+        "Preferred duration (about 60 minutes)?"
       ]
     },
     {
@@ -302,6 +367,10 @@
         "One Stilt Walker",
         "One LED Robot",
         "Includes party props, glow sticks, and more"
+      ],
+      "qualifiers": [
+        "How long do you want the full show?",
+        "Any preferred character or theme?"
       ]
     },
     {
@@ -321,6 +390,10 @@
         "One carnival stilt walker",
         "Energetic choreographed performance",
         "Interactive dancing with guests"
+      ],
+      "qualifiers": [
+        "Do you want a mini dance show plus photos?",
+        "Time slot during the event?"
       ]
     },
     {
@@ -340,6 +413,10 @@
         "Adjustable flake size and output",
         "Safe for indoor use",
         "Ideal for winter-themed parties and first dances"
+      ],
+      "qualifiers": [
+        "What area do you want covered with snowfall?",
+        "Indoor location and ceiling height?"
       ]
     }
   ]

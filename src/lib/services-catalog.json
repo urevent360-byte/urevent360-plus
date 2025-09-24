@@ -1,0 +1,346 @@
+{
+  "services": [
+    {
+      "id": "360_booth",
+      "label": "360 Photo Booth",
+      "category": "Photo Booths",
+      "keywords": ["360", "360 booth", "cabina 360", "video 360", "slow motion"],
+      "packageCode": "PHT-360",
+      "qbItem": "Service-360-Booth",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service1/800/600", "alt": "Guests enjoying the 360 photo booth" }
+      ],
+      "shortDescription": "A modern platform where guests can record dynamic, slow-motion videos with a rotating camera.",
+      "features": [
+        "Revolving camera for 360° video",
+        "Slow-motion & boomerang effects",
+        "Instant social media sharing",
+        "Professional attendant"
+      ]
+    },
+    {
+      "id": "magic_mirror",
+      "label": "Magic Mirror",
+      "category": "Photo Booths",
+      "keywords": ["magic mirror", "espejo mágico", "mirror booth", "selfie mirror"],
+      "packageCode": "PHT-MIR",
+      "qbItem": "Service-Magic-Mirror",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service3/800/600", "alt": "Guests interacting with the Magic Mirror" }
+      ],
+      "shortDescription": "An interactive, full-length mirror that takes amazing selfies with fun animations.",
+      "features": [
+        "Full-length touchscreen mirror",
+        "Voice & animated guidance",
+        "On-screen signing & emojis",
+        "Instant high-quality prints"
+      ]
+    },
+    {
+      "id": "printer_booth",
+      "label": "Photo Booth Printer",
+      "category": "Photo Booths",
+      "keywords": ["photo printer", "instant prints", "impresiones"],
+      "packageCode": "PHT-PRN",
+      "qbItem": "Service-Printer-Addon",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service2/800/600", "alt": "Guests holding freshly printed photo strips" }
+      ],
+      "shortDescription": "Receive glossy, high-quality photo strips instantly with custom logos and designs.",
+      "features": [
+        "High-speed dye-sublimation printing",
+        "Customizable print layouts & branding",
+        "Glossy or matte finish options",
+        "Unlimited prints during event"
+      ]
+    },
+    {
+      "id": "led_robot",
+      "label": "La Hora Loca with LED Robot",
+      "category": "Hora Loca & Performers",
+      "keywords": ["hora loca", "led robot", "robot led", "animación", "co2"],
+      "packageCode": "ENT-ROBO",
+      "qbItem": "Service-LED-Robot",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service4/800/600", "alt": "Giant LED Robot dancing with guests" }
+      ],
+      "shortDescription": "An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.",
+      "features": [
+        "10-foot tall LED robot performer",
+        "CO₂ cannon blasts",
+        "Handheld confetti cannons",
+        "Party props for guests (hats, glasses)"
+      ]
+    },
+    {
+      "id": "cold_sparklers",
+      "label": "Cold Sparklers",
+      "category": "Effects",
+      "keywords": ["cold sparks", "chispas frías", "indoor fireworks", "special effects"],
+      "packageCode": "EFX-SPK",
+      "qbItem": "Service-Cold-Sparklers",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service5/800/600", "alt": "Bride and groom with cold sparklers" }
+      ],
+      "shortDescription": "Create a stunning, safe pyrotechnic-like effect for magical moments without heat or smoke.",
+      "features": [
+        "Completely safe for indoor use",
+        "No smoke, no odor",
+        "Adjustable height and duration",
+        "Perfect for grand entrances & first dances"
+      ]
+    },
+    {
+      "id": "dance_on_clouds",
+      "label": "Dance on the Clouds",
+      "category": "Effects",
+      "keywords": ["dry ice", "low fog", "humo bajo", "first dance"],
+      "packageCode": "EFX-CLD",
+      "qbItem": "Service-Cloud-Effect",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service6/800/600", "alt": "Couple dancing on a cloud of dry ice" }
+      ],
+      "shortDescription": "A dreamy, thick cloud effect that covers the dance floor for a fairy-tale first dance.",
+      "features": [
+        "Professional-grade dry ice machine",
+        "Thick, low-lying fog that stays near the floor",
+        "Odorless and leaves no residue",
+        "Creates a magical atmosphere"
+      ]
+    },
+    {
+      "id": "hq_projector",
+      "label": "Projector (Slideshows & Videos)",
+      "category": "Screens & Projection",
+      "keywords": ["projector", "proyector", "slideshow", "video projection"],
+      "packageCode": "AV-PROJ",
+      "qbItem": "Service-Projector-Rental",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service7/800/600", "alt": "A slideshow playing on a large screen at a wedding" }
+      ],
+      "shortDescription": "Display slideshows and videos on a large screen for an emotional and personal touch.",
+      "features": [
+        "High-definition 1080p projector",
+        "Large projection screen (up to 120 inches)",
+        "Includes all necessary cables and setup",
+        "Technician available for operation"
+      ]
+    },
+    {
+      "id": "monogram_projector",
+      "label": "Monogram Projector",
+      "category": "Screens & Projection",
+      "keywords": ["gobo", "monogram", "logo projection", "wedding lighting"],
+      "packageCode": "AV-GOBO",
+      "qbItem": "Service-Monogram-Projector",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service8/800/600", "alt": "A custom wedding monogram on a dance floor" }
+      ],
+      "shortDescription": "Project a custom, glowing monogram of initials or designs onto the dance floor or wall.",
+      "features": [
+        "Custom monogram design included",
+        "High-power LED light source for bright projection",
+        "Can be projected on walls, floors, or ceilings",
+        "Elegant and personalized touch"
+      ]
+    },
+    {
+      "id": "led_video_wall",
+      "label": "LED Screens Wall",
+      "category": "Screens & Projection",
+      "keywords": ["video wall", "led wall", "stage design", "visuals"],
+      "packageCode": "AV-LEDW",
+      "qbItem": "Service-LED-Wall",
+      "visible": true,
+      "images": [
+        { "url": "https://picsum.photos/seed/service9/800/600", "alt": "A huge LED wall behind a DJ at a party" }
+      ],
+      "shortDescription": "A massive LED screen wall for vibrant visuals, animations, and a futuristic event look.",
+      "features": [
+        "Seamless high-resolution panels",
+        "Customizable size and configuration",
+        "Live video feed capabilities",
+        "Professional technician for setup and operation"
+      ]
+    },
+    {
+      "id": "champagne_hostess",
+      "label": "Champagne Dress Hostess",
+      "category": "Specialty Welcomes",
+      "keywords": ["champagne girl", "champagne lady", "chica champaña", "welcoming"],
+      "packageCode": "ENT-CHMP",
+      "qbItem": "Service-Champagne-Hostess",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/champagne1/800/600", "alt": "A hostess in a dress that holds champagne glasses" }
+      ],
+      "shortDescription": "A glamorous hostess in a custom dress that holds dozens of champagne glasses to welcome guests.",
+      "features": [
+        "Professional model hostess",
+        "Holds up to 72 glasses of champagne",
+        "Customizable attire to match event theme",
+        "Perfect for cocktail hours and grand entrances"
+      ]
+    },
+    {
+      "id": "bridgerton_welcome",
+      "label": "Welcome Bridgerton Style",
+      "category": "Specialty Welcomes",
+      "keywords": ["bridgerton", "elegant welcome", "themed performers", "modelos"],
+      "packageCode": "ENT-BRDG",
+      "qbItem": "Service-Bridgerton-Welcome",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/bridgerton1/800/600", "alt": "Performers in regency-era costumes greeting guests" }
+      ],
+      "shortDescription": "Elegant performers in regency-style attire who greet and escort guests, adding a touch of class.",
+      "features": [
+        "Two or more performers in costume",
+        "Ideal for elegant greetings and photo ops",
+        "Can distribute programs or escort guests",
+        "Creates a sophisticated and immersive atmosphere"
+      ]
+    },
+    {
+      "id": "led_tunnel",
+      "label": "LED Tunnel / Neon Tubes",
+      "category": "Lighting & Installations",
+      "keywords": ["túnel led", "neon tubes", "infinity tunnel", "backdrop"],
+      "packageCode": "LIT-TUN",
+      "qbItem": "Service-LED-Tunnel",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/tunnel1/800/600", "alt": "An infinity mirror style LED tunnel" }
+      ],
+      "shortDescription": "A stunning visual installation of light arches, creating a tunnel or backdrop.",
+      "features": [
+        "Modular and customizable length",
+        "Full RGB color control",
+        "Dynamic and music-reactive patterns",
+        "Perfect for entrances and photo backdrops"
+      ]
+    },
+    {
+      "id": "big_head_characters",
+      "label": "Big-Head Characters",
+      "category": "Hora Loca & Performers",
+      "keywords": ["big head", "cabezones", "mascots", "hora loca characters"],
+      "packageCode": "ENT-BIGH",
+      "qbItem": "Service-Big-Head-Characters",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/bighead1/800/600", "alt": "A person in a large character head dancing" }
+      ],
+      "shortDescription": "Larger-than-life character mascots to dance and interact with your guests during Hora Loca.",
+      "features": [
+        "Choice of popular characters (e.g., Bad Bunny, Karol G)",
+        "High-energy performer",
+        "Excellent for photos and surprising guests",
+        "Adds a hilarious and memorable element"
+      ]
+    },
+    {
+      "id": "carnival_stilts_double",
+      "label": "Two Carnival Stilt Walkers",
+      "category": "Hora Loca & Performers",
+      "keywords": ["zanquistas", "stilt walkers", "carnaval"],
+      "packageCode": "ENT-STLT2",
+      "qbItem": "Service-Stilt-Walkers-Duo",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/stilt1/800/600", "alt": "Two stilt walkers in colorful carnival costumes" }
+      ],
+      "shortDescription": "A pair of towering stilt walkers in vibrant carnival attire to animate your party.",
+      "features": [
+        "Two professional stilt performers",
+        "Colorful and eye-catching costumes",
+        "Can be used for welcoming or dancing",
+        "Creates a grand, festive atmosphere"
+      ]
+    },
+    {
+      "id": "circus_welcome",
+      "label": "Circus-Theme Welcome",
+      "category": "Hora Loca & Performers",
+      "keywords": ["circo", "circus", "mime", "juggler", "bienvenida"],
+      "packageCode": "ENT-CIRC",
+      "qbItem": "Service-Circus-Welcome",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/circus1/800/600", "alt": "A mime and juggler performing for guests at an event entrance" }
+      ],
+      "shortDescription": "A welcome act with circus performers like mimes, jugglers, or unicyclists.",
+      "features": [
+        "Choice of circus-themed performers",
+        "Interactive and engaging entertainment",
+        "Perfect for pre-event mingling",
+        "Sets a fun and whimsical tone"
+      ]
+    },
+    {
+      "id": "hora_loca_deluxe",
+      "label": "Hora Loca Deluxe",
+      "category": "Hora Loca & Performers",
+      "keywords": ["hora loca deluxe", "complete show", "show completo"],
+      "packageCode": "ENT-HLDX",
+      "qbItem": "Service-Hora-Loca-Deluxe",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/deluxe1/800/600", "alt": "A full Hora Loca show with multiple performers" }
+      ],
+      "shortDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot.",
+      "features": [
+        "Multiple costumed dancers",
+        "One Stilt Walker",
+        "One LED Robot",
+        "Includes party props, glow sticks, and more"
+      ]
+    },
+    {
+      "id": "brazil_carnival_plus_stilt",
+      "label": "Brazilian Carnival + Stilt Walker",
+      "category": "Hora Loca & Performers",
+      "keywords": ["brazilian carnival", "samba", "zanquista", "garotas"],
+      "packageCode": "ENT-BRST",
+      "qbItem": "Service-Brazil-Stilt",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/brazil1/800/600", "alt": "Samba dancers in feathered costumes next to a stilt walker" }
+      ],
+      "shortDescription": "Authentic Brazilian samba dancers (garotas) plus a towering stilt walker for a true carnival feel.",
+      "features": [
+        "Two samba dancers in authentic costumes",
+        "One carnival stilt walker",
+        "Energetic choreographed performance",
+        "Interactive dancing with guests"
+      ]
+    },
+    {
+      "id": "snow_effect",
+      "label": "Snow Effect",
+      "category": "Effects",
+      "keywords": ["nieve artificial", "snow machine", "winter theme"],
+      "packageCode": "EFX-SNW",
+      "qbItem": "Service-Snow-Machine",
+      "visible": false,
+      "images": [
+        { "url": "https://picsum.photos/seed/snow1/800/600", "alt": "Fake snow falling during a winter-themed event" }
+      ],
+      "shortDescription": "Create a magical winter wonderland with our professional, safe, and evaporating snow machines.",
+      "features": [
+        "Evaporating snow fluid leaves no residue",
+        "Adjustable flake size and output",
+        "Safe for indoor use",
+        "Ideal for winter-themed parties and first dances"
+      ]
+    }
+  ]
+}

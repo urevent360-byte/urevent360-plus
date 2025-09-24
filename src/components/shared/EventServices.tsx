@@ -1,15 +1,18 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { listSelectedServices, listAddons, requestAddons, approveServiceRequest, listRequestedServices, type Addon, type RequestedService } from '@/lib/data-adapter';
+import { listSelectedServices, requestAddons, approveServiceRequest, listRequestedServices } from '@/lib/data-adapter';
+import type { Addon, RequestedService, Service } from '@/app/admin/services/[serviceId]/actions';
 import Image from 'next/image';
 import { Check, PlusCircle, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import servicesCatalog from '@/lib/services-catalog.json';
 
 type EventServicesProps = {
     eventId: string;
@@ -19,27 +22,27 @@ type EventServicesProps = {
 
 export function EventServices({ eventId, role, onDataChange }: EventServicesProps) {
     const [bookedServices, setBookedServices] = useState<RequestedService[]>([]);
-    const [availableAddons, setAvailableAddons] = useState<Addon[]>([]);
+    const [availableAddons, setAvailableAddons] = useState<Service[]>([]);
     const [requestedAddons, setRequestedAddons] = useState<RequestedService[]>([]);
-    const [cart, setCart] = useState<Addon[]>([]);
+    const [cart, setCart] = useState<Service[]>([]);
     const { toast } = useToast();
     const { user } = useAuth();
 
     const fetchData = async () => {
         if (!user || !eventId) return;
         
-        const [allBooked, allAddons, allRequests] = await Promise.all([
+        const [allBooked, allRequests] = await Promise.all([
             listSelectedServices(eventId),
-            listAddons(),
             listRequestedServices(eventId)
         ]);
         
-        const bookedServiceNames = allBooked.map(s => s.name);
-        const requestedAddonNames = allRequests.map(r => r.serviceName);
+        const bookedServiceIds = allBooked.map(s => s.serviceId);
+        const requestedAddonIds = allRequests.map(r => r.serviceId);
         
-        const unbookedAddons = allAddons.filter(addon => 
-            !bookedServiceNames.includes(addon.name) && 
-            !requestedAddonNames.includes(addon.name)
+        const unbookedAddons = servicesCatalog.services.filter(service => 
+            service.active &&
+            !bookedServiceIds.includes(service.id) && 
+            !requestedAddonIds.includes(service.id)
         );
 
         setBookedServices(allBooked);
@@ -51,7 +54,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
         fetchData();
     }, [user, eventId]);
 
-    const handleAddToCart = (addon: Addon) => {
+    const handleAddToCart = (addon: Service) => {
         setCart(prev => [...prev, addon]);
     };
 
@@ -61,13 +64,13 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
 
     const handleSendRequest = async () => {
         if (cart.length === 0) return;
-        await requestAddons(eventId, cart.map(item => item.name));
+        await requestAddons(eventId, cart.map(item => item.id));
         toast({
             title: 'Request Sent!',
             description: 'Your request for additional services has been sent to the admin for approval.'
         });
         setCart([]);
-        fetchData(); // Refresh data after request
+        fetchData();
         if (onDataChange) onDataChange();
     };
     
@@ -77,7 +80,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
             title: 'Service Approved!',
             description: 'The addon is now approved and can be added to an invoice.'
         });
-        fetchData(); // Refresh data
+        fetchData();
         if (onDataChange) onDataChange();
     };
 
@@ -151,7 +154,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         <Card key={booking.id}>
                             <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
                                 <div className="md:col-span-3">
-                                    <h3 className="font-semibold">{booking.name || booking.serviceName}</h3>
+                                    <h3 className="font-semibold">{booking.serviceName}</h3>
                                 </div>
                                 <div>
                                     <Badge variant={'default'} className="bg-green-500">Booked</Badge>
@@ -174,11 +177,11 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         return (
                             <Card key={addon.id} className="overflow-hidden">
                                 <div className="relative h-48 w-full">
-                                    <Image src={addon.image} alt={addon.name} fill className="object-cover"/>
+                                    <Image src={addon.heroImage} alt={addon.title} fill className="object-cover"/>
                                 </div>
                                 <div className="p-4">
-                                    <h3 className="font-semibold">{addon.name}</h3>
-                                    <p className="text-sm text-muted-foreground mt-1 h-10">{addon.description}</p>
+                                    <h3 className="font-semibold">{addon.title}</h3>
+                                    <p className="text-sm text-muted-foreground mt-1 h-10">{addon.shortDescription}</p>
                                     <Button 
                                         className="w-full mt-4" 
                                         variant={isInCart ? "outline" : "default"}
@@ -199,7 +202,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         <div>
                             <h4 className="font-semibold">Services to request:</h4>
                             <ul className="list-disc list-inside text-sm text-muted-foreground">
-                                {cart.map(item => <li key={item.id}>{item.name}</li>)}
+                                {cart.map(item => <li key={item.id}>{item.title}</li>)}
                             </ul>
                         </div>
                         <Button onClick={handleSendRequest}>

@@ -9,21 +9,21 @@ import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import servicesCatalog from '@/lib/services-catalog.json';
 
-const visibleServices = servicesCatalog.services.filter(service => service.visible);
+const activeServices = servicesCatalog.services.filter(service => service.active);
 
 export default function ServicesPage() {
   const { addToCart } = useCart();
   const { toast } = useToast();
 
-  const handleAddToCart = (service: typeof visibleServices[0]) => {
+  const handleAddToCart = (service: typeof activeServices[0]) => {
     addToCart({
       slug: service.id,
-      name: service.label,
-      image: service.images[0]?.url || '',
+      name: service.title,
+      image: service.heroImage || '',
     });
     toast({
       title: 'Added to cart!',
-      description: `${service.label} has been added to your inquiry cart.`,
+      description: `${service.title} has been added to your inquiry cart.`,
     });
   };
 
@@ -39,14 +39,14 @@ export default function ServicesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {visibleServices.map((service) => (
+        {activeServices.map((service) => (
           <Card key={service.id} className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2">
              <div className="bg-white">
-              <Link href={`/services/${service.id}`} className="block">
+              <Link href={`/services/${service.slug}`} className="block">
                 <div className="relative h-64 w-full">
                   <Image
-                    src={service.images[0]?.url || 'https://picsum.photos/800/600'}
-                    alt={service.images[0]?.alt || service.label}
+                    src={service.heroImage || 'https://picsum.photos/800/600'}
+                    alt={service.title}
                     fill
                     className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -54,11 +54,11 @@ export default function ServicesPage() {
                 </div>
               </Link>
               <div className="p-6">
-                <h3 className="font-headline text-xl font-semibold text-primary">{service.label}</h3>
+                <h3 className="font-headline text-xl font-semibold text-primary">{service.title}</h3>
                 <p className="mt-2 text-gray-700 min-h-[72px]">{service.shortDescription}</p>
                 <div className="mt-4 flex gap-2">
                     <Button asChild className="flex-1" variant="outline">
-                        <Link href={`/services/${service.id}`}>
+                        <Link href={`/services/${service.slug}`}>
                             View Details <ArrowRight className="ml-2" />
                         </Link>
                     </Button>

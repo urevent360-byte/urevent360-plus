@@ -1,6 +1,7 @@
 
 'use client';
 
+import * as React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,7 +24,7 @@ import {
 } from '@/components/ui/form';
 import { upsertServiceAction, getServiceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import servicesCatalog from '@/lib/services-catalog.json';
 import { useEffect, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
@@ -31,17 +32,19 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const serviceSchema = z.object({
   id: z.string().min(2, 'ID is required and must be unique.'),
-  label: z.string().min(2, 'Service label is required.'),
+  slug: z.string().min(2, 'Slug must be unique.'),
+  title: z.string().min(2, 'Service title is required.'),
   category: z.string().min(1, 'Category is required.'),
   shortDescription: z.string().min(10, 'Short description must be at least 10 characters.'),
-  features: z.array(z.string().min(3, 'Feature text cannot be empty.')).min(1, 'At least one feature is required.'),
-  keywords: z.array(z.string().min(2, 'Keyword cannot be empty.')).min(1, 'At least one keyword is required.'),
-  qualifiers: z.array(z.string().min(10, 'Qualifier text cannot be empty.')).min(1, 'At least one qualifier question is required.'),
-  images: z.array(z.object({
-    url: z.string().url(),
-    alt: z.string().min(2, 'Alt text is required.'),
-  })).min(1, 'At least one image is required.'),
-  visible: z.boolean().default(false),
+  longDescription: z.string().optional(),
+  heroImage: z.string().url('A valid hero image URL is required.'),
+  galleryImages: z.array(z.string().url()).optional(),
+  active: z.boolean().default(false),
+  featured: z.boolean().default(false),
+  options: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
+  keywords: z.array(z.string().min(1, 'At least one keyword is required.')),
+  qualifiers: z.array(z.string().min(1, 'At least one qualifier question is required.')),
   packageCode: z.string().optional(),
   qbItem: z.string().optional(),
 });
@@ -81,11 +84,10 @@ const ArrayFieldManager = ({ name, control, label, description }: { name: any, c
 };
 
 
-export default function ServiceFormPage() {
+export default function ServiceFormPage({ params }: { params: { serviceId: string } }) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const serviceId = searchParams.get('id');
-    const isEditing = !!serviceId;
+    const serviceId = params.serviceId;
+    const isEditing = serviceId !== 'new';
     
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(isEditing);
@@ -94,14 +96,19 @@ export default function ServiceFormPage() {
         resolver: zodResolver(serviceSchema),
         defaultValues: {
             id: '',
-            label: '',
+            slug: '',
+            title: '',
             category: '',
             shortDescription: '',
-            features: [],
+            longDescription: '',
+            heroImage: '',
+            galleryImages: [],
+            active: false,
+            featured: false,
+            options: [],
+            tags: [],
             keywords: [],
             qualifiers: [],
-            images: [],
-            visible: false,
             packageCode: '',
             qbItem: '',
         },
@@ -113,7 +120,7 @@ export default function ServiceFormPage() {
                 setIsLoading(true);
                 const result = await getServiceAction(serviceId);
                 if (result.success && result.service) {
-                    form.reset(result.service as ServiceFormValues);
+                    form.reset(result.service);
                 } else {
                     toast({ title: "Error", description: result.message, variant: "destructive" });
                     router.push('/admin/services');
@@ -127,15 +134,19 @@ export default function ServiceFormPage() {
 
     const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
         control: form.control,
-        name: 'images',
+        name: 'galleryImages',
     });
     
     async function onSubmit(data: ServiceFormValues) {
-        const result = await upsertServiceAction(data, isEditing);
+        // Ensure slug is a URL-friendly version of the ID
+        const slug = data.id.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const dataWithSlug = { ...data, slug };
+
+        const result = await upsertServiceAction(dataWithSlug, isEditing);
         if (result.success) {
             toast({
                 title: 'Service Saved!',
-                description: `The service "${data.label}" has been successfully saved.`,
+                description: `The service "${data.title}" has been successfully saved.`,
             });
             router.push('/admin/services');
             router.refresh();
@@ -181,10 +192,10 @@ export default function ServiceFormPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <FormField
                             control={form.control}
-                            name="label"
+                            name="title"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Service Label</FormLabel>
+                                    <FormLabel>Service Title</FormLabel>
                                     <FormControl>
                                         <Input placeholder="e.g., Magic Mirror" {...field} />
                                     </FormControl>
@@ -243,10 +254,23 @@ export default function ServiceFormPage() {
                             </FormItem>
                         )}
                     />
+                     <FormField
+                        control={form.control}
+                        name="longDescription"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Long Description</FormLabel>
+                                 <FormControl>
+                                    <Textarea placeholder="A detailed description for the service page. Supports rich text." {...field} className="min-h-32" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <ArrayFieldManager name="features" control={form.control} label="Features" description="List key features of the service." />
                         <ArrayFieldManager name="keywords" control={form.control} label="Keywords" description="For search and AI mapping. (e.g., '360', 'cabina 360')" />
                         <ArrayFieldManager name="qualifiers" control={form.control} label="Qualifier Questions" description="Questions the AI will ask for this service." />
+                        <ArrayFieldManager name="tags" control={form.control} label="Tags" description="For filtering on the public site." />
                      </div>
                 </CardContent>
             </Card>
@@ -254,60 +278,50 @@ export default function ServiceFormPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Photo Gallery Management</CardTitle>
-                    <CardDescription>Upload, replace, or delete images for this service.</CardDescription>
+                    <CardDescription>Provide a main Hero Image and optional gallery images.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {imageFields.map((image, index) => (
-                            <div key={image.id} className="relative group border rounded-lg p-2 space-y-2">
-                                <Image
-                                    src={image.url}
-                                    alt={image.alt}
-                                    width={400}
-                                    height={300}
-                                    className="rounded-md aspect-[4/3] object-cover w-full bg-muted"
-                                />
-                                 <FormField
-                                    control={form.control}
-                                    name={`images.${index}.url`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs">Image URL</FormLabel>
-                                            <FormControl><Input {...field}/></FormControl>
-                                            <FormMessage className="text-xs" />
-                                        </FormItem>
-                                    )}
-                                />
+                 <CardContent className="space-y-6">
+                    <FormField
+                        control={form.control}
+                        name="heroImage"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Hero Image URL</FormLabel>
+                                <FormControl>
+                                    <div className="flex items-center gap-4">
+                                        <Input placeholder="https://example.com/image.jpg" {...field} />
+                                        {field.value && (
+                                            <Image src={field.value} alt="Hero Preview" width={80} height={45} className="rounded-md object-cover aspect-video" />
+                                        )}
+                                    </div>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <div className="space-y-4">
+                        <FormLabel>Additional Gallery Images</FormLabel>
+                        {imageFields.map((field, index) => (
+                            <div key={field.id} className="flex items-center gap-2">
                                 <FormField
                                     control={form.control}
-                                    name={`images.${index}.alt`}
+                                    name={`galleryImages.${index}`}
                                     render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="text-xs">Alt Text</FormLabel>
-                                            <FormControl><Input placeholder="Describe the image" {...field}/></FormControl>
-                                            <FormMessage className="text-xs" />
+                                        <FormItem className="flex-grow">
+                                            <FormControl>
+                                                <Input placeholder="https://example.com/image.jpg" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <Button size="icon" type="button" variant="destructive" className="h-8 w-8" onClick={() => removeImage(index)}>
-                                        <X className="h-4 w-4" />
-                                        <span className="sr-only">Delete</span>
-                                    </Button>
-                                </div>
+                                <Button type="button" variant="destructive" size="icon" onClick={() => removeImage(index)}><X className="h-4 w-4"/></Button>
                             </div>
                         ))}
-                         <div 
-                            className="flex flex-col items-center justify-center w-full min-h-64 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted"
-                            onClick={() => appendImage({ url: 'https://picsum.photos/seed/new/800/600', alt: ''})}
-                        >
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
-                                <p className="mb-2 text-sm text-muted-foreground text-center">Click to add image</p>
-                            </div>
-                        </div>
+                        <Button type="button" variant="outline" size="sm" onClick={() => appendImage('')}>
+                            <PlusCircle className="mr-2"/>Add Image URL
+                        </Button>
                     </div>
-                     {form.formState.errors.images && <p className="text-sm text-destructive mt-2">{form.formState.errors.images.message}</p>}
                 </CardContent>
             </Card>
 
@@ -341,26 +355,48 @@ export default function ServiceFormPage() {
                             )}
                         />
                     </div>
-                     <FormField
-                        control={form.control}
-                        name="visible"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                                <FormLabel className="text-base">Visible on Public Site</FormLabel>
-                                <FormDescription>
-                                    Show this service on the public-facing services page.
-                                </FormDescription>
-                            </div>
-                            <FormControl>
-                                <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                />
-                            </FormControl>
-                            </FormItem>
-                        )}
-                        />
+                     <div className="flex items-center space-x-8">
+                         <FormField
+                            control={form.control}
+                            name="active"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5 mr-4">
+                                    <FormLabel className="text-base">Active on Public Site</FormLabel>
+                                    <FormDescription>
+                                        Show this service on the public-facing services page.
+                                    </FormDescription>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                         <FormField
+                            control={form.control}
+                            name="featured"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                                <div className="space-y-0.5 mr-4">
+                                    <FormLabel className="text-base">Featured Service</FormLabel>
+                                    <FormDescription>
+                                        Show this service on the home page carousel.
+                                    </FormDescription>
+                                </div>
+                                <FormControl>
+                                    <Switch
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                    />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                    </div>
                 </CardContent>
             </Card>
 

@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { PlusCircle, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
-import { getServicesAction, deleteServiceAction, Service } from './form/actions';
+import { getServicesAction, deleteServiceAction, Service } from './[serviceId]/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -64,7 +64,7 @@ export default function ServiceManagementPage() {
           <p className="text-muted-foreground">Add, edit, or delete your event services.</p>
         </div>
         <Button asChild>
-          <Link href="/admin/services/form">
+          <Link href="/admin/services/new">
             <PlusCircle className="mr-2" />
             Add New Service
           </Link>
@@ -89,16 +89,16 @@ export default function ServiceManagementPage() {
             <TableBody>
               {services.map((service) => (
                 <TableRow key={service.id}>
-                  <TableCell className="font-medium">{service.label}</TableCell>
+                  <TableCell className="font-medium">{service.title}</TableCell>
                   <TableCell>{service.category}</TableCell>
                    <TableCell>
-                      <Badge variant={service.visible ? 'default' : 'secondary'}>
-                        {service.visible ? 'Public' : 'Hidden'}
+                      <Badge variant={service.active ? 'default' : 'secondary'}>
+                        {service.active ? 'Public' : 'Hidden'}
                       </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="sm" asChild className="mr-2">
-                      <Link href={`/admin/services/form?id=${service.id}`}><Edit className="mr-2 h-4 w-4"/>Edit</Link>
+                      <Link href={`/admin/services/${service.id}`}><Edit className="mr-2 h-4 w-4"/>Edit</Link>
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>

@@ -47,7 +47,7 @@ export default function AdminHomePage() {
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 gap-4">
                        <Button asChild variant="outline"><Link href="/admin/crm"><BookUser className="mr-2"/> Manage Leads</Link></Button>
-                       <Button asChild variant="outline"><Link href="/admin/services/form"><Briefcase className="mr-2"/> Add New Service</Link></Button>
+                       <Button asChild variant="outline"><Link href="/admin/services/new"><Briefcase className="mr-2"/> Add New Service</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/assistant"><Bot className="mr-2"/> Chat with AI</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/content"><Newspaper className="mr-2"/> Edit Content</Link></Button>
                        <Button asChild variant="outline"><Link href="/admin/calendar"><Calendar className="mr-2"/> View Calendar</Link></Button>

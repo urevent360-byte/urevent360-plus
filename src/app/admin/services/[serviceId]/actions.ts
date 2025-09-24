@@ -4,13 +4,12 @@
 import { z } from 'zod';
 import fs from 'fs/promises';
 import path from 'path';
-import servicesCatalog from '@/lib/services-catalog.json';
 
 const catalogPath = path.join(process.cwd(), 'src', 'lib', 'services-catalog.json');
 
 const serviceSchema = z.object({
   id: z.string().min(2, 'ID is required and must be unique.'),
-  slug: z.string().min(2, 'Slug is required.'),
+  slug: z.string().min(2, 'Slug is required and must be unique.'),
   title: z.string().min(2, 'Service title is required.'),
   category: z.string().min(1, 'Category is required.'),
   shortDescription: z.string().min(10, 'Short description must be at least 10 characters.'),
@@ -58,10 +57,7 @@ export async function getServiceAction(id: string): Promise<{ success: boolean; 
 }
 
 export async function upsertServiceAction(data: Service, isEditing: boolean): Promise<{ success: boolean; message?: string }> {
-  const validatedFields = serviceSchema.safeParse({
-    ...data,
-    slug: data.id, // Ensure slug is always same as id
-  });
+  const validatedFields = serviceSchema.safeParse(data);
 
   if (!validatedFields.success) {
     console.error('Validation errors:', validatedFields.error.flatten().fieldErrors);
@@ -82,6 +78,7 @@ export async function upsertServiceAction(data: Service, isEditing: boolean): Pr
     if (isEditing) {
       if (existingIndex !== -1) {
         services[existingIndex] = {
+            ...services[existingIndex], // Preserve existing fields like createdAt
             ...validatedFields.data,
             updatedAt: now,
         };

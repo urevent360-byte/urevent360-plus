@@ -20,6 +20,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<DisplayMessage[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const chatContentRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = () => {
@@ -33,28 +34,45 @@ export function ChatWidget() {
     if (chatContentRef.current) {
       chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, suggestions]);
 
-  const handleSendMessage = async () => {
-    if (input.trim() === '' || isLoading) return;
-    
-    const userMessage: DisplayMessage = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+  const processAndSetResponse = (responseText: string) => {
+    const suggestionMatch = responseText.match(/SUGGEST:\s*\|([^|]+(?:\|[^|]+)*)\|/);
+    if (suggestionMatch && suggestionMatch[1]) {
+      const suggestedReplies = suggestionMatch[1].split('|').map(s => s.trim()).filter(Boolean);
+      setSuggestions(suggestedReplies);
+      const cleanText = responseText.replace(suggestionMatch[0], '').trim();
+      setMessages(prev => [...prev, { role: 'model', text: cleanText }]);
+    } else {
+      setSuggestions([]);
+      setMessages(prev => [...prev, { role: 'model', text: responseText }]);
+    }
+  };
+  
+  const sendMessage = async (messageText: string) => {
+    if (messageText.trim() === '' || isLoading) return;
+
     setIsLoading(true);
+    setSuggestions([]);
+    
+    const userMessage: DisplayMessage = { role: 'user', text: messageText };
+    setMessages(prev => [...prev, userMessage]);
+    
+    if (messageText === input) {
+        setInput('');
+    }
 
     const conversationHistory: MessageData[] = [
         ...messages.map(msg => ({
             role: msg.role,
             content: [{ text: msg.text }],
         })),
-        { role: 'user', content: [{ text: input }] },
+        { role: 'user', content: [{ text: messageText }] },
     ];
 
     try {
         const aiResponseText = await continueConversation(conversationHistory);
-        const aiMessage: DisplayMessage = { role: 'model', text: aiResponseText };
-        setMessages(prev => [...prev, aiMessage]);
+        processAndSetResponse(aiResponseText);
     } catch (error) {
         console.error("AI Error:", error);
         const errorMessage: DisplayMessage = { role: 'model', text: "I'm sorry, I encountered an error. Please try again." };
@@ -78,7 +96,7 @@ export function ChatWidget() {
       <div className={cn("fixed bottom-4 right-4 z-50 w-[calc(100vw-2rem)] max-w-md transition-all duration-300",
         isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90 pointer-events-none'
       )}>
-        <Card className="h-[60vh] flex flex-col shadow-2xl">
+        <Card className="h-[70vh] flex flex-col shadow-2xl">
           <CardHeader className="flex flex-row items-center justify-between border-b">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10 bg-primary text-primary-foreground">
@@ -123,6 +141,15 @@ export function ChatWidget() {
                     </div>
                 </div>
             )}
+             {suggestions.length > 0 && !isLoading && (
+              <div className="flex flex-wrap gap-2 justify-start pt-2">
+                {suggestions.map((suggestion, index) => (
+                  <Button key={index} variant="outline" size="sm" onClick={() => sendMessage(suggestion)}>
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            )}
           </CardContent>
           <div className="p-4 border-t">
             <div className="flex items-center gap-2">
@@ -130,10 +157,10 @@ export function ChatWidget() {
                 placeholder="Ask about our services..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyDown={(e) => e.key === 'Enter' && sendMessage(input)}
                 disabled={isLoading}
               />
-              <Button onClick={handleSendMessage} disabled={isLoading}>
+              <Button onClick={() => sendMessage(input)} disabled={isLoading}>
                 <Send className="w-4 h-4" />
               </Button>
             </div>

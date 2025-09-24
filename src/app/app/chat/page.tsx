@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -22,34 +21,52 @@ export default function AppChatPage() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const chatContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatContentRef.current) {
       chatContentRef.current.scrollTop = chatContentRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, suggestions]);
 
-  const handleSendMessage = async () => {
-    if (input.trim() === '' || isLoading) return;
-    
-    const userMessage: DisplayMessage = { role: 'user', text: input };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
+  const processAndSetResponse = (responseText: string) => {
+    const suggestionMatch = responseText.match(/SUGGEST:\s*\|([^|]+(?:\|[^|]+)*)\|/);
+    if (suggestionMatch && suggestionMatch[1]) {
+      const suggestedReplies = suggestionMatch[1].split('|').map(s => s.trim()).filter(Boolean);
+      setSuggestions(suggestedReplies);
+      const cleanText = responseText.replace(suggestionMatch[0], '').trim();
+      setMessages(prev => [...prev, { role: 'model', text: cleanText }]);
+    } else {
+      setSuggestions([]);
+      setMessages(prev => [...prev, { role: 'model', text: responseText }]);
+    }
+  };
+
+  const sendMessage = async (messageText: string) => {
+    if (messageText.trim() === '' || isLoading) return;
+
     setIsLoading(true);
+    setSuggestions([]);
+    
+    const userMessage: DisplayMessage = { role: 'user', text: messageText };
+    setMessages(prev => [...prev, userMessage]);
+    
+    if (messageText === input) {
+        setInput('');
+    }
 
     const conversationHistory: MessageData[] = [
         ...messages.map(msg => ({
             role: msg.role,
             content: [{ text: msg.text }],
         })),
-        { role: 'user', content: [{ text: input }] },
+        { role: 'user', content: [{ text: messageText }] },
     ];
 
     try {
         const aiResponseText = await continueConversation(conversationHistory);
-        const aiMessage: DisplayMessage = { role: 'model', text: aiResponseText };
-        setMessages(prev => [...prev, aiMessage]);
+        processAndSetResponse(aiResponseText);
     } catch (error) {
         console.error("AI Error:", error);
         const errorMessage: DisplayMessage = { role: 'model', text: "I'm sorry, I encountered an error. Please try again." };
@@ -101,6 +118,15 @@ export default function AppChatPage() {
                   </div>
               </div>
           )}
+           {suggestions.length > 0 && !isLoading && (
+              <div className="flex flex-wrap gap-2 justify-start pt-2">
+                {suggestions.map((suggestion, index) => (
+                  <Button key={index} variant="outline" size="sm" onClick={() => sendMessage(suggestion)}>
+                    {suggestion}
+                  </Button>
+                ))}
+              </div>
+            )}
         </CardContent>
         <div className="p-4 border-t">
           <div className="flex items-center gap-2">
@@ -108,10 +134,10 @@ export default function AppChatPage() {
               placeholder="Ask about our services..."
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage(input)}
               disabled={isLoading}
             />
-            <Button onClick={handleSendMessage} disabled={isLoading}>
+            <Button onClick={() => sendMessage(input)} disabled={isLoading}>
               <Send className="w-4 h-4" />
             </Button>
           </div>

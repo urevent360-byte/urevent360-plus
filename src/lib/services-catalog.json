@@ -1,4 +1,3 @@
-
 {
   "services": [
     {
@@ -99,39 +98,6 @@
       ],
       "packageCode": "PHT-PRN",
       "qbItem": "Service-Printer-Addon",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "led_robot",
-      "slug": "led_robot",
-      "title": "La Hora Loca with LED Robot",
-      "category": "Hora Loca & Performers",
-      "shortDescription": "An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.",
-      "longDescription": "An unforgettable hour of high-energy fun, featuring a giant dancing LED robot, samba dancers, and tons of party props to get everyone on the dance floor.",
-      "heroImage": "https://picsum.photos/seed/service4/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": true,
-      "options": [],
-      "tags": [
-        "hora loca",
-        "performer",
-        "high-energy"
-      ],
-      "keywords": [
-        "hora loca",
-        "led robot",
-        "robot led",
-        "animación",
-        "co2"
-      ],
-      "qualifiers": [
-        "What time slot should the show start and for how many minutes?",
-        "Any theme preference (carnival, urban, circus)?"
-      ],
-      "packageCode": "ENT-ROBO",
-      "qbItem": "Service-LED-Robot",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
@@ -265,103 +231,66 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": "champagne_hostess",
-      "slug": "champagne_hostess",
-      "title": "Champagne Dress Hostess",
-      "category": "special_welcomes",
-      "shortDescription": "Modelo de bienvenida con vestido/estación de copas para recepción o cóctel. Personalizable por temática.",
-      "longDescription": "A glamorous hostess in a custom dress that holds dozens of champagne glasses to welcome guests. It's a unique and elegant way to start any celebration.",
-      "heroImage": "https://picsum.photos/seed/champagne1/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": false,
-      "options": [],
-      "tags": [
-        "welcome",
-        "luxury",
-        "interactive"
-      ],
-      "keywords": [
-        "champagne girl",
-        "champagne lady",
-        "chica champaña",
-        "welcoming",
-        "cocktail hour"
-      ],
-      "qualifiers": [
-        "Roughly how many guests will arrive during welcome?",
-        "How long would you like the hostess to serve (e.g., 60–90 minutes)?",
-        "Shall we provide the bubbly or will the venue/caterer?",
-        "Any theme/attire to match?"
-      ],
-      "packageCode": "ENT-CHMP",
-      "qbItem": "Service-Champagne-Hostess",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "bridgerton_welcome",
-      "slug": "bridgerton_welcome",
-      "title": "Welcome Bridgerton Style",
-      "category": "special_welcomes",
-      "shortDescription": "Recepción elegante con 2 modelos que guían a los invitados. Ideal para galas y bodas.",
-      "longDescription": "Elegant performers in regency-style attire who greet and escort guests, adding a touch of class. Perfect for themed weddings and upscale galas.",
-      "heroImage": "https://picsum.photos/seed/bridgerton1/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": false,
-      "options": [],
-      "tags": [
-        "themed",
-        "elegant",
-        "performer"
-      ],
-      "keywords": [
-        "bridgerton",
-        "elegant welcome",
-        "themed performers",
-        "modelos"
-      ],
-      "qualifiers": [
-        "Entry greeting, escorting to tables, or both?",
-        "Any specific color palette or wardrobe notes?"
-      ],
-      "packageCode": "ENT-BRDG",
-      "qbItem": "Service-Bridgerton-Welcome",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
-      "id": "led_tunnel",
-      "slug": "led_tunnel",
-      "title": "LED Tunnel & Neon Tube Installations",
-      "category": "installations",
-      "shortDescription": "Túnel/escenografía modular con tubos LED, colores dinámicos y escenas.",
-      "longDescription": "A stunning visual installation of light arches, creating a tunnel or backdrop. We are pioneers in Orlando for this type of installation. It's a guaranteed showstopper.",
-      "heroImage": "https://picsum.photos/seed/tunnel1/800/600",
+      "id": "led_robot",
+      "slug": "led_robot",
+      "title": "La Hora Loca with LED Robot",
+      "category": "Hora Loca & Performers",
+      "shortDescription": "An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.",
+      "longDescription": "An unforgettable hour of high-energy fun, featuring a giant dancing LED robot, samba dancers, and tons of party props to get everyone on the dance floor.",
+      "heroImage": "https://picsum.photos/seed/service4/800/600",
       "galleryImages": [],
       "active": true,
       "featured": true,
       "options": [],
       "tags": [
-        "lighting",
-        "installation",
-        "futuristic"
+        "hora loca",
+        "performer",
+        "high-energy"
       ],
       "keywords": [
-        "túnel led",
-        "neon tubes",
-        "infinity tunnel",
-        "backdrop"
+        "hora loca",
+        "led robot",
+        "robot led",
+        "animación",
+        "co2"
       ],
       "qualifiers": [
-        "Is the tunnel for a grand entrance or a photo backdrop?",
-        "Space available (length × width) and ceiling height?",
-        "Indoor or outdoor and where are the nearest power outlets?",
-        "Static brand colors or dynamic/music-reactive looks?"
+        "What time slot should the show start and for how many minutes?",
+        "Any theme preference (carnival, urban, circus)?"
       ],
-      "packageCode": "LIT-TUN",
-      "qbItem": "Service-LED-Tunnel",
+      "packageCode": "ENT-ROBO",
+      "qbItem": "Service-LED-Robot",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "hora_loca_deluxe",
+      "slug": "hora_loca_deluxe",
+      "title": "Hora Loca Deluxe",
+      "category": "hora_loca",
+      "shortDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot.",
+      "longDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot. This is the all-in-one package for an unforgettable party hour.",
+      "heroImage": "https://picsum.photos/seed/deluxe1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": true,
+      "options": [],
+      "tags": [
+        "hora loca",
+        "package",
+        "all-in-one"
+      ],
+      "keywords": [
+        "hora loca deluxe",
+        "complete show",
+        "show completo"
+      ],
+      "qualifiers": [
+        "How long do you want the full show?",
+        "Any preferred character or theme?"
+      ],
+      "packageCode": "ENT-HLDX",
+      "qbItem": "Service-Hora-Loca-Deluxe",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
@@ -462,37 +391,6 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": "hora_loca_deluxe",
-      "slug": "hora_loca_deluxe",
-      "title": "Hora Loca Deluxe",
-      "category": "hora_loca",
-      "shortDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot.",
-      "longDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot. This is the all-in-one package for an unforgettable party hour.",
-      "heroImage": "https://picsum.photos/seed/deluxe1/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": true,
-      "options": [],
-      "tags": [
-        "hora loca",
-        "package",
-        "all-in-one"
-      ],
-      "keywords": [
-        "hora loca deluxe",
-        "complete show",
-        "show completo"
-      ],
-      "qualifiers": [
-        "How long do you want the full show?",
-        "Any preferred character or theme?"
-      ],
-      "packageCode": "ENT-HLDX",
-      "qbItem": "Service-Hora-Loca-Deluxe",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
       "id": "big_head_characters",
       "slug": "big_head_characters",
       "title": "Big-Head Characters / Extra Dancers",
@@ -521,6 +419,107 @@
       ],
       "packageCode": "ENT-BIGH",
       "qbItem": "Service-Big-Head-Characters",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "champagne_hostess",
+      "slug": "champagne_hostess",
+      "title": "Champagne Dress Hostess",
+      "category": "special_welcomes",
+      "shortDescription": "Modelo de bienvenida con vestido/estación de copas para recepción o cóctel. Personalizable por temática.",
+      "longDescription": "A glamorous hostess in a custom dress that holds dozens of champagne glasses to welcome guests. It's a unique and elegant way to start any celebration.",
+      "heroImage": "https://picsum.photos/seed/champagne1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": false,
+      "options": [],
+      "tags": [
+        "welcome",
+        "luxury",
+        "interactive"
+      ],
+      "keywords": [
+        "champagne girl",
+        "champagne lady",
+        "chica champaña",
+        "welcoming",
+        "cocktail hour"
+      ],
+      "qualifiers": [
+        "Roughly how many guests will arrive during welcome?",
+        "How long would you like the hostess to serve (e.g., 60–90 minutes)?",
+        "Shall we provide the bubbly or will the venue/caterer?",
+        "Any theme/attire to match?"
+      ],
+      "packageCode": "ENT-CHMP",
+      "qbItem": "Service-Champagne-Hostess",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "bridgerton_welcome",
+      "slug": "bridgerton_welcome",
+      "title": "Welcome Bridgerton Style",
+      "category": "special_welcomes",
+      "shortDescription": "Recepción elegante con 2 modelos que guían a los invitados. Ideal para galas y bodas.",
+      "longDescription": "Elegant performers in regency-style attire who greet and escort guests, adding a touch of class. Perfect for themed weddings and upscale galas.",
+      "heroImage": "https://picsum.photos/seed/bridgerton1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": false,
+      "options": [],
+      "tags": [
+        "themed",
+        "elegant",
+        "performer"
+      ],
+      "keywords": [
+        "bridgerton",
+        "elegant welcome",
+        "themed performers",
+        "modelos"
+      ],
+      "qualifiers": [
+        "Entry greeting, escorting to tables, or both?",
+        "Any specific color palette or wardrobe notes?"
+      ],
+      "packageCode": "ENT-BRDG",
+      "qbItem": "Service-Bridgerton-Welcome",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "led_tunnel",
+      "slug": "led_tunnel",
+      "title": "LED Tunnel & Neon Tube Installations",
+      "category": "installations",
+      "shortDescription": "Túnel/escenografía modular con tubos LED, colores dinámicos y escenas.",
+      "longDescription": "A stunning visual installation of light arches, creating a tunnel or backdrop. We are pioneers in Orlando for this type of installation. It's a guaranteed showstopper.",
+      "heroImage": "https://picsum.photos/seed/tunnel1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": true,
+      "options": [],
+      "tags": [
+        "lighting",
+        "installation",
+        "futuristic"
+      ],
+      "keywords": [
+        "túnel led",
+        "neon tubes",
+        "infinity tunnel",
+        "backdrop"
+      ],
+      "qualifiers": [
+        "Is the tunnel for a grand entrance or a photo backdrop?",
+        "Space available (length × width) and ceiling height?",
+        "Indoor or outdoor and where are the nearest power outlets?",
+        "Static brand colors or dynamic/music-reactive looks?"
+      ],
+      "packageCode": "LIT-TUN",
+      "qbItem": "Service-LED-Tunnel",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },

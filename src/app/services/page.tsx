@@ -1,5 +1,6 @@
 
 'use client';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -10,10 +11,12 @@ import { useToast } from '@/hooks/use-toast';
 import servicesCatalog from '@/lib/services-catalog.json';
 
 const activeServices = servicesCatalog.services.filter(service => service.active);
+const allCategories = [...new Set(activeServices.map(service => service.category))];
 
 export default function ServicesPage() {
   const { addToCart } = useCart();
   const { toast } = useToast();
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const handleAddToCart = (service: typeof activeServices[0]) => {
     addToCart({
@@ -27,6 +30,10 @@ export default function ServicesPage() {
     });
   };
 
+  const filteredServices = selectedCategory === 'all'
+    ? activeServices
+    : activeServices.filter(service => service.category === selectedCategory);
+
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="text-center max-w-3xl mx-auto mb-12">
@@ -38,8 +45,27 @@ export default function ServicesPage() {
         </p>
       </div>
 
+      <div className="flex flex-wrap justify-center gap-2 mb-12">
+        <Button
+          variant={selectedCategory === 'all' ? 'default' : 'outline'}
+          onClick={() => setSelectedCategory('all')}
+        >
+          All Services
+        </Button>
+        {allCategories.map(category => (
+          <Button
+            key={category}
+            variant={selectedCategory === category ? 'default' : 'outline'}
+            onClick={() => setSelectedCategory(category)}
+            className="capitalize"
+          >
+            {category.replace(/_/g, ' ')}
+          </Button>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {activeServices.map((service) => (
+        {filteredServices.map((service) => (
           <Card key={service.id} className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2">
              <div className="bg-white">
               <Link href={`/services/${service.slug}`} className="block">

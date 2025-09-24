@@ -1,11 +1,9 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import Link from 'next/link';
 import { listSelectedServices, listAddons, requestAddons, approveServiceRequest, listRequestedServices, type Addon, type RequestedService } from '@/lib/data-adapter';
 import Image from 'next/image';
 import { Check, PlusCircle, ShoppingCart } from 'lucide-react';

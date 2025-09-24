@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Data adapter for fetching application data.
  * This file provides a layer of abstraction for data fetching.

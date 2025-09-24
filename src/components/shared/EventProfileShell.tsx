@@ -24,6 +24,7 @@ type EventProfileShellProps = {
 
 const adminTabs = [
   { value: 'details', label: 'Details' },
+  { value: 'my-services', label: 'Services' },
   { value: 'billing', label: 'Billing' },
   { value: 'timeline', label: 'Timeline' },
   { value: 'files', label: 'Files' },
@@ -31,18 +32,17 @@ const adminTabs = [
   { value: 'guest-qr', label: 'Guest QR' },
   { value: 'music', label: 'Music' },
   { value: 'communication', label: 'Communication' },
-  { value: 'my-services', label: 'My Services' },
 ];
 
 const hostTabs = [
   { value: 'details', label: 'Details' },
+  { value: 'my-services', label: 'My Services' },
   { value: 'billing', label: 'Billing' },
   { value: 'timeline', label: 'Timeline' },
   { value: 'files', label: 'Files' },
   { value: 'gallery', label: 'My Gallery' },
   { value: 'music', label: 'Music' },
   { value: 'communication', label: 'Communication' },
-  { value: 'my-services', label: 'My Services' },
 ]
 
 export function EventProfileShell({ event, role, children, isLoading = false, activeTab, onTabChange, isLocked = false }: EventProfileShellProps) {

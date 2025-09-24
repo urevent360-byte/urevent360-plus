@@ -142,29 +142,6 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": "hq_projector",
-      "slug": "hq_projector",
-      "title": "High-Quality Projector",
-      "category": "Screens & Projection",
-      "shortDescription": "Display slideshows and videos on a large screen for an emotional and personal touch.",
-      "longDescription": "We offer high-definition projectors and screens for displaying photo slideshows, videos, or presentations. A great way to share memories with your guests.",
-      "heroImage": "https://picsum.photos/seed/service7/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": false,
-      "options": [],
-      "tags": ["visuals", "slideshow", "video"],
-      "keywords": ["projector", "proyector", "slideshow", "video projection"],
-      "qualifiers": [
-        "Content source (USB, laptop, streaming)?",
-        "Projection surface and approximate size?"
-      ],
-      "packageCode": "AV-PROJ",
-      "qbItem": "Service-Projector-Rental",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
       "id": "monogram_projector",
       "slug": "monogram_projector",
       "title": "Monogram Projector",
@@ -223,8 +200,18 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["welcome", "luxury", "interactive"],
-      "keywords": ["champagne girl", "champagne lady", "chica champaña", "welcoming", "cocktail hour"],
+      "tags": [
+        "welcome",
+        "luxury",
+        "interactive"
+      ],
+      "keywords": [
+        "champagne girl",
+        "champagne lady",
+        "chica champaña",
+        "welcoming",
+        "cocktail hour"
+      ],
       "qualifiers": [
         "Roughly how many guests will arrive during welcome?",
         "How long would you like the hostess to serve (e.g., 60–90 minutes)?",
@@ -248,8 +235,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["themed", "elegant", "performer"],
-      "keywords": ["bridgerton", "elegant welcome", "themed performers", "modelos"],
+      "tags": [
+        "themed",
+        "elegant",
+        "performer"
+      ],
+      "keywords": [
+        "bridgerton",
+        "elegant welcome",
+        "themed performers",
+        "modelos"
+      ],
       "qualifiers": [
         "Entry greeting, escorting to tables, or both?",
         "Any specific color palette or wardrobe notes?"
@@ -271,8 +267,17 @@
       "active": true,
       "featured": true,
       "options": [],
-      "tags": ["lighting", "installation", "futuristic"],
-      "keywords": ["túnel led", "neon tubes", "infinity tunnel", "backdrop"],
+      "tags": [
+        "lighting",
+        "installation",
+        "futuristic"
+      ],
+      "keywords": [
+        "túnel led",
+        "neon tubes",
+        "infinity tunnel",
+        "backdrop"
+      ],
       "qualifiers": [
         "Is the tunnel for a grand entrance or a photo backdrop?",
         "Space available (length × width) and ceiling height?",
@@ -285,33 +290,10 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": "big_head_characters",
-      "slug": "big_head_characters",
-      "title": "Big-Head Characters / Extra Dancers",
-      "category": "Hora Loca & Performers",
-      "shortDescription": "Larger-than-life character mascots to dance and interact with your guests during Hora Loca.",
-      "longDescription": "Larger-than-life character mascots to dance and interact with your guests during Hora Loca. A hilarious and memorable addition to any party.",
-      "heroImage": "https://picsum.photos/seed/bighead1/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": false,
-      "options": [],
-      "tags": ["hora loca", "mascot", "fun"],
-      "keywords": ["big head", "cabezones", "mascots", "hora loca characters"],
-      "qualifiers": [
-        "Which character(s) are you considering?",
-        "How many additional dancers would you like?"
-      ],
-      "packageCode": "ENT-BIGH",
-      "qbItem": "Service-Big-Head-Characters",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
       "id": "carnival_stilts_double",
       "slug": "carnival_stilts_double",
       "title": "Two Carnival Stilt Walkers",
-      "category": "Hora Loca & Performers",
+      "category": "hora_loca",
       "shortDescription": "A pair of towering stilt walkers in vibrant carnival attire to animate your party.",
       "longDescription": "A pair of towering stilt walkers in vibrant carnival attire to animate your party. Great for creating a grand, festive atmosphere.",
       "heroImage": "https://picsum.photos/seed/stilt1/800/600",
@@ -319,8 +301,16 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["performer", "carnival", "visual"],
-      "keywords": ["zanquistas", "stilt walkers", "carnaval"],
+      "tags": [
+        "performer",
+        "carnival",
+        "visual"
+      ],
+      "keywords": [
+        "zanquistas",
+        "stilt walkers",
+        "carnaval"
+      ],
       "qualifiers": [
         "Will they greet guests, perform, or both?",
         "Any costume color/theme to match?"
@@ -334,7 +324,7 @@
       "id": "circus_welcome",
       "slug": "circus_welcome",
       "title": "Circus-Theme Welcome",
-      "category": "Hora Loca & Performers",
+      "category": "hora_loca",
       "shortDescription": "A welcome act with circus performers like mimes, jugglers, or unicyclists.",
       "longDescription": "A welcome act with circus performers like mimes, jugglers, or unicyclists. It sets a fun and whimsical tone from the moment guests arrive.",
       "heroImage": "https://picsum.photos/seed/circus1/800/600",
@@ -342,8 +332,18 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["welcome", "themed", "interactive"],
-      "keywords": ["circo", "circus", "mime", "juggler", "bienvenida"],
+      "tags": [
+        "welcome",
+        "themed",
+        "interactive"
+      ],
+      "keywords": [
+        "circo",
+        "circus",
+        "mime",
+        "juggler",
+        "bienvenida"
+      ],
       "qualifiers": [
         "Entry welcome vs roaming interaction?",
         "Preferred duration (about 60 minutes)?"
@@ -354,33 +354,10 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
-      "id": "hora_loca_deluxe",
-      "slug": "hora_loca_deluxe",
-      "title": "Hora Loca Deluxe",
-      "category": "Hora Loca & Performers",
-      "shortDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot.",
-      "longDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot. This is the all-in-one package for an unforgettable party hour.",
-      "heroImage": "https://picsum.photos/seed/deluxe1/800/600",
-      "galleryImages": [],
-      "active": true,
-      "featured": true,
-      "options": [],
-      "tags": ["hora loca", "package", "all-in-one"],
-      "keywords": ["hora loca deluxe", "complete show", "show completo"],
-      "qualifiers": [
-        "How long do you want the full show?",
-        "Any preferred character or theme?"
-      ],
-      "packageCode": "ENT-HLDX",
-      "qbItem": "Service-Hora-Loca-Deluxe",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "updatedAt": "2024-01-01T00:00:00.000Z"
-    },
-    {
       "id": "brazil_carnival_plus_stilt",
       "slug": "brazil_carnival_plus_stilt",
       "title": "Brazilian Carnival + One Stilt Walker",
-      "category": "Hora Loca & Performers",
+      "category": "hora_loca",
       "shortDescription": "Authentic Brazilian samba dancers (garotas) plus a towering stilt walker for a true carnival feel.",
       "longDescription": "Authentic Brazilian samba dancers (garotas) plus a towering stilt walker for a true carnival feel. An energetic and colorful addition to any event.",
       "heroImage": "https://picsum.photos/seed/brazil1/800/600",
@@ -388,8 +365,17 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["samba", "dance", "carnival"],
-      "keywords": ["brazilian carnival", "samba", "zanquista", "garotas"],
+      "tags": [
+        "samba",
+        "dance",
+        "carnival"
+      ],
+      "keywords": [
+        "brazilian carnival",
+        "samba",
+        "zanquista",
+        "garotas"
+      ],
       "qualifiers": [
         "Do you want a mini dance show plus photos?",
         "Time slot during the event?"
@@ -400,10 +386,73 @@
       "updatedAt": "2024-01-01T00:00:00.000Z"
     },
     {
+      "id": "hora_loca_deluxe",
+      "slug": "hora_loca_deluxe",
+      "title": "Hora Loca Deluxe",
+      "category": "hora_loca",
+      "shortDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot.",
+      "longDescription": "The ultimate Hora Loca package with multiple performers, a stilt walker, and an LED robot. This is the all-in-one package for an unforgettable party hour.",
+      "heroImage": "https://picsum.photos/seed/deluxe1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": true,
+      "options": [],
+      "tags": [
+        "hora loca",
+        "package",
+        "all-in-one"
+      ],
+      "keywords": [
+        "hora loca deluxe",
+        "complete show",
+        "show completo"
+      ],
+      "qualifiers": [
+        "How long do you want the full show?",
+        "Any preferred character or theme?"
+      ],
+      "packageCode": "ENT-HLDX",
+      "qbItem": "Service-Hora-Loca-Deluxe",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "big_head_characters",
+      "slug": "big_head_characters",
+      "title": "Big-Head Characters / Extra Dancers",
+      "category": "hora_loca",
+      "shortDescription": "Larger-than-life character mascots to dance and interact with your guests during Hora Loca.",
+      "longDescription": "Larger-than-life character mascots to dance and interact with your guests during Hora Loca. A hilarious and memorable addition to any party.",
+      "heroImage": "https://picsum.photos/seed/bighead1/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": false,
+      "options": [],
+      "tags": [
+        "hora loca",
+        "mascot",
+        "fun"
+      ],
+      "keywords": [
+        "big head",
+        "cabezones",
+        "mascots",
+        "hora loca characters"
+      ],
+      "qualifiers": [
+        "Which character(s) are you considering?",
+        "How many additional dancers would you like?"
+      ],
+      "packageCode": "ENT-BIGH",
+      "qbItem": "Service-Big-Head-Characters",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
       "id": "snow_effect",
       "slug": "snow_effect",
       "title": "Snow Effect",
-      "category": "Effects",
+      "category": "effects",
       "shortDescription": "Create a magical winter wonderland with our professional, safe, and evaporating snow machines.",
       "longDescription": "Create a magical winter wonderland with our professional, safe, and evaporating snow machines. Ideal for winter-themed parties and first dances.",
       "heroImage": "https://picsum.photos/seed/snow1/800/600",
@@ -411,14 +460,54 @@
       "active": true,
       "featured": false,
       "options": [],
-      "tags": ["winter", "themed", "special effect"],
-      "keywords": ["nieve artificial", "snow machine", "winter theme"],
+      "tags": [
+        "winter",
+        "themed",
+        "special effect"
+      ],
+      "keywords": [
+        "nieve artificial",
+        "snow machine",
+        "winter theme"
+      ],
       "qualifiers": [
         "What area do you want covered with snowfall?",
         "Indoor location and ceiling height?"
       ],
       "packageCode": "EFX-SNW",
       "qbItem": "Service-Snow-Machine",
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "hq_projector",
+      "slug": "hq_projector",
+      "title": "High-Quality Projector",
+      "category": "screens_projection",
+      "shortDescription": "Display slideshows and videos on a large screen for an emotional and personal touch.",
+      "longDescription": "We offer high-definition projectors and screens for displaying photo slideshows, videos, or presentations. A great way to share memories with your guests.",
+      "heroImage": "https://picsum.photos/seed/service7/800/600",
+      "galleryImages": [],
+      "active": true,
+      "featured": false,
+      "options": [],
+      "tags": [
+        "visuals",
+        "slideshow",
+        "video"
+      ],
+      "keywords": [
+        "projector",
+        "proyector",
+        "slideshow",
+        "video projection"
+      ],
+      "qualifiers": [
+        "Content source (USB, laptop, streaming)?",
+        "Projection surface and approximate size?"
+      ],
+      "packageCode": "AV-PROJ",
+      "qbItem": "Service-Projector-Rental",
       "createdAt": "2024-01-01T00:00:00.000Z",
       "updatedAt": "2024-01-01T00:00:00.000Z"
     }

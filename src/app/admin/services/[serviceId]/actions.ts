@@ -20,8 +20,8 @@ const serviceSchema = z.object({
   featured: z.boolean().default(false),
   options: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
-  keywords: z.array(z.string()).min(1, 'At least one keyword is required.'),
-  qualifiers: z.array(z.string()).min(1, 'At least one qualifier question is required.'),
+  keywords: z.array(z.string().min(1, 'At least one keyword is required.')),
+  qualifiers: z.array(z.string().min(1, 'At least one qualifier question is required.')),
   packageCode: z.string().optional(),
   qbItem: z.string().optional(),
   createdAt: z.string().optional(),
@@ -119,5 +119,38 @@ export async function deleteServiceAction(id: string): Promise<{ success: boolea
   } catch (error) {
     console.error('Error deleting service:', error);
     return { success: false, message: 'Failed to delete service.' };
+  }
+}
+
+
+export async function reorderServicesAction(serviceId: string, direction: 'up' | 'down'): Promise<{ success: boolean; message?: string }> {
+  try {
+    const currentCatalogData = await fs.readFile(catalogPath, 'utf-8');
+    const currentCatalog = JSON.parse(currentCatalogData);
+    const services = currentCatalog.services as Service[];
+    
+    const index = services.findIndex(s => s.id === serviceId);
+    
+    if (index === -1) {
+      return { success: false, message: 'Service not found.' };
+    }
+
+    if (direction === 'up' && index > 0) {
+      // Swap with the previous element
+      [services[index], services[index - 1]] = [services[index - 1], services[index]];
+    } else if (direction === 'down' && index < services.length - 1) {
+      // Swap with the next element
+      [services[index], services[index + 1]] = [services[index + 1], services[index]];
+    } else {
+        return { success: true }; // No change needed but not an error
+    }
+
+    currentCatalog.services = services;
+    await fs.writeFile(catalogPath, JSON.stringify(currentCatalog, null, 2));
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error reordering services:', error);
+    return { success: false, message: 'Failed to reorder services.' };
   }
 }

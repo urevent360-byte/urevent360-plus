@@ -12,9 +12,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Edit, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 import Link from 'next/link';
-import { getServicesAction, deleteServiceAction, Service } from './[serviceId]/actions';
+import { getServicesAction, deleteServiceAction, reorderServicesAction, Service } from './[serviceId]/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -56,6 +56,16 @@ export default function ServiceManagementPage() {
     }
   }
 
+  const handleReorder = async (serviceId: string, direction: 'up' | 'down') => {
+      const result = await reorderServicesAction(serviceId, direction);
+      if (result.success) {
+          toast({ title: "Service Moved", description: "The service order has been updated." });
+          fetchServices(); // Refresh the list
+      } else {
+          toast({ title: "Error", description: result.message, variant: "destructive" });
+      }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -80,6 +90,7 @@ export default function ServiceManagementPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[80px]">Position</TableHead>
                 <TableHead>Service Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Visibility</TableHead>
@@ -87,8 +98,18 @@ export default function ServiceManagementPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {services.map((service) => (
+              {services.map((service, index) => (
                 <TableRow key={service.id}>
+                  <TableCell>
+                      <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleReorder(service.id, 'up')} disabled={index === 0}>
+                              <ArrowUp className="h-4 w-4"/>
+                          </Button>
+                           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleReorder(service.id, 'down')} disabled={index === services.length - 1}>
+                              <ArrowDown className="h-4 w-4"/>
+                          </Button>
+                      </div>
+                  </TableCell>
                   <TableCell className="font-medium">{service.title}</TableCell>
                   <TableCell>{service.category}</TableCell>
                    <TableCell>

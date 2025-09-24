@@ -10,111 +10,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Tag, ShoppingCart, Video } from 'lucide-react';
+import { Tag, ShoppingCart, Video, Check } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-
-// In a real app, this data would come from a CMS or database.
-const placeholderServicesData: any = {
-    '360-photo-booth': {
-        slug: '360-photo-booth',
-        name: '360 Photo Booth',
-        longDescription: "Step onto our platform and let our revolving camera capture you in a stunning 360-degree slow-motion video. It's the perfect way to create dynamic, shareable content that will make your event unforgettable. We provide a professional attendant, fun props, and instant sharing options so your guests can show off their amazing videos right away.",
-        images: [
-            { url: 'https://picsum.photos/seed/service1-1/800/600', alt: 'Guests enjoying the 360 photo booth at a quinceañera' },
-            { url: 'https://picsum.photos/seed/service1-2/800/600', alt: 'Close-up of the 360 camera setup with lighting' },
-            { url: 'https://picsum.photos/seed/service1-3/800/600', alt: 'A couple posing on the 360 photo booth platform' },
-        ],
-        videos: [
-            { url: 'https://www.youtube.com/embed/5_v634-9W3E', alt: '360 Photo Booth Sample Video' }
-        ],
-        keywords: ['360 photo booth', 'video booth', 'quinceañera', 'event entertainment', 'social media booth'],
-    },
-    'photo-booth-printer': {
-        slug: 'photo-booth-printer',
-        name: 'Photo Booth Printer',
-        longDescription: "Don't let memories stay digital. Our high-speed, professional-grade printers produce beautiful, glossy photo strips in seconds. We can customize the prints with your event's logo, date, or a special message, creating the perfect take-home souvenir for your guests.",
-        images: [
-            { url: 'https://picsum.photos/seed/service2-1/800/600', alt: 'Guests holding freshly printed photo strips at a wedding' },
-            { url: 'https://picsum.photos/seed/service2-2/800/600', alt: 'A custom-branded photo strip with a wedding logo' },
-        ],
-        keywords: ['photo printer', 'instant prints', 'wedding souvenirs', 'custom photos', 'photo booth rental'],
-    },
-     'magic-mirror': {
-        slug: 'magic-mirror',
-        name: 'Magic Mirror',
-        longDescription: "It's not just a photo booth, it's an experience. This full-length touch-screen mirror interacts with your guests through vibrant animations and voice guidance. They can sign their creations, add emojis, and get their photos printed instantly. It's a sleek and magical addition to any upscale event.",
-        images: [
-            { url: 'https://picsum.photos/seed/service3-1/800/600', alt: 'Guests interacting with the Magic Mirror at a corporate event' },
-            { url: 'https://picsum.photos/seed/service3-2/800/600', alt: 'Colorful animations displayed on the Magic Mirror screen' },
-        ],
-        keywords: ['magic mirror', 'selfie mirror', 'photo booth', 'interactive entertainment', 'corporate events'],
-    },
-    'la-hora-loca-led-robot': {
-        slug: 'la-hora-loca-led-robot',
-        name: 'La Hora Loca with LED Robot',
-        longDescription: "Turn your party into an epic festival with La Hora Loca! We bring the energy with a towering LED Robot that dances with your guests, shoots CO2 cannons, and lights up the room. Accompanied by samba dancers and a host of party props, it's an hour of non-stop, high-octane fun that no one will ever forget.",
-        images: [
-            { url: 'https://picsum.photos/seed/service4-1/800/600', alt: 'Giant LED Robot dancing with guests during La Hora Loca' },
-            { url: 'https://picsum.photos/seed/service4-2/800/600', alt: 'Samba dancers in full costume performing at a party' },
-        ],
-        keywords: ['la hora loca', 'LED robot', 'party entertainment', 'samba dancers', 'CO2 jets'],
-    },
-    'cold-sparklers': {
-        slug: 'cold-sparklers',
-        name: 'Cold Sparklers',
-        longDescription: "Create a breathtaking 'wow' moment with our cold sparkler fountains. These are completely safe for indoor use, with no smoke, heat, or fire hazard. They are perfect for a grand entrance, a romantic first dance, or a spectacular cake-cutting ceremony, adding a touch of Hollywood glamour to your event.",
-        images: [
-            { url: 'https://picsum.photos/seed/service5-1/800/600', alt: "Bride and groom's first dance surrounded by cold sparklers" },
-            { url: 'https://picsum.photos/seed/service5-2/800/600', alt: 'A grand entrance at a party with cold sparkler fountains' },
-        ],
-        keywords: ['cold sparklers', 'wedding first dance', 'special effects', 'indoor fireworks', 'grand entrance'],
-    },
-    'dance-on-the-clouds': {
-        slug: 'dance-on-the-clouds',
-        name: 'Dance on the Clouds',
-        longDescription: 'Create a truly magical first dance with our "Dance on the Clouds" effect. Using professional-grade dry ice machines, we create a thick, low-lying cloud that covers the dance floor, making it seem as if you are floating. It’s a breathtaking visual that will leave your guests in awe and create unforgettable photos.',
-        images: [
-            { url: 'https://picsum.photos/seed/service6-1/800/600', alt: 'Couple having their first dance on a cloud of dry ice' },
-            { url: 'https://picsum.photos/seed/service6-2/800/600', alt: 'The low-lying cloud effect on a dance floor' },
-        ],
-        keywords: ['dance on clouds', 'dry ice effect', 'wedding first dance', 'magical atmosphere', 'event effects'],
-    },
-     'projector-slideshows-videos': {
-        slug: 'projector-slideshows-videos',
-        name: 'Projector (Slideshows & Videos)',
-        longDescription: "Share your story with your guests. We provide high-definition projectors and large screens to display photo slideshows, love stories, or corporate presentations. It's a perfect way to add a personal and emotional touch to weddings, anniversaries, and corporate events.",
-        images: [
-            { url: 'https://picsum.photos/seed/service7-1/800/600', alt: 'A photo slideshow playing on a large screen at a wedding reception' },
-            { url: 'https://picsum.photos/seed/service7-2/800/600', alt: 'Guests watching a video presentation at a corporate event' },
-        ],
-        keywords: ['projector rental', 'slideshow', 'video projection', 'event visuals', 'presentation screen'],
-    },
-    'monogram-projector': {
-        slug: 'monogram-projector',
-        name: 'Monogram Projector',
-        longDescription: 'Personalize your venue with a custom monogram projection. We can project your initials, wedding date, or a custom design onto the dance floor, a wall, or the ceiling. This elegant lighting effect, also known as a gobo, adds a sophisticated and branded touch to your event space.',
-        images: [
-            { url: 'https://picsum.photos/seed/service8-1/800/600', alt: 'A custom wedding monogram projected onto a dance floor' },
-            { url: 'https://picsum.photos/seed/service8-2/800/600', alt: 'A corporate logo projected on a wall at an event' },
-        ],
-        keywords: ['monogram projection', 'gobo projection', 'wedding lighting', 'custom logo light', 'event branding'],
-    },
-    'led-screens-wall': {
-        slug: 'led-screens-wall',
-        name: 'LED Screens Wall',
-        longDescription: 'Make a massive impact with a stunning LED video wall. Perfect for stage backdrops, live camera feeds, or dynamic visual displays, our LED walls offer vibrant colors and seamless resolution. Elevate your concert, conference, or high-end wedding with this state-of-the-art visual centerpiece.',
-        images: [
-            { url: 'https://picsum.photos/seed/service9-1/800/600', alt: 'A huge LED wall behind a DJ at a music festival' },
-            { url: 'https://picsum.photos/seed/service9-2/800/600', alt: 'A corporate presentation on a seamless LED video wall' },
-        ],
-        keywords: ['LED wall', 'video wall', 'stage design', 'event production', 'visuals'],
-    },
-};
+import servicesCatalog from '@/lib/services-catalog.json';
 
 export default function ServiceDetailClient({ slug }: { slug: string }) {
-    const service = placeholderServicesData[slug];
+    const service = servicesCatalog.services.find(s => s.id === slug);
     const { toast } = useToast();
     const { addToCart } = useCart();
 
@@ -125,13 +28,13 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
     
     const handleAddToCart = () => {
         addToCart({
-            slug: service.slug,
-            name: service.name,
-            image: service.images[0].url
+            slug: service.id,
+            name: service.label,
+            image: service.images[0]?.url || ''
         });
         toast({
             title: 'Added to inquiry cart!',
-            description: `${service.name} has been added to your inquiry cart.`,
+            description: `${service.label} has been added to your inquiry cart.`,
         });
     }
 
@@ -141,7 +44,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                 <div>
                      <Carousel className="w-full">
                         <CarouselContent>
-                            {service.images.map((img: {url: string, alt: string}, index: number) => (
+                            {service.images.map((img, index) => (
                             <CarouselItem key={index}>
                                 <div className="relative aspect-video">
                                 <Image
@@ -159,9 +62,21 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                     </Carousel>
                 </div>
                 <div>
-                    <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary">{service.name}</h1>
-                    <p className="mt-4 text-lg text-foreground/80">{service.longDescription}</p>
+                    <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary">{service.label}</h1>
+                    <p className="mt-4 text-lg text-foreground/80">{service.shortDescription}</p>
                     
+                    <div className="mt-6 space-y-2">
+                        <h3 className="font-headline text-lg font-semibold">Key Features</h3>
+                        <ul className="space-y-2">
+                            {service.features.map((feature, index) => (
+                                <li key={index} className="flex items-start gap-2">
+                                    <Check className="h-5 w-5 text-green-500 mt-1 shrink-0"/>
+                                    <span className="text-foreground/80">{feature}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
                     <div className="mt-8">
                         <h3 className="font-headline text-lg font-semibold flex items-center gap-2"><Tag /> Keywords</h3>
                         <div className="flex flex-wrap gap-2 mt-2">
@@ -187,7 +102,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                         </h2>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {service.videos.map((video: {url: string, alt: string}, index: number) => (
+                        {service.videos.map((video, index) => (
                             <div key={index} className="aspect-video">
                                 <iframe
                                     src={video.url}
@@ -204,3 +119,4 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
         </div>
     );
 }
+

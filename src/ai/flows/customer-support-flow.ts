@@ -16,18 +16,18 @@ import { getSystemPromptAction, getSystemPromptEsAction } from '@/app/admin/cont
 
 
 const LeadSchema = z.object({
-  fullName: z.string().describe("The user's full name."),
-  phone: z.string().describe("The user's phone number."),
-  services: z.array(z.string()).describe('The list of services the user is interested in.'),
-  eventDate: z.string().describe("The date of the event in 'YYYY-MM-DD' format."),
-  location: z.string().describe("The city and state, or ZIP code of the event location."),
-  notes: z.string().optional().describe("Optional notes capturing user preferences or context from the conversation."),
+  fullName: z.string().describe("Client’s full name"),
+  phone: z.string().describe("Client phone with country/area code"),
+  services: z.array(z.string()).describe("List of service IDs or names from SERVICES_CATALOG"),
+  eventDate: z.string().describe("Date in ISO or natural language"),
+  location: z.string().describe("City/State or ZIP code"),
+  notes: z.string().optional().describe("Any extra preferences captured during chat"),
 });
 
 const createLeadTool = ai.defineTool(
     {
         name: 'createLead',
-        description: 'Use this tool to create a lead once you have gathered all the required information from the user (fullName, phone, services, eventDate, and location).',
+        description: 'Create a new sales lead in the CRM when all five fields are collected.',
         inputSchema: LeadSchema,
         outputSchema: z.object({ success: z.boolean(), message: z.string() }),
     },

@@ -1,3 +1,4 @@
+
 'use server';
 
 import * as React from 'react';
@@ -74,7 +75,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-
 export default function VenuePage({ params }: Props) {
   const venue = venues.find(v => v.slug === params.slug);
 

@@ -104,14 +104,60 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
     return 'en';
 }
 
-export async function continueConversation(messages: MessageData[]): Promise<ConversationOutput> {
-  // Ensure the message format is correct for the Genkit flow.
-  const history: MessageData[] = messages.map(msg => ({
-    role: msg.role,
-    content: msg.content || [{ text: (msg as any).text || '' }]
-  })).filter(msg => msg.content && msg.content[0] && msg.content[0].text);
-  return customerSupportFlow(history);
+/**
+ * Normalizes a message to the format expected by Genkit's prompt.
+ * It ensures 'content' is a string and handles various legacy formats.
+ */
+function normalizeMessage(message: any): MessageData | null {
+  if (!message) return null;
+
+  // 1. Determine role
+  let role: 'user' | 'model' = 'user';
+  if (message.role === 'user' || message.role === 'model' || message.role === 'assistant' || message.role === 'system') {
+    // Map 'assistant' and 'system' to 'model' for simplicity if needed, but Genkit handles them.
+    // For this flow, we only expect user/model. Let's be strict.
+    if (message.role === 'user' || message.role === 'model') {
+       role = message.role;
+    }
+  }
+
+  // 2. Build content string
+  let contentText = '';
+  if (typeof message.content === 'string') {
+    contentText = message.content.trim();
+  } else if (Array.isArray(message.content) && message.content[0]?.text) {
+    // Standard Genkit format
+    contentText = message.content[0].text.trim();
+  } else if (typeof (message as any).text === 'string') {
+    // Legacy format { text: '...' }
+    contentText = (message as any).text.trim();
+  } else if (Array.isArray((message as any).parts)) {
+    // Legacy format { parts: [...] }
+    contentText = (message as any).parts
+      .filter((part: any) => typeof part.text === 'string')
+      .map((part: any) => part.text.trim())
+      .join(' ');
+  }
+
+  // 3. After mapping, drop any message with empty content
+  if (!contentText) {
+    return null;
+  }
+  
+  return { role, content: [{ text: contentText }] };
 }
+
+
+export async function continueConversation(messages: MessageData[]): Promise<ConversationOutput> {
+  const normalizedHistory = messages
+    .map(normalizeMessage)
+    .filter((msg): msg is MessageData => !!msg); // Filter out any nulls
+
+  const limitedHistory = normalizedHistory.slice(-15); // Limit history to last 15 messages
+
+  return customerSupportFlow(limitedHistory);
+}
+
 
 const customerSupportFlow = ai.defineFlow(
   {
@@ -141,14 +187,10 @@ const customerSupportFlow = ai.defineFlow(
         name: `customerSupportPrompt-${lang}`,
         system: systemPromptText,
         tools: [createLeadTool],
-        input: {
-          schema: z.object({
-            messages: z.array(MessageData)
-          })
-        }
+        messages: messages // Pass the history here
     });
 
-    const { output } = await prompt({ messages });
+    const { output } = await prompt();
     return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
   }
 );

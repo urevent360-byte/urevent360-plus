@@ -10,13 +10,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
-import { Tag, ShoppingCart, CheckCircle } from 'lucide-react';
+import { Tag, ShoppingCart, CheckCircle, HelpCircle } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import servicesCatalog from '@/lib/services-catalog.json';
 import Link from 'next/link';
 import { useOpenInquiryModal } from '@/components/page/home/InquiryModal';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export default function ServiceDetailClient({ slug }: { slug: string }) {
     const service = servicesCatalog.services.find(s => s.slug === slug);
@@ -77,7 +78,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                     <p className="mt-4 text-lg text-foreground/80">{service.shortDescription}</p>
                     
                      <div className="mt-6 space-y-2">
-                        {service.longDescription && <p className="text-foreground/80">{service.longDescription}</p>}
+                        <p className="text-foreground/80">{service.longDescription}</p>
                     </div>
 
                     <Button onClick={handleAddToCart} size="lg" className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90">
@@ -103,6 +104,28 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                     </Button>
                  </div>
             </div>
+
+            {service.faq && service.faq.length > 0 && (
+                <>
+                    <Separator className="my-16" />
+                    <div className="max-w-4xl mx-auto">
+                         <h2 className="font-headline text-2xl md:text-3xl font-bold text-primary text-center mb-8 flex items-center justify-center gap-2">
+                            <HelpCircle />
+                            Frequently Asked Questions
+                         </h2>
+                         <Accordion type="single" collapsible className="w-full">
+                            {service.faq.map((item, index) => (
+                                <AccordionItem key={index} value={`item-${index}`}>
+                                    <AccordionTrigger className="text-lg text-left">{item.question}</AccordionTrigger>
+                                    <AccordionContent className="text-base text-muted-foreground">
+                                    {item.answer}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </div>
+                </>
+            )}
 
             {service.tags && service.tags.length > 0 && (
                  <div className="mt-16 text-center">

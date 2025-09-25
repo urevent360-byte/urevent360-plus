@@ -118,6 +118,40 @@ export async function generateMetadata(
   };
 }
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-    return <ServiceDetailClient slug={params.slug} />;
+function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)[0] }) {
+  if (!service.faq || service.faq.length === 0) {
+    return null;
+  }
+
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: service.faq.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
 }
+
+
+export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+    const service = servicesCatalog.services.find(s => s.slug === params.slug);
+
+    return (
+        <>
+            {service && <FAQPageSchema service={service} />}
+            <ServiceDetailClient slug={params.slug} />
+        </>
+    );
+}
+

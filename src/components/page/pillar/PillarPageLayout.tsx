@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -5,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { ArrowRight, CheckCircle, Quote, Star } from 'lucide-react';
+import { ArrowRight, Quote } from 'lucide-react';
 import servicesCatalog from '@/lib/services-catalog.json';
 import { useOpenInquiryModal } from '@/components/page/home/InquiryModal';
 
@@ -31,6 +32,7 @@ type PillarPageLayoutProps = {
   heroImageUrl: string;
   planningSteps: Step[];
   recommendedServiceIds: string[];
+  pageContent: string;
   faqItems: FAQItem[];
   testimonials: Testimonial[];
 };
@@ -63,6 +65,7 @@ export function PillarPageLayout({
   heroImageUrl,
   planningSteps,
   recommendedServiceIds,
+  pageContent,
   faqItems,
   testimonials,
 }: PillarPageLayoutProps) {
@@ -98,6 +101,20 @@ export function PillarPageLayout({
         </div>
       </section>
 
+      {/* Intro Content Section */}
+      <section className="py-16 md:py-24">
+        <div className="container mx-auto px-4">
+           <div className="prose prose-lg max-w-4xl mx-auto text-foreground/80">
+            {pageContent.split('\n').map((paragraph, index) => {
+              if (paragraph.startsWith('## ')) {
+                return <h2 key={index} className="font-headline text-3xl text-primary md:text-4xl !mb-4">{paragraph.substring(3)}</h2>;
+              }
+              return <p key={index}>{paragraph}</p>;
+            })}
+           </div>
+        </div>
+      </section>
+
       {/* How We Plan It */}
       <section className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -128,23 +145,22 @@ export function PillarPageLayout({
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="font-headline text-3xl font-bold text-primary md:text-4xl">
-              Recommended Services
+              Popular Services for {heroTitle.split(' in ')[0]}
             </h2>
              <p className="mx-auto mt-2 max-w-3xl text-lg text-foreground/80">
-              Popular choices to elevate your event.
+              Our most requested services to elevate your event.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {recommendedServices.map((service) => (
               <Card key={service.id} className="group overflow-hidden border-0 shadow-lg transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-2">
                 <Link href={`/services/${service.slug}`} className="block">
-                  <div className="relative h-64 w-full">
+                  <div className="relative h-56 w-full">
                     <Image src={service.heroImage} alt={service.title} fill className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110" />
                   </div>
-                  <div className="p-6 bg-white">
-                    <h3 className="font-headline text-xl font-semibold text-primary">{service.title}</h3>
-                    <p className="mt-2 text-gray-700 h-16">{service.shortDescription}</p>
-                    <div className="mt-4 text-accent font-semibold flex items-center">
+                  <div className="p-4 bg-white">
+                    <h3 className="font-headline text-lg font-semibold text-primary h-12">{service.title}</h3>
+                    <div className="mt-4 text-accent font-semibold flex items-center text-sm">
                         View Details <ArrowRight className="ml-2 h-4 w-4" />
                     </div>
                   </div>

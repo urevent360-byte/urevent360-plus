@@ -3,8 +3,15 @@ import { PillarPageLayout } from '@/components/page/pillar/PillarPageLayout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Quinceañera & Sweet 16 Entertainment Orlando | Hora Loca, 360 Booth',
-  description: 'Plan the ultimate Quinceañera or Sweet 16 in Orlando with UREVENT 360 PLUS. We offer Hora Loca with LED Robots, 360 photo booths, and custom monograms.',
+  title: 'Quinceañera Entertainment in Orlando: La Hora Loca & 360 Booth',
+  description: 'Make your quince unforgettable with La Hora Loca, LED robot, 360 booth, music lists and more. Bilingual team. Reserve your date in Orlando.',
+  alternates: {
+    canonical: '/quinceanera-entertainment-orlando',
+    languages: {
+      'en': '/quinceanera-entertainment-orlando',
+      'es': '/es/entretenimiento-quinceanera-orlando',
+    },
+  },
 };
 
 const planningSteps = [
@@ -29,9 +36,9 @@ const testimonials = [
 ];
 
 const pageContent = `
-## The Ultimate Quinceañera & Sweet 16 Experience
+## Quinceañera Entertainment: La Hora Loca, 360 Booth & More
 
-A Quinceañera or Sweet 16 is a once-in-a-lifetime milestone that deserves a spectacular celebration. UREVENT 360 PLUS specializes in turning these important coming-of-age parties into vibrant, high-energy events that the guest of honor and her friends will talk about for years. We understand the importance of tradition while embracing modern trends that resonate with today's teens.
+Make her night unforgettable with high-energy La Hora Loca, LED robot, dancers, and share-ready photo/video booths. Bilingual planners, elegant looks, and a timeline that keeps the dance floor lit. A Quinceañera or Sweet 16 is a once-in-a-lifetime milestone that deserves a spectacular celebration. UREVENT 360 PLUS specializes in turning these important coming-of-age parties into vibrant, high-energy events that the guest of honor and her friends will talk about for years. We understand the importance of tradition while embracing modern trends that resonate with today's teens.
 
 Our most sought-after service, La Hora Loca, brings an unparalleled level of excitement to the dance floor, led by our incredible LED Robot and professional dancers. Combine this with our 360 Photo Booth, and you'll have endless content for social media, capturing all the fun from every angle. For a touch of elegance, a custom projected monogram with her name can transform the ballroom, while cold sparklers can create a dramatic and safe grand entrance. We are a fully bilingual team, ready to create an authentic and unforgettable celebration for your family.
 `;
@@ -39,7 +46,7 @@ Our most sought-after service, La Hora Loca, brings an unparalleled level of exc
 export default function QuinceaneraEntertainmentPage() {
   return (
     <PillarPageLayout
-      heroTitle="Quinceañera & Sweet 16 Entertainment in Orlando"
+      heroTitle="Quinceañera Entertainment in Orlando"
       heroSubtitle="Create a magical and unforgettable celebration with our spectacular entertainment options."
       heroImageUrl="https://picsum.photos/seed/orlando-quince/1920/1080"
       planningSteps={planningSteps}
@@ -50,3 +57,4 @@ export default function QuinceaneraEntertainmentPage() {
     />
   );
 }
+

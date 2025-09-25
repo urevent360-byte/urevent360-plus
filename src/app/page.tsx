@@ -20,14 +20,19 @@ async function getBranding() {
   const brandingPath = path.join(process.cwd(), 'public', 'branding.json');
   try {
     const data = await fs.readFile(brandingPath, 'utf-8');
-    return JSON.parse(data);
+    const branding = JSON.parse(data);
+    // Ensure heroImageUrl is provided, otherwise fallback
+    if (branding && branding.heroImageUrl) {
+        return branding;
+    }
   } catch (error) {
-    // If the file doesn't exist or is invalid, return defaults
-    return {
-      logoUrl: null,
-      heroImageUrl: placeholderImages.placeholderImages.find(p => p.id === 'hero')?.imageUrl,
-    };
+    console.warn('branding.json not found or invalid, using fallback hero image.');
   }
+  // Fallback to placeholder if file is missing, invalid, or heroImageUrl is not set
+  return {
+    logoUrl: null,
+    heroImageUrl: placeholderImages.placeholderImages.find(p => p.id === 'hero')?.imageUrl || 'https://picsum.photos/seed/hero/1920/1080',
+  };
 }
 
 async function getCatalogUrl() {

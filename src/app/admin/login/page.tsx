@@ -6,7 +6,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, getMultiFactorResolver, PhoneAuthProvider, PhoneMultiFactorGenerator } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  getMultiFactorResolver,
+  PhoneAuthProvider,
+  PhoneMultiFactorGenerator,
+  RecaptchaVerifier,
+  MultiFactorInfo,
+  PhoneMultiFactorInfo,
+  MultiFactorResolver,
+} from 'firebase/auth';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -39,7 +48,7 @@ export default function AdminLoginPage() {
 
   const [step, setStep] = useState<'credentials' | 'verification'>('credentials');
   const [verificationId, setVerificationId] = useState<string | null>(null);
-  const [resolver, setResolver] = useState<any>(null);
+  const [resolver, setResolver] = useState<MultiFactorResolver | null>(null);
 
   useEffect(() => {
     if (user && isAdmin && !loading) {

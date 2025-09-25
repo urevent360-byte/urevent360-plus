@@ -7,7 +7,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { PartyPopper, CheckCircle2, MoreHorizontal, Clock, Hourglass, FileText, AlertTriangle, XCircle } from 'lucide-react';
+import { PartyPopper, CheckCircle2, MoreHorizontal, Clock, Hourglass, FileText, XCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 type Status = 'booked' | 'completed' | 'quote_requested' | 'contract_sent' | 'invoice_sent' | 'deposit_due' | 'canceled';

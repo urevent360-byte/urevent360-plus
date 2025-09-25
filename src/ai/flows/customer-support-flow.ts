@@ -106,51 +106,52 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
 
 /**
  * Normalizes a message to the format expected by Genkit's prompt.
- * It ensures 'content' is a string and handles various legacy formats.
+ * It ensures 'content' is an array with text parts and handles various legacy formats.
  */
 function normalizeMessage(message: any): MessageData | null {
-  if (!message) return null;
+  if (!message || (typeof message !== 'object')) return null;
 
-  let role: 'user' | 'model' = 'user';
-  if (message.role === 'user' || message.role === 'model') {
+  let role: 'user' | 'model' | 'system' = 'user';
+  if (message.role === 'user' || message.role === 'model' || message.role === 'system') {
     role = message.role;
   } else if (message.role === 'assistant') { // Map 'assistant' to 'model'
     role = 'model';
   }
 
-  let contentText = '';
+  const contentParts: { text?: string; media?: { contentType: string; url: string } }[] = [];
 
-  const processContent = (content: any) => {
-    if (typeof content === 'string') {
-      return content.trim();
+  const processContentPart = (part: any) => {
+    if (typeof part === 'string') {
+      const trimmedText = part.trim();
+      if (trimmedText) contentParts.push({ text: trimmedText });
+    } else if (typeof part === 'object' && part !== null) {
+      if (typeof part.text === 'string' && part.text.trim()) {
+        contentParts.push({ text: part.text.trim() });
+      } else if (part.media && typeof part.media.url === 'string') {
+        // Sanitize to a textual representation for the LLM
+        contentParts.push({ text: `\n[Attachment: ${part.media.contentType || 'file'}]` });
+      }
     }
-    if (Array.isArray(content)) {
-      return content.map(part => {
-        if (part.text) {
-          return part.text.trim();
-        }
-        if (part.media) {
-          return `\n[Attachment: ${part.media.contentType || 'file'}]`;
-        }
-        return '';
-      }).join(' ');
-    }
-    return '';
   };
-  
-  if (message.content) {
-    contentText = processContent(message.content);
+
+  if (Array.isArray(message.content)) {
+    message.content.forEach(processContentPart);
+  } else if (message.content) {
+    processContentPart(message.content);
   } else if (typeof (message as any).text === 'string') {
-    contentText = (message as any).text.trim();
+    // Handle legacy format { text: "..." }
+    const trimmedText = (message as any).text.trim();
+    if (trimmedText) contentParts.push({ text: trimmedText });
   } else if (Array.isArray((message as any).parts)) {
-    contentText = processContent((message as any).parts);
+    // Handle legacy format { parts: [...] }
+    (message as any).parts.forEach(processContentPart);
   }
 
-  if (!contentText) {
-    return null;
+  if (contentParts.length === 0) {
+    return null; // Skip messages with no valid textual content
   }
-  
-  return { role, content: [{ text: contentText }] };
+
+  return { role, content: contentParts.map(p => ({ text: p.text! })) };
 }
 
 
@@ -172,31 +173,36 @@ const customerSupportFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (messages) => {
-    
-    const lang = detectLanguage(messages);
-    const systemPromptResult = lang === 'es' 
-        ? await getSystemPromptEsAction()
-        : await getSystemPromptAction();
+    try {
+        const lang = detectLanguage(messages);
+        const systemPromptResult = lang === 'es' 
+            ? await getSystemPromptEsAction()
+            : await getSystemPromptAction();
 
-    let systemPromptText = systemPromptResult.prompt;
+        let systemPromptText = systemPromptResult.prompt;
 
-    if (!systemPromptText) {
-        return "I'm sorry, my instructions are not configured correctly. Please contact support.";
+        if (!systemPromptText) {
+            return "I'm sorry, my instructions are not configured correctly. Please contact support.";
+        }
+
+        // Dynamically inject the service catalog into the prompt
+        if (systemPromptText.includes('{{SERVICES_CATALOG}}')) {
+            systemPromptText = systemPromptText.replace('{{SERVICES_CATALOG}}', JSON.stringify(servicesCatalog, null, 2));
+        }
+        
+        const prompt = ai.definePrompt({
+            name: `customerSupportPrompt-${lang}`,
+            system: systemPromptText,
+            tools: [createLeadTool],
+            inputSchema: z.array(MessageData),
+        });
+        
+        const { output } = await prompt(messages);
+        return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
+
+    } catch (error) {
+        console.error("Error in customerSupportFlow:", error);
+        return "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
     }
-
-    // Dynamically inject the service catalog into the prompt
-    if (systemPromptText.includes('{{SERVICES_CATALOG}}')) {
-        systemPromptText = systemPromptText.replace('{{SERVICES_CATALOG}}', JSON.stringify(servicesCatalog, null, 2));
-    }
-    
-    const prompt = ai.definePrompt({
-        name: `customerSupportPrompt-${lang}`,
-        system: systemPromptText,
-        tools: [createLeadTool],
-        messages: messages, // Pass the history here
-    });
-
-    const { output } = await prompt();
-    return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
   }
 );

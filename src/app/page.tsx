@@ -11,6 +11,7 @@ import { SocialFeed } from '@/components/page/home/SocialFeed';
 import { ChatWidget } from '@/components/shared/ChatWidget';
 import fs from 'fs/promises';
 import path from 'path';
+import { CatalogCTA } from '@/components/page/home/CatalogCTA';
 
 // In a real app, you might use a more robust way to get the base URL
 const getBaseUrl = () => process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
@@ -29,8 +30,20 @@ async function getBranding() {
   }
 }
 
+async function getCatalogUrl() {
+  const catalogPath = path.join(process.cwd(), 'public', 'catalog.json');
+  try {
+    const data = await fs.readFile(catalogPath, 'utf-8');
+    const catalog = JSON.parse(data);
+    return catalog.catalogUrl;
+  } catch (error) {
+    return null;
+  }
+}
+
 export default async function Home() {
   const branding = await getBranding();
+  const catalogUrl = await getCatalogUrl();
   const heroImage = {
     imageUrl: branding.heroImageUrl,
     description: "A vibrant event with confetti falling on a joyful crowd.",
@@ -70,6 +83,14 @@ export default async function Home() {
         </div>
       </section>
       
+      {catalogUrl && (
+        <section className="py-16 md:py-24 bg-muted/50">
+          <div className="container mx-auto px-4">
+            <CatalogCTA catalogUrl={catalogUrl} />
+          </div>
+        </section>
+      )}
+
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <Testimonials />

@@ -8,9 +8,42 @@ import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import fs from 'fs/promises';
 import path from 'path';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://urevent360.com';
+const ogImageUrl = `${siteUrl}/og-image.png`; // Assuming a default OG image exists at this path
+
 export const metadata: Metadata = {
-  title: 'UREVENT 360 PLUS',
-  description: 'Your premier event planning partner for unforgettable experiences.',
+  title: 'Event Entertainment & Photo Booths in Orlando | UREVENT 360 PLUS',
+  description: 'Premium event entertainment in Orlando & Central Florida: 360 photo booth, LED tunnel, LED walls, La Hora Loca, cold sparklers, champagne hostess & more.',
+  alternates: {
+    canonical: siteUrl,
+  },
+  openGraph: {
+    title: 'UREVENT 360 PLUS — Event Entertainment in Orlando',
+    description: '360 photo booth, LED tunnel, La Hora Loca, LED screens, special welcomes & effects. Serving Orlando & Central Florida.',
+    url: siteUrl,
+    siteName: 'UREVENT 360 PLUS',
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: 'Guests enjoying a 360 photo booth at an Orlando event.',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'UREVENT 360 PLUS — Event Entertainment in Orlando',
+    description: '360 photo booth, LED tunnel, La Hora Loca, LED screens, special welcomes & effects. Serving Orlando & Central Florida.',
+    images: [ogImageUrl],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 const getBaseUrl = () => process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';

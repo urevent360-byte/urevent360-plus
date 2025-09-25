@@ -3,8 +3,15 @@ import { PillarPageLayout } from '@/components/page/pillar/PillarPageLayout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Corporate Event Production Orlando | LED Walls, Branding & AV',
-  description: 'Professional corporate event production in Orlando. UREVENT 360 PLUS offers LED video walls, custom branding, A/V services, and unique entertainment that engages your audience.',
+  title: 'Corporate Event Entertainment in Orlando | LED Walls & Tunnels',
+  description: 'High-impact corporate experiences: LED video walls, LED tunnel entrances, interactive photo booths & show control. Brand-ready in Orlando.',
+  alternates: {
+    canonical: '/corporate-event-production-orlando',
+    languages: {
+      'en': '/corporate-event-production-orlando',
+      'es': '/es/entretenimiento-corporativo-orlando',
+    },
+  },
 };
 
 const planningSteps = [
@@ -13,7 +20,7 @@ const planningSteps = [
   { title: '3. Flawless A/V & Execution', description: "Our technical team handles all audio-visual needs, ensuring your presentations and entertainment run smoothly." },
 ];
 
-const recommendedServiceIds = ['led-screen-wall', 'custom-monogram', 'magic-mirror', '360-photo-booth'];
+const recommendedServiceIds = ['led-screen-wall', 'led-tunnel-neon-tubes', 'custom-monogram', 'magic-mirror'];
 
 const faqItems = [
   { question: "Can you display our company's branding and sponsor logos?", answer: "Yes. Our LED screen walls are perfect for displaying dynamic content, including sponsor loops, company branding, and presentations. We can also project a custom monogram of your logo or use branded overlays on our photo booths." },
@@ -29,9 +36,9 @@ const testimonials = [
 ];
 
 const pageContent = `
-## Engaging Corporate Events, Professionally Produced
+## Corporate Event Entertainment & Visuals in Orlando
 
-In the corporate world, events are an opportunity to make a powerful statement. Whether you're launching a product, hosting a conference, or celebrating your team's success, the production quality reflects directly on your brand. UREVENT 360 PLUS is your partner in creating polished, engaging, and memorable corporate events in Orlando. We understand the need for professionalism and flawless execution.
+Drive engagement with LED video walls, branded entrances, interactive photo booths, and show control. We scale to your venue and run a crisp, on-schedule production your partners will love. In the corporate world, events are an opportunity to make a powerful statement. Whether you're launching a product, hosting a conference, or celebrating your team's success, the production quality reflects directly on your brand. UREVENT 360 PLUS is your partner in creating polished, engaging, and memorable corporate events in Orlando. We understand the need for professionalism and flawless execution.
 
 Our state-of-the-art LED Video Walls can transform any venue, serving as a dynamic backdrop for presentations, branding, and sponsor recognition. For interactive engagement, our sleek Magic Mirror and 360 Photo Booths can be fully branded, providing guests with fun, shareable content that amplifies your message online. We handle all technical aspects, from audio-visual setup to on-site management, allowing you to focus on your guests and your goals. Let us help you create an event that not only impresses but also achieves your business objectives.
 `;
@@ -39,8 +46,8 @@ Our state-of-the-art LED Video Walls can transform any venue, serving as a dynam
 export default function CorporateEventProductionPage() {
   return (
     <PillarPageLayout
-      heroTitle="Orlando Corporate Event Production"
-      heroSubtitle="Engage your audience and elevate your brand with our professional production and entertainment services."
+      heroTitle="Corporate Event Entertainment & Visuals in Orlando"
+      heroSubtitle="High-impact corporate experiences: LED video walls, LED tunnel entrances, interactive photo booths & show control. Brand-ready in Orlando."
       heroImageUrl="https://picsum.photos/seed/orlando-corporate/1920/1080"
       planningSteps={planningSteps}
       recommendedServiceIds={recommendedServiceIds}
@@ -50,3 +57,4 @@ export default function CorporateEventProductionPage() {
     />
   );
 }
+

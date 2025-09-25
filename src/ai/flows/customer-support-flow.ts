@@ -193,6 +193,13 @@ const customerSupportFlow = ai.defineFlow(
             inputSchema: z.array(MessageData),
         });
         
+        // Temporary debug logs
+        console.log(`[AI FLOW] Normalization complete. Sending ${history.length} messages to model.`);
+        history.forEach((msg, i) => {
+            const contentPreview = msg.content[0]?.text?.substring(0, 40) || '[NO TEXT CONTENT]';
+            console.log(`[AI FLOW] Message ${i}: Role=${msg.role}, Content='${contentPreview}...'`);
+        });
+
         const { output } = await prompt(history);
         return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
 

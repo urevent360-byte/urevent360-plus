@@ -1,5 +1,4 @@
 
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { LogIn, Shield } from 'lucide-react';
 import Link from 'next/link';
@@ -30,11 +29,11 @@ export default function DashboardPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button asChild className="w-full">
+                            
                                 <Link href="/app/login">
                                     Login as Host
                                 </Link>
-                            </Button>
+                            
                         </CardContent>
                     </Card>
 
@@ -50,11 +49,11 @@ export default function DashboardPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Button asChild className="w-full">
+                            
                                 <Link href="/admin/login">
                                     Login as Admin
                                 </Link>
-                            </Button>
+                            
                         </CardContent>
                     </Card>
                 </div>

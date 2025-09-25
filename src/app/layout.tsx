@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import fs from 'fs/promises';
 import path from 'path';
+import { JsonLd } from '@/components/shared/JsonLd';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://urevent360.com';
 const ogImageUrl = `${siteUrl}/og-image.png`; // Assuming a default OG image exists at this path
@@ -79,6 +80,7 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=PT+Sans:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        <JsonLd />
       </head>
       <body className={cn('font-body antialiased')}>
         <AuthProvider>

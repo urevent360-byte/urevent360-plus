@@ -3,23 +3,31 @@ import { PillarPageLayout } from '@/components/page/pillar/PillarPageLayout';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Wedding Entertainment Orlando | Photo Booths, Sparklers & More',
-  description: 'Create your dream wedding in Orlando with UREVENT 360 PLUS. Discover unique entertainment like 360 photo booths, cold sparklers, and dance on the clouds effect for a magical celebration.',
+  title: 'Wedding Entertainment in Orlando | UREVENT 360 PLUS',
+  description: 'Premium Orlando wedding entertainment—360 photo booth, LED tunnel, cold sparklers, dance on the clouds, monograms & more. Plan a custom package today.',
+  alternates: {
+    canonical: '/wedding-entertainment-orlando',
+    languages: {
+      'en': '/wedding-entertainment-orlando',
+      'es': '/es/entretenimiento-bodas-orlando',
+    },
+  },
 };
 
 const planningSteps = [
-  { title: '1. Share Your Vision', description: "Tell us about your dream wedding. We'll listen to every detail to understand your style and preferences." },
-  { title: '2. Curate Your Experience', description: "We'll suggest a package of services like our 360 photo booth, cold sparklers, or dance on the clouds effect to match your vision." },
-  { title: '3. Flawless Execution', description: "Our professional team will coordinate with your venue and planner to ensure every moment is perfect on your big day." },
+  { title: '1. Share Your Vision (9-12 Months Out)', description: "Tell us about your dream wedding. We'll listen to every detail to understand your style and help you select entertainment that tells your unique love story." },
+  { title: '2. Curate Your Experience (6-9 Months Out)', description: "Lock in your date and choose from our premium services. We'll draft a proposal that aligns with your budget and venue, coordinating all technical details." },
+  { title: '3. Flawless Execution (Final Month)', description: "Our professional team confirms the final timeline with your planner and venue. On your big day, we handle everything, letting you relax and enjoy every magical moment." },
 ];
 
-const recommendedServiceIds = ['cold-sparklers', 'dance-on-the-clouds', '360-photo-booth', 'custom-monogram'];
+const recommendedServiceIds = ['360-photo-booth', 'led-tunnel-neon-tubes', 'cold-sparklers', 'dance-on-the-clouds'];
 
 const faqItems = [
   { question: "Are the cold sparklers safe for indoor venues in Orlando?", answer: "Absolutely. Our cold sparkler fountains are designed for indoor use and are approved by most Orlando and Central Florida venues. They are smokeless, odorless, and do not present a fire hazard, making them safe for any space." },
   { question: "How does the 'Dance on the Clouds' effect work?", answer: "We use professional-grade machines that utilize heated water and dry ice to create a beautiful, thick cloud of low-lying fog that will not rise or trigger smoke alarms, perfect for a romantic first dance." },
-  { question: "Can the photo booth prints be customized for our wedding?", answer: "Yes! We work with you to create a custom design for your photo strips that matches your wedding theme, colors, and includes your names and wedding date." },
-  { question: "What is the most popular entertainment for a wedding reception?", answer: "The 360 Photo Booth is a massive hit at weddings for creating fun, shareable videos. For a 'wow' moment, the Cold Sparklers for the grand entrance or exit and the Dance on the Clouds for the first dance are incredibly popular." }
+  { question: "Can the photo booth prints and video overlays be customized for our wedding?", answer: "Yes! We work with you to create a custom design for your photo strips or 360 video overlays that matches your wedding theme, colors, and includes your names and wedding date." },
+  { question: "How much space do you need for the 360 Photo Booth?", answer: "We generally recommend a clear, flat area of at least 10x10 feet. This ensures the camera arm can rotate safely and guests have enough room to dance and pose. We always coordinate with your venue to find the perfect spot." },
+  { question: "Do your packages include an on-site attendant?", answer: "Yes, all of our interactive entertainment services, like the 360 Photo Booth and Magic Mirror, come with a professional and friendly on-site attendant to ensure everything runs smoothly and your guests have a wonderful experience." }
 ];
 
 const testimonials = [
@@ -29,18 +37,18 @@ const testimonials = [
 ];
 
 const pageContent = `
-## Make Your Orlando Wedding Unforgettable
+## Creating Unforgettable Orlando Wedding Experiences
 
-Your wedding day is one of the most important moments of your life, and the entertainment you choose plays a crucial role in making it memorable. At UREVENT 360 PLUS, we specialize in providing premium, modern entertainment that elevates your celebration from ordinary to extraordinary. Whether you're hosting an elegant reception at a classic Orlando venue or a chic party in a modern space, our services are designed to integrate seamlessly and create 'wow' moments for you and your guests.
+Your wedding day is a celebration of your unique love story, and the entertainment you choose is the brushstroke that turns a beautiful day into a masterpiece of memories. At UREVENT 360 PLUS, we specialize in transforming Orlando weddings with premium, immersive entertainment that captivates guests and creates picture-perfect moments. Forget outdated wedding trends; modern couples are choosing interactive and visually stunning experiences that reflect their personality. From a jaw-dropping grand entrance through a custom LED Tunnel to a magical first dance on a cloud, our services are designed to integrate seamlessly with your vision and venue.
 
-From a magical first dance on a cloud of low-lying fog to a grand exit through a tunnel of safe, indoor cold sparklers, we focus on creating picture-perfect memories. Our interactive photo booths, like the wildly popular 360 Photo Booth, give your guests a fun activity and a personalized keepsake to remember your special day. We work closely with you and your wedding planner to ensure every detail is flawless, allowing you to relax and soak in every moment of your celebration.
+We believe that wedding entertainment should be more than just a background playlist; it should be an integral part of your celebration. That's why our most sought-after services, like the **360 Photo Booth**, provide not just fun, but also a take-home memory for your guests. Imagine the romance of a first dance amplified by our **Dance on the Clouds** effect, or the sheer excitement of an exit surrounded by safe, indoor **Cold Sparklers**. Our bilingual (EN/ES) team coordinates every detail with your venue and planner, from power requirements to timeline cues, ensuring a stress-free experience. Let's work together to make your Orlando wedding the one everyone talks about for years to come.
 `;
 
 export default function WeddingEntertainmentPage() {
   return (
     <PillarPageLayout
-      heroTitle="Unforgettable Wedding Entertainment in Orlando"
-      heroSubtitle="From magical first dances to high-energy celebrations, we bring your dream wedding to life."
+      heroTitle="Wedding Entertainment in Orlando: 360 Booth, LED Tunnel & More"
+      heroSubtitle="Premium Orlando wedding entertainment—360 photo booth, LED tunnel, cold sparklers, dance on the clouds, monograms & more. Plan a custom package today."
       heroImageUrl="https://picsum.photos/seed/orlando-wedding/1920/1080"
       planningSteps={planningSteps}
       recommendedServiceIds={recommendedServiceIds}

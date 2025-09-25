@@ -12,9 +12,12 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { MessageData } from 'genkit';
 import { createLeadAction } from '@/app/app/events/new/actions';
-import { getSystemPromptAction, getSystemPromptEsAction } from '@/app/admin/content/prompts/actions';
 import servicesCatalog from '@/lib/services-catalog.json';
+import fs from 'fs/promises';
+import path from 'path';
 
+const promptFilePath = path.join(process.cwd(), 'src', 'lib', 'ai-system-prompt.txt');
+const promptEsFilePath = path.join(process.cwd(), 'src', 'lib', 'ai-system-prompt-es.txt');
 
 const LeadSchema = z.object({
   fullName: z.string().describe("Client’s full name"),
@@ -170,14 +173,15 @@ const customerSupportFlow = ai.defineFlow(
   async (messages) => {
     try {
         const lang = detectLanguage(messages);
-        const systemPromptResult = lang === 'es' 
-            ? await getSystemPromptEsAction()
-            : await getSystemPromptAction();
-
-        let systemPromptText = systemPromptResult.prompt;
-
-        if (!systemPromptText) {
-            return "I'm sorry, my instructions are not configured correctly. Please contact support.";
+        
+        let systemPromptText = '';
+        try {
+            const promptFile = lang === 'es' ? promptEsFilePath : promptFilePath;
+            systemPromptText = await fs.readFile(promptFile, 'utf-8');
+        } catch (e) {
+            console.error(`Could not read system prompt file for lang '${lang}'`, e);
+            // Use a fallback prompt if file is missing
+            systemPromptText = "You are a helpful assistant for UREVENT 360 PLUS.";
         }
 
         if (systemPromptText.includes('{{SERVICES_CATALOG}}')) {
@@ -191,14 +195,18 @@ const customerSupportFlow = ai.defineFlow(
             inputSchema: z.array(MessageData),
         });
         
+        const history = messages.length > 0
+          ? messages
+          : [{ role: 'user' as const, content: [{ text: 'Hello' }] }];
+
         // Temporary debug logs
-        console.log(`[AI FLOW] Normalization complete. Sending ${messages.length} messages to model.`);
-        messages.forEach((msg, i) => {
+        console.log(`[AI FLOW] Normalization complete. Sending ${history.length} messages to model.`);
+        history.forEach((msg, i) => {
             const contentPreview = msg.content[0]?.text?.substring(0, 40) || '[NO TEXT CONTENT]';
             console.log(`[AI FLOW] Message ${i}: Role=${msg.role}, Content='${contentPreview}...'`);
         });
 
-        const { output } = await prompt(messages);
+        const { output } = await prompt(history);
         return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
 
     } catch (error) {

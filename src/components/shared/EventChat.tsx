@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -96,6 +97,9 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                         <Loader2 className="animate-spin text-muted-foreground" />
                     </div>
                 ) : messages.map((msg, index) => {
+                    // Defensive guard: Do not render if content is empty
+                    if (!msg.content) return null;
+
                     const isCurrentUser = (role === 'admin' && msg.sender === 'admin') || (role === 'host' && msg.sender === 'user');
 
                     if (msg.sender === 'system') {

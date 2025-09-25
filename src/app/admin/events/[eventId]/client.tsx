@@ -11,7 +11,7 @@ import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, File, Download, DollarSign, Check, Circle, CheckCircle, Link as LinkIcon, Clock, ExternalLink, Music, Ban, GitPullRequest, ThumbsUp, ThumbsDown, QrCode, Pause, Play, CalendarOff } from 'lucide-react';
+import { Loader2, File, Download, DollarSign, Check, CheckCircle, Link as LinkIcon, GitPullRequest, ThumbsUp, ThumbsDown, QrCode, Pause, Play, CalendarOff, Music, Ban } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -383,7 +383,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                         <TableCell className="font-medium">{item.title}</TableCell>
                                         <TableCell>
                                             <Badge variant={item.isSyncedToGoogle ? 'default' : 'secondary'} className="gap-1">
-                                                {item.isSyncedToGoogle ? <CheckCircle size={14} /> : <Circle size={14}/>}
+                                                {item.isSyncedToGoogle ? <CheckCircle size={14} /> : <Loader2 size={14} className="animate-spin" />}
                                                 {item.isSyncedToGoogle ? 'Synced' : 'Not Synced'}
                                             </Badge>
                                         </TableCell>
@@ -530,4 +530,5 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     
 
     
+
 

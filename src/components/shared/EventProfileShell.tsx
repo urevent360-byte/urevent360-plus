@@ -9,7 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
 import { Button } from '../ui/button';
-import { Calendar, QrCode } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 type EventProfileShellProps = {
@@ -85,7 +85,7 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
                     {role === 'admin' && (
                         <>
                              <Button variant="outline" size="sm" asChild><Link href="/admin/calendar"><Calendar className="mr-2"/> Itinerary</Link></Button>
-                            <Button variant="outline" size="sm"><QrCode className="mr-2"/> Guest QR</Button>
+                            <Button variant="outline" size="sm" asChild><Link href={`/admin/events/${event.id}?tab=guest-qr`}>QR Manager</Link></Button>
                         </>
                     )}
                 </div>

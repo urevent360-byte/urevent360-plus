@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Settings, LayoutGrid, Newspaper, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, Search, LogOut, FolderKanban, Palette, User, MessageCircleQuestion } from 'lucide-react';
+import { Settings, LayoutGrid, Newspaper, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, FolderKanban, Palette, User } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';

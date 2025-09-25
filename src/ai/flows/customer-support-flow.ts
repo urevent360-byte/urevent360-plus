@@ -111,35 +111,41 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
 function normalizeMessage(message: any): MessageData | null {
   if (!message) return null;
 
-  // 1. Determine role
   let role: 'user' | 'model' = 'user';
-  if (message.role === 'user' || message.role === 'model' || message.role === 'assistant' || message.role === 'system') {
-    // Map 'assistant' and 'system' to 'model' for simplicity if needed, but Genkit handles them.
-    // For this flow, we only expect user/model. Let's be strict.
-    if (message.role === 'user' || message.role === 'model') {
-       role = message.role;
-    }
+  if (message.role === 'user' || message.role === 'model') {
+    role = message.role;
+  } else if (message.role === 'assistant') { // Map 'assistant' to 'model'
+    role = 'model';
   }
 
-  // 2. Build content string
   let contentText = '';
-  if (typeof message.content === 'string') {
-    contentText = message.content.trim();
-  } else if (Array.isArray(message.content) && message.content[0]?.text) {
-    // Standard Genkit format
-    contentText = message.content[0].text.trim();
+
+  const processContent = (content: any) => {
+    if (typeof content === 'string') {
+      return content.trim();
+    }
+    if (Array.isArray(content)) {
+      return content.map(part => {
+        if (part.text) {
+          return part.text.trim();
+        }
+        if (part.media) {
+          return `\n[Attachment: ${part.media.contentType || 'file'}]`;
+        }
+        return '';
+      }).join(' ');
+    }
+    return '';
+  };
+  
+  if (message.content) {
+    contentText = processContent(message.content);
   } else if (typeof (message as any).text === 'string') {
-    // Legacy format { text: '...' }
     contentText = (message as any).text.trim();
   } else if (Array.isArray((message as any).parts)) {
-    // Legacy format { parts: [...] }
-    contentText = (message as any).parts
-      .filter((part: any) => typeof part.text === 'string')
-      .map((part: any) => part.text.trim())
-      .join(' ');
+    contentText = processContent((message as any).parts);
   }
 
-  // 3. After mapping, drop any message with empty content
   if (!contentText) {
     return null;
   }
@@ -187,7 +193,7 @@ const customerSupportFlow = ai.defineFlow(
         name: `customerSupportPrompt-${lang}`,
         system: systemPromptText,
         tools: [createLeadTool],
-        messages: messages // Pass the history here
+        messages: messages, // Pass the history here
     });
 
     const { output } = await prompt();

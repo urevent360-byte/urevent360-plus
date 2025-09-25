@@ -33,7 +33,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/home">
-                  <LayoutGrid />
+                  <LayoutGrid className="text-sky-500" />
                   Home
                 </Link>
               </SidebarMenuButton>
@@ -41,7 +41,7 @@ export default function AppPortalLayout({
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/my-events">
-                  <FolderKanban />
+                  <FolderKanban className="text-orange-500" />
                   My Events
                 </Link>
               </SidebarMenuButton>
@@ -49,7 +49,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/events/new">
-                  <PlusSquare />
+                  <PlusSquare className="text-green-500" />
                   New Event
                 </Link>
               </SidebarMenuButton>
@@ -57,7 +57,7 @@ export default function AppPortalLayout({
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/services">
-                  <Briefcase />
+                  <Briefcase className="text-rose-500" />
                   My Services
                 </Link>
               </SidebarMenuButton>
@@ -65,7 +65,7 @@ export default function AppPortalLayout({
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/timeline">
-                  <ListTree />
+                  <ListTree className="text-indigo-500" />
                   Timeline
                 </Link>
               </SidebarMenuButton>
@@ -73,7 +73,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/designs">
-                  <Palette />
+                  <Palette className="text-purple-500" />
                   Designs
                 </Link>
               </SidebarMenuButton>
@@ -81,7 +81,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/gallery">
-                  <Camera />
+                  <Camera className="text-pink-500" />
                   My Gallery
                 </Link>
               </SidebarMenuButton>
@@ -89,7 +89,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/payments">
-                  <CreditCard />
+                  <CreditCard className="text-amber-500" />
                   Payments
                 </Link>
               </SidebarMenuButton>
@@ -97,7 +97,7 @@ export default function AppPortalLayout({
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/chat">
-                  <Bot />
+                  <Bot className="text-teal-500" />
                   Chat
                 </Link>
               </SidebarMenuButton>
@@ -105,7 +105,7 @@ export default function AppPortalLayout({
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/app/profile">
-                  <User />
+                  <User className="text-slate-500" />
                   My Profile
                 </Link>
               </SidebarMenuButton>

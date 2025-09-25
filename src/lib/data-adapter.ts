@@ -198,7 +198,7 @@ export type RequestedService = z.infer<typeof RequestedServiceSchema>;
 
 export const ChatMessageSchema = z.object({
     sender: z.enum(['user', 'admin', 'system']),
-    text: z.string(),
+    content: z.string(),
     timestamp: z.string(),
 });
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
@@ -460,12 +460,12 @@ let MOCK_REQUESTED_SERVICES: RequestedService[] = [
 
 let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
     'evt-123': [
-        { sender: 'system', text: 'Event created from lead.', timestamp: new Date('2024-07-30T10:00:00Z').toISOString() },
-        { sender: 'admin', text: 'Hi! I\'ve sent over the contract and invoice for you to review.', timestamp: new Date('2024-07-30T10:05:00Z').toISOString() },
-        { sender: 'user', text: 'Great, thanks! I will review it shortly.', timestamp: new Date('2024-07-30T10:15:00Z').toISOString() },
+        { sender: 'system', content: 'Event created from lead.', timestamp: new Date('2024-07-30T10:00:00Z').toISOString() },
+        { sender: 'admin', content: 'Hi! I\'ve sent over the contract and invoice for you to review.', timestamp: new Date('2024-07-30T10:05:00Z').toISOString() },
+        { sender: 'user', content: 'Great, thanks! I will review it shortly.', timestamp: new Date('2024-07-30T10:15:00Z').toISOString() },
     ],
     'evt-456': [
-         { sender: 'system', text: 'Event created from lead.', timestamp: new Date('2024-07-28T10:00:00Z').toISOString() },
+         { sender: 'system', content: 'Event created from lead.', timestamp: new Date('2024-07-28T10:00:00Z').toISOString() },
     ]
 };
 
@@ -826,7 +826,7 @@ export async function createInvoice(eventId: string): Promise<void> {
             MOCK_PAYMENTS[eventId].forEach(p => p.isActive = false);
             MOCK_PAYMENTS[eventId].push(newPayment);
 
-            await sendMessage(eventId, { sender: 'system', text: 'Invoice created.', timestamp: new Date().toISOString() });
+            await sendMessage(eventId, { sender: 'system', content: 'Invoice created.', timestamp: new Date().toISOString() });
             console.log(`(Mock) Invoice created for event ${eventId}. Total: $${total}.`);
         } else {
             throw new Error('Event not found');
@@ -869,7 +869,7 @@ export async function simulateDepositPaid(eventId: string): Promise<void> {
         event.status = 'booked';
         event.confirmedAt = new Date().toISOString();
         
-        await sendMessage(eventId, { sender: 'system', text: 'Deposit paid by client. Portal is now unlocked.', timestamp: new Date().toISOString() });
+        await sendMessage(eventId, { sender: 'system', content: 'Deposit paid by client. Portal is now unlocked.', timestamp: new Date().toISOString() });
         console.log(`(Mock) Deposit payment simulated for event ${eventId}. Status is now 'booked'.`);
         return;
     }
@@ -929,7 +929,7 @@ export async function markContractSigned(eventId: string): Promise<FileRecord> {
     }
     MOCK_FILES[eventId].push(newFile);
     
-    await sendMessage(eventId, { sender: 'system', text: 'Contract signed by client.', timestamp: new Date().toISOString() });
+    await sendMessage(eventId, { sender: 'system', content: 'Contract signed by client.', timestamp: new Date().toISOString() });
     console.log(`(Mock) Contract marked as signed for event ${eventId}`);
     return newFile;
 }

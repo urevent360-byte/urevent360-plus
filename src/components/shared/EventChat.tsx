@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -59,7 +58,7 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
 
         const newMessage: ChatMessage = {
             sender: role === 'admin' ? 'admin' : 'user',
-            text: input,
+            content: input,
             timestamp: new Date().toISOString(),
         };
 
@@ -103,8 +102,8 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                         return (
                              <div key={index} className="flex items-center justify-center gap-2 text-xs text-muted-foreground my-4">
                                 <div className="h-px flex-grow bg-border"></div>
-                                {getSystemIcon(msg.text)}
-                                <span>{msg.text}</span>
+                                {getSystemIcon(msg.content)}
+                                <span>{msg.content}</span>
                                 <span className="text-xs">({format(new Date(msg.timestamp), 'p')})</span>
                                 <div className="h-px flex-grow bg-border"></div>
                             </div>
@@ -127,7 +126,7 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                                     </p>
                                 )}
                                 <div className={cn("rounded-lg px-4 py-2 max-w-sm break-words", isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-card')}>
-                                    <p className="text-sm">{msg.text}</p>
+                                    <p className="text-sm">{msg.content}</p>
                                 </div>
                                 <p className={cn("text-xs text-muted-foreground mt-1", isCurrentUser ? 'text-right' : 'text-left')}>
                                     {format(new Date(msg.timestamp), 'p')}

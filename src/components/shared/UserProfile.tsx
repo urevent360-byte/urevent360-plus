@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages } from 'lucide-react';
+import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, Languages, CreditCard, PlusCircle } from 'lucide-react';
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
@@ -135,6 +135,14 @@ export function UserProfile({ role }: UserProfileProps) {
         });
     }, 1500)
   }
+
+  const handleAddCard = () => {
+    toast({
+      title: 'Simulating Secure Card Entry',
+      description: 'In a real app, this would open a secure form from a payment provider like Stripe.',
+    });
+  };
+
 
   return (
     <div className="space-y-8">
@@ -279,6 +287,28 @@ export function UserProfile({ role }: UserProfileProps) {
                         <ShieldCheck className="mr-2"/>
                         {locales.profile.security.mfa.setup[language]}
                     </Button>
+                </CardContent>
+              </Card>
+              
+               <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><CreditCard /> Payment Methods</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
+                        <div className="flex items-center gap-3">
+                            <CreditCard className="h-6 w-6 text-muted-foreground"/>
+                            <div>
+                                <p className="font-semibold">Visa ending in 1234</p>
+                                <p className="text-sm text-muted-foreground">Expires 12/26</p>
+                            </div>
+                        </div>
+                        <Button variant="ghost" size="sm">Manage</Button>
+                    </div>
+                  <Button variant="secondary" onClick={handleAddCard} className="w-full justify-start" type="button">
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add New Card
+                  </Button>
                 </CardContent>
               </Card>
 

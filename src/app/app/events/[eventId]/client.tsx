@@ -239,6 +239,8 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
             description: 'Your request has been sent to the admin for review.',
         });
     };
+    
+    const activePayment = payments.find(p => p.isActive);
 
     if (isLoading) {
         return (
@@ -304,52 +306,83 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                     </CardContent>
                 </Card>
             </TabsContent>
-            <TabsContent value="billing">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Billing & Payments</CardTitle>
-                        <CardDescription>Review your invoices and payment history.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        {payments.length === 0 ? (
-                             <p className="text-center text-muted-foreground p-8">Waiting for invoice from our team.</p>
-                        ) : (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Invoice ID</TableHead>
-                                        <TableHead>Amount</TableHead>
-                                        <TableHead>Status</TableHead>
-                                        <TableHead>Due Date</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {payments.map(payment => (
-                                        <TableRow key={payment.id}>
-                                            <TableCell className="font-medium">{payment.invoiceId}</TableCell>
-                                            <TableCell>${payment.total.toFixed(2)}</TableCell>
-                                            <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
-                                            <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
-                                            <TableCell className="text-right">
-                                                {payment.status !== 'paid_in_full' && payment.quickbooksUrl && (
-                                                    <Button asChild>
-                                                        <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
-                                                            Pay Now <ExternalLink className="ml-2 h-4 w-4" />
-                                                        </a>
-                                                    </Button>
-                                                )}
-                                                 {payment.status === 'paid_in_full' && (
-                                                    <span className="text-sm text-green-600 font-semibold">Paid in Full</span>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        )}
-                    </CardContent>
-                </Card>
+             <TabsContent value="billing">
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Billing & Payments</CardTitle>
+                            <CardDescription>Review your invoices and payment history.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {activePayment ? (
+                                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                                    <div className="lg:col-span-3 space-y-4">
+                                        <div className="flex justify-between items-center p-4 border rounded-lg">
+                                            <span className="text-muted-foreground">Invoice Total</span>
+                                            <span className="font-bold text-lg">${activePayment.total.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-4 border rounded-lg text-green-600">
+                                            <span className="">Amount Paid</span>
+                                            <span className="font-bold text-lg">${activePayment.depositPaid.toFixed(2)}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center p-4 border rounded-lg font-semibold text-destructive">
+                                            <span className="">Remaining Balance</span>
+                                            <span className="font-bold text-lg">${activePayment.remaining.toFixed(2)}</span>
+                                        </div>
+                                        {activePayment.remaining > 0 && activePayment.quickbooksUrl && (
+                                            <Button asChild className="w-full">
+                                                <a href={activePayment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
+                                                    <BadgeDollarSign className="mr-2"/> Pay Remaining Balance
+                                                </a>
+                                            </Button>
+                                        )}
+                                        {activePayment.status === 'paid_in_full' && (
+                                            <div className="text-center font-semibold text-green-600 p-4 border rounded-lg bg-green-50">
+                                                <CheckCircle className="inline-block mr-2" />
+                                                Paid in Full
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="lg:col-span-2">
+                                        <Card>
+                                            <CardHeader>
+                                                <CardTitle className="text-base">Payment History</CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow>
+                                                            <TableHead>Date</TableHead>
+                                                            <TableHead className="text-right">Amount</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {activePayment.history && activePayment.history.length > 0 ? (
+                                                            activePayment.history.map((item, index) => (
+                                                                <TableRow key={index}>
+                                                                    <TableCell>{format(new Date(item.ts), 'PP')}</TableCell>
+                                                                    <TableCell className="text-right">${item.amount.toFixed(2)}</TableCell>
+                                                                </TableRow>
+                                                            ))
+                                                        ) : (
+                                                            <TableRow>
+                                                                <TableCell colSpan={2} className="text-center h-24">
+                                                                    No payments made yet.
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        )}
+                                                    </TableBody>
+                                                </Table>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                </div>
+                            ) : (
+                                <p className="text-center text-muted-foreground p-8">Waiting for invoice from our team.</p>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
             </TabsContent>
             <TabsContent value="timeline">
                 <Card>
@@ -441,4 +474,5 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
 }
 
     
+
 

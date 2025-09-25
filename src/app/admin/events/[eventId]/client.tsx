@@ -200,6 +200,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
             toast({ title: "Error", description: `Failed to perform action: ${action}`, variant: "destructive" });
         }
     };
+    
+    const activePayment = payments.find(p => p.isActive);
 
     return (
         <EventProfileShell
@@ -264,13 +266,13 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                  </div>
             </TabsContent>
             <TabsContent value="billing">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Billing Management</CardTitle>
-                        <CardDescription>Manage invoices, track payments, and view financial summaries for this event.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        <div className="space-y-2">
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Billing Management</CardTitle>
+                            <CardDescription>Manage invoices, track payments, and view financial summaries for this event.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
                             <p>The current event status is: <span className="font-bold capitalize">{event?.status.replace('_', ' ')}</span></p>
                             <div className="flex gap-4 items-center">
                                 <Button onClick={handleCreateInvoice} disabled={!event || !['quote_requested'].includes(event.status) || isCreatingInvoice}>
@@ -287,47 +289,71 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                             <p className="text-sm text-muted-foreground">
                                 Use "Simulate Deposit Payment" to trigger the webhook that marks the deposit as paid and unlocks the host portal.
                             </p>
-                        </div>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Payment History</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Invoice ID</TableHead>
-                                            <TableHead>Amount</TableHead>
-                                            <TableHead>Status</TableHead>
-                                            <TableHead>Due Date</TableHead>
-                                            <TableHead className="text-right">Actions</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {payments.map(payment => (
-                                            <TableRow key={payment.id}>
-                                                <TableCell className="font-medium">{payment.invoiceId}</TableCell>
-                                                <TableCell>${payment.total.toFixed(2)}</TableCell>
-                                                <TableCell><Badge variant={payment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize">{payment.status.replace('_', ' ')}</Badge></TableCell>
-                                                <TableCell>{format(new Date(payment.dueDate), 'PP')}</TableCell>
-                                                <TableCell className="text-right">
-                                                    {payment.quickbooksUrl && (
-                                                        <Button variant="ghost" size="sm" asChild>
-                                                            <a href={payment.quickbooksUrl} target="_blank" rel="noopener noreferrer">
-                                                                View on QuickBooks <ExternalLink className="ml-2 h-4 w-4" />
-                                                            </a>
-                                                        </Button>
-                                                    )}
-                                                </TableCell>
+                        </CardContent>
+                    </Card>
+
+                    {activePayment ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Financial Summary</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                     <div className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Invoice Total</span>
+                                        <span className="font-bold text-lg">${activePayment.total.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-green-600">
+                                        <span className="">Amount Paid</span>
+                                        <span className="font-bold text-lg">${activePayment.depositPaid.toFixed(2)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center font-semibold text-destructive">
+                                        <span className="">Remaining Balance</span>
+                                        <span className="font-bold text-lg">${activePayment.remaining.toFixed(2)}</span>
+                                    </div>
+                                     <Badge variant={activePayment.status === 'paid_in_full' ? 'default' : 'destructive'} className="capitalize w-full justify-center py-2 text-md">
+                                        {activePayment.status.replace(/_/g, ' ')}
+                                    </Badge>
+                                </CardContent>
+                            </Card>
+                             <Card>
+                                <CardHeader>
+                                    <CardTitle>Payment History</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Amount</TableHead>
+                                                <TableHead>Note</TableHead>
                                             </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                                {payments.length === 0 && <p className="text-center text-muted-foreground p-8">No invoices or payments have been recorded for this event yet.</p>}
+                                        </TableHeader>
+                                        <TableBody>
+                                            {activePayment.history && activePayment.history.length > 0 ? (
+                                                activePayment.history.map((item, index) => (
+                                                    <TableRow key={index}>
+                                                        <TableCell>{format(new Date(item.ts), 'PP')}</TableCell>
+                                                        <TableCell>${item.amount.toFixed(2)}</TableCell>
+                                                        <TableCell>{item.note}</TableCell>
+                                                    </TableRow>
+                                                ))
+                                            ) : (
+                                                <TableRow><TableCell colSpan={3} className="text-center">No payments recorded yet.</TableCell></TableRow>
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ) : (
+                        <Card>
+                            <CardContent className="text-center text-muted-foreground p-8">
+                                No active invoice has been created for this event yet.
                             </CardContent>
                         </Card>
-                    </CardContent>
-                </Card>
+                    )}
+                </div>
             </TabsContent>
             <TabsContent value="timeline">
                 <Card>
@@ -504,3 +530,4 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     
 
     
+

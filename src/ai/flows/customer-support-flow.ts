@@ -91,7 +91,8 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
     const spanishKeywords = ['hola', 'gracias', 'evento', 'precio', 'servicio', 'ayuda'];
     const userText = messages
         .filter(m => m.role === 'user')
-        .map(m => m.content[0]?.text || '')
+        .flatMap(m => m.content)
+        .map(c => c.text || '')
         .join(' ')
         .toLowerCase();
     
@@ -104,7 +105,12 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
 }
 
 export async function continueConversation(messages: MessageData[]): Promise<ConversationOutput> {
-  return customerSupportFlow(messages);
+  // Ensure the message format is correct for the Genkit flow.
+  const history: MessageData[] = messages.map(msg => ({
+    role: msg.role,
+    content: msg.content || [{ text: (msg as any).text || '' }]
+  }));
+  return customerSupportFlow(history);
 }
 
 const customerSupportFlow = ai.defineFlow(

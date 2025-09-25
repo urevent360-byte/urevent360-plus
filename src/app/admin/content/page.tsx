@@ -3,7 +3,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowRight, Instagram, MessageCircleQuestion } from 'lucide-react';
+import { ArrowRight, Instagram, MessageCircleQuestion, FileText, QrCode, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 const contentSections = [
@@ -31,6 +31,18 @@ const contentSections = [
         title: 'Branding',
         description: 'Manage your logo and hero background image.',
         link: '/admin/content/branding'
+    },
+    {
+        title: 'Catalog (PDF)',
+        description: 'Upload and manage your shareable service catalog PDF.',
+        link: '/admin/content/catalog',
+        icon: <BookOpen />
+    },
+    {
+        title: 'Share QR Code',
+        description: 'Generate a QR code that links to your homepage for easy sharing.',
+        link: '/admin/content/qr-code',
+        icon: <QrCode />
     },
     {
         title: 'Social Media Feed',

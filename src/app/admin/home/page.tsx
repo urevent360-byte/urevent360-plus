@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookUser, Briefcase, Bot, Newspaper, Users, Calendar, Settings } from 'lucide-react';
+import { BookUser, Briefcase, Bot, Newspaper, Users, Calendar, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 const overviewCards = [

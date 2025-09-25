@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Data adapter for fetching application data.
  * This file provides a layer of abstraction for data fetching.
@@ -10,6 +11,35 @@ import { z } from 'zod';
 import { format, add } from 'date-fns';
 import { handleDepositWebhookFlow } from '@/ai/flows/gallery-automation';
 import servicesCatalog from './services-catalog.json';
+
+// --- Service ID Normalization ---
+
+const serviceIdMap = new Map<string, string>();
+servicesCatalog.services.forEach(service => {
+    const keys = [
+        service.id.toLowerCase(),
+        service.label.toLowerCase(),
+        ...(service.keywords || []).map(k => k.toLowerCase())
+    ];
+    for (const key of keys) {
+        serviceIdMap.set(key, service.id);
+    }
+});
+
+export const getCanonicalServiceId = (serviceName: string): string => {
+    const lowerCaseName = serviceName.toLowerCase().trim();
+    if (serviceIdMap.has(lowerCaseName)) {
+        return serviceIdMap.get(lowerCaseName)!;
+    }
+    // Fallback for partial matches
+    for (const [key, id] of serviceIdMap.entries()) {
+        if (lowerCaseName.includes(key) || key.includes(lowerCaseName)) {
+            return id;
+        }
+    }
+    return lowerCaseName.replace(/\s+/g, '_');
+};
+
 
 // --- Data Schemas / Types ---
 

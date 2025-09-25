@@ -92,7 +92,7 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
     const userText = messages
         .filter(m => m.role === 'user')
         .flatMap(m => m.content)
-        .map(c => c.text || '')
+        .map(c => c?.text || '')
         .join(' ')
         .toLowerCase();
     
@@ -109,7 +109,7 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
   const history: MessageData[] = messages.map(msg => ({
     role: msg.role,
     content: msg.content || [{ text: (msg as any).text || '' }]
-  }));
+  })).filter(msg => msg.content && msg.content[0] && msg.content[0].text);
   return customerSupportFlow(history);
 }
 

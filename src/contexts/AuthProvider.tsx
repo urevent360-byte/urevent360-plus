@@ -33,33 +33,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const pathname = usePathname();
 
   React.useEffect(() => {
-    // --- TEMPORARY DEVELOPMENT LOGIC ---
-    // This simulates a logged-in user to bypass authentication during development.
-    // It makes the system assume a user is logged in based on the current URL.
-    setLoading(true);
-    const isAppRoute = pathname.startsWith('/app');
-    const isAdminRoute = pathname.startsWith('/admin');
-
-    if (isAdminRoute) {
-        // If we are in an admin route, simulate an admin user being logged in.
-        setUser({ email: ADMIN_EMAIL, displayName: 'Admin' } as User);
-        setIsAdmin(true);
-    } else if (isAppRoute) {
-        // If we are in a client app route, simulate a client/host user being logged in.
-        setUser({ email: 'client@urevent360.com', displayName: 'Host' } as User);
-        setIsAdmin(false);
-    } else {
-        // For public pages, no user is simulated.
-        setUser(null);
-        setIsAdmin(false);
-    }
-    setLoading(false);
-
-    // The original Firebase auth logic is commented out below.
-    // To re-enable real authentication, remove the temporary logic above
-    // and uncomment the `onAuthStateChanged` listener.
-
-    /*
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setLoading(true);
       setUser(user);
@@ -96,16 +69,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => unsubscribe();
-    */
   }, [router, pathname]);
 
   const signOut = async () => {
-    // In dev mode, just clear the user and redirect to the appropriate login page.
-    setUser(null);
-    setIsAdmin(false);
-
-    // The original Firebase sign-out call is commented for development.
-    // await firebaseSignOut(auth); 
+    await firebaseSignOut(auth); 
     
     if (pathname.startsWith('/admin')) {
       router.push('/admin/login');

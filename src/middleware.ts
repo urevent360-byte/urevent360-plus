@@ -15,10 +15,6 @@ export function middleware(request: NextRequest) {
   // The 'firebase-authed' cookie would be set upon sign-in on the client and verified here.
   const isAuthed = request.cookies.has('firebase-authed-token'); // Example cookie name
 
-  // --- AUTHENTICATION IS TEMPORARILY DISABLED FOR DEVELOPMENT ---
-  // The logic below is commented out to allow for free navigation without logging in.
-  // To re-enable server-side route protection, uncomment this block.
-  /*
   if (!isAuthed) {
     // If a user is not authenticated and tries to access a protected admin route,
     // redirect them to the admin login page.
@@ -31,7 +27,6 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/app/login', request.url));
     }
   }
-  */
 
   return NextResponse.next();
 }

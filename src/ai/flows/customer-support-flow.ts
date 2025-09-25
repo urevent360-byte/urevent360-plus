@@ -110,7 +110,7 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
 const customerSupportFlow = ai.defineFlow(
   {
     name: 'customerSupportFlow',
-    inputSchema: z.any(),
+    inputSchema: ConversationInputSchema.shape.messages,
     outputSchema: z.string(),
   },
   async (messages) => {
@@ -137,7 +137,7 @@ const customerSupportFlow = ai.defineFlow(
         tools: [createLeadTool],
     });
 
-    const { output } = await prompt(messages);
+    const { output } = await prompt({ messages });
     return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
   }
 );

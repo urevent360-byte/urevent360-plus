@@ -13,7 +13,6 @@ import { EventChat } from '@/components/shared/EventChat';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Lock, FileSignature, BadgeDollarSign, Loader2, File, Download, CheckCircle, Music, Plus, Ban, Trash2, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -442,3 +441,4 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
 }
 
     
+

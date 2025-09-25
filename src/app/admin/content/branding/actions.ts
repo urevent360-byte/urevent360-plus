@@ -5,12 +5,6 @@ import { z } from 'zod';
 import fs from 'fs/promises';
 import path from 'path';
 
-// Define a schema for expected form data (optional but good practice)
-const brandingSchema = z.object({
-  logo: z.instanceof(File).optional(),
-  heroImage: z.instanceof(File).optional(),
-});
-
 const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
 const brandingConfigFile = path.join(process.cwd(), 'public', 'branding.json');
 

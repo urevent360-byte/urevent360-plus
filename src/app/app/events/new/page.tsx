@@ -17,18 +17,12 @@ import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createLeadAction } from './actions';
 import { useAuth } from '@/contexts/AuthProvider';
+import servicesCatalog from '@/lib/services-catalog.json';
 
-const allServices = [
-    { id: '360-photo-booth', title: '360 Photo Booth' },
-    { id: 'photo-booth-printer', title: 'Photo Booth Printer' },
-    { id: 'magic-mirror', title: 'Magic Mirror' },
-    { id: 'la-hora-loca-led-robot', title: 'La Hora Loca with LED Robot' },
-    { id: 'cold-sparklers', title: 'Cold Sparklers' },
-    { id: 'dance-on-the-clouds', title: 'Dance on the Clouds' },
-    { id: 'projector-slideshows-videos', title: 'Projector (Slideshows & Videos)' },
-    { id: 'monogram-projector', title: 'Monogram Projector' },
-    { id: 'led-screens-wall', title: 'LED Screens Wall' },
-];
+const allServices = servicesCatalog.services.map(s => ({
+    id: s.id,
+    title: s.label,
+}));
 
 const formSchema = z.object({
   name: z.string().min(2, 'Event name is required'),
@@ -283,3 +277,5 @@ export default function NewEventPage() {
         </div>
     );
 }
+
+    

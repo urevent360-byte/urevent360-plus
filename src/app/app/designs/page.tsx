@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { listDesignProposals, approveDesign, type DesignProposal } from '@/lib/data-adapter';
 import Image from 'next/image';
-import { Check, CheckCircle, Image as ImageIcon } from 'lucide-react';
+import { CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 

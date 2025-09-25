@@ -100,9 +100,9 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                         <Loader2 className="animate-spin text-muted-foreground" />
                     </div>
                 ) : messages.map((msg, index) => {
-                    // Defensive guard: Do not render if content is empty
-                    if (!msg.content) {
-                        console.log(`[RSC] Warning: Skipping message at index ${index} due to empty content.`);
+                    // Defensive guard: Do not render if content is empty or msg is invalid
+                    if (!msg || !msg.content) {
+                        console.log(`[RSC] Warning: Skipping message at index ${index} due to invalid or empty content.`);
                         return null;
                     };
 

@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { listDesignProposals, approveDesign, type DesignProposal } from '@/lib/data-adapter';
-import type { Event } from '@/lib/data-adapter';
 import Image from 'next/image';
 import { Check, CheckCircle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

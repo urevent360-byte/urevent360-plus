@@ -54,7 +54,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                                 <div className="relative aspect-video">
                                 <Image
                                     src={imgUrl}
-                                    alt={`${service.title} image ${index + 1}`}
+                                    alt={`${service.title} - Image ${index + 1}`}
                                     fill
                                     className="object-cover"
                                     priority={index === 0}

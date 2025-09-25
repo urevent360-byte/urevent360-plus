@@ -91,7 +91,7 @@ const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
     const spanishKeywords = ['hola', 'gracias', 'evento', 'precio', 'servicio', 'ayuda'];
     const userText = messages
         .filter(m => m.role === 'user')
-        .map(m => m.content.map(c => c.text || '').join(' '))
+        .map(m => m.content[0]?.text || '')
         .join(' ')
         .toLowerCase();
     
@@ -110,7 +110,7 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
 const customerSupportFlow = ai.defineFlow(
   {
     name: 'customerSupportFlow',
-    inputSchema: ConversationInputSchema.shape.messages,
+    inputSchema: z.array(MessageData),
     outputSchema: z.string(),
   },
   async (messages) => {

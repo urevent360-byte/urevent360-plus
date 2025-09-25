@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
@@ -26,6 +27,7 @@ const getSystemIcon = (text: string) => {
 
 
 export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 'host' }) {
+    console.log('[RSC] Enter: EventChat');
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -84,7 +86,8 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
         admin: { name: 'Admin' },
         user: { name: 'Client' }
     };
-
+    
+    console.log('[RSC] Render: EventChat Content');
     return (
         <Card className="h-[70vh] flex flex-col">
             <CardHeader>
@@ -98,7 +101,10 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                     </div>
                 ) : messages.map((msg, index) => {
                     // Defensive guard: Do not render if content is empty
-                    if (!msg.content) return null;
+                    if (!msg.content) {
+                        console.log(`[RSC] Warning: Skipping message at index ${index} due to empty content.`);
+                        return null;
+                    };
 
                     const isCurrentUser = (role === 'admin' && msg.sender === 'admin') || (role === 'host' && msg.sender === 'user');
 
@@ -165,6 +171,7 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
                     </Button>
                 </div>
             </div>
+            {console.log('[RSC] Exit: EventChat')}
         </Card>
     );
 }

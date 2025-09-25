@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -21,6 +22,7 @@ type EventServicesProps = {
 };
 
 export function EventServices({ eventId, role, onDataChange }: EventServicesProps) {
+    console.log('[RSC] Enter: EventServices');
     const [bookedServices, setBookedServices] = useState<RequestedService[]>([]);
     const [availableAddons, setAvailableAddons] = useState<Service[]>([]);
     const [requestedAddons, setRequestedAddons] = useState<RequestedService[]>([]);
@@ -84,6 +86,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
         if (onDataChange) onDataChange();
     };
 
+    console.log('[RSC] Render: EventServices Content');
     if (role === 'admin') {
         return (
             <Card>
@@ -138,6 +141,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                      {requestedAddons.length === 0 && bookedServices.length > 0 && <p className="text-center text-muted-foreground p-8">No add-on services have been requested for this event.</p>}
                      {requestedAddons.length === 0 && bookedServices.length === 0 && <p className="text-center text-muted-foreground p-8">No services booked or requested for this event.</p>}
                 </CardContent>
+                {console.log('[RSC] Exit: EventServices (Admin)')}
             </Card>
         )
     }
@@ -212,6 +216,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                     </CardFooter>
                 )}
             </Card>
+            {console.log('[RSC] Exit: EventServices (Host)')}
         </div>
     );
 }

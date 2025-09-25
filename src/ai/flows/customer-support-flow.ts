@@ -141,6 +141,11 @@ const customerSupportFlow = ai.defineFlow(
         name: `customerSupportPrompt-${lang}`,
         system: systemPromptText,
         tools: [createLeadTool],
+        input: {
+          schema: z.object({
+            messages: z.array(MessageData)
+          })
+        }
     });
 
     const { output } = await prompt({ messages });

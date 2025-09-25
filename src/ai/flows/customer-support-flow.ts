@@ -184,8 +184,6 @@ const customerSupportFlow = ai.defineFlow(
             systemPromptText = systemPromptText.replace('{{SERVICES_CATALOG}}', JSON.stringify(servicesCatalog, null, 2));
         }
 
-        const history = messages.length > 0 ? messages : [{ role: 'system', content: [{ text: systemPromptText }] }];
-        
         const prompt = ai.definePrompt({
             name: `customerSupportPrompt-${lang}`,
             system: systemPromptText,
@@ -194,13 +192,13 @@ const customerSupportFlow = ai.defineFlow(
         });
         
         // Temporary debug logs
-        console.log(`[AI FLOW] Normalization complete. Sending ${history.length} messages to model.`);
-        history.forEach((msg, i) => {
+        console.log(`[AI FLOW] Normalization complete. Sending ${messages.length} messages to model.`);
+        messages.forEach((msg, i) => {
             const contentPreview = msg.content[0]?.text?.substring(0, 40) || '[NO TEXT CONTENT]';
             console.log(`[AI FLOW] Message ${i}: Role=${msg.role}, Content='${contentPreview}...'`);
         });
 
-        const { output } = await prompt(history);
+        const { output } = await prompt(messages);
         return output?.text || "I'm sorry, I'm having trouble responding right now. Please try again in a moment.";
 
     } catch (error) {

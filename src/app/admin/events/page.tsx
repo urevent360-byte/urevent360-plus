@@ -1,5 +1,3 @@
-const GEMINI_API_KEY="AIzaSyB5_iVWj5eQ-OZflg_HX5GzJkP025Lyz_k"
-
 'use client';
 
 import { Button } from '@/components/ui/button';

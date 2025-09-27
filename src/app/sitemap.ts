@@ -36,7 +36,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .map(service => ({
       url: `${siteUrl}/services/${service.slug}`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.9,
     }));
 

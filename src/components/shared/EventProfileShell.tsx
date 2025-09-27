@@ -46,12 +46,10 @@ const hostTabs = [
 ]
 
 export function EventProfileShell({ event, role, children, isLoading = false, activeTab, onTabChange, isLocked = false }: EventProfileShellProps) {
-    console.log('[RSC] Enter: EventProfileShell');
 
     const tabs = role === 'admin' ? adminTabs : hostTabs;
 
     if (isLoading || !event) {
-        console.log('[RSC] Render: EventProfileShell Loading State');
         return (
             <div className="space-y-6">
                 <Card>
@@ -72,7 +70,6 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
         )
     }
 
-  console.log('[RSC] Render: EventProfileShell Content');
   return (
     <div className="space-y-6">
         <Card>
@@ -111,7 +108,6 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
         </div>
         
       </Tabs>
-      {console.log('[RSC] Exit: EventProfileShell')}
     </div>
   );
 }

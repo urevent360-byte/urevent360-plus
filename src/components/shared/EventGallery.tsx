@@ -57,7 +57,6 @@ function GalleryLoader() {
 }
 
 export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
-    console.log('[RSC] Enter: EventGallery');
     const { toast } = useToast();
     const [guestUploads, setGuestUploads] = useState<GuestUpload[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -93,12 +92,10 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
     };
 
     if (isLoading) {
-        console.log('[RSC] Render: EventGallery Loading State');
         return <GalleryLoader />;
     }
 
     if (!event) {
-        console.log('[RSC] Error: Event data not found in EventGallery');
         return (
             <Alert variant="destructive">
                 <AlertTitle>Error</AlertTitle>
@@ -110,7 +107,6 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
     const isGalleryVisible = event.galleryVisibilityDate ? isPast(new Date(event.galleryVisibilityDate)) : false;
     const isGalleryActive = isGalleryVisible && (event.galleryExpirationDate ? isFuture(new Date(event.galleryExpirationDate)) : true);
 
-    console.log('[RSC] Render: EventGallery Content');
     return (
         <div className="space-y-8">
             <Card>
@@ -225,7 +221,6 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
                     </Alert>
                 </CardContent>
             </Card>
-            {console.log('[RSC] Exit: EventGallery')}
         </div>
     );
 }

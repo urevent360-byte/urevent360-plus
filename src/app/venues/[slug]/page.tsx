@@ -75,7 +75,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-export default function VenuePage({ params }: Props) {
+export default async function VenuePage({ params }: Props) {
     const venue = venues.find(v => v.slug === params.slug);
   
     if (!venue) {

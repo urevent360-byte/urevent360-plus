@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const planningSteps = [
   { title: '1. Her Vision', description: "We start by understanding the birthday girl's vision, from themes and colors to the vibe she wants for her party." },
-  { title: '2. Choose the 'Wow'', description: "Select from our most popular Sweet 16 services, like the 360 Photo Booth for TikTok-ready videos or a custom monogram." },
+  { title: "2. Choose the 'Wow'", description: "Select from our most popular Sweet 16 services, like the 360 Photo Booth for TikTok-ready videos or a custom monogram." },
   { title: '3. A Night to Remember', description: "Our team handles all the details, ensuring a seamless and spectacular party so the whole family can celebrate." },
 ];
 

@@ -102,7 +102,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-export default function SolutionPage({ params }: Props) {
+export default async function SolutionPage({ params }: Props) {
   const { service: serviceSlug, eventType } = params;
   const service = servicesCatalog.services.find(s => s.slug === serviceSlug);
 

@@ -164,7 +164,6 @@ function MusicPreferences({ eventId }: { eventId: string }) {
 }
 
 export default function AppEventDetailClient({ eventId }: { eventId: string }) {
-    console.log('[RSC] Enter: AppEventDetailClient');
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -176,7 +175,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     const { toast } = useToast();
 
     async function fetchEventData() {
-        console.log('[RSC] Enter: fetchEventData (App)');
         setIsLoading(true);
         const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedPayments] = await Promise.all([
             getEvent(eventId),
@@ -189,7 +187,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         setTimeline(fetchedTimeline);
         setPayments(fetchedPayments);
         setIsLoading(false);
-        console.log('[RSC] Exit: fetchEventData (App)');
     }
 
     useEffect(() => {
@@ -277,7 +274,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         );
     }
 
-    console.log('[RSC] Render: AppEventDetailClient Content');
     return (
         <EventProfileShell
             event={event}
@@ -288,7 +284,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
             isLocked={isLocked}
         >
              <TabsContent value="details">
-                 {console.log('[RSC] Enter: App Details Tab')}
                  <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
@@ -310,10 +305,8 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                         </div>
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: App Details Tab')}
             </TabsContent>
              <TabsContent value="billing">
-                 {console.log('[RSC] Enter: App Billing Tab')}
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
@@ -390,10 +383,8 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                         </CardContent>
                     </Card>
                 </div>
-                 {console.log('[RSC] Exit: App Billing Tab')}
             </TabsContent>
             <TabsContent value="timeline">
-                 {console.log('[RSC] Enter: App Timeline Tab')}
                 <Card>
                      <CardHeader className="flex flex-row items-center justify-between">
                         <div>
@@ -428,10 +419,8 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                          {timeline.length === 0 && <p className="text-center text-muted-foreground p-8">The event timeline has not been published yet.</p>}
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: App Timeline Tab')}
             </TabsContent>
              <TabsContent value="files">
-                 {console.log('[RSC] Enter: App Files Tab')}
                  <Card>
                     <CardHeader>
                         <CardTitle>My Files</CardTitle>
@@ -463,7 +452,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                          {files.length === 0 && <p className="text-center text-muted-foreground p-8">No files have been shared with you yet.</p>}
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: App Files Tab')}
             </TabsContent>
             <TabsContent value="gallery">
                  <EventGallery 
@@ -473,9 +461,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
                  />
             </TabsContent>
              <TabsContent value="music">
-                 {console.log('[RSC] Enter: App Music Tab')}
                 <MusicPreferences eventId={eventId} />
-                 {console.log('[RSC] Exit: App Music Tab')}
             </TabsContent>
             <TabsContent value="communication">
                 <EventChat eventId={eventId} role="host" />
@@ -483,12 +469,6 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
              <TabsContent value="my-services">
                 <EventServices eventId={eventId} role="host" onDataChange={fetchEventData} />
             </TabsContent>
-            {console.log('[RSC] Exit: AppEventDetailClient')}
         </EventProfileShell>
     );
 }
-
-    
-
-
-

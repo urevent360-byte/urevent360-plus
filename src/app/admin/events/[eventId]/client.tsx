@@ -23,7 +23,6 @@ import { EventServices } from '@/components/shared/EventServices';
 
 
 export default function AdminEventDetailClient({ eventId }: { eventId: string }) {
-    console.log('[RSC] Enter: AdminEventDetailClient');
     const [event, setEvent] = useState<Event | null>(null);
     const [files, setFiles] = useState<FileRecord[]>([]);
     const [timeline, setTimeline] = useState<TimelineItem[]>([]);
@@ -39,7 +38,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     const { toast } = useToast();
 
     async function fetchEventData() {
-        console.log('[RSC] Enter: fetchEventData (Admin)');
         setIsLoading(true);
         const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments, musicPlaylist, fetchedChanges] = await Promise.all([
             getEvent(eventId),
@@ -61,7 +59,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
             setDoNotPlay(musicPlaylist.doNotPlay);
         }
         setIsLoading(false);
-        console.log('[RSC] Exit: fetchEventData (Admin)');
     }
 
     useEffect(() => {
@@ -206,7 +203,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     
     const activePayment = payments.find(p => p.isActive);
 
-    console.log('[RSC] Render: AdminEventDetailClient Content');
     return (
         <EventProfileShell
             event={event}
@@ -216,7 +212,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
             onTabChange={setActiveTab}
         >
              <TabsContent value="details">
-                 {console.log('[RSC] Enter: Admin Details Tab')}
                  <div className="space-y-6">
                     <Card>
                         <CardHeader>
@@ -269,10 +264,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                         </Card>
                      )}
                  </div>
-                 {console.log('[RSC] Exit: Admin Details Tab')}
             </TabsContent>
             <TabsContent value="billing">
-                {console.log('[RSC] Enter: Admin Billing Tab')}
                 <div className="space-y-6">
                     <Card>
                         <CardHeader>
@@ -361,10 +354,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                         </Card>
                     )}
                 </div>
-                {console.log('[RSC] Exit: Admin Billing Tab')}
             </TabsContent>
             <TabsContent value="timeline">
-                 {console.log('[RSC] Enter: Admin Timeline Tab')}
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between">
                         <div>
@@ -409,10 +400,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                          {timeline.length === 0 && <p className="text-center text-muted-foreground p-8">No timeline items have been added for this event yet.</p>}
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: Admin Timeline Tab')}
             </TabsContent>
              <TabsContent value="files">
-                 {console.log('[RSC] Enter: Admin Files Tab')}
                 <Card>
                     <CardHeader>
                         <CardTitle>File Management</CardTitle>
@@ -448,7 +437,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                          {files.length === 0 && <p className="text-center text-muted-foreground p-8">No files have been uploaded for this event yet.</p>}
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: Admin Files Tab')}
             </TabsContent>
             <TabsContent value="gallery">
                  <EventGallery 
@@ -458,7 +446,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                  />
             </TabsContent>
              <TabsContent value="guest-qr">
-                 {console.log('[RSC] Enter: Admin Guest QR Tab')}
                 <Card>
                     <CardHeader>
                         <CardTitle>Guest Upload QR Code</CardTitle>
@@ -517,10 +504,8 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                         )}
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: Admin Guest QR Tab')}
             </TabsContent>
              <TabsContent value="music">
-                 {console.log('[RSC] Enter: Admin Music Tab')}
                 <Card>
                     <CardHeader>
                         <CardTitle>Client's Music Preferences</CardTitle>
@@ -531,7 +516,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                         <SongList title="Do-Not-Play List" songs={doNotPlay} icon={<Ban />} />
                     </CardContent>
                 </Card>
-                 {console.log('[RSC] Exit: Admin Music Tab')}
             </TabsContent>
             <TabsContent value="communication">
                 <EventChat eventId={eventId} role="admin" />
@@ -539,14 +523,6 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
              <TabsContent value="my-services">
                  <EventServices eventId={eventId} role="admin" onDataChange={fetchEventData} />
             </TabsContent>
-            {console.log('[RSC] Exit: AdminEventDetailClient')}
         </EventProfileShell>
     );
 }
-
-    
-
-    
-
-
-

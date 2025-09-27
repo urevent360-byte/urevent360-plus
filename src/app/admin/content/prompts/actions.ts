@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A customer support and sales AI agent for UREVENT 360 PLUS.
@@ -74,13 +75,20 @@ const createLeadTool = ai.defineTool(
 );
 
 
-const ConversationInputSchema = z.object({
-  messages: z.array(
+const MessageSchema = z.object({
+  role: z.enum(['user', 'model', 'system', 'tool']),
+  content: z.array(
     z.object({
-      role: z.enum(['user', 'model']),
-      content: z.array(z.object({ text: z.string() })),
+      text: z.string().optional(),
+      media: z.object({ url: z.string(), contentType: z.string().optional() }).optional(),
+      toolRequest: z.any().optional(),
+      toolResponse: z.any().optional(),
     })
-  ).describe('A history of messages in the conversation.'),
+  ),
+});
+
+const ConversationInputSchema = z.object({
+  messages: z.array(MessageSchema).describe('A history of messages in the conversation.'),
 });
 export type ConversationInput = z.infer<typeof ConversationInputSchema>;
 
@@ -166,7 +174,7 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
 const customerSupportFlow = ai.defineFlow(
   {
     name: 'customerSupportFlow',
-    inputSchema: z.array(MessageData),
+    inputSchema: z.array(MessageSchema),
     outputSchema: z.string(),
   },
   async (messages) => {
@@ -191,7 +199,7 @@ const customerSupportFlow = ai.defineFlow(
             name: `customerSupportPrompt-${lang}`,
             system: systemPromptText,
             tools: [createLeadTool],
-            inputSchema: z.array(MessageData),
+            input: { schema: z.array(MessageSchema) },
         });
         
         const history = messages.length > 0

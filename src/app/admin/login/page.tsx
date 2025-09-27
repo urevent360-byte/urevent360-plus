@@ -12,7 +12,6 @@ import {
   PhoneAuthProvider,
   PhoneMultiFactorGenerator,
   RecaptchaVerifier,
-  MultiFactorInfo,
   PhoneMultiFactorInfo,
   MultiFactorResolver,
 } from 'firebase/auth';

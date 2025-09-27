@@ -14,6 +14,10 @@ type Props = {
   params: { service: string; eventType: string };
 };
 
+// --- CONSTANTS ---
+const CITY_NAME = "Orlando";
+const QUOTE_PATH = "/plan";
+
 // --- HELPER FUNCTIONS ---
 const formatSlug = (slug: string) => {
   return slug
@@ -36,7 +40,7 @@ function ServiceSchema({ service, eventType }: { service: (typeof servicesCatalo
     },
     areaServed: {
       '@type': 'City',
-      name: 'Orlando',
+      name: CITY_NAME,
     },
     offers: {
       '@type': 'Offer',
@@ -70,8 +74,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const serviceName = service.title;
-  const title = `${serviceName} for ${formattedEventType}s in Orlando`;
-  const description = `Discover why our ${serviceName} is the perfect addition for your ${formattedEventType.toLowerCase()} in Orlando. Create unforgettable moments. Contact us for a quote!`;
+  const title = `${serviceName} for ${formattedEventType}s in ${CITY_NAME}`;
+  const description = `Discover why our ${serviceName} is the perfect addition for your ${formattedEventType.toLowerCase()} in ${CITY_NAME}. Create unforgettable moments. Contact us for a quote!`;
 
   return {
     title,
@@ -108,6 +112,7 @@ export default async function SolutionPage({ params }: Props) {
 
   if (!service) {
     notFound();
+    return null; // Explicitly stop execution after notFound()
   }
 
   const formattedEventType = formatSlug(eventType);
@@ -144,10 +149,10 @@ export default async function SolutionPage({ params }: Props) {
             {title}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white drop-shadow-sm md:text-xl">
-            Elevate your {formattedEventType.toLowerCase()} in Orlando with a unique and engaging experience.
+            Elevate your {formattedEventType.toLowerCase()} in {CITY_NAME} with a unique and engaging experience.
           </p>
            <Button size="lg" className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90" asChild>
-            <Link href="/plan">
+            <Link href={QUOTE_PATH}>
               Get a Quote for Your {formattedEventType}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
@@ -187,8 +192,8 @@ export default async function SolutionPage({ params }: Props) {
               {formattedEventType} Inspiration Gallery
             </h2>
              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {galleryImages.map((image, index) => (
-                    <div key={index} className="overflow-hidden shadow-lg rounded-lg">
+                {galleryImages.map((image) => (
+                    <div key={image.url} className="overflow-hidden shadow-lg rounded-lg">
                         <div className="relative aspect-video">
                             <Image src={image.url} alt={image.alt} fill className="object-cover"/>
                         </div>
@@ -208,7 +213,7 @@ export default async function SolutionPage({ params }: Props) {
             Let's make your {formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
           </p>
           <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 font-bold" asChild>
-            <Link href="/plan">
+            <Link href={QUOTE_PATH}>
               Get Your Free Quote
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>

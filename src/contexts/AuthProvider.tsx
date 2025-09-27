@@ -20,8 +20,10 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
-const publicRoutes = ['/', '/contact', '/gallery'];
+const publicRoutes = ['/', '/contact', '/gallery', '/plan', '/orlando-event-planning', '/corporate-event-production-orlando', '/wedding-entertainment-orlando', '/quinceanera-entertainment-orlando', '/sweet-16-entertainment-orlando', '/birthday-party-entertainment-orlando', '/baby-shower-entertainment-orlando', '/prom-entertainment-orlando'];
 const servicesRegex = /^\/services(\/.*)?$/;
+const solutionsRegex = /^\/solutions(\/.*)?$/;
+const venuesRegex = /^\/venues(\/.*)?$/;
 const uploadRegex = /^\/upload(\/.*)?$/;
 
 
@@ -43,7 +45,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const isAppLogin = pathname === '/app/login' || pathname === '/app/register' || pathname === '/app/forgot-password';
       const isAdminLogin = pathname === '/admin/login' || pathname === '/admin/forgot-password';
 
-      const isPublicRoute = publicRoutes.includes(pathname) || servicesRegex.test(pathname) || uploadRegex.test(pathname);
+      const isPublicRoute = publicRoutes.includes(pathname) || 
+                            servicesRegex.test(pathname) || 
+                            solutionsRegex.test(pathname) ||
+                            venuesRegex.test(pathname) ||
+                            uploadRegex.test(pathname);
 
       if (user) {
         if (userIsAdmin) {

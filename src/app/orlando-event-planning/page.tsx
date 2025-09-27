@@ -1,3 +1,4 @@
+
 import { PillarPageLayout } from '@/components/page/pillar/PillarPageLayout';
 import type { Metadata } from 'next';
 
@@ -26,6 +27,14 @@ const testimonials = [
   { text: "The most professional and creative event team I've ever worked with. Our wedding was perfect.", author: "Jessica L.", event: "Wedding" },
 ];
 
+const pageContent = `
+## Your Partner in Creating Unforgettable Orlando Events
+
+Planning an event, whether it's a dream wedding, a milestone quinceañera, or a high-impact corporate function, requires a clear vision and flawless execution. At UREVENT 360 PLUS, we are more than just an entertainment provider; we are your creative partners. Our team is dedicated to bringing your vision to life with a combination of spectacular services and meticulous planning.
+
+We specialize in creating immersive experiences that engage your guests from the moment they arrive. From dazzling LED video walls and futuristic entrance tunnels to high-energy Hora Loca performances and interactive photo booths, we offer a comprehensive suite of services to elevate any occasion. Our bilingual team understands the unique needs of Orlando's diverse community and is committed to delivering a seamless, stress-free planning process. Let's work together to make your next event not just successful, but truly legendary.
+`;
+
 export default function OrlandoEventPlanningPage() {
   return (
     <PillarPageLayout
@@ -34,6 +43,7 @@ export default function OrlandoEventPlanningPage() {
       heroImageUrl="https://picsum.photos/seed/orlando-planning/1920/1080"
       planningSteps={planningSteps}
       recommendedServiceIds={recommendedServiceIds}
+      pageContent={pageContent}
       faqItems={faqItems}
       testimonials={testimonials}
     />

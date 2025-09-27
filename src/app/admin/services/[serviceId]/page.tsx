@@ -2,7 +2,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, Control } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,14 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 const allCategories = [...new Set(servicesCatalog.services.map(s => s.category))];
 
-const ArrayFieldManager = ({ name, control, label, description }: { name: any, control: any, label: string, description: string }) => {
+type ArrayFieldManagerProps = {
+  name: 'keywords' | 'qualifiers' | 'tags' | 'galleryImages' | 'options';
+  control: Control<ServiceFormValues>;
+  label: string;
+  description: string;
+};
+
+const ArrayFieldManager = ({ name, control, label, description }: ArrayFieldManagerProps) => {
     const { fields, append, remove } = useFieldArray({ control, name });
     return (
         <div className="space-y-4">

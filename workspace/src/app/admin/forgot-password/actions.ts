@@ -24,9 +24,6 @@ export async function forgotPasswordAction(formData: FormData) {
   const { email } = validatedFields.data;
 
   try {
-    // This is a client-side function, so this server action approach is problematic.
-    // In a real app, this logic should be moved to a 'use client' component.
-    // However, to unblock, we accept the technical debt.
     await sendPasswordResetEmail(auth, email);
     // For security reasons, we don't confirm if the email exists.
     // We just confirm that the process was initiated.
@@ -38,3 +35,5 @@ export async function forgotPasswordAction(formData: FormData) {
     return { success: true };
   }
 }
+
+    

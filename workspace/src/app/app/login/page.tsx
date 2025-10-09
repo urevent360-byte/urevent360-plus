@@ -1,6 +1,4 @@
-
-'use client';
-
+"use client";
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -192,5 +190,3 @@ export default function HostLoginPage() {
     </div>
   );
 }
-
-    

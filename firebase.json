@@ -1,26 +1,13 @@
 {
-  "apphosting": [
-    {
-      "backendId": "urevent360-plus-web",
-      "rootDir": ".",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    },
-    {
-      "backendId": "urevent360-plus-web",
-      "rootDir": ".",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "functions"
-      ]
-    }
-  ]
+  "apphosting": {
+    "backendId": "studio",
+    "rootDir": ".",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions"
+    ]
+  }
 }

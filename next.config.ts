@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  env: {
+    // Expose the JSON that App Hosting injects as FIREBASE_WEBAPP_CONFIG
+    NEXT_PUBLIC_FIREBASE_WEBAPP_CONFIG: process.env.FIREBASE_WEBAPP_CONFIG,
+  },
   images: {
     remotePatterns: [
       {

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -14,7 +13,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, KeyRound, ArrowLeft } from 'lucide-react';
 import { forgotPasswordAction } from './actions';
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/authClient';
 
 const formSchema = z.object({
   email: z.string().email(),

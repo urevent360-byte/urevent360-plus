@@ -1,5 +1,10 @@
 // This file is deprecated. Please import from '@/lib/firebase/app' or '@/lib/firebase/authClient'
-import { app, db, storage } from "./app";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { app } from "./app";
 import { auth } from './authClient';
 
-export { app, db, storage, auth };
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+export { app, auth };

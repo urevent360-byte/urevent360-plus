@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -16,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Shield } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({

@@ -1,9 +1,8 @@
-
 'use client';
 
 import React, { ReactNode } from 'react';
 import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/authClient';
 import { usePathname, useRouter } from 'next/navigation';
 
 // For this prototype, we'll use a hardcoded email to identify the admin.

@@ -1,9 +1,9 @@
-
+'use client';
 'use server';
 
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { z } from 'zod';
-import { auth } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/authClient';
 
 const formSchema = z.object({
   email: z.string().email('A valid email is required.'),

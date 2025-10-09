@@ -1,0 +1,16 @@
+runtime: nodejs22
+entrypoint: npm run start
+
+build:
+  command: npm run build
+  dir: .
+
+runConfig:
+  minInstances: 0
+
+env:
+  - variable: FIREBASE_WEBAPP_CONFIG
+    value: ${FIREBASE_WEBAPP_CONFIG}
+    availability:
+      - BUILD
+      - RUNTIME

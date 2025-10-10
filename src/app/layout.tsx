@@ -8,6 +8,8 @@ import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import fs from 'fs/promises';
 import path from 'path';
 import { JsonLd } from '@/components/shared/JsonLd';
+import { ChatWidget } from '@/components/shared/ChatWidget';
+import { InquiryModal } from '@/components/page/home/InquiryModal';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://urevent360.com';
 const ogImageUrl = `${siteUrl}/og-image.png`; // Assuming a default OG image exists at this path
@@ -88,6 +90,7 @@ export default async function RootLayout({
               <AppLayoutClient logoUrl={logoUrl}>{children}</AppLayoutClient>
             </div>
             <Toaster />
+            <InquiryModal />
         </AuthProvider>
       </body>
     </html>

@@ -34,5 +34,3 @@ export async function forgotPasswordAction(formData: FormData) {
     return { success: true };
   }
 }
-
-    

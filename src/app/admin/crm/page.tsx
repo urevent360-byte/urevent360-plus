@@ -1,6 +1,9 @@
 
 'use client';
 
+// Opt-out de SSG para esta ruta
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {

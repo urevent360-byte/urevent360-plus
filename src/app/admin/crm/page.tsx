@@ -1,3 +1,4 @@
+
 'use client';
 
 // Opt-out de SSG para esta ruta
@@ -108,7 +109,7 @@ export default function CrmPage() {
                             onClick={() => setFilter(status)}
                             className="capitalize"
                         >
-                            {locales.status[status as keyof typeof locales.status]?.[language] || status}
+                            {locales.status[status as keyof typeof locales.status]?.[language] ?? status}
                         </Button>
                     ))}
                 </div>
@@ -132,8 +133,8 @@ export default function CrmPage() {
                             </TableCell>
                             <TableCell>{lead.date}</TableCell>
                             <TableCell>
-                                <Badge className={`${statusColors[lead.status as Status]} text-white capitalize hover:${statusColors[lead.status as Status]}`}>
-                                    {locales.status[lead.status as keyof typeof locales.status]?.[language] || lead.status}
+                                <Badge className={`${statusColors[lead.status]} text-white capitalize hover:${statusColors[lead.status]}`}>
+                                    {locales.status[lead.status as keyof typeof locales.status]?.[language] ?? lead.status}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">

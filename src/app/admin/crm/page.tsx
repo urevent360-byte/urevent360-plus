@@ -1,4 +1,3 @@
-
 'use client';
 
 // Opt-out de SSG para esta ruta
@@ -31,7 +30,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import locales from '@/lib/locales.json';
 
-type Status = 'new' | 'contacted' | 'follow-up' | 'quote_sent' | 'accepted' | 'converted' | 'rejected';
+type Status = 'new_request' | 'contacted' | 'follow-up' | 'quote_sent' | 'accepted' | 'converted' | 'rejected';
 
 type Lead = {
     id: string;
@@ -46,14 +45,14 @@ const placeholderLeads: Lead[] = [
     { id: 'lead-123', name: 'John Doe', email: 'client@urevent360.com', date: '2024-08-25', status: 'converted', eventId: 'evt-123' },
     { id: 'lead2', name: 'Jane Smith', email: 'jane@example.com', date: '2024-07-29', status: 'quote_sent', eventId: null },
     { id: 'lead3', name: 'Peter Jones', email: 'peter@example.com', date: '2024-07-28', status: 'follow-up', eventId: null },
-    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new', eventId: null },
+    { id: 'lead4', name: 'Maria Garcia', email: 'maria@example.com', date: '2024-09-15', status: 'new_request', eventId: null },
     { id: 'lead-456', name: 'David Lee', email: 'david@example.com', date: '2024-07-20', status: 'converted', eventId: 'evt-456' },
     { id: 'lead6', name: 'Samantha Wu', email: 'sam@example.com', date: '2024-09-18', status: 'contacted', eventId: null },
     { id: 'lead7', name: 'Chris Green', email: 'chris@example.com', date: '2024-09-20', status: 'accepted', eventId: null },
 ];
 
 const statusColors: Record<Status, string> = {
-    new: 'bg-blue-500',
+    new_request: 'bg-blue-500',
     contacted: 'bg-yellow-500',
     'follow-up': 'bg-orange-500',
     quote_sent: 'bg-purple-500',
@@ -62,7 +61,7 @@ const statusColors: Record<Status, string> = {
     rejected: 'bg-gray-500',
 };
 
-const allStatuses: Status[] = ['new', 'contacted', 'follow-up', 'quote_sent', 'accepted', 'converted', 'rejected'];
+const allStatuses: Status[] = ['new_request', 'contacted', 'follow-up', 'quote_sent', 'accepted', 'converted', 'rejected'];
 
 export default function CrmPage() {
   const [leads] = useState<Lead[]>(placeholderLeads);
@@ -109,7 +108,7 @@ export default function CrmPage() {
                             onClick={() => setFilter(status)}
                             className="capitalize"
                         >
-                            {locales.status[status as keyof typeof locales.status][language]}
+                            {locales.status[status as keyof typeof locales.status]?.[language] || status}
                         </Button>
                     ))}
                 </div>
@@ -134,7 +133,7 @@ export default function CrmPage() {
                             <TableCell>{lead.date}</TableCell>
                             <TableCell>
                                 <Badge className={`${statusColors[lead.status as Status]} text-white capitalize hover:${statusColors[lead.status as Status]}`}>
-                                    {locales.status[lead.status as keyof typeof locales.status][language]}
+                                    {locales.status[lead.status as keyof typeof locales.status]?.[language] || lead.status}
                                 </Badge>
                             </TableCell>
                             <TableCell className="text-right">

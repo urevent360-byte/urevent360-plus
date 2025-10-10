@@ -1,5 +1,4 @@
 'use client';
-'use server';
 
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { z } from 'zod';

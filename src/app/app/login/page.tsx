@@ -13,7 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, LogIn, Eye, EyeOff, Shield } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff, Shield, Home } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -186,6 +186,15 @@ export default function HostLoginPage() {
               Sign up
             </Link>
           </p>
+
+          <div className="mt-6 text-center space-y-2">
+             <Button variant="link" asChild>
+                <Link href="/">
+                    <Home className="mr-2" />
+                    Go back to landing page
+                </Link>
+             </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

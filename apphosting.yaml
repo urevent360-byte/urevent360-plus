@@ -1,5 +1,6 @@
-# Settings for Backend (on Cloud Run).
+# Settings for Backend (on Cloud Run)
 # See https://firebase.google.com/docs/app-hosting/configure#cloud-run
+
 runConfig:
   minInstances: 0
   # maxInstances: 100
@@ -7,23 +8,18 @@ runConfig:
   # cpu: 1
   # memoryMiB: 512
 
-# Environment variables and secrets.
+# Environment variables and secrets
 # See https://firebase.google.com/docs/app-hosting/configure#environment-variables
 env:
-  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+  - variable: "NEXT_PUBLIC_FIREBASE_API_KEY"
     value: "AIzaSyCgx3p7fMTWv-9TJcc32QiKsHRMJmSrBWQ"
-  - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+  - variable: "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"
     value: "studio-9636239298-2e252.firebaseapp.com"
-  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+  - variable: "NEXT_PUBLIC_FIREBASE_PROJECT_ID"
     value: "studio-9636239298-2e252"
-  - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+  - variable: "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"
     value: "studio-9636239298-2e252.appspot.com"
-  - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+  - variable: "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
     value: "298341125021"
-  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+  - variable: "NEXT_PUBLIC_FIREBASE_APP_ID"
     value: "1:298341125021:web:abaa2c228a0fdebed6bd74"
-
-  # Grant access to secrets in Cloud Secret Manager.
-  # See https://firebase.google.com/docs/app-hosting/configure#secret-parameters
-  # - variable: MY_SECRET
-  #   secret: mySecretRef

@@ -14,9 +14,24 @@ const nextConfig = {
     remotePatterns: [
       { protocol: 'https', hostname: 'placehold.co', port: '', pathname: '/**' },
       { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
-      { protocol: 'https', hostname: 'picsum.photos', port: '', pathname: '/**' },
+      { protocol: 'https://', hostname: 'picsum.photos', port: '', pathname: '/**' },
     ],
+  },
+  webpack: (config, { isServer }) => {
+    // Ignorar Handlebars (usado por Genkit) del bundle del cliente
+    if (!isServer) {
+      config.externals.push({
+        handlebars: 'handlebars',
+      });
+    }
+
+    // Silenciar warnings de require.extensions
+    config.ignoreWarnings = [
+      { message: /require\.extensions is not supported by webpack/ },
+    ];
+
+    return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

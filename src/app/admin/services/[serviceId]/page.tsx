@@ -1,8 +1,9 @@
 
+
 'use client';
 
 import * as React from 'react';
-import { useForm, useFieldArray, Control } from 'react-hook-form';
+import { useForm, useFieldArray, Control, FieldValues, FieldPath } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -53,14 +54,14 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 const allCategories = [...new Set(servicesCatalog.services.map(s => s.category))];
 
-type ArrayFieldManagerProps = {
-  name: 'keywords' | 'qualifiers' | 'tags' | 'galleryImages' | 'options';
-  control: Control<ServiceFormValues>;
+type ArrayFieldManagerProps<T extends FieldValues> = {
+  name: FieldPath<T>;
+  control: Control<T>;
   label: string;
   description: string;
 };
 
-const ArrayFieldManager = ({ name, control, label, description }: ArrayFieldManagerProps) => {
+const ArrayFieldManager = <T extends FieldValues>({ name, control, label, description }: ArrayFieldManagerProps<T>) => {
     const { fields, append, remove } = useFieldArray({ control, name });
     return (
         <div className="space-y-4">
@@ -70,7 +71,7 @@ const ArrayFieldManager = ({ name, control, label, description }: ArrayFieldMana
                 <div key={field.id} className="flex items-center gap-2">
                     <FormField
                         control={control}
-                        name={`${name}.${index}`}
+                        name={`${name}.${index}` as FieldPath<T>}
                         render={({ field }) => (
                             <FormItem className="flex-grow">
                                 <FormControl>
@@ -83,7 +84,7 @@ const ArrayFieldManager = ({ name, control, label, description }: ArrayFieldMana
                     <Button type="button" variant="destructive" size="icon" onClick={() => remove(index)}><X className="h-4 w-4"/></Button>
                 </div>
             ))}
-            <Button type="button" variant="outline" size="sm" onClick={() => append('')}>
+            <Button type="button" variant="outline" size="sm" onClick={() => append({ value: '' } as any)}>
                 <PlusCircle className="mr-2"/>Add {label.slice(0,-1)}
             </Button>
         </div>

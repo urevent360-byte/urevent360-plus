@@ -3,7 +3,7 @@
 'use client';
 
 import * as React from 'react';
-import { useForm, useFieldArray, Control, FieldValues, FieldPath } from 'react-hook-form';
+import { useForm, useFieldArray, Control, FieldValues, FieldPath, ArrayPath } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -55,7 +55,7 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 const allCategories = [...new Set(servicesCatalog.services.map(s => s.category))];
 
 type ArrayFieldManagerProps<T extends FieldValues> = {
-  name: FieldPath<T>;
+  name: ArrayPath<T>;
   control: Control<T>;
   label: string;
   description: string;
@@ -276,9 +276,9 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
                         )}
                     />
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <ArrayFieldManager name="keywords" control={form.control} label="Keywords" description="For search and AI mapping. (e.g., '360', 'cabina 360')" />
-                        <ArrayFieldManager name="qualifiers" control={form.control} label="Qualifier Questions" description="Questions the AI will ask for this service." />
-                        <ArrayFieldManager name="tags" control={form.control} label="Tags" description="For filtering on the public site." />
+                        <ArrayFieldManager<ServiceFormValues> name="keywords" control={form.control} label="Keywords" description="For search and AI mapping. (e.g., '360', 'cabina 360')" />
+                        <ArrayFieldManager<ServiceFormValues> name="qualifiers" control={form.control} label="Qualifier Questions" description="Questions the AI will ask for this service." />
+                        <ArrayFieldManager<ServiceFormValues> name="tags" control={form.control} label="Tags" description="For filtering on the public site." />
                      </div>
                 </CardContent>
             </Card>

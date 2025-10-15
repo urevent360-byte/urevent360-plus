@@ -140,10 +140,14 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
     }, [isEditing, serviceId, form, toast, router]);
 
 
-    const { fields: imageFields, append: appendImage, remove: removeImage } = useFieldArray({
+    const {
+        fields: imageFields,
+        append: appendImage,
+        remove: removeImage,
+      } = useFieldArray<ServiceFormValues, ArrayPath<ServiceFormValues>>({
         control: form.control,
-        name: 'galleryImages',
-    });
+        name: 'galleryImages' as ArrayPath<ServiceFormValues>, // 👈 forzar el tipo del path
+      });
     
     async function onSubmit(data: ServiceFormValues) {
         // Ensure slug is a URL-friendly version of the ID
@@ -276,9 +280,9 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
                         )}
                     />
                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <ArrayFieldManager<ServiceFormValues> name="keywords" control={form.control} label="Keywords" description="For search and AI mapping. (e.g., '360', 'cabina 360')" />
-                        <ArrayFieldManager<ServiceFormValues> name="qualifiers" control={form.control} label="Qualifier Questions" description="Questions the AI will ask for this service." />
-                        <ArrayFieldManager<ServiceFormValues> name="tags" control={form.control} label="Tags" description="For filtering on the public site." />
+                        <ArrayFieldManager<ServiceFormValues> name={'keywords' as ArrayPath<ServiceFormValues>} control={form.control} label="Keywords" description="For search and AI mapping. (e.g., '360', 'cabina 360')" />
+                        <ArrayFieldManager<ServiceFormValues>name={'qualifiers' as ArrayPath<ServiceFormValues>} control={form.control} label="Qualifier Questions" description="Questions the AI will ask for this service." />
+                        <ArrayFieldManager<ServiceFormValues> name={'tags' as ArrayPath<ServiceFormValues>} control={form.control} label="Tags" description="For filtering on the public site." />
                      </div>
                 </CardContent>
             </Card>
@@ -420,3 +424,5 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
     </div>
   );
 }
+// src/app/admin/services/[serviceId]/page.tsx
+

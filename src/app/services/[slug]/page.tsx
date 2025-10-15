@@ -6,6 +6,7 @@ import servicesCatalog from '@/lib/services-catalog.json';
 
 type Props = {
   params: { slug: string };
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 const metadataMap: Record<string, { title: string; description: string }> = {
@@ -144,7 +145,7 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
 }
 
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
+export default function ServiceDetailPage({ params }: Props) {
     const service = servicesCatalog.services.find(s => s.slug === params.slug);
 
     return (
@@ -154,4 +155,3 @@ export default function ServiceDetailPage({ params }: { params: { slug: string }
         </>
     );
 }
-

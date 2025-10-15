@@ -96,9 +96,9 @@ export default function AdminPortalLayout({
             </SidebarMenuItem>
              <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/admin/seo">
+                <Link href="/admin/marketing">
                   <BarChart />
-                  SEO
+                  Marketing
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

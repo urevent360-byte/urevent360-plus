@@ -9,6 +9,8 @@ import { ArrowUpRight, BarChart3, Bot, Edit, Instagram, PlusCircle, Trash2 } fro
 import Link from 'next/link';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
+export const dynamic = 'force-dynamic';
+
 const placeholderLeads = [
     { id: 'lead-1', name: 'Jennifer Aniston', location: 'Winter Park, FL', potential: 'High' },
     { id: 'lead-2', name: 'Brad Pitt', location: 'Lake Nona, FL', potential: 'High' },

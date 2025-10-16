@@ -147,11 +147,12 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
 
 export default function ServiceDetailPage({ params }: Props) {
     const service = servicesCatalog.services.find(s => s.slug === params.slug);
+    const { slug } = params;
 
     return (
         <>
             {service && <FAQPageSchema service={service} />}
-            <ServiceDetailClient slug={params.slug} />
+            <ServiceDetailClient slug={slug} />
         </>
     );
 }

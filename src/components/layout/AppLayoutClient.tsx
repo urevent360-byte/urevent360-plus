@@ -18,7 +18,7 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
   return (
     <>
       <Header logoUrl={logoUrl} />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow flex flex-col">{children}</main>
       <Footer />
     </>
   );

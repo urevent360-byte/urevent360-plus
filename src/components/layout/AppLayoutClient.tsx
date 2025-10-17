@@ -4,6 +4,7 @@
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { cn } from '@/lib/utils';
 
 export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
   const pathname = usePathname();
@@ -18,7 +19,7 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
   return (
     <div className="flex min-h-screen flex-col">
       <Header logoUrl={logoUrl} />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow flex flex-col">{children}</main>
       <Footer />
     </div>
   );

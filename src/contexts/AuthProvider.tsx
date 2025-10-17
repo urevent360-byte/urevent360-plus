@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 // For this prototype, we'll use a hardcoded email to identify the admin.
 // In a production app, this would be managed via Firebase Custom Claims.
-const ADMIN_EMAIL = 'admin@urevent360.com';
+const ADMIN_EMAIL = 'info@urevent360.com';
 
 interface AuthContextType {
   user: User | null;

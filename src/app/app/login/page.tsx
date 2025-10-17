@@ -62,7 +62,24 @@ export default function HostLoginPage() {
   }
 
   async function onSubmit(data: FormValues) {
-    router.push('/app/home');
+    setIsSubmitting(true);
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+      handleLoginSuccess(data.email);
+      // The useAuth hook will handle the redirection automatically
+    } catch (error: any) {
+      let description = 'An unexpected error occurred.';
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        description = 'Incorrect email or password. Please try again.';
+      }
+      toast({
+        title: 'Login Failed',
+        description,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
   
   const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
@@ -200,5 +217,3 @@ export default function HostLoginPage() {
     </div>
   );
 }
-
-    

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'; 
 import { ArrowUpRight, BarChart3, Bot, Edit, Instagram, PlusCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -151,3 +152,5 @@ export default function MarketingPage() {
         </div>
     );
 }
+export const dynamic = 'force-dynamic';  
+export const revalidate = 0;   

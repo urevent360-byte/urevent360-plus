@@ -1,14 +1,6 @@
 {
-  "hosting": {
+  "hosting": [{
     "site": "studio-9636239298-2e252",
-    "public": ".next",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
-  "frameworksBackend": {
-    "region": "us-central1"
-  }
+    "source": "."
+  }]
 }

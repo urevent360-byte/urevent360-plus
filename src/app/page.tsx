@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
@@ -12,7 +13,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { CatalogCTA } from '@/components/page/home/CatalogCTA';
 
-// In a real app, you might use a more robust way to get the base URL
 const getBaseUrl = () =>
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
 
@@ -22,12 +22,13 @@ async function getBranding() {
     const data = await fs.readFile(brandingPath, 'utf-8');
     const branding = JSON.parse(data);
     if (branding && branding.heroImageUrl) return branding;
-  } catch {}
+  } catch {
+    // Fallback if file doesn't exist or is invalid
+  }
+  const heroPlaceholder = placeholderImages?.placeholderImages?.find(p => p.id === 'hero');
   return {
     logoUrl: null,
-    heroImageUrl:
-      placeholderImages.placeholderImages.find(p => p.id === 'hero')?.imageUrl
-      || 'https://picsum.photos/seed/hero/1920/1080',
+    heroImageUrl: heroPlaceholder?.imageUrl || 'https://picsum.photos/seed/hero/1920/1080',
   };
 }
 
@@ -35,8 +36,10 @@ async function getCatalogUrl() {
   const catalogPath = path.join(process.cwd(), 'public', 'catalog.json');
   try {
     const data = await fs.readFile(catalogPath, 'utf-8');
-    return JSON.parse(data).catalogUrl;
+    const config = JSON.parse(data);
+    return config.catalogUrl;
   } catch {
+    // Return null if file doesn't exist or is invalid
     return null;
   }
 }

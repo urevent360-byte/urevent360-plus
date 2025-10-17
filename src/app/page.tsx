@@ -1,6 +1,7 @@
 
+'use server';
+
 import Image from 'next/image';
-import placeholderImages from '@/lib/placeholder-images.json';
 import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
@@ -9,49 +10,24 @@ import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel'
 import { Testimonials } from '@/components/page/home/Testimonials';
 import { SocialFeed } from '@/components/page/home/SocialFeed';
 import { ChatWidget } from '@/components/shared/ChatWidget';
-import fs from 'fs/promises';
-import path from 'path';
 import { CatalogCTA } from '@/components/page/home/CatalogCTA';
+import placeholderImages from '@/lib/placeholder-images.json';
+import brandingData from '@/lib/branding.json';
+import catalogData from '@/lib/catalog.json';
 
 const getBaseUrl = () =>
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
 
-async function getBranding() {
-  const brandingPath = path.join(process.cwd(), 'public', 'branding.json');
-  try {
-    const data = await fs.readFile(brandingPath, 'utf-8');
-    const branding = JSON.parse(data);
-    if (branding && branding.heroImageUrl) return branding;
-  } catch {
-    // Fallback if file doesn't exist or is invalid
-  }
-  const heroPlaceholder = placeholderImages?.placeholderImages?.find(p => p.id === 'hero');
-  return {
-    logoUrl: null,
-    heroImageUrl: heroPlaceholder?.imageUrl || 'https://picsum.photos/seed/hero/1920/1080',
-  };
-}
-
-async function getCatalogUrl() {
-  const catalogPath = path.join(process.cwd(), 'public', 'catalog.json');
-  try {
-    const data = await fs.readFile(catalogPath, 'utf-8');
-    const config = JSON.parse(data);
-    return config.catalogUrl;
-  } catch {
-    // Return null if file doesn't exist or is invalid
-    return null;
-  }
-}
-
 export default async function Home() {
-  const branding = await getBranding();
-  const catalogUrl = await getCatalogUrl();
+  const heroPlaceholder = placeholderImages.placeholderImages.find(p => p.id === 'hero');
+
   const heroImage = {
-    imageUrl: branding.heroImageUrl,
+    imageUrl: brandingData.heroImageUrl || heroPlaceholder?.imageUrl || 'https://picsum.photos/seed/hero/1920/1080',
     description: "A vibrant event with confetti falling on a joyful crowd.",
     imageHint: "event celebration",
   };
+  
+  const catalogUrl = catalogData.catalogUrl;
 
   return (
     <div className="flex flex-col">

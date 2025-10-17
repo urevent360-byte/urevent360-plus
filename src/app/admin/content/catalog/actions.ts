@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-const catalogConfigFile = path.join(process.cwd(), 'public', 'catalog.json');
+const catalogConfigFile = path.join(process.cwd(), 'src', 'lib', 'catalog.json');
 
 async function saveFile(file: File): Promise<string> {
     await fs.mkdir(uploadsDir, { recursive: true });

@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-const brandingConfigFile = path.join(process.cwd(), 'public', 'branding.json');
+const brandingConfigFile = path.join(process.cwd(), 'src', 'lib', 'branding.json');
 
 async function saveFile(file: File): Promise<string> {
     await fs.mkdir(uploadsDir, { recursive: true });

@@ -5,11 +5,10 @@ import { AuthProvider } from '@/contexts/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
-import fs from 'fs/promises';
-import path from 'path';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { ChatWidget } from '@/components/shared/ChatWidget';
 import { InquiryModal } from '@/components/page/home/InquiryModal';
+import brandingData from '@/lib/branding.json';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://urevent360.com';
 const ogImageUrl = `${siteUrl}/og-image.png`; // Assuming a default OG image exists at this path
@@ -52,18 +51,11 @@ export const metadata: Metadata = {
 const getBaseUrl = () => process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:9002';
 
 async function getLogoUrl() {
-    const brandingPath = path.join(process.cwd(), 'public', 'branding.json');
-    try {
-        const data = await fs.readFile(brandingPath, 'utf-8');
-        const branding = JSON.parse(data);
-        const logoUrl = branding.logoUrl;
-        if (logoUrl && !logoUrl.startsWith('http')) {
-            return `${getBaseUrl()}${logoUrl}`;
-        }
-        return logoUrl;
-    } catch (error) {
-        return null;
+    const logoUrl = brandingData.logoUrl;
+    if (logoUrl && !logoUrl.startsWith('http')) {
+        return `${getBaseUrl()}${logoUrl}`;
     }
+    return logoUrl;
 }
 
 

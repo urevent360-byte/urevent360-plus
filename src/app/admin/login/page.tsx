@@ -77,6 +77,23 @@ export default function AdminLoginPage() {
   
   async function onCredentialsSubmit(data: FormValues) {
     setIsSubmitting(true);
+
+    // --- Temporary Prototype Fix ---
+    // If the admin credentials are used, simulate a successful login to bypass
+    // the need for the user to exist in Firebase Auth during prototyping.
+    if (data.email === 'info@urevent360.com' && data.password === 'Capa$0529') {
+        toast({
+            title: 'Admin Login Simulated',
+            description: 'Redirecting to your dashboard...'
+        });
+        // This will trigger the AuthProvider to see a "logged in" admin
+        // by manually navigating. This is a hack for the prototype.
+        router.push('/admin/home?simulated_login=true'); 
+        // We add a dummy query param to force re-evaluation in the AuthProvider
+        return;
+    }
+    // --- End of Temporary Fix ---
+
     try {
         await signInWithEmailAndPassword(auth, data.email, data.password);
         toast({

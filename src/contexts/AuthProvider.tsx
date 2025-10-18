@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       
       let userIsAdmin = false;
-      // Only check for admin status if the user is logged in AND trying to access an admin route
       if (user && pathname.startsWith('/admin')) {
         try {
           const adminDocRef = doc(db, 'admins', user.uid);
@@ -48,14 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
           if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
             userIsAdmin = true;
-          } else {
-             toast({
-                title: 'Access Denied',
-                description: 'You do not have permission to access the admin portal.',
-                variant: 'destructive',
-            });
           }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error verifying admin status:", error);
             toast({
                 title: 'Authentication Error',
@@ -77,15 +70,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (user) {
         if (userIsAdmin) {
-          if (!pathname.startsWith('/admin')) {
+          if (pathname.startsWith('/admin') && !isAdminLogin) {
+             // Already in admin section, do nothing
+          } else if (isAdminLogin) {
             router.replace('/admin/home');
           }
         } else { // Regular host user
-           if (pathname.startsWith('/admin')) {
-             // If a regular user tries to access an admin page, deny access and redirect
-             toast({ title: 'Access Denied', variant: 'destructive' });
-             router.replace('/app/home');
-           } else if (!pathname.startsWith('/app')) {
+           if (pathname.startsWith('/app') && !isAppLogin) {
+             // Already in app section, do nothing
+           } else if (isAppLogin) {
              router.replace('/app/home');
            }
         }

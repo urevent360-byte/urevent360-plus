@@ -13,6 +13,7 @@ import {
   RecaptchaVerifier,
   PhoneMultiFactorInfo,
   MultiFactorResolver,
+  signOut,
 } from 'firebase/auth';
 import Link from 'next/link';
 
@@ -23,6 +24,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, Eye, EyeOff, Smartphone, Home, User, Loader2 } from 'lucide-react';
 import { auth } from '@/lib/firebase/authClient';
+import { db } from '@/lib/firebase/client';
+import { doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
@@ -52,11 +55,10 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     if (user && isAdmin && !loading) {
-      router.push('/admin/home');
+      router.replace('/admin/home');
     }
   }, [user, loading, router, isAdmin]);
   
-  // Cleanup verifier on unmount
   useEffect(() => {
       return () => {
         verifierRef.current = null;
@@ -78,12 +80,27 @@ export default function AdminLoginPage() {
   async function onCredentialsSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-        await signInWithEmailAndPassword(auth, data.email, data.password);
-        toast({
-            title: 'Login Success!',
-            description: 'Verifying admin access...'
-        });
-        // AuthProvider will handle redirect for non-MFA users
+        const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+        
+        // Verify admin role in Firestore
+        const adminDocRef = doc(db, 'admins', userCredential.user.uid);
+        const adminDoc = await getDoc(adminDocRef);
+
+        if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
+            toast({
+                title: 'Login Success!',
+                description: 'Verifying admin access...'
+            });
+             router.replace('/admin/home');
+        } else {
+            // Not an authorized admin, sign them out.
+            await signOut(auth);
+            toast({
+                title: 'Access Denied',
+                description: 'You do not have permission to access the admin portal.',
+                variant: 'destructive',
+            });
+        }
     } catch (error: any) {
         let title = 'Login Error';
         let description = 'An unknown error occurred. Please try again.';
@@ -127,18 +144,7 @@ export default function AdminLoginPage() {
                     return; 
                 } catch (verifyError: any) {
                     title = 'MFA Error';
-                    switch (verifyError.code) {
-                        case 'auth/missing-recaptcha-token':
-                        case 'auth/recaptcha-not-enabled':
-                            description = 'Configurar reCAPTCHA web en el proyecto.';
-                            break;
-                        case 'auth/too-many-requests':
-                            description = 'Demasiados intentos; espera e inténtalo de nuevo.';
-                            break;
-                        default:
-                            description = 'No se pudo enviar el código de verificación.';
-                            break;
-                    }
+                    description = verifyError.message || 'No se pudo enviar el código de verificación.';
                     verifierRef.current= null;
                 }
                 break;
@@ -146,7 +152,6 @@ export default function AdminLoginPage() {
                 description = error.message || description;
                 break;
         }
-
         toast({ title, description, variant: 'destructive', duration: 9000 });
     } finally {
         if (step === 'credentials') {
@@ -167,6 +172,7 @@ export default function AdminLoginPage() {
               title: 'Success!',
               description: 'Verification successful! Redirecting...',
           });
+          // AuthProvider will handle redirect
       } catch (error: any) {
           let title = 'Verification Failed';
           let description = 'An unknown error occurred.';
@@ -188,7 +194,6 @@ export default function AdminLoginPage() {
           });
       } finally {
           setIsSubmitting(false);
-          // Don't clear verifier here, user might want to retry
       }
   }
 

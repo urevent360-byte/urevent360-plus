@@ -1,19 +1,29 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseOptions } from "firebase/app";
 
-function getFirebaseWebConfig() {
+function getFirebaseWebConfig(): FirebaseOptions {
   try {
-    const fromNext = process.env.NEXT_PUBLIC_FIREBASE_WEBAPP_CONFIG;
-    const fromFirebase = process.env.FIREBASE_WEBAPP_CONFIG;
-    if (fromNext) return JSON.parse(fromNext);
-    if (fromFirebase) return JSON.parse(fromFirebase);
+    const fromNextPublic = process.env.NEXT_PUBLIC_FIREBASE_WEBAPP_CONFIG;
+    if (fromNextPublic && fromNextPublic.startsWith('{')) {
+      return JSON.parse(fromNextPublic);
+    }
   } catch {}
+
+  // Fallback to server-side env var if client-side is not available
+  try {
+    const fromServer = process.env.FIREBASE_WEBAPP_CONFIG;
+    if (fromServer && fromServer.startsWith('{')) {
+      return JSON.parse(fromServer);
+    }
+  } catch {}
+  
+  // Final fallback to hardcoded values if no env vars are found
   return {
-    apiKey: "AIzaSyCgx3p7fMTWv-9TJcc32QiKsHRMJmSrBWQ",
-    authDomain: "studio-9636239298-2e252.firebaseapp.com",
-    projectId: "studio-9636239298-2e252",
-    storageBucket: "studio-9636239298-2e252.firebasestorage.app",
-    messagingSenderId: "298341125021",
-    appId: "1:298341125021:web:2e4e6878c1625184d6bd74"
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   };
 }
 

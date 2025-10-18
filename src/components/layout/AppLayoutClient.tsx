@@ -10,9 +10,9 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
   const isAppRoute = pathname.startsWith('/app');
-  const isAuthRoute = pathname.startsWith('/admin/login') || pathname.startsWith('/app/login') || pathname.startsWith('/app/register') || pathname.startsWith('/admin/forgot-password') || pathname.startsWith('/app/forgot-password');
+  const isAuthRoute = isAdminRoute || isAppRoute;
 
-  if (isAdminRoute || isAppRoute || isAuthRoute) {
+  if (isAuthRoute) {
     return <>{children}</>;
   }
 

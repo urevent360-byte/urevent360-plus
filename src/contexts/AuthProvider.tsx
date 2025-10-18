@@ -8,6 +8,8 @@ import { auth } from '@/lib/firebase/authClient';
 import { db } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { FirestorePermissionError } from '@/lib/firebase/errors';
+import { errorEmitter } from '@/lib/firebase/error-emitter';
 
 interface AuthContextType {
   user: User | null;
@@ -49,12 +51,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             userIsAdmin = true;
           }
         } catch (error: any) {
-            console.error("Error verifying admin status:", error);
-            toast({
-                title: 'Authentication Error',
-                description: 'Could not verify your admin permissions.',
-                variant: 'destructive',
-            });
+            if (error.code === 'permission-denied') {
+                const permissionError = new FirestorePermissionError({
+                    operation: 'get',
+                    path: `admins/${user.uid}`,
+                });
+                errorEmitter.emit('permission-error', permissionError);
+            } else {
+                 toast({
+                    title: 'Authentication Error',
+                    description: 'Could not verify your admin permissions.',
+                    variant: 'destructive',
+                });
+            }
         }
       }
       setIsAdmin(userIsAdmin);

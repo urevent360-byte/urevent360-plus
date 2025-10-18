@@ -20,16 +20,16 @@ const db = getFirestore(app);
 // Initialize Firebase App Check
 // Note: This needs to be configured in your Firebase project.
 // In a real environment, the site key should be in an environment variable.
-if (typeof window !== 'undefined') {
-  try {
-    initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider("6LcwCOYrAAAAAJEh6OuzdHOeihJFkPzxNMuYTLx2"), // ✅ Tu SITE KEY
-      isTokenAutoRefreshEnabled: true,
-    });
-  } catch (error) {
-    console.error("App Check initialization error:", error);
-  }
-}
+// if (typeof window !== 'undefined') {
+//   try {
+//     initializeAppCheck(app, {
+//       provider: new ReCaptchaV3Provider("6LcwCOYrAAAAAJEh6OuzdHOeihJFkPzxNMuYTLx2"), // ✅ Tu SITE KEY
+//       isTokenAutoRefreshEnabled: true,
+//     });
+//   } catch (error) {
+//     console.error("App Check initialization error:", error);
+//   }
+// }
 
 
 export { app, db };

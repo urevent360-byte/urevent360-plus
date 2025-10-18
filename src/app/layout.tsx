@@ -78,9 +78,9 @@ export default async function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <AuthProvider>
-            <div className="flex min-h-screen flex-col">
-              <AppLayoutClient logoUrl={logoUrl}>{children}</AppLayoutClient>
-            </div>
+            <AppLayoutClient logoUrl={logoUrl}>
+              <div className="flex flex-col flex-grow">{children}</div>
+            </AppLayoutClient>
             <Toaster />
             <InquiryModal />
         </AuthProvider>

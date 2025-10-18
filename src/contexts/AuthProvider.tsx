@@ -2,12 +2,11 @@
 
 import React, { ReactNode } from 'react';
 import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
+import { db } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
-
-// For this prototype, we'll use a hardcoded email to identify the admin.
-// In a production app, this would be managed via Firebase Custom Claims.
-const ADMIN_EMAIL = 'info@urevent360.com';
+import { useToast } from '@/hooks/use-toast';
 
 interface AuthContextType {
   user: User | null;
@@ -32,14 +31,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = React.useState(true);
   const router = useRouter();
   const pathname = usePathname();
+  const { toast } = useToast();
 
   React.useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       setUser(user);
-      const userIsAdmin = user?.email === ADMIN_EMAIL;
+      
+      let userIsAdmin = false;
+      if (user) {
+        try {
+          const adminDocRef = doc(db, 'admins', user.uid);
+          const adminDoc = await getDoc(adminDocRef);
+
+          if (adminDoc.exists()) {
+            const adminData = adminDoc.data();
+            if (adminData.active === true && adminData.role) {
+                userIsAdmin = true;
+            } else {
+                 toast({
+                    title: 'Access Denied',
+                    description: 'Your admin account is inactive or has no role.',
+                    variant: 'destructive',
+                });
+            }
+          }
+        } catch (error) {
+            console.error("Error verifying admin status:", error);
+            toast({
+                title: 'Authentication Error',
+                description: 'Could not verify your admin permissions.',
+                variant: 'destructive',
+            });
+        }
+      }
       setIsAdmin(userIsAdmin);
-      setLoading(false);
 
       const isAppLogin = pathname === '/app/login' || pathname === '/app/register' || pathname === '/app/forgot-password';
       const isAdminLogin = pathname === '/admin/login' || pathname === '/admin/forgot-password';
@@ -52,32 +78,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (user) {
         if (userIsAdmin) {
-          // If admin is logged in, and they are not in the admin section, redirect them.
           if (!pathname.startsWith('/admin')) {
             router.push('/admin/home');
           }
         } else {
-          // If a non-admin client is logged in, and they are not in the app section, redirect them.
           if (!pathname.startsWith('/app')) {
             router.push('/app/home');
           }
         }
       } else {
-        // User is not logged in.
-        // If they try to access a protected route, redirect to the appropriate login page.
         if (pathname.startsWith('/admin') && !isAdminLogin) {
           router.push('/admin/login');
         } else if (pathname.startsWith('/app') && !isAppLogin) {
           router.push('/app/login');
         }
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [router, pathname]);
+  }, [router, pathname, toast]);
 
   const signOut = async () => {
     await firebaseSignOut(auth); 
+    setIsAdmin(false); // Reset admin state on logout
     
     if (pathname.startsWith('/admin')) {
       router.push('/admin/login');

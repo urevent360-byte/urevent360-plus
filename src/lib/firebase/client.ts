@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // Your web app's Firebase configuration
@@ -13,12 +14,22 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app);
 
 // Initialize Firebase App Check
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LcwCOYrAAAAAJEh6OuzdHOeihJFkPzxNMuYTLx2"), // ✅ Tu SITE KEY
-  isTokenAutoRefreshEnabled: true,
-});
+// Note: This needs to be configured in your Firebase project.
+// In a real environment, the site key should be in an environment variable.
+if (typeof window !== 'undefined') {
+  try {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider("6LcwCOYrAAAAAJEh6OuzdHOeihJFkPzxNMuYTLx2"), // ✅ Tu SITE KEY
+      isTokenAutoRefreshEnabled: true,
+    });
+  } catch (error) {
+    console.error("App Check initialization error:", error);
+  }
+}
 
-export { app, appCheck };
+
+export { app, db };

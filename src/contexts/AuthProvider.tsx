@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { ReactNode } from 'react';
@@ -39,22 +40,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       
       let userIsAdmin = false;
-      if (user) {
+      // Only check for admin status if the user is logged in AND trying to access an admin route
+      if (user && pathname.startsWith('/admin')) {
         try {
           const adminDocRef = doc(db, 'admins', user.uid);
           const adminDoc = await getDoc(adminDocRef);
 
-          if (adminDoc.exists()) {
-            const adminData = adminDoc.data();
-            if (adminData.active === true && adminData.role) {
-                userIsAdmin = true;
-            } else {
-                 toast({
-                    title: 'Access Denied',
-                    description: 'Your admin account is inactive or has no role.',
-                    variant: 'destructive',
-                });
-            }
+          if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
+            userIsAdmin = true;
+          } else {
+             toast({
+                title: 'Access Denied',
+                description: 'You do not have permission to access the admin portal.',
+                variant: 'destructive',
+            });
           }
         } catch (error) {
             console.error("Error verifying admin status:", error);
@@ -79,18 +78,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (user) {
         if (userIsAdmin) {
           if (!pathname.startsWith('/admin')) {
-            router.push('/admin/home');
+            router.replace('/admin/home');
           }
-        } else {
-          if (!pathname.startsWith('/app')) {
-            router.push('/app/home');
-          }
+        } else { // Regular host user
+           if (pathname.startsWith('/admin')) {
+             // If a regular user tries to access an admin page, deny access and redirect
+             toast({ title: 'Access Denied', variant: 'destructive' });
+             router.replace('/app/home');
+           } else if (!pathname.startsWith('/app')) {
+             router.replace('/app/home');
+           }
         }
-      } else {
+      } else { // No user logged in
         if (pathname.startsWith('/admin') && !isAdminLogin) {
-          router.push('/admin/login');
+          router.replace('/admin/login');
         } else if (pathname.startsWith('/app') && !isAppLogin) {
-          router.push('/app/login');
+          router.replace('/app/login');
         }
       }
       setLoading(false);

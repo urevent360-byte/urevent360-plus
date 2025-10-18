@@ -2,14 +2,15 @@
 'use client';
 
 import React, { ReactNode } from 'react';
-import { onAuthStateChanged, User, signOut as firebaseSignOut } from 'firebase/auth';
+import { onAuthStateChanged, User, signOut as firebaseSignOut, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
 import { db } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { FirestorePermissionError } from '@/lib/firebase/errors';
 import { errorEmitter } from '@/lib/firebase/error-emitter';
+import { FirestorePermissionError } from '@/lib/firebase/errors';
+
 
 interface AuthContextType {
   user: User | null;
@@ -42,7 +43,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
       
       let userIsAdmin = false;
-      if (user && pathname.startsWith('/admin')) {
+      if (user) {
         try {
           const adminDocRef = doc(db, 'admins', user.uid);
           const adminDoc = await getDoc(adminDocRef);
@@ -52,11 +53,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error: any) {
             if (error.code === 'permission-denied') {
-                const permissionError = new FirestorePermissionError({
+                errorEmitter.emit('permission-error', new FirestorePermissionError({
                     operation: 'get',
                     path: `admins/${user.uid}`,
-                });
-                errorEmitter.emit('permission-error', permissionError);
+                }));
             } else {
                  toast({
                     title: 'Authentication Error',
@@ -79,15 +79,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (user) {
         if (userIsAdmin) {
+          // User is an admin
           if (pathname.startsWith('/admin') && !isAdminLogin) {
-             // Already in admin section, do nothing
-          } else if (isAdminLogin) {
-            router.replace('/admin/home');
+             // Already in admin section, do nothing.
+          } else {
+             // If they are on any other page (including login pages), redirect to admin home.
+             router.replace('/admin/home');
           }
         } else { // Regular host user
            if (pathname.startsWith('/app') && !isAppLogin) {
-             // Already in app section, do nothing
+             // Already in app section, do nothing.
            } else if (isAppLogin) {
+             // If on a host login page, redirect to host home.
              router.replace('/app/home');
            }
         }
@@ -105,26 +108,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [router, pathname, toast]);
 
   const signOut = async () => {
+    const isAdminPath = pathname.startsWith('/admin');
     await firebaseSignOut(auth); 
-    setIsAdmin(false); // Reset admin state on logout
+    setUser(null);
+    setIsAdmin(false); 
     
-    if (pathname.startsWith('/admin')) {
+    // Redirect based on the portal they were in.
+    if (isAdminPath) {
       router.push('/admin/login');
-    } else if (pathname.startsWith('/app')) {
-      router.push('/app/login');
     } else {
-      router.push('/');
+      router.push('/app/login');
     }
   };
   
-  const updateProfile = (profileData: { displayName?: string; photoURL?: string; }) => {
-      setUser(currentUser => {
-          if (!currentUser) return null;
-          return {
-              ...currentUser,
-              ...profileData,
-          } as User;
-      });
+  const updateProfile = async (profileData: { displayName?: string; photoURL?: string; }) => {
+      if (auth.currentUser) {
+          await firebaseUpdateProfile(auth.currentUser, profileData);
+          // Refresh user state to reflect changes
+          setUser({ ...auth.currentUser });
+      }
   };
 
   return (

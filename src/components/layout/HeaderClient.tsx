@@ -130,7 +130,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                     <Button asChild variant="outline" size="sm">
                       <Link href="/app/login">Host Login</Link>
                     </Button>
@@ -153,6 +153,18 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <div className="flex flex-col items-center justify-center h-full">
                   <NavLinks isMobile />
+                   <div className="mt-8 flex flex-col gap-4 w-full px-8">
+                     {!isLoggedIn && (
+                        <>
+                           <Button asChild variant="outline" size="lg">
+                            <Link href="/app/login" onClick={() => setSheetOpen(false)}>Host Login</Link>
+                          </Button>
+                          <Button asChild variant="default" size="lg">
+                              <Link href="/admin/login" onClick={() => setSheetOpen(false)}>Admin Login</Link>
+                          </Button>
+                        </>
+                     )}
+                   </div>
                 </div>
               </SheetContent>
             </Sheet>

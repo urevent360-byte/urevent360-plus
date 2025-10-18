@@ -1,4 +1,3 @@
-
 'use client';
 
 import { usePathname } from 'next/navigation';
@@ -6,7 +5,7 @@ import AdminPortalLayout from '@/app/admin/PortalLayout';
 import AppPortalLayout from '@/app/app/PortalLayout';
 
 const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
-const appAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
+const appAuthRoutes   = ['/app/login', '/app/register', '/app/forgot-password'];
 
 export function AuthLayout({
   children,
@@ -15,7 +14,8 @@ export function AuthLayout({
   children: React.ReactNode;
   portalType: 'admin' | 'app';
 }) {
-  const pathname = usePathname();
+  // En algunos setups usePathname() puede ser string | null, así que hacemos fallback:
+  const pathname = usePathname() ?? '';
 
   if (portalType === 'admin') {
     if (adminAuthRoutes.includes(pathname)) {

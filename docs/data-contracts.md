@@ -210,6 +210,11 @@ service cloud.firestore {
         allow read, write: if request.auth.uid == uid || isAdmin();
     }
 
+    // Admins can read their own admin record to verify their role
+    match /admins/{uid} {
+        allow read: if request.auth.uid == uid || isAdmin();
+    }
+
     // Events can only be read by the assigned host or an admin.
     match /events/{eventId} {
       allow read: if isHost(eventId) || isAdmin();

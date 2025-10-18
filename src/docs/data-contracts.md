@@ -212,7 +212,7 @@ service cloud.firestore {
 
     // Admins can read their own admin record to verify their role
     match /admins/{uid} {
-        allow read: if request.auth.uid == uid;
+        allow read: if request.auth.uid == uid || isAdmin();
     }
 
     // Events can only be read by the assigned host or an admin.
@@ -249,5 +249,4 @@ service cloud.firestore {
   }
 }
 ```
-
     

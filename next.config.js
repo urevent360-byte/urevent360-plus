@@ -17,21 +17,6 @@ const nextConfig = {
       { protocol: 'https', hostname: 'picsum.photos', port: '', pathname: '/**' },
     ],
   },
-  webpack: (config, { isServer }) => {
-    // Ignorar Handlebars (usado por Genkit) del bundle del cliente
-    if (!isServer) {
-      config.externals.push({
-        handlebars: 'handlebars',
-      });
-    }
-
-    // Silenciar warnings de require.extensions
-    config.ignoreWarnings = [
-      { message: /require\.extensions is not supported by webpack/ },
-    ];
-
-    return config;
-  },
 };
 
 export default nextConfig;

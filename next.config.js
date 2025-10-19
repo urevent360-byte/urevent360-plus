@@ -12,23 +12,32 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'placehold.co', port: '', pathname: '/**' },
-      { protocol: 'https', hostname: 'images.unsplash.com', port: '', pathname: '/**' },
-      { protocol: 'https://picsum.photos', port: '', pathname: '/**' },
+      { protocol: 'https', hostname: 'placehold.co', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'picsum.photos', pathname: '/**' },
+      { protocol: 'https', hostname: 'firebasestorage.googleapis.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
     ],
   },
-  
+
   async headers() {
     return [
       {
         source: '/:path*',
         headers: [
-          // Allow clipboard read/write for same-origin
           { key: 'Permissions-Policy', value: 'clipboard-read=(self), clipboard-write=(self)' },
         ],
       },
     ];
   },
+
+  experimental: {
+    allowedDevOrigins: [
+      'https://*.cloudworkstations.dev',
+      'http://localhost:9000',
+      'http://localhost:9002',
+    ],
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;

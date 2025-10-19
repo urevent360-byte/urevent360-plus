@@ -192,7 +192,9 @@ service cloud.firestore {
     // Helper function to check if a user is an admin by reading their own admin doc.
     // This is secure because the rule on /admins/{uid} only allows reading one's own document.
     function isAdmin() {
-      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'Super Admin';
+      // In a real app, this would check a custom claim: request.auth.token.admin == true
+      // For this implementation, we check Firestore.
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
     }
 
     // Helper function to check if user is the host of an event
@@ -204,7 +206,8 @@ service cloud.firestore {
     // This is the key rule to break the "can't check if admin" circular dependency.
     match /admins/{uid} {
         allow read: if request.auth != null && request.auth.uid == uid;
-        allow write: if false; // Block client-side writes to admin roles for security.
+        // Block client-side writes to admin roles for security. Manually edit roles in Firebase Console.
+        allow write: if false; 
     }
 
     // Users can read and write their own user profile.

@@ -73,11 +73,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error: any) {
           if (error?.code === 'permission-denied') {
+            // This error is critical for debugging security rules.
+            // We emit it so the FirebaseErrorListener can display it in the dev overlay.
             errorEmitter.emit(
               'permission-error',
               new FirestorePermissionError({ operation: 'get', path: `admins/${u.uid}` }),
             );
+            // Sign out the user to prevent getting stuck in a permission loop.
+            await firebaseSignOut(auth);
           } else {
+            // Handle other potential Firestore errors during admin check.
             toast({
               title: 'Authentication Error',
               description: 'Could not verify your admin permissions.',
@@ -103,30 +108,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         uploadRegex.test(pathname);
 
       // 🔁 Redirect logic
-      if (u) {
-        if (userIsAdmin) {
-          // Admin user
-          if (!pathname.startsWith('/admin') || isAdminLogin) {
-            if (pathname !== '/admin/home') router.replace('/admin/home');
-          }
-        } else {
-          // Host user
-          if (!pathname.startsWith('/app') || isAppLogin) {
-            if (pathname !== '/app/home') router.replace('/app/home');
-          }
+      if (u && userIsAdmin) {
+        // Admin user is logged in
+        if (!pathname.startsWith('/admin') || isAdminLogin) {
+          router.replace('/admin/home');
+        }
+      } else if (u) {
+        // Non-admin (host) user is logged in
+        if (!pathname.startsWith('/app') || isAppLogin) {
+          router.replace('/app/home');
         }
       } else {
-        // No user
+        // No user is logged in
         if (pathname.startsWith('/admin') && !isAdminLogin) {
-          if (pathname !== '/admin/login') router.replace('/admin/login');
+          router.replace('/admin/login');
         } else if (pathname.startsWith('/app') && !isAppLogin) {
-          if (pathname !== '/app/login') router.replace('/app/login');
-        } else {
-          // Public routes: stay
-          if (isPublicRoute) {
-            // do nothing
-          }
+          router.replace('/app/login');
         }
+        // For all other cases (e.g., public routes), do nothing and allow access.
       }
 
       setLoading(false);

@@ -7,7 +7,8 @@ import { Footer } from '@/components/layout/Footer';
 import { cn } from '@/lib/utils';
 
 export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  const pathname = rawPathname ?? '';
   const isAdminRoute = pathname.startsWith('/admin');
   const isAppRoute = pathname.startsWith('/app');
   const isAuthRoute = isAdminRoute || isAppRoute;

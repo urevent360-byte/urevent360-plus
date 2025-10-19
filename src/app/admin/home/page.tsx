@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookUser, Briefcase, Bot, Newspaper, Users, Calendar, Settings } from 'lucide-react';
 import Link from 'next/link';
@@ -57,7 +57,6 @@ export default function AdminHomePage() {
                  <Card>
                     <CardHeader>
                         <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>A log of recent lead submissions and client actions.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <ul className="space-y-3">

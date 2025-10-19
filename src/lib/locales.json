@@ -359,6 +359,16 @@
           "en": "A request to delete your account has been sent.",
           "es": "Se ha enviado una solicitud para eliminar tu cuenta."
         }
+      },
+      "photo": {
+        "saving": {
+          "en": "Uploading...",
+          "es": "Subiendo..."
+        },
+        "saved": {
+          "en": "Avatar Updated!",
+          "es": "¡Avatar Actualizado!"
+        }
       }
     }
   },

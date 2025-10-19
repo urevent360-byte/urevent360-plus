@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -12,6 +13,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   Settings,
@@ -27,10 +29,11 @@ import {
   FolderKanban,
   Palette,
   User,
+  Menu,
 } from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
-import { cn } from '@/lib/utils'; // if you don't have cn, remove and inline template strings
+import { cn } from '@/lib/utils';
 
 type NavItem = { href: string; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> };
 
@@ -51,7 +54,8 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname() || '';
+  const pathname = usePathname() ?? '';
+  const { toggleSidebar } = useSidebar();
 
   return (
     <SidebarProvider>
@@ -70,10 +74,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
                 <SidebarMenuItem key={href}>
                   <SidebarMenuButton
                     asChild
-                    className={cn(
-                      'justify-start',
-                      active && 'bg-primary/10 text-primary hover:bg-primary/15'
-                    )}
+                    className={cn('justify-start', active && 'bg-primary/10 text-primary hover:bg-primary/15')}
                     aria-current={active ? 'page' : undefined}
                   >
                     <Link href={href}>
@@ -92,8 +93,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
                 <Link href="/">
-                  <Home />
-                  Go to Site
+                  <Home /> Go to Site
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -105,6 +105,21 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
       </Sidebar>
 
       <SidebarInset>
+        {/* Top bar with hamburger toggle (mobile-first) */}
+        <header className="sticky top-0 z-20 bg-background/70 backdrop-blur supports-[backdrop-filter]:bg-background/50 border-b">
+          <div className="flex items-center gap-2 p-3">
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border md:hidden"
+              aria-label="Toggle navigation menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <span className="font-medium text-sm text-muted-foreground">Admin</span>
+          </div>
+        </header>
+
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
     </SidebarProvider>

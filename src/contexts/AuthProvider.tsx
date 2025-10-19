@@ -69,13 +69,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
-          if (
-            adminDoc.exists() &&
-            adminDoc.data().active === true &&
-            (adminDoc.data().role === 'admin' || adminDoc.data().role === 'owner')
-          ) {
+          
+          const allowedAdminRoles = new Set(['admin', 'owner']);
+          const exists = adminDoc.exists();
+          const data = exists ? adminDoc.data() : undefined;
+          const active = !!data?.active;
+          const role = (data?.role ?? '').toString().toLowerCase();
+
+          if (exists && active && allowedAdminRoles.has(role)) {
             userIsAdmin = true;
           }
+
         } catch (error: any) {
           if (error?.code === 'permission-denied') {
             errorEmitter.emit(

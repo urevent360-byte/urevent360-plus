@@ -79,19 +79,12 @@ export default function CatalogPage() {
   const handleShare = async () => {
       if (!catalogUrl) return;
       const fullUrl = `${window.location.origin}${catalogUrl}`;
-      const copied = await safeCopy(fullUrl);
-      if (copied) {
-          toast({
-              title: "Link Copied!",
-              description: "The link to your catalog has been copied to your clipboard."
-          });
-      } else {
-           toast({
-              title: "Copy Failed",
-              description: "Could not copy link to clipboard. Please try again.",
-              variant: "destructive"
-          });
-      }
+      const ok = await safeCopy(fullUrl);
+      toast({
+        title: ok ? 'Copied to clipboard' : 'Copy failed',
+        description: ok ? 'The link to your catalog has been copied.' : 'Your browser blocked clipboard access.',
+        variant: ok ? 'default' : 'destructive',
+      });
   }
 
   if (isLoading) {

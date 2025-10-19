@@ -208,9 +208,9 @@ service cloud.firestore {
     }
 
     // Users can read and write their own user profile.
-    // Admins can read any user profile.
     match /users/{uid} {
         allow read, write: if request.auth.uid == uid;
+        // Admins should be able to read user profiles for support.
         allow read: if isAdmin();
     }
 
@@ -244,11 +244,6 @@ service cloud.firestore {
       allow read: if isHost(eventId) || isAdmin();
       allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
       allow delete: if isAdmin();
-    }
-    
-    // Default deny all other reads/writes
-    match /{document=**} {
-      allow read, write: if false;
     }
   }
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { ReactNode } from 'react';
@@ -73,16 +74,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           }
         } catch (error: any) {
           if (error?.code === 'permission-denied') {
-            // This error is critical for debugging security rules.
-            // We emit it so the FirebaseErrorListener can display it in the dev overlay.
             errorEmitter.emit(
               'permission-error',
               new FirestorePermissionError({ operation: 'get', path: `admins/${u.uid}` }),
             );
-            // Sign out the user to prevent getting stuck in a permission loop.
             await firebaseSignOut(auth);
           } else {
-            // Handle other potential Firestore errors during admin check.
             toast({
               title: 'Authentication Error',
               description: 'Could not verify your admin permissions.',

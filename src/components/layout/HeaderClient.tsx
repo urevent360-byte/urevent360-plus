@@ -30,7 +30,8 @@ import { useOpenInquiryModal } from '../page/home/InquiryModal';
 
 export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
-  const pathname = usePathname();
+  const rawPathname = usePathname();
+  const pathname = rawPathname ?? '';
   const [isSheetOpen, setSheetOpen] = useState(false);
   const { items } = useCart();
   const { setOpen: setInquiryOpen } = useOpenInquiryModal();
@@ -130,7 +131,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <div className="hidden md:flex items-center gap-2">
+                <div className="flex items-center gap-2">
                     <Button asChild variant="outline" size="sm">
                       <Link href="/app/login">Host Login</Link>
                     </Button>

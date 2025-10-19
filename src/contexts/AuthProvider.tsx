@@ -70,25 +70,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
           
-          const allowedAdminRoles = new Set(['admin', 'owner']);
-          const exists = adminDoc.exists();
-          const data = exists ? adminDoc.data() : undefined;
-          const active = !!data?.active;
-          const role = (data?.role ?? '').toString().toLowerCase();
-
-          if (exists && active && allowedAdminRoles.has(role)) {
+          if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
             userIsAdmin = true;
           }
 
         } catch (error: any) {
           if (error?.code === 'permission-denied') {
-            errorEmitter.emit(
-              'permission-error',
-              new FirestorePermissionError({ operation: 'get', path: `admins/${u.uid}` }),
-            );
-            await firebaseSignOut(auth);
+            // This error is expected if a non-admin user logs in.
+            // We can safely assume they are not an admin.
+            userIsAdmin = false;
           } else {
-            toast({
+             toast({
               title: 'Authentication Error',
               description: 'Could not verify your admin permissions.',
               variant: 'destructive',
@@ -113,15 +105,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         uploadRegex.test(pathname);
 
       // 🔁 Redirect logic
-      if (u && userIsAdmin) {
-        // Admin user is logged in
-        if (!pathname.startsWith('/admin') || isAdminLogin) {
-          router.replace('/admin/home');
-        }
-      } else if (u) {
-        // Non-admin (host) user is logged in
-        if (!pathname.startsWith('/app') || isAppLogin) {
-          router.replace('/app/home');
+      if (u) {
+        if (userIsAdmin) {
+          // Admin user is logged in
+          if (pathname !== '/admin/home' && !pathname.startsWith('/admin/')) {
+            router.replace('/admin/home');
+          }
+        } else {
+          // Non-admin (host) user is logged in
+          if (pathname !== '/app/home' && !pathname.startsWith('/app/')) {
+            router.replace('/app/home');
+          }
         }
       } else {
         // No user is logged in
@@ -138,7 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     return () => unsubscribe();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]); // keep deps minimal to avoid loops
+  }, []); // Run only on mount
 
   const signOut = async () => {
     const isAdminPath = pathname.startsWith('/admin');

@@ -190,121 +190,14 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isSignedIn() { return request.auth != null; }
-    function isMe(uid) { return isSignedIn() && request.auth.uid == uid; }
 
-    // Si en el futuro usas custom claims:
-    function isAdminClaim() { return isSignedIn() && request.auth.token.admin == true; }
-
-    // ---- ADMINS ----
-    // El usuario autenticado puede leer SU PROPIO doc /admins/{uid}.
-    // Ediciones solo desde consola / backend (no front).
+    // Admins: a signed-in user can read ONLY their own doc in /admins
     match /admins/{uid} {
-      allow read: if isMe(uid) || isAdminClaim();
-      allow write: if false;
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false; // Forbid client-side writes
     }
-
-    // ---- USERS ----
-    match /users/{uid} {
-      // Su perfil: leer/escribir solo el dueño (y admins por claim).
-      allow read, write: if isMe(uid) || isAdminClaim();
-    }
-
-    // ---- LEADS ----
-    match /leads/{leadId} {
-      // Crear lead: cualquier usuario autenticado (ajusta a tu flujo).
-      allow create: if isSignedIn();
-
-      // Leer/editar: dueño del lead (hostId) o admin (claim).
-      allow read, update, delete: if isSignedIn() && (
-        isAdminClaim() ||
-        (resource.data.hostId == request.auth.uid)
-      );
-    }
-
-    // ---- EVENTS ----
-    match /events/{eventId} {
-      // Leer: admin o host dueño
-      allow read: if isSignedIn() && (
-        isAdminClaim() ||
-        (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-      );
-
-      // Crear: admin; también permite que un host cree si el hostId == su uid
-      allow create: if isSignedIn() && (
-        isAdminClaim() ||
-        (request.resource.data.hostId == request.auth.uid)
-      );
-
-      // Actualizar/Eliminar: admin o dueño
-      allow update, delete: if isSignedIn() && (
-        isAdminClaim() ||
-        (resource.data.hostId == request.auth.uid)
-      );
-
-      // ---- Subcolecciones de eventos ----
-      match /services/{serviceId} {
-        allow read: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        // Crear/editar por admin; host puede proponer (write) si es dueño
-        allow create, update, delete: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-      }
-
-      match /payments/{paymentId} {
-        // Host y admin pueden leer; escribe solo admin
-        allow read: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        allow create, update, delete: if isAdminClaim();
-      }
-
-      match /files/{fileId} {
-        // Leer: host y admin
-        allow read: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        // Subir/eliminar: admin; host puede subir si es dueño (ajústalo según tu flujo)
-        allow create, delete: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        // Actualizar metadatos
-        allow update: if isAdminClaim();
-      }
-
-      match /timeline/{itemId} {
-        allow read: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        allow create, update, delete: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-      }
-
-      match /guestUploads/{uploadId} {
-        // Si quieres público, cambia esta regla. Por ahora, solo host/admin.
-        allow read: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        // Crear: normalmente lo hace un endpoint con token; aquí lo limita a host/admin
-        allow create: if isSignedIn() && (
-          isAdminClaim() ||
-          (get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid)
-        );
-        allow update, delete: if isAdminClaim();
-      }
-    }
-
-    // ---- DEFAULT DENY (última barrera) ----
+    
+    // Fallback security rule - deny all reads and writes by default
     match /{document=**} {
       allow read, write: if false;
     }

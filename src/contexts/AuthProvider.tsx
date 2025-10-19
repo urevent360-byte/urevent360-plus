@@ -69,7 +69,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
-          if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
+          if (
+            adminDoc.exists() &&
+            adminDoc.data().active === true &&
+            (adminDoc.data().role === 'admin' || adminDoc.data().role === 'owner')
+          ) {
             userIsAdmin = true;
           }
         } catch (error: any) {

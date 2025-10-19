@@ -188,67 +188,33 @@ This section outlines the Firestore security rules logic to be implemented.
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() { return request.auth != null; }
 
-    // Helper function to check if a user is an admin by reading their own admin doc.
-    // This is secure because the rule on /admins/{uid} only allows reading one's own document.
-    function isAdmin() {
-      // In a real app, this would check a custom claim: request.auth.token.admin == true
-      // For this implementation, we check Firestore.
-      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'admin';
-    }
-
-    // Helper function to check if user is the host of an event
-    function isHost(eventId) {
-      return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
-    }
-    
-    // Admins can read their own admin record to verify their role upon login.
-    // This is the key rule to break the "can't check if admin" circular dependency.
+    // Admins: the signed-in user can read ONLY their own doc
     match /admins/{uid} {
-        allow read: if request.auth != null && request.auth.uid == uid;
-        // Block client-side writes to admin roles for security. Manually edit roles in Firebase Console.
-        allow write: if false; 
+      allow read: if isSignedIn() && request.auth.uid == uid;
+      allow write: if false; // edits only from Console/Backend
     }
 
-    // Users can read and write their own user profile.
+    // Keep your other collections as you already had them or deny by default:
+    // This is a placeholder. You should define specific rules for other collections.
+    // For example, to allow users to read/write their own profiles:
     match /users/{uid} {
-        allow read, write: if request.auth.uid == uid;
-        // Admins should be able to read user profiles for support.
-        allow read: if isAdmin();
+        allow read, write: if isSignedIn() && request.auth.uid == uid;
     }
-
-    // Events can only be read by the assigned host or an admin.
+    
+    // Example for events: only the host can read.
     match /events/{eventId} {
-      allow read: if isHost(eventId) || isAdmin();
-      // Only admins can write directly to events. Hosts must use change requests.
-      allow write: if isAdmin();
+       allow read: if isSignedIn() && get(/databases/$(database)/documents/events/$(eventId)).data.hostId == request.auth.uid;
+       // Add other rules for subcollections as needed
     }
 
-    // Hosts can read subcollections of their own events. Admins can read any.
-    match /events/{eventId}/{subcollection}/{document=**} {
-       allow read: if isHost(eventId) || isAdmin();
-    }
-    
-    // Hosts can create change requests for their events.
-    match /events/{eventId}/changeRequests/{requestId} {
-        allow create: if isHost(eventId);
-        // Only admins can update (approve/reject) change requests.
-        allow update: if isAdmin();
-    }
-    
-    // Payments: Hosts and Admins can read. Only Admins can write.
-    match /events/{eventId}/payments/{paymentId} {
-      allow read: if isHost(eventId) || isAdmin();
-      allow write: if isAdmin();
-    }
-
-    // Guest Uploads: Public can create if QR is active. Host/Admin can read. Admin can delete.
-    match /events/{eventId}/guestUploads/{uploadId} {
-      allow read: if isHost(eventId) || isAdmin();
-      allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
-      allow delete: if isAdmin();
+    // Default deny all other reads/writes
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
 ```
+
     

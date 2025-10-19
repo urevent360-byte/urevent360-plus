@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, LogIn, Eye, EyeOff, Home, Loader2, KeyRound, Smartphone } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff, Home, Loader2, KeyRound, Smartphone, User } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';

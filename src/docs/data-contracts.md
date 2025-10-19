@@ -189,9 +189,9 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if a user is an admin
+    // Helper function to check if a user is an admin by reading their own admin doc.
+    // This is secure because the rule on /admins/{uid} only allows reading one's own document.
     function isAdmin() {
-      // In a real app, this would check a custom claim: request.auth.token.admin == true
       return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'Super Admin';
     }
 
@@ -199,20 +199,19 @@ service cloud.firestore {
     function isHost(eventId) {
       return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
     }
-
-    // Admins have global write access.
-    match /{document=**} {
-      allow write: if isAdmin();
-    }
     
-    // Users can read and write their own profile. Admins can read any profile.
-    match /users/{uid} {
-        allow read, write: if request.auth.uid == uid || isAdmin();
+    // Admins can read their own admin record to verify their role upon login.
+    // This is the key rule to break the "can't check if admin" circular dependency.
+    match /admins/{uid} {
+        allow read: if request.auth != null && request.auth.uid == uid;
+        allow write: if false; // Block client-side writes to admin roles for security.
     }
 
-    // Admins can read their own admin record to verify their role
-    match /admins/{uid} {
-        allow read: if request.auth.uid == uid || isAdmin();
+    // Users can read and write their own user profile.
+    // Admins can read any user profile.
+    match /users/{uid} {
+        allow read, write: if request.auth.uid == uid;
+        allow read: if isAdmin();
     }
 
     // Events can only be read by the assigned host or an admin.
@@ -245,6 +244,11 @@ service cloud.firestore {
       allow read: if isHost(eventId) || isAdmin();
       allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
       allow delete: if isAdmin();
+    }
+    
+    // Default deny all other reads/writes
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

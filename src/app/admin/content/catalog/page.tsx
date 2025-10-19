@@ -10,6 +10,7 @@ import { ArrowLeft, Upload, Loader2, FileText, Share2, Download } from 'lucide-r
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { updateCatalogAction, getCatalogAction } from './actions';
+import { safeCopy } from '@/lib/utils';
 
 export default function CatalogPage() {
   const { toast } = useToast();
@@ -75,14 +76,22 @@ export default function CatalogPage() {
     setIsSaving(false);
   };
   
-  const handleShare = () => {
+  const handleShare = async () => {
       if (!catalogUrl) return;
       const fullUrl = `${window.location.origin}${catalogUrl}`;
-      navigator.clipboard.writeText(fullUrl);
-      toast({
-          title: "Link Copied!",
-          description: "The link to your catalog has been copied to your clipboard."
-      });
+      const copied = await safeCopy(fullUrl);
+      if (copied) {
+          toast({
+              title: "Link Copied!",
+              description: "The link to your catalog has been copied to your clipboard."
+          });
+      } else {
+           toast({
+              title: "Copy Failed",
+              description: "Could not copy link to clipboard. Please try again.",
+              variant: "destructive"
+          });
+      }
   }
 
   if (isLoading) {

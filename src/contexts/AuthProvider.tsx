@@ -70,16 +70,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
           
-          if (adminDoc.exists() && adminDoc.data().active === true && adminDoc.data().role) {
+          const allowedAdminRoles = new Set(['admin', 'owner']);
+          const exists = adminDoc.exists();
+          const data = exists ? adminDoc.data() : undefined;
+          const active = !!data?.active;
+          const role = (data?.role ?? '').toString().toLowerCase();
+          
+          if (exists && active && allowedAdminRoles.has(role)) {
             userIsAdmin = true;
           }
 
         } catch (error: any) {
           if (error?.code === 'permission-denied') {
-            // This error is expected if a non-admin user logs in.
-            // We can safely assume they are not an admin.
-            userIsAdmin = false;
+            userIsAdmin = false; // Expected for non-admins, not an error.
           } else {
+             console.error("Auth check error:", error);
              toast({
               title: 'Authentication Error',
               description: 'Could not verify your admin permissions.',
@@ -106,19 +111,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // 🔁 Redirect logic
       if (u) {
+        // A user is logged in.
         if (userIsAdmin) {
-          // Admin user is logged in
-          if (pathname !== '/admin/home' && !pathname.startsWith('/admin/')) {
+          // It's an admin. If they are not in an admin page, redirect them.
+          if (!pathname.startsWith('/admin/')) {
             router.replace('/admin/home');
           }
         } else {
-          // Non-admin (host) user is logged in
-          if (pathname !== '/app/home' && !pathname.startsWith('/app/')) {
+          // It's a regular host user. If they are not in an app page, redirect them.
+           if (!pathname.startsWith('/app/')) {
             router.replace('/app/home');
           }
         }
       } else {
-        // No user is logged in
+        // No user is logged in. Protect routes.
         if (pathname.startsWith('/admin') && !isAdminLogin) {
           router.replace('/admin/login');
         } else if (pathname.startsWith('/app') && !isAppLogin) {

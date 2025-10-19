@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -131,7 +130,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <div className="flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-2">
                     <Button asChild variant="outline" size="sm">
                       <Link href="/app/login">Host Login</Link>
                     </Button>

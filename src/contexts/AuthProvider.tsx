@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
   User,
@@ -13,8 +13,6 @@ import { auth } from '@/lib/firebase/authClient';
 import { db } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { errorEmitter } from '@/lib/firebase/error-emitter';
-import { FirestorePermissionError } from '@/lib/firebase/errors';
 
 interface AuthContextType {
   user: User | null;
@@ -26,7 +24,7 @@ interface AuthContextType {
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 
-// Public routes and regexes
+// Public routes and regexes that don't require login
 const publicRoutes = [
   '/',
   '/contact',
@@ -46,113 +44,107 @@ const solutionsRegex = /^\/solutions(\/.*)?$/;
 const venuesRegex = /^\/venues(\/.*)?$/;
 const uploadRegex = /^\/upload(\/.*)?$/;
 
+// Special auth pages that should be accessible when logged out
+const adminAuthPages = ['/admin/login', '/admin/forgot-password'];
+const appAuthPages = ['/app/login', '/app/register', '/app/forgot-password'];
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = React.useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = React.useState(false);
-  const [loading, setLoading] = React.useState(true);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
-  const rawPathname = usePathname();
-  // 🔒 Normalize pathname to a non-null string for TS safety
-  const pathname = rawPathname ?? '';
-
+  const pathname = usePathname() ?? '';
   const { toast } = useToast();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setLoading(true);
       setUser(u);
-
-      let userIsAdmin = false;
 
       if (u) {
         try {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
           
-          const allowedAdminRoles = new Set(['admin', 'owner']);
-          const exists = adminDoc.exists();
-          const data = exists ? adminDoc.data() : undefined;
-          const active = !!data?.active;
-          const role = (data?.role ?? '').toString().toLowerCase();
+          const allowedAdminRoles = new Set(['admin', 'owner', 'super admin']);
+          const data = adminDoc.exists() ? adminDoc.data() : undefined;
           
-          if (exists && active && allowedAdminRoles.has(role)) {
-            userIsAdmin = true;
-          }
-
-        } catch (error: any) {
-          if (error?.code === 'permission-denied') {
-            userIsAdmin = false; // Expected for non-admins, not an error.
+          if (data?.active && allowedAdminRoles.has((data?.role ?? '').toLowerCase())) {
+            setIsAdmin(true);
           } else {
-             console.error("Auth check error:", error);
-             toast({
+            setIsAdmin(false);
+          }
+        } catch (error: any) {
+          console.error("Admin check failed:", error.message);
+          setIsAdmin(false);
+          // Don't show toast for permission-denied, it's expected for non-admins
+          if (error.code !== 'permission-denied') {
+            toast({
               title: 'Authentication Error',
-              description: 'Could not verify your admin permissions.',
+              description: 'Could not verify your permissions.',
               variant: 'destructive',
             });
           }
         }
-      }
-
-      setIsAdmin(userIsAdmin);
-
-      // Auth pages
-      const isAppLogin =
-        pathname === '/app/login' || pathname === '/app/register' || pathname === '/app/forgot-password';
-      const isAdminLogin = pathname === '/admin/login' || pathname === '/admin/forgot-password';
-
-      // Public pages
-      const isPublicRoute =
-        publicRoutes.includes(pathname) ||
-        servicesRegex.test(pathname) ||
-        solutionsRegex.test(pathname) ||
-        venuesRegex.test(pathname) ||
-        uploadRegex.test(pathname);
-
-      // 🔁 Redirect logic
-      if (u) {
-        // A user is logged in.
-        if (userIsAdmin) {
-          // It's an admin. If they are not in an admin page, redirect them.
-          if (!pathname.startsWith('/admin/')) {
-            router.replace('/admin/home');
-          }
-        } else {
-          // It's a regular host user. If they are not in an app page, redirect them.
-           if (!pathname.startsWith('/app/')) {
-            router.replace('/app/home');
-          }
-        }
       } else {
-        // No user is logged in. Protect routes.
-        if (pathname.startsWith('/admin') && !isAdminLogin) {
-          router.replace('/admin/login');
-        } else if (pathname.startsWith('/app') && !isAppLogin) {
-          router.replace('/app/login');
-        }
-        // For all other cases (e.g., public routes), do nothing and allow access.
+        setIsAdmin(false);
       }
-
+      
       setLoading(false);
     });
 
     return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run only on mount
+  }, [toast]);
+
+  useEffect(() => {
+    if (loading) return; // Wait until auth state is resolved
+
+    const isPublic =
+      publicRoutes.includes(pathname) ||
+      servicesRegex.test(pathname) ||
+      solutionsRegex.test(pathname) ||
+      venuesRegex.test(pathname) ||
+      uploadRegex.test(pathname);
+
+    const isAdminAuthPage = adminAuthPages.includes(pathname);
+    const isAppAuthPage = appAuthPages.includes(pathname);
+    
+    if (user) { // User is logged in
+      if (isAdmin) {
+        // Logged in as Admin
+        if (isAdminAuthPage) {
+          router.replace('/admin/home');
+        }
+      } else {
+        // Logged in as Host
+        if (isAppAuthPage) {
+          router.replace('/app/home');
+        }
+      }
+    } else { // User is logged out
+      const isProtectedAdminRoute = pathname.startsWith('/admin/') && !isAdminAuthPage;
+      const isProtectedAppRoute = pathname.startsWith('/app/') && !isAppAuthPage;
+
+      if (isProtectedAdminRoute) {
+        router.replace('/admin/login');
+      } else if (isProtectedAppRoute) {
+        router.replace('/app/login');
+      }
+    }
+  }, [loading, user, isAdmin, pathname, router]);
 
   const signOut = async () => {
     const isAdminPath = pathname.startsWith('/admin');
     await firebaseSignOut(auth);
-    setUser(null);
-    setIsAdmin(false);
+    // State will be cleared by onAuthStateChanged listener
     router.push(isAdminPath ? '/admin/login' : '/app/login');
   };
 
   const updateProfile = async (profileData: { displayName?: string | null; photoURL?: string | null }) => {
     if (auth.currentUser) {
       await firebaseUpdateProfile(auth.currentUser, profileData);
-      // Refresh local state from the actual currentUser instance
-      setUser(auth.currentUser);
+      setUser({ ...auth.currentUser }); // Force re-render with updated info
     }
   };
 

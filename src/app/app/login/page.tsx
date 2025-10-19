@@ -4,27 +4,30 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, LogIn, Eye, EyeOff, Shield, Home } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  email: z.string().email('Enter a valid email.'),
+  password: z.string().min(6, 'At least 6 characters.'),
 });
-
 type FormValues = z.infer<typeof formSchema>;
-
 
 export default function HostLoginPage() {
   const { toast } = useToast();
@@ -32,90 +35,98 @@ export default function HostLoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
-  
+
+  // Redirect once auth context resolves
   useEffect(() => {
-    if (user && !loading) {
-        if (isAdmin) {
-            // This should ideally not happen if an admin uses the correct login page,
-            // but as a safeguard, we redirect them to the admin portal.
-            router.push('/admin/home');
-        } else {
-            router.push('/app/home'); 
-        }
+    if (!loading && user) {
+      if (isAdmin) router.replace('/admin/home');
+      else router.replace('/app/home');
     }
-  }, [user, loading, router, isAdmin]);
+  }, [user, isAdmin, loading, router]);
 
-
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "client@urevent360.com",
-      password: "password"
-    }
+    defaultValues: { email: '', password: '' },
   });
-  
-  const handleLoginSuccess = (email: string | null) => {
-    toast({
-        title: 'Success!',
-        description: 'Login successful! Redirecting to your portal...',
-      });
+
+  function onLoginSuccess(dest: '/app/home' | '/admin/home' = '/app/home') {
+    toast({ title: 'Success', description: 'Redirecting to your portal…' });
+    router.replace(dest);
   }
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      handleLoginSuccess(data.email);
-      // The useAuth hook will handle the redirection automatically
+      // useAuth effect will redirect; as fallback:
+      onLoginSuccess('/app/home');
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
-      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
-        description = 'Incorrect email or password. Please try again.';
+      switch (error?.code) {
+        case 'auth/invalid-credential':
+        case 'auth/wrong-password':
+        case 'auth/user-not-found':
+          description = 'Incorrect email or password.'; break;
+        case 'auth/too-many-requests':
+          description = 'Too many attempts. Please try again later.'; break;
+        case 'auth/network-request-failed':
+          description = 'Network error. Check your connection.'; break;
+        default:
+          description = error?.message || description; break;
       }
-      toast({
-        title: 'Login Failed',
-        description,
-        variant: 'destructive',
-      });
+      toast({ title: 'Login Failed', description, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);
     }
   }
-  
-  const handleSocialLogin = async (providerName: 'google' | 'facebook') => {
-    const provider = providerName === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+
+  async function handleSocialLogin(kind: 'google' | 'facebook') {
+    setIsSubmitting(true);
     try {
-        const result = await signInWithPopup(auth, provider);
-        handleLoginSuccess(result.user.email);
-    } catch (error: any) {
-      if (error.code === 'auth/configuration-not-found') {
-        toast({
-          title: 'Configuration Error',
-          description: `The ${providerName} sign-in provider is not enabled. Please enable it in your Firebase console under Authentication > Sign-in method.`,
-          variant: 'destructive',
-        });
+      const provider =
+        kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      // If that account is actually admin, route them away from host portal
+      if ((await auth.currentUser?.getIdTokenResult())?.claims?.admin || isAdmin) {
+        onLoginSuccess('/admin/home');
       } else {
-        toast({
-          title: 'Error',
-          description: error.message || `An unexpected error occurred during ${providerName} login.`,
-          variant: 'destructive',
-        });
+        onLoginSuccess('/app/home');
       }
+    } catch (error: any) {
+      let description = error?.message || 'Social login failed.';
+      switch (error?.code) {
+        case 'auth/popup-closed-by-user':
+          description = 'Login popup closed.'; break;
+        case 'auth/cancelled-popup-request':
+          description = 'Popup cancelled. Try again.'; break;
+        case 'auth/account-exists-with-different-credential':
+          description = 'Email already exists with another provider.'; break;
+        case 'auth/configuration-not-found':
+          description = `The ${kind} provider is not enabled in Firebase.`; break;
+      }
+      toast({ title: 'Error', description, variant: 'destructive' });
+    } finally {
+      setIsSubmitting(false);
     }
-  };
+  }
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center min-h-screen">
       <Card className="max-w-md w-full shadow-xl border-0">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary pt-8">
-            <LogIn className="inline-block mr-2" />
-            Host Portal
+            <LogIn className="inline-block mr-2" /> Host Portal
           </CardTitle>
           <CardDescription className="text-lg">
             Access your portal to manage your events.
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
@@ -123,29 +134,27 @@ export default function HostLoginPage() {
               <Input
                 id="email"
                 type="email"
-                {...register('email')}
+                autoComplete="username"
+                inputMode="email"
                 placeholder="you@example.com"
+                {...register('email')}
                 aria-invalid={!!errors.email}
               />
-              {errors.email && (
-                <p className="text-sm text-destructive">{errors.email?.message}</p>
-              )}
+              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-2">
-               <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link
-                  href="/app/forgot-password"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
+                <Link href="/app/forgot-password" className="text-sm font-medium text-primary hover:underline">
                   Forgot Password?
                 </Link>
               </div>
-               <div className="relative">
+              <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   {...register('password')}
                   aria-invalid={!!errors.password}
                 />
@@ -154,26 +163,18 @@ export default function HostLoginPage() {
                   variant="ghost"
                   size="icon"
                   className="absolute inset-y-0 right-0 h-full px-3"
-                  onClick={() => setShowPassword(prev => !prev)}
+                  onClick={() => setShowPassword((p) => !p)}
+                  aria-label="Toggle password visibility"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  <span className="sr-only">Toggle password visibility</span>
                 </Button>
               </div>
-              {errors.password && (
-                <p className="text-sm text-destructive">{errors.password?.message}</p>
-              )}
+              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
-            
-            <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? (
-                <>Logging in...</>
-              ) : (
-                <>
-                  <Mail className="mr-2" />
-                  Login
-                </>
-              )}
+
+            <Button type="submit" disabled={isSubmitting || loading} className="w-full">
+              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
+              {isSubmitting ? 'Logging in…' : 'Login'}
             </Button>
           </form>
 
@@ -185,32 +186,27 @@ export default function HostLoginPage() {
               <span className="bg-card px-2 text-muted-foreground">OR</span>
             </div>
           </div>
-          
+
           <div className="space-y-4">
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')}>
-              <GoogleIcon className="mr-2" />
-              Continue with Google
+            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')} disabled={isSubmitting || loading}>
+              <GoogleIcon className="mr-2" /> Continue with Google
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')}>
-              <FacebookIcon className="mr-2" />
-              Continue with Facebook
+            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')} disabled={isSubmitting || loading}>
+              <FacebookIcon className="mr-2" /> Continue with Facebook
             </Button>
           </div>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/app/register" className="font-semibold text-primary hover:underline">
               Sign up
             </Link>
           </p>
 
-          <div className="mt-6 text-center space-y-2">
-             <Button variant="link" asChild>
-                <Link href="/">
-                    <Home className="mr-2" />
-                    Go back to landing page
-                </Link>
-             </Button>
+          <div className="mt-6 text-center">
+            <Button variant="link" asChild>
+              <Link href="/"><Home className="mr-2" /> Go back to landing page</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>

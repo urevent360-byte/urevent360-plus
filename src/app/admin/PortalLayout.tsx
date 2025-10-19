@@ -1,4 +1,7 @@
+'use client';
 
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Sidebar,
   SidebarProvider,
@@ -10,152 +13,99 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Settings, LayoutGrid, Newspaper, BookUser, Bot, Calendar, Camera, Home, Briefcase, BarChart, FolderKanban, Palette, User } from 'lucide-react';
-import Link from 'next/link';
+import {
+  Settings,
+  LayoutGrid,
+  Newspaper,
+  BookUser,
+  Bot,
+  Calendar,
+  Camera,
+  Home,
+  Briefcase,
+  BarChart,
+  FolderKanban,
+  Palette,
+  User,
+} from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
+import { cn } from '@/lib/utils'; // if you don't have cn, remove and inline template strings
 
-export default function AdminPortalLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+type NavItem = { href: string; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> };
+
+const NAV_ITEMS: NavItem[] = [
+  { href: '/admin/home', label: 'Home', icon: LayoutGrid },
+  { href: '/admin/crm', label: 'CRM (Leads)', icon: BookUser },
+  { href: '/admin/projects', label: 'Projects (Weekly)', icon: Briefcase },
+  { href: '/admin/events', label: 'Events (List View)', icon: FolderKanban },
+  { href: '/admin/calendar', label: 'Calendar', icon: Calendar },
+  { href: '/admin/services', label: 'Services', icon: Briefcase },
+  { href: '/admin/designs', label: 'Designs', icon: Palette },
+  { href: '/admin/gallery', label: 'Gallery', icon: Camera },
+  { href: '/admin/marketing', label: 'Marketing', icon: BarChart },
+  { href: '/admin/content', label: 'Content', icon: Newspaper },
+  { href: '/admin/settings/profile', label: 'My Profile', icon: User },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/assistant', label: 'AI Assistant', icon: Bot },
+];
+
+export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname() || '';
+
   return (
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-            <div className="p-2 flex justify-center">
-                <Logo />
-            </div>
+          <div className="p-2 flex justify-center">
+            <Logo />
+          </div>
         </SidebarHeader>
+
         <SidebarContent>
           <SidebarMenu>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/home">
-                  <LayoutGrid />
-                  Home
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/crm">
-                  <BookUser />
-                  CRM (Leads)
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/projects">
-                  <Briefcase />
-                  Projects (Weekly)
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/events">
-                  <FolderKanban />
-                  Events (List View)
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/calendar">
-                  <Calendar />
-                  Calendar
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/services">
-                  <Briefcase />
-                  Services
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/designs">
-                  <Palette />
-                  Designs
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/gallery">
-                  <Camera />
-                  Gallery
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/marketing">
-                  <BarChart />
-                  Marketing
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/content">
-                  <Newspaper />
-                  Content
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/settings/profile">
-                  <User />
-                  My Profile
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/settings">
-                  <Settings />
-                  Settings
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-             <SidebarMenuItem>
-              <SidebarMenuButton asChild>
-                <Link href="/admin/assistant">
-                  <Bot />
-                  AI Assistant
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+              const active = pathname === href || pathname.startsWith(href + '/');
+              return (
+                <SidebarMenuItem key={href}>
+                  <SidebarMenuButton
+                    asChild
+                    className={cn(
+                      'justify-start',
+                      active && 'bg-primary/10 text-primary hover:bg-primary/15'
+                    )}
+                    aria-current={active ? 'page' : undefined}
+                  >
+                    <Link href={href}>
+                      <Icon />
+                      {label}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarContent>
+
         <SidebarFooter>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                        <Link href="/">
-                        <Home />
-                        Go to Site
-                        </Link>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-                 <SidebarMenuItem>
-                    <AuthSignOutButton />
-                </SidebarMenuItem>
-            </SidebarMenu>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link href="/">
+                  <Home />
+                  Go to Site
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <AuthSignOutButton />
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
+
       <SidebarInset>
-        <div className="p-4 sm:p-6 lg:p-8">
-            {children}
-        </div>
+        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
     </SidebarProvider>
   );

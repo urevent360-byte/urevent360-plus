@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { AuthProvider } from '@/contexts/AuthProvider';
+import { Providers } from './Providers';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
@@ -92,7 +92,7 @@ export default async function RootLayout({
         <JsonLd />
       </head>
       <body className={cn('font-body antialiased')}>
-        <AuthProvider>
+        <Providers>
           <FirebaseErrorListener />
           <AppLayoutClient logoUrl={logoUrl}>
             <div className="flex flex-col flex-grow">{children}</div>
@@ -103,7 +103,7 @@ export default async function RootLayout({
 
           <Toaster />
           <InquiryModal />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

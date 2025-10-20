@@ -14,21 +14,22 @@ export function AuthLayout({
   children: React.ReactNode;
   portalType: 'admin' | 'app';
 }) {
-  // En algunos setups usePathname() puede ser string | null, así que hacemos fallback:
   const pathname = usePathname() ?? '';
 
   if (portalType === 'admin') {
-    if (adminAuthRoutes.includes(pathname)) {
-      return <>{children}</>;
-    }
-    return <AdminPortalLayout>{children}</AdminPortalLayout>;
+    return adminAuthRoutes.includes(pathname) ? (
+      <>{children}</>
+    ) : (
+      <AdminPortalLayout>{children}</AdminPortalLayout>
+    );
   }
 
   if (portalType === 'app') {
-    if (appAuthRoutes.includes(pathname)) {
-      return <>{children}</>;
-    }
-    return <AppPortalLayout>{children}</AppPortalLayout>;
+    return appAuthRoutes.includes(pathname) ? (
+      <>{children}</>
+    ) : (
+      <AppPortalLayout>{children}</AppPortalLayout>
+    );
   }
 
   return <>{children}</>;

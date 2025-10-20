@@ -41,7 +41,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   // -------------------------------
   const isLoggedIn = !!user;
   const hostLink = isLoggedIn ? '/app/home' : '/app/login';
-  const adminLink = isLoggedIn ? '/admin/home' : '/admin/login';
+  const adminLink = isLoggedIn ? '/admin/dashboard' : '/admin/login';
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -128,7 +128,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={isAdmin ? '/admin/home' : '/app/home'}>
+                    <Link href={isAdmin ? '/admin/dashboard' : '/app/home'}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </Link>

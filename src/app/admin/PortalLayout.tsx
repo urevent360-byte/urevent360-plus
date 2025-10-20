@@ -38,7 +38,7 @@ import { cn } from '@/lib/utils';
 type NavItem = { href: string; label: string; icon: React.ComponentType<React.SVGProps<SVGSVGElement>> };
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/admin/home', label: 'Home', icon: LayoutGrid },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutGrid },
   { href: '/admin/crm', label: 'CRM (Leads)', icon: BookUser },
   { href: '/admin/projects', label: 'Projects (Weekly)', icon: Briefcase },
   { href: '/admin/events', label: 'Events (List View)', icon: FolderKanban },

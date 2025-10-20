@@ -26,6 +26,7 @@ const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
 // Rutas públicas (acceso sin login)
 const publicRoutes = new Set<string>([
   '/',
+  '/services',
   '/contact',
   '/gallery',
   '/plan',
@@ -39,6 +40,8 @@ const publicRoutes = new Set<string>([
   '/prom-entertainment-orlando',
 ]);
 
+const publicPrefixes = ['/services/', '/solutions/', '/venues/'];
+
 // Páginas de auth permitidas sin sesión
 const adminAuthPages = new Set<string>(['/admin/login', '/admin/forgot-password']);
 const appAuthPages   = new Set<string>(['/app/login', '/app/register', '/app/forgot-password']);
@@ -46,6 +49,8 @@ const appAuthPages   = new Set<string>(['/app/login', '/app/register', '/app/for
 // Helpers
 const isAdminArea = (p: string) => p === '/admin' || p.startsWith('/admin/');
 const isAppArea   = (p: string) => p === '/app'   || p.startsWith('/app/');
+const isPublicRoute = (p: string) => publicRoutes.has(p) || publicPrefixes.some(prefix => p.startsWith(prefix));
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -110,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isAdmin) {
       // Si cae en /app/*, lo mandamos a admin dashboard
       if (isAppArea(pathname)) {
-        router.replace('/admin/home');
+        router.replace('/admin/dashboard');
         return;
       }
       // Si está en /admin root o en páginas de auth de admin, también a dashboard

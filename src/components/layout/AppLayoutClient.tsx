@@ -4,17 +4,15 @@
 import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { cn } from '@/lib/utils';
 import { InquiryModal } from '../page/home/InquiryModal';
 
-export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
-  const rawPathname = usePathname();
-  const pathname = rawPathname ?? '';
-  const isAdminRoute = pathname.startsWith('/admin');
-  const isAppRoute = pathname.startsWith('/app');
-  const isAuthRoute = isAdminRoute || isAppRoute;
+const adminRoutes = ['/admin', '/app'];
 
-  if (isAuthRoute) {
+export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
+  const pathname = usePathname() ?? '';
+  const isPortalRoute = adminRoutes.some(route => pathname.startsWith(route));
+
+  if (isPortalRoute) {
     return <>{children}</>;
   }
 

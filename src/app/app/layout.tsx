@@ -1,10 +1,15 @@
-'use client';
-import { AuthLayout } from '@/components/layout/AuthLayout';
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return <AuthLayout portalType="app">{children}</AuthLayout>;
+'use client';
+import AppPortalLayout from '@/app/app/PortalLayout';
+import { usePathname } from 'next/navigation';
+
+const appAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
+
+export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname() ?? '';
+  const isAuthPage = appAuthRoutes.includes(pathname);
+
+  return (
+      isAuthPage ? <>{children}</> : <AppPortalLayout>{children}</AppPortalLayout>
+  );
 }

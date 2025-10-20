@@ -1,9 +1,17 @@
-import { AuthLayout } from '@/components/layout/AuthLayout';
+
+'use client';
+import AdminPortalLayout from '@/app/admin/PortalLayout';
+import { usePathname } from 'next/navigation';
+
+const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
 
 export default function RootAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AuthLayout portalType="admin">{children}</AuthLayout>;
+  const pathname = usePathname() ?? '';
+  const isAuthPage = adminAuthRoutes.includes(pathname);
+
+  return isAuthPage ? <>{children}</> : <AdminPortalLayout>{children}</AdminPortalLayout>;
 }

@@ -8,7 +8,6 @@ import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import { JsonLd } from '@/components/shared/JsonLd';
 // If you actively use it, keep; otherwise remove this import
 // import { ChatWidget } from '@/components/shared/ChatWidget';
-import { InquiryModal } from '@/components/page/home/InquiryModal';
 import brandingData from '@/lib/branding.json';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
@@ -102,7 +101,6 @@ export default async function RootLayout({
           {/* <ChatWidget /> */}
 
           <Toaster />
-          <InquiryModal />
         </Providers>
       </body>
     </html>

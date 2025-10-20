@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { AuthProvider } from '@/contexts/AuthProvider';
 import AdminPortalLayout from '@/app/admin/PortalLayout';
 import AppPortalLayout from '@/app/app/PortalLayout';
 
@@ -16,21 +17,24 @@ export function AuthLayout({
 }) {
   const pathname = usePathname() ?? '';
 
-  if (portalType === 'admin') {
-    return adminAuthRoutes.includes(pathname) ? (
-      <>{children}</>
-    ) : (
-      <AdminPortalLayout>{children}</AdminPortalLayout>
-    );
-  }
-
-  if (portalType === 'app') {
-    return appAuthRoutes.includes(pathname) ? (
-      <>{children}</>
-    ) : (
-      <AppPortalLayout>{children}</AppPortalLayout>
-    );
-  }
-
-  return <>{children}</>;
+  // 🔹 Envolvemos TODO con AuthProvider para que onAuthStateChanged funcione incluso en login
+  return (
+    <AuthProvider>
+      {portalType === 'admin' ? (
+        adminAuthRoutes.includes(pathname) ? (
+          <>{children}</>
+        ) : (
+          <AdminPortalLayout>{children}</AdminPortalLayout>
+        )
+      ) : portalType === 'app' ? (
+        appAuthRoutes.includes(pathname) ? (
+          <>{children}</>
+        ) : (
+          <AppPortalLayout>{children}</AppPortalLayout>
+        )
+      ) : (
+        <>{children}</>
+      )}
+    </AuthProvider>
+  );
 }

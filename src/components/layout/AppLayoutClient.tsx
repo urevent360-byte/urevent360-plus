@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { cn } from '@/lib/utils';
+import { InquiryModal } from '../page/home/InquiryModal';
 
 export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
   const rawPathname = usePathname();
@@ -22,6 +23,7 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
       <Header logoUrl={logoUrl} />
       <main className="flex-grow flex flex-col">{children}</main>
       <Footer />
+      <InquiryModal />
     </div>
   );
 }

@@ -67,13 +67,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
-          if (adminDoc.exists()) {
-            const data = adminDoc.data();
-            const allowed = new Set(['admin', 'owner']);
-            if (data?.active === true && allowed.has(String(data?.role ?? '').toLowerCase())) {
-              userIsAdmin = true;
-            }
+          
+          const allowedAdminRoles = new Set(['admin', 'owner']);
+          const exists = adminDoc.exists();
+          const data = exists ? adminDoc.data() : undefined;
+          const active = !!data?.active;
+          const role = (data?.role ?? '').toString().toLowerCase();
+
+          if (exists && active && allowedAdminRoles.has(role)) {
+            userIsAdmin = true;
           }
+          
         } catch (error: any) {
           // Be tolerant: if rules deny or any read issue, just treat as non-admin.
           // Only log silently; do not show toast.
@@ -92,33 +96,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [toast]);
 
   useEffect(() => {
-    if (loading) return; // Wait until auth state is resolved
+    if (loading) return;
 
-    const isPublic =
-      publicRoutes.includes(pathname) ||
-      servicesRegex.test(pathname) ||
-      solutionsRegex.test(pathname) ||
-      venuesRegex.test(pathname) ||
-      uploadRegex.test(pathname);
-
-    const isAdminAuthPage = adminAuthPages.includes(pathname);
-    const isAppAuthPage = appAuthPages.includes(pathname);
-    
-    if (user) { // User is logged in
+    if (user) {
       if (isAdmin) {
-        // Logged in as Admin
-        if (isAdminAuthPage) {
-          router.replace('/admin/home');
+        // User is an admin
+        if (!pathname.startsWith('/admin') || adminAuthPages.includes(pathname)) {
+          if (pathname !== '/admin/home') {
+            router.replace('/admin/home');
+          }
         }
       } else {
-        // Logged in as Host
-        if (isAppAuthPage) {
-          router.replace('/app/home');
+        // User is a host
+        if (!pathname.startsWith('/app') || appAuthPages.includes(pathname)) {
+           if (pathname !== '/app/home') {
+            router.replace('/app/home');
+           }
         }
       }
-    } else { // User is logged out
-      const isProtectedAdminRoute = pathname.startsWith('/admin/') && !isAdminAuthPage;
-      const isProtectedAppRoute = pathname.startsWith('/app/') && !isAppAuthPage;
+    } else {
+      // User is logged out, protect routes
+      const isProtectedAdminRoute = pathname.startsWith('/admin/') && !adminAuthPages.includes(pathname);
+      const isProtectedAppRoute = pathname.startsWith('/app/') && !appAuthPages.includes(pathname);
 
       if (isProtectedAdminRoute) {
         router.replace('/admin/login');

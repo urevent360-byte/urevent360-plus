@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { HeroContent } from '@/components/page/home/HeroContent';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
-import { InquiryModal } from '@/components/page/home/InquiryModal';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
 import { Testimonials } from '@/components/page/home/Testimonials';
 import { SocialFeed } from '@/components/page/home/SocialFeed';
@@ -47,8 +46,6 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <InquiryModal />
-
       <section className="relative flex h-[60vh] w-full items-center justify-center text-center text-white md:h-[80vh]">
         <Image
           src={heroSrc}

@@ -1,13 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { Providers } from './Providers';
+import { AuthProvider } from '@/contexts/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import { JsonLd } from '@/components/shared/JsonLd';
-// If you actively use it, keep; otherwise remove this import
-// import { ChatWidget } from '@/components/shared/ChatWidget';
 import brandingData from '@/lib/branding.json';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
 
@@ -91,17 +89,13 @@ export default async function RootLayout({
         <JsonLd />
       </head>
       <body className={cn('font-body antialiased')}>
-        <Providers>
+        <AuthProvider>
           <FirebaseErrorListener />
           <AppLayoutClient logoUrl={logoUrl}>
-            <div className="flex flex-col flex-grow">{children}</div>
+            {children}
           </AppLayoutClient>
-
-          {/* If you want the chat, uncomment: */}
-          {/* <ChatWidget /> */}
-
           <Toaster />
-        </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

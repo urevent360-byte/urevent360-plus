@@ -98,27 +98,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (loading) return;
 
+    const isProtectedAdminRoute = pathname.startsWith('/admin/') && !adminAuthPages.includes(pathname);
+    const isProtectedAppRoute = pathname.startsWith('/app/') && !appAuthPages.includes(pathname);
+    
     if (user) {
+      // User is logged in
       if (isAdmin) {
-        // User is an admin
-        if (!pathname.startsWith('/admin') || adminAuthPages.includes(pathname)) {
-          if (pathname !== '/admin/home') {
-            router.replace('/admin/home');
-          }
+        // User is an admin, should be in /admin area
+        if (!pathname.startsWith('/admin/') || adminAuthPages.includes(pathname)) {
+          router.replace('/admin/home');
         }
       } else {
-        // User is a host
-        if (!pathname.startsWith('/app') || appAuthPages.includes(pathname)) {
-           if (pathname !== '/app/home') {
-            router.replace('/app/home');
-           }
+        // User is a host, should be in /app area
+        if (!pathname.startsWith('/app/') || appAuthPages.includes(pathname)) {
+          router.replace('/app/home');
         }
       }
     } else {
-      // User is logged out, protect routes
-      const isProtectedAdminRoute = pathname.startsWith('/admin/') && !adminAuthPages.includes(pathname);
-      const isProtectedAppRoute = pathname.startsWith('/app/') && !appAuthPages.includes(pathname);
-
+      // User is not logged in, protect routes
       if (isProtectedAdminRoute) {
         router.replace('/admin/login');
       } else if (isProtectedAppRoute) {

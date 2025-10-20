@@ -68,8 +68,10 @@ export default function HostLoginPage() {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
         case 'auth/invalid-credential':
-        case 'auth/wrong-password':
+          description = 'Incorrect email or password.';
+          break;
         case 'auth/user-not-found':
+        case 'auth/wrong-password':
           description = 'Incorrect email or password.'; break;
         case 'auth/too-many-requests':
           description = 'Too many attempts. Please try again later.'; break;

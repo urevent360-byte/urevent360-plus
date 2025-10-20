@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
@@ -111,7 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isAdmin) {
       // Si cae en /app/*, lo mandamos a admin dashboard
       if (isAppArea(pathname)) {
-        router.replace('/admin/dashboard');
+        router.replace('/admin/home');
         return;
       }
       // Si está en /admin root o en páginas de auth de admin, también a dashboard

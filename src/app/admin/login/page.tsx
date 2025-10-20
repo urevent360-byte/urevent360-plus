@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
   // Redirect once auth context resolves
   useEffect(() => {
     if (!loading && user && isAdmin) {
-      router.replace('/admin/home');
+      router.replace('/admin/dashboard');
     }
   }, [user, isAdmin, loading, router]);
 
@@ -58,7 +58,7 @@ export default function AdminLoginPage() {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       // AuthProvider will handle the redirect, but we can give it a push
       toast({ title: 'Success', description: 'Redirecting to your portal…' });
-      router.replace('/admin/home');
+      router.replace('/admin/dashboard');
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {

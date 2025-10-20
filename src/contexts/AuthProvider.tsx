@@ -48,7 +48,7 @@ const appAuthPages   = new Set<string>(['/app/login', '/app/register', '/app/for
 const isAdminArea = (p: string) => p === '/admin' || p.startsWith('/admin/');
 const isAppArea   = (p: string) => p === '/app'   || p.startsWith('/app/');
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -109,14 +109,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Usuario autenticado admin
     if (isAdmin) {
-      // Si cae en /app/*, lo mandamos a admin home
+      // Si cae en /app/*, lo mandamos a admin dashboard
       if (isAppArea(pathname)) {
-        router.replace('/admin/home');
+        router.replace('/admin/dashboard');
         return;
       }
-      // Si está en /admin root o en páginas de auth de admin, también a home
+      // Si está en /admin root o en páginas de auth de admin, también a dashboard
       if (pathname === '/admin' || adminAuthPages.has(pathname)) {
-        router.replace('/admin/home');
+        router.replace('/admin/dashboard');
         return;
       }
       // Nada más que hacer

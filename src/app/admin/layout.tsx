@@ -1,6 +1,6 @@
 import { AuthLayout } from '@/components/layout/AuthLayout';
 
-export default function AdminLayout({
+export default function RootAdminLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const active = data?.active; // puede ser undefined
 
             // Si NO hay "active", lo tratamos como permitido (backward compatible)
-            const allowed = new Set(['admin', 'owner']);
+            const allowed = new Set(['admin', 'owner', 'super admin']);
             userIsAdmin = allowed.has(role) && (active === undefined || active === true);
           }
         } catch {

@@ -53,23 +53,17 @@ export default function HostLoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  function onLoginSuccess(dest: '/app/home' | '/admin/home' = '/app/home') {
-    toast({ title: 'Success', description: 'Redirecting to your portal…' });
-    router.replace(dest);
-  }
-
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // useAuth effect will redirect; as fallback:
-      onLoginSuccess('/app/home');
+      // Explicit redirect on success
+      toast({ title: 'Success', description: 'Redirecting to your portal…' });
+      router.replace('/app/home');
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
         case 'auth/invalid-credential':
-          description = 'Incorrect email or password.';
-          break;
         case 'auth/user-not-found':
         case 'auth/wrong-password':
           description = 'Incorrect email or password.'; break;
@@ -95,9 +89,11 @@ export default function HostLoginPage() {
 
       // If that account is actually admin, route them away from host portal
       if ((await auth.currentUser?.getIdTokenResult())?.claims?.admin || isAdmin) {
-        onLoginSuccess('/admin/home');
+        toast({ title: 'Success', description: 'Redirecting to your portal…' });
+        router.replace('/admin/home');
       } else {
-        onLoginSuccess('/app/home');
+        toast({ title: 'Success', description: 'Redirecting to your portal…' });
+        router.replace('/app/home');
       }
     } catch (error: any) {
       let description = error?.message || 'Social login failed.';

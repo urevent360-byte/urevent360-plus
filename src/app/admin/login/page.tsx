@@ -57,7 +57,8 @@ export default function AdminLoginPage() {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       // AuthProvider will handle the redirect, but we can give it a push
-      router.push('/admin/home');
+      toast({ title: 'Success', description: 'Redirecting to your portal…' });
+      router.replace('/admin/home');
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {

@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-import { AuthProvider } from '@/contexts/AuthProvider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import { JsonLd } from '@/components/shared/JsonLd';
 import brandingData from '@/lib/branding.json';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import Providers from './Providers';
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://urevent360.com';
 
@@ -89,13 +89,13 @@ export default async function RootLayout({
         <JsonLd />
       </head>
       <body className={cn('font-body antialiased')}>
-        <AuthProvider>
+        <Providers>
           <FirebaseErrorListener />
           <AppLayoutClient logoUrl={logoUrl}>
             {children}
           </AppLayoutClient>
           <Toaster />
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );

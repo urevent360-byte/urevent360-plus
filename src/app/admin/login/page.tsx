@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // AuthProvider will handle the redirect, but we can give it a push
+      // Explicitly push to the dashboard on successful login
       toast({ title: 'Success', description: 'Redirecting to your portal…' });
       router.replace('/admin/dashboard');
     } catch (error: any) {

@@ -62,34 +62,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true);
       setUser(u);
 
+      let userIsAdmin = false;
       if (u) {
         try {
           const adminDocRef = doc(db, 'admins', u.uid);
           const adminDoc = await getDoc(adminDocRef);
-          
-          const allowedAdminRoles = new Set(['admin', 'owner', 'super admin']);
-          const data = adminDoc.exists() ? adminDoc.data() : undefined;
-          
-          if (data?.active && allowedAdminRoles.has((data?.role ?? '').toLowerCase())) {
-            setIsAdmin(true);
-          } else {
-            setIsAdmin(false);
+          if (adminDoc.exists()) {
+            const data = adminDoc.data();
+            const allowed = new Set(['admin', 'owner']);
+            if (data?.active === true && allowed.has(String(data?.role ?? '').toLowerCase())) {
+              userIsAdmin = true;
+            }
           }
         } catch (error: any) {
-          console.error("Admin check failed:", error.message);
-          setIsAdmin(false);
-          // Don't show toast for permission-denied, it's expected for non-admins
-          if (error.code !== 'permission-denied') {
-            toast({
-              title: 'Authentication Error',
-              description: 'Could not verify your permissions.',
-              variant: 'destructive',
-            });
+          // Be tolerant: if rules deny or any read issue, just treat as non-admin.
+          // Only log silently; do not show toast.
+          if (error?.code !== 'permission-denied') {
+            // Optional: console.debug('Admin check error', error);
           }
+          userIsAdmin = false;
         }
-      } else {
-        setIsAdmin(false);
       }
+      setIsAdmin(userIsAdmin);
       
       setLoading(false);
     });

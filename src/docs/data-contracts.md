@@ -56,7 +56,7 @@ Represents an initial inquiry from a potential client.
     - **notes** (string, optional)
 - **requestedServices** (array of maps): List of services the client is interested in.
     - **serviceId** (string)
-    s   - **title** (string)
+    - **title** (string)
     - **qty** (number)
     - **notes** (string, optional)
 - **eventId** (string, nullable): If converted, this holds the ID of the corresponding document in the `events` collection.
@@ -189,17 +189,62 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    function isSignedIn() { return request.auth != null; }
+    // Helper function to check if a user is an admin
+    function isAdmin() {
+      // In a real app, this would check a custom claim: request.auth.token.admin == true
+      return get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role == 'Super Admin';
+    }
 
-    // Admins: a signed-in user can read ONLY their own doc in /admins
-    match /admins/{uid} {
-      allow read: if isSignedIn() && request.auth.uid == uid;
-      allow write: if false; // Forbid client-side writes
+    // Helper function to check if user is the host of an event
+    function isHost(eventId) {
+      return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
+    }
+
+    // Admins have global read/write access.
+    match /{document=**} {
+      allow write: if isAdmin();
     }
     
-    // Fallback security rule - deny all reads and writes by default
-    match /{document=**} {
-      allow read, write: if false;
+    // Users can read and write their own profile. Admins can read any profile.
+    match /users/{uid} {
+        allow read, write: if request.auth.uid == uid || isAdmin();
+    }
+
+    // Admins can read their own admin record to verify their role
+    match /admins/{uid} {
+        allow read: if request.auth.uid == uid || isAdmin();
+    }
+
+    // Events can only be read by the assigned host or an admin.
+    match /events/{eventId} {
+      allow read: if isHost(eventId) || isAdmin();
+      // Only admins can write directly to events. Hosts must use change requests.
+      allow write: if isAdmin();
+    }
+
+    // Hosts can read subcollections of their own events. Admins can read any.
+    match /events/{eventId}/{subcollection}/{document=**} {
+       allow read: if isHost(eventId) || isAdmin();
+    }
+    
+    // Hosts can create change requests for their events.
+    match /events/{eventId}/changeRequests/{requestId} {
+        allow create: if isHost(eventId);
+        // Only admins can update (approve/reject) change requests.
+        allow update: if isAdmin();
+    }
+    
+    // Payments: Hosts and Admins can read. Only Admins can write.
+    match /events/{eventId}/payments/{paymentId} {
+      allow read: if isHost(eventId) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Guest Uploads: Public can create if QR is active. Host/Admin can read. Admin can delete.
+    match /events/{eventId}/guestUploads/{uploadId} {
+      allow read: if isHost(eventId) || isAdmin();
+      allow create: if get(/databases/$(database)/documents/events/$(eventId)).data.qrUpload.status == 'active';
+      allow delete: if isAdmin();
     }
   }
 }

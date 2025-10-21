@@ -8,9 +8,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
 } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
@@ -19,7 +16,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2, User } from 'lucide-react';
-import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
 
@@ -36,7 +32,7 @@ export default function AdminLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
 
-  // Redirect once auth context resolves
+  // Redirect if already logged in as admin
   useEffect(() => {
     if (!loading && user && isAdmin) {
       router.replace('/admin/dashboard');
@@ -49,16 +45,21 @@ export default function AdminLoginPage() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: 'info@urevent360.com', password: '' },
   });
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // Explicitly push to the dashboard on successful login
-      toast({ title: 'Success', description: 'Redirecting to your portal…' });
-      router.replace('/admin/dashboard');
+      // AuthProvider's useEffect will handle redirection for admins.
+      // If the user is not an admin, the AuthProvider will redirect them
+      // away from admin pages, but we can show a toast here for clarity.
+      // After a successful signIn, the onAuthStateChanged listener in AuthProvider
+      // will run, update user and isAdmin state, and trigger its own redirection logic.
+      // If the user is NOT an admin, the provider will redirect them to /app/home.
+      toast({ title: 'Login successful!', description: 'Checking credentials and redirecting...' });
+
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
@@ -74,9 +75,10 @@ export default function AdminLoginPage() {
           description = error?.message || description; break;
       }
       toast({ title: 'Login Failed', description, variant: 'destructive' });
-    } finally {
       setIsSubmitting(false);
     }
+    // No need to set submitting to false here if login is successful,
+    // as the page will redirect. It's set for failure cases above.
   }
 
   return (

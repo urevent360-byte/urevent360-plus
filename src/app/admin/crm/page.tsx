@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import QRCode from "qrcode.react";
 import { useToast } from '@/hooks/use-toast';
@@ -199,6 +200,9 @@ export default function CrmPage() {
                         />
                     )}
                 </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setQrCodeData(null)}>Close</Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
 

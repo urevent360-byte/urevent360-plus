@@ -52,13 +52,11 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // AuthProvider's useEffect will handle redirection for admins.
-      // If the user is not an admin, the AuthProvider will redirect them
-      // away from admin pages, but we can show a toast here for clarity.
-      // After a successful signIn, the onAuthStateChanged listener in AuthProvider
-      // will run, update user and isAdmin state, and trigger its own redirection logic.
-      // If the user is NOT an admin, the provider will redirect them to /app/home.
+      // The redirection is now handled by the AuthProvider and the AdminLayout's useEffect.
+      // This page's only job is to log in and send the user to the admin dashboard.
+      // The layout guard will then verify if they are an admin and redirect if not.
       toast({ title: 'Login successful!', description: 'Checking credentials and redirecting...' });
+      router.replace('/admin/dashboard');
 
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
@@ -77,8 +75,6 @@ export default function AdminLoginPage() {
       toast({ title: 'Login Failed', description, variant: 'destructive' });
       setIsSubmitting(false);
     }
-    // No need to set submitting to false here if login is successful,
-    // as the page will redirect. It's set for failure cases above.
   }
 
   return (

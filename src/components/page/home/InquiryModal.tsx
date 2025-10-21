@@ -120,7 +120,7 @@ export function InquiryModal() {
         <DialogHeader>
           <DialogTitle>Request an Inquiry</DialogTitle>
           <DialogDescription>
-            Review your selected services and provide your event details.
+            Review your selected services and provide your event details. We'll get back to you with a quote.
           </DialogDescription>
         </DialogHeader>
 

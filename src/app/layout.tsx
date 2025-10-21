@@ -59,7 +59,13 @@ function getBaseUrl() {
 
 async function getLogoUrl(): Promise<string | null> {
   // Safe access to branding data
-  const raw = (brandingData as { logoUrl?: string | null })?.logoUrl;
+  let raw: string | null = null;
+  try {
+      raw = (brandingData as { logoUrl?: string | null })?.logoUrl;
+  } catch (e) {
+      console.error("Could not parse branding.json, continuing without custom logo.", e);
+      return null;
+  }
   
   if (!raw) return null;
   if (!/^https?:\/\//i.test(raw)) {

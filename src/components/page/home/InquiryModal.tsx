@@ -118,9 +118,9 @@ export function InquiryModal() {
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Request an Inquiry</DialogTitle>
+          <DialogTitle>Contact Us</DialogTitle>
           <DialogDescription>
-            Review your selected services and provide your event details. We'll get back to you with a quote.
+            Send us the details of your event and we’ll get back to you shortly.
           </DialogDescription>
         </DialogHeader>
 

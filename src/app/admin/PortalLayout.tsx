@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Sidebar,
-  SidebarProvider,
   SidebarInset,
   SidebarHeader,
   SidebarContent,
@@ -58,7 +57,7 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
   const { toggleSidebar } = useSidebar();
 
   return (
-    <SidebarProvider>
+    <>
       <Sidebar>
         <SidebarHeader>
           <div className="p-2 flex justify-center">
@@ -122,6 +121,6 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
 
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
-    </SidebarProvider>
+    </>
   );
 }

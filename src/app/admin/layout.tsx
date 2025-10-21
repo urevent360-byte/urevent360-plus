@@ -1,6 +1,7 @@
 
 'use client';
 import AdminPortalLayout from '@/app/admin/PortalLayout';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { usePathname } from 'next/navigation';
 
 const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
@@ -13,5 +14,13 @@ export default function RootAdminLayout({
   const pathname = usePathname() ?? '';
   const isAuthPage = adminAuthRoutes.includes(pathname);
 
-  return isAuthPage ? <>{children}</> : <AdminPortalLayout>{children}</AdminPortalLayout>;
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
+
+  return (
+    <SidebarProvider>
+      <AdminPortalLayout>{children}</AdminPortalLayout>
+    </SidebarProvider>
+  );
 }

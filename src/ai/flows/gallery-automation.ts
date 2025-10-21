@@ -175,8 +175,8 @@ export const deleteExpiredPhotosFlow = ai.defineFlow(
   },
   async () => {
     console.log('Running deleteExpiredPhotosFlow...');
-    let deletedEventsCount = 0;
-    let deletedPhotosCount = 0;
+    const deletedEventsCount = 0;
+    const deletedPhotosCount = 0;
 
     // In a real implementation, you would uncomment and use the Firebase Admin SDK.
     /*
@@ -250,7 +250,7 @@ export const notifyOnGalleryVisibilityFlow = ai.defineFlow(
   },
   async () => {
     console.log('Running notifyOnGalleryVisibilityFlow...');
-    let notificationsSent = 0;
+    const notificationsSent = 0;
 
     // In a real implementation, you would uncomment and use the Firebase Admin SDK and an email service.
     /*

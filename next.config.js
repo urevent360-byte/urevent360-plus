@@ -34,7 +34,7 @@ const nextConfig = {
   experimental: {
     allowedDevOrigins: [
       'https://*.cloudworkstations.dev',
-      'http://localhost:9000',
+      'http://localhost:3000',
       'http://localhost:9002',
     ],
   },

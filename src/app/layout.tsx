@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: 'UREVENT 360 PLUS — Event Entertainment in Orlando',
     description:
       '360 photo booth, LED tunnel, La Hora Loca, LED screens, special welcomes & effects. Serving Orlando & Central Florida.',
-    images: ['/og-image.png'],
+    images: ['/og_image.png'],
   },
   icons: {
     icon: '/favicon.ico',
@@ -58,7 +58,9 @@ function getBaseUrl() {
 }
 
 async function getLogoUrl(): Promise<string | null> {
-  const raw = (brandingData as any)?.logoUrl as string | undefined;
+  // Safe access to branding data
+  const raw = (brandingData as { logoUrl?: string | null })?.logoUrl;
+  
   if (!raw) return null;
   if (!/^https?:\/\//i.test(raw)) {
     // resolve relative path to absolute

@@ -25,12 +25,6 @@ import {
   CheckCircle,
 } from 'lucide-react';
 
-// (Opcional) Metadata para esta ruta
-export const metadata = {
-  title: 'Dashboard | UREVENT 360 PLUS',
-  description: 'Panel del cliente para gestionar reservas, pagos y mensajes.',
-};
-
 // Guard simple: requiere usuario logueado (sin exigir rol admin)
 function useHostGuard() {
   const { user, loading } = useAuth?.() ?? { user: null, loading: false };
@@ -226,4 +220,3 @@ export default function HostDashboardPage() {
     </div>
   );
 }
-

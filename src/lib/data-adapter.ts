@@ -258,7 +258,7 @@ export type ChangeRequest = z.infer<typeof ChangeRequestSchema>;
 
 // --- Mock Data ---
 
-let MOCK_LEADS: Lead[] = [
+const MOCK_LEADS: Lead[] = [
     { 
         id: 'lead-123',
         hostId: 'user-johndoe',
@@ -350,7 +350,7 @@ let MOCK_LEADS: Lead[] = [
     },
 ];
 
-let MOCK_EVENTS: Event[] = [
+const MOCK_EVENTS: Event[] = [
     {
         id: 'evt-123',
         hostId: 'user-johndoe',
@@ -407,7 +407,7 @@ let MOCK_EVENTS: Event[] = [
     },
 ];
 
-let MOCK_FILES: Record<string, FileRecord[]> = {
+const MOCK_FILES: Record<string, FileRecord[]> = {
     'evt-456': [
         { id: 'file-1', name: 'Signed Contract - Lee Gala.pdf', type: 'contract', status: 'signed', uploadedBy: 'admin', storagePath: 'events/evt-456/contract.pdf', createdAt: new Date().toISOString(), url: '#', timestamp: new Date().toISOString() },
         { id: 'file-2', name: 'Invoice-001.pdf', type: 'invoice', status: 'paid', uploadedBy: 'admin', storagePath: 'events/evt-456/invoice.pdf', createdAt: new Date().toISOString(), url: '#', timestamp: new Date().toISOString() },
@@ -417,7 +417,7 @@ let MOCK_FILES: Record<string, FileRecord[]> = {
     ]
 };
 
-let MOCK_PAYMENTS: Record<string, Payment[]> = {
+const MOCK_PAYMENTS: Record<string, Payment[]> = {
     'evt-123': [
         { 
             id: 'pay-2', 
@@ -454,7 +454,7 @@ let MOCK_PAYMENTS: Record<string, Payment[]> = {
     ]
 };
 
-let MOCK_TIMELINE: Record<string, TimelineItem[]> = {
+const MOCK_TIMELINE: Record<string, TimelineItem[]> = {
     'evt-456': [
         { id: 'tl-1', start: '2024-07-20T17:00:00Z', end: '2024-07-20T18:00:00Z', title: 'DJ Setup', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T17:00:00Z', endTime: '2024-07-20T18:00:00Z', isSyncedToGoogle: true, gcalEventId:'', notes: '' },
         { id: 'tl-2', start: '2024-07-20T18:00:00Z', end: '2024-07-20T22:00:00Z', title: 'Magic Mirror Opens', status: 'completed', syncToGoogle: true, approvalStatus: 'approved', startTime: '2024-07-20T18:00:00Z', endTime: '2024-07-20T22:00:00Z', isSyncedToGoogle: true, gcalEventId:'', notes: '' },
@@ -476,7 +476,7 @@ const MOCK_MAIN_SERVICES: Addon[] = servicesCatalog.services
     }));
 
 
-let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
+const MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
     { id: 'design-1', name: 'Classic Elegance', imageUrl: 'https://picsum.photos/seed/design1/800/600' },
     { id: 'design-2', name: 'Modern Minimalist', imageUrl: 'https://picsum.photos/seed/design2/800/600' },
     { id: 'design-3', name: 'Festive Fiesta', imageUrl: 'https://picsum.photos/seed/design3/800/600' },
@@ -484,11 +484,11 @@ let MOCK_DESIGN_PROPOSALS: DesignProposal[] = [
 ];
 
 
-let MOCK_REQUESTED_SERVICES: RequestedService[] = [
+const MOCK_REQUESTED_SERVICES: RequestedService[] = [
     { id: 'req-1', eventId: 'evt-456', serviceName: 'Guest Book Station', serviceId: 'guest_book', status: 'requested', title: 'Guest Book Station', qty: 1, notes:'' }
 ];
 
-let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
+const MOCK_MESSAGES: Record<string, ChatMessage[]> = {
     'evt-123': [
         { sender: 'system', content: 'Event created from lead.', timestamp: new Date('2024-07-30T10:00:00Z').toISOString() },
         { sender: 'admin', content: 'Hi! I\'ve sent over the contract and invoice for you to review.', timestamp: new Date('2024-07-30T10:05:00Z').toISOString() },
@@ -499,7 +499,7 @@ let MOCK_MESSAGES: Record<string, ChatMessage[]> = {
     ]
 };
 
-let MOCK_MUSIC_PLAYLISTS: Record<string, MusicPlaylist> = {
+const MOCK_MUSIC_PLAYLISTS: Record<string, MusicPlaylist> = {
     'evt-456': {
         mustPlay: [
             { title: 'Don\'t Stop Me Now', artist: 'Queen' },
@@ -511,7 +511,7 @@ let MOCK_MUSIC_PLAYLISTS: Record<string, MusicPlaylist> = {
     }
 };
 
-let MOCK_CHANGE_REQUESTS: Record<string, ChangeRequest[]> = {
+const MOCK_CHANGE_REQUESTS: Record<string, ChangeRequest[]> = {
     'evt-123': [
         {
             id: 'cr-1',

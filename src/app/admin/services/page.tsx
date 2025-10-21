@@ -44,7 +44,7 @@ export default function ServiceManagementPage() {
 
   useEffect(() => {
     fetchServices();
-  }, []);
+  }, [toast]);
 
   const handleDelete = async (serviceId: string) => {
     const result = await deleteServiceAction(serviceId);

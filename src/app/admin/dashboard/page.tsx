@@ -1,10 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -14,10 +10,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/contexts/AuthProvider';
-
 import {
-  Loader2,
   ShieldCheck,
   Settings,
   Package,
@@ -30,77 +23,51 @@ import {
   Wand2,
   ChevronRight,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthProvider';
+
+
+// --- Datos mock (puedes reemplazar por datos reales) ---
+const stats = {
+  services: 11,
+  openOrders: 3,
+  inquiries: 7,
+  lowInventory: 2,
+};
+
+const recentActivity = [
+    {
+      id: 'act-1',
+      title: 'Nueva cotización recibida',
+      meta: '360 Photo Booth • Boda • 12/14',
+      when: 'hace 15 min',
+      pill: 'Cotización',
+    },
+    {
+      id: 'act-2',
+      title: 'Reserva confirmada',
+      meta: 'Magic Mirror • Sweet 16 • 10/30',
+      when: 'hace 1 h',
+      pill: 'Reserva',
+    },
+    {
+      id: 'act-3',
+      title: 'Servicio actualizado',
+      meta: 'LED Screens Wall • Precio y descripción',
+      when: 'ayer',
+      pill: 'Actualización',
+    },
+];
 
 /**
  * Admin Dashboard
- * - Protegido por el AuthProvider (solo Admin)
- * - KPIs de ejemplo (puedes conectar Firestore cuando quieras)
+ * - Protegido por el layout de /admin
+ * - KPIs de ejemplo
  * - Acciones rápidas y accesos a módulos de administración
  */
 export default function AdminDashboardPage() {
-  const router = useRouter();
-  const { user, isAdmin, loading } = useAuth();
-
-  // Simulaciones/KPIs de muestra (reemplaza con Firestore cuando quieras)
-  const [stats] = useState({
-    services: 11,
-    openOrders: 3,
-    inquiries: 7,
-    lowInventory: 2,
-  });
-
-  const recentActivity = useMemo(
-    () => [
-      {
-        id: 'act-1',
-        title: 'Nueva cotización recibida',
-        meta: '360 Photo Booth • Boda • 12/14',
-        when: 'hace 15 min',
-        pill: 'Cotización',
-      },
-      {
-        id: 'act-2',
-        title: 'Reserva confirmada',
-        meta: 'Magic Mirror • Sweet 16 • 10/30',
-        when: 'hace 1 h',
-        pill: 'Reserva',
-      },
-      {
-        id: 'act-3',
-        title: 'Servicio actualizado',
-        meta: 'LED Screens Wall • Precio y descripción',
-        when: 'ayer',
-        pill: 'Actualización',
-      },
-    ],
-    []
-  );
-
-  // Guardas & redirecciones
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.replace('/admin/login');
-      } else if (!isAdmin) {
-        router.replace('/'); // o /app si prefieres
-      }
-    }
-  }, [loading, user, isAdmin, router]);
-
-  if (loading || (!user && typeof window !== 'undefined')) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="flex items-center gap-3 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Verificando credenciales…</span>
-        </div>
-      </div>
-    );
-  }
-
-  // Si no es admin, no renders (el useEffect se encarga de redirigir)
-  if (user && !isAdmin) return null;
-
+  const { user } = useAuth();
+  
   return (
     <main className="container max-w-6xl px-4 py-8">
       {/* Header */}

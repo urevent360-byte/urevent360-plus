@@ -53,7 +53,7 @@ export function JsonLd() {
     sameAs: [
       footerData.social?.instagram,
       footerData.social?.facebook,
-    ].filter(url => url && url !== '#'),
+    ].filter(Boolean),
     makesOffer: {
       '@type': 'OfferCatalog',
       name: 'Event Entertainment Services',

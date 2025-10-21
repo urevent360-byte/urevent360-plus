@@ -1,27 +1,11 @@
 {
   "contact": {
-    "emails": [
-      {
-        "address": "urevent360@gmail.com"
-      },
-      {
-        "address": "info@urevent360.com"
-      }
-    ],
-    "phones": [
-      {
-        "number": "(689) 302-5502",
-        "label": ""
-      },
-      {
-        "number": "(407) 533-0970",
-        "label": "Español"
-      }
-    ]
+    "emails": [],
+    "phones": []
   },
   "social": {
-    "instagram": "https://www.instagram.com/urevent360",
-    "facebook": "#",
-    "twitter": "#"
+    "instagram": "",
+    "facebook": "",
+    "twitter": ""
   }
 }

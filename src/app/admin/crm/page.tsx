@@ -187,7 +187,7 @@ export default function CrmPage() {
                 <DialogHeader>
                     <DialogTitle>Event Photo Upload QR Code</DialogTitle>
                     <DialogDescription>
-                        This generates a unique QR code for guests to upload photos to the event gallery for <span className="font-bold">"{qrCodeData?.eventId}"</span>. This action should now be performed on the Event Management page.
+                        This QR code allows guests to upload photos for the event "{qrCodeData?.eventId}". This action is now managed on the Event page.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-center p-4">

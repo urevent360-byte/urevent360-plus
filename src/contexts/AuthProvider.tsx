@@ -1,29 +1,40 @@
 'use client';
 
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import {
   onAuthStateChanged,
-  User,
+  getIdTokenResult,
   signOut as firebaseSignOut,
   updateProfile as firebaseUpdateProfile,
+  User,
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { auth } from '@/lib/firebase/authClient';
-import { db } from '@/lib/firebase/client';
+import { auth } from '@/lib/firebase/authClient'; // Correct: Import client-side auth
+import { db } from '@/lib/firebase/client'; // Import firestore
+
+// --- Types & Interfaces ---
 
 interface AuthContextType {
   user: User | null;
-  isAdmin: boolean;
   loading: boolean;
-  signOut: () => void;
-  updateProfile?: (profileData: { displayName?: string | null; photoURL?: string | null }) => Promise<void>;
+  isAdmin: boolean;
+  signOut: () => Promise<void>;
+  updateProfile?: (profileData: {
+    displayName?: string | null;
+    photoURL?: string | null;
+  }) => Promise<void>;
 }
 
-const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
+// --- Hardcoded Admin Emails ---
+// A simple, first-layer check for admin access.
+const ADMIN_EMAILS = new Set(['info@urevent360.com']);
 
-// Rutas públicas (acceso sin login)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// --- Route Definitions ---
+
 const publicRoutes = new Set<string>([
   '/',
   '/services',
@@ -40,49 +51,66 @@ const publicRoutes = new Set<string>([
   '/prom-entertainment-orlando',
 ]);
 
-const publicPrefixes = ['/services/', '/solutions/', '/venues/'];
-
-// Páginas de auth permitidas sin sesión
+const publicPrefixes = ['/services/', '/solutions/', '/venues/', '/upload/'];
 const adminAuthPages = new Set<string>(['/admin/login', '/admin/forgot-password']);
-const appAuthPages   = new Set<string>(['/app/login', '/app/register', '/app/forgot-password']);
+const appAuthPages = new Set<string>(['/app/login', '/app/register', '/app/forgot-password']);
 
-// Helpers
 const isAdminArea = (p: string) => p === '/admin' || p.startsWith('/admin/');
-const isAppArea   = (p: string) => p === '/app'   || p.startsWith('/app/');
-const isPublicRoute = (p: string) => publicRoutes.has(p) || publicPrefixes.some(prefix => p.startsWith(prefix));
+const isAppArea = (p: string) => p === '/app' || p.startsWith('/app/');
+const isPublicRoute = (p: string) =>
+  publicRoutes.has(p) || publicPrefixes.some((prefix) => p.startsWith(prefix));
 
+// --- AuthProvider Component ---
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const router = useRouter();
   const pathname = usePathname() ?? '/';
 
-  // 1) Suscripción de Auth y chequeo de rol admin
+  // --- Multi-layered Admin Check ---
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
-      setLoading(true);
       setUser(u);
+      if (!u) {
+        setIsAdmin(false);
+        setLoading(false);
+        return;
+      }
 
       let userIsAdmin = false;
 
-      if (u) {
+      // 1. Check hardcoded email list
+      if (u.email && ADMIN_EMAILS.has(u.email.toLowerCase())) {
+        userIsAdmin = true;
+      }
+
+      // 2. Check for custom claim (overrides email list if false)
+      try {
+        const idTokenResult = await getIdTokenResult(u, true); // Force refresh
+        if (idTokenResult.claims.admin === true) {
+          userIsAdmin = true;
+        }
+      } catch (error) {
+        console.warn('Could not get custom claims:', error);
+      }
+      
+      // 3. Check for Firestore role as a fallback
+      if (!userIsAdmin) {
         try {
           const adminDocSnap = await getDoc(doc(db, 'admins', u.uid));
           if (adminDocSnap.exists()) {
-            const data = adminDocSnap.data() as { role?: string; active?: boolean };
-            const role = (data?.role ?? '').toString().toLowerCase();
-            const active = data?.active; // puede ser undefined
-
-            // Si NO hay "active", lo tratamos como permitido (backward compatible)
-            const allowed = new Set(['admin', 'owner', 'super admin']);
-            userIsAdmin = allowed.has(role) && (active === undefined || active === true);
+             const data = adminDocSnap.data() as { role?: string; active?: boolean };
+             const role = (data?.role ?? '').toString().toLowerCase();
+             const allowed = new Set(['admin', 'owner', 'super admin']);
+             if (allowed.has(role) && (data?.active === undefined || data?.active === true)) {
+                 userIsAdmin = true;
+             }
           }
-        } catch {
-          // Si falla la lectura (reglas), asumimos "no admin" para no romper navegación.
-          userIsAdmin = false;
+        } catch (error) {
+            console.warn('Could not check Firestore admin role:', error);
         }
       }
 
@@ -93,84 +121,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, []);
 
-  // 2) Redirecciones simples y predecibles
+  // --- Redirection Logic ---
   useEffect(() => {
     if (loading) return;
 
-    // Usuario no autenticado → proteger zonas /admin/* y /app/* (excepto páginas de auth)
     if (!user) {
       if (isAdminArea(pathname) && !adminAuthPages.has(pathname)) {
         router.replace('/admin/login');
-        return;
-      }
-      if (isAppArea(pathname) && !appAuthPages.has(pathname)) {
+      } else if (isAppArea(pathname) && !appAuthPages.has(pathname)) {
         router.replace('/app/login');
-        return;
       }
-      // En públicas o páginas de auth permitidas → no tocar
       return;
     }
 
-    // Usuario autenticado admin
     if (isAdmin) {
-      // Si cae en /app/*, lo mandamos a admin dashboard
-      if (isAppArea(pathname)) {
+      if (isAppArea(pathname) || pathname === '/admin' || adminAuthPages.has(pathname)) {
         router.replace('/admin/dashboard');
-        return;
       }
-      // Si está en /admin root o en páginas de auth de admin, también a dashboard
-      if (pathname === '/admin' || adminAuthPages.has(pathname)) {
-        router.replace('/admin/dashboard');
-        return;
+    } else { // Host user
+      if (isAdminArea(pathname)) {
+        router.replace('/app/home');
+      } else if (pathname === '/app' || appAuthPages.has(pathname)) {
+        router.replace('/app/home');
       }
-      // Nada más que hacer
-      return;
-    }
-
-    // Usuario autenticado host (NO admin)
-    // Si cae en /admin/*, lo mandamos a app home
-    if (isAdminArea(pathname)) {
-      router.replace('/app/home');
-      return;
-    }
-    // Si está en /app root o en páginas de auth de app, lo llevamos a home
-    if (pathname === '/app' || appAuthPages.has(pathname)) {
-      router.replace('/app/home');
-      return;
     }
   }, [loading, user, isAdmin, pathname, router]);
 
   const signOut = async () => {
-    const inAdmin = isAdminArea(pathname);
+    const inAdminArea = isAdminArea(pathname);
     await firebaseSignOut(auth);
-    // onAuthStateChanged limpiará el estado y el efecto de arriba redirigirá
-    router.push(inAdmin ? '/admin/login' : '/app/login');
+    router.push(inAdminArea ? '/admin/login' : '/app/login');
   };
-
+  
   const updateProfile = async (profileData: { displayName?: string | null; photoURL?: string | null }) => {
     if (auth.currentUser) {
       await firebaseUpdateProfile(auth.currentUser, profileData);
-      setUser({ ...auth.currentUser }); // forza re-render
+      // Create a new user object to trigger re-render in consumers
+      setUser({ ...auth.currentUser });
     }
   };
 
-  const value = useMemo<AuthContextType>(() => ({
-    user,
-    isAdmin,
-    loading,
-    signOut,
-    updateProfile,
-  }), [user, isAdmin, loading]);
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo<AuthContextType>(
+    () => ({ user, loading, isAdmin, signOut, updateProfile }),
+    [user, loading, isAdmin]
   );
-};
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
 
 export const useAuth = () => {
-  const context = React.useContext(AuthContext);
+  const context = useContext(AuthContext);
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider');
   }

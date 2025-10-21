@@ -182,7 +182,7 @@ export default function CrmPage() {
         </Card>
 
         <Dialog open={!!qrCodeData} onOpenChange={(isOpen) => !isOpen && setQrCodeData(null)}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Event Photo Upload QR Code</DialogTitle>
                     <DialogDescription>

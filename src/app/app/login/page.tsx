@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -32,7 +32,6 @@ type FormValues = z.infer<typeof formSchema>;
 export default function HostLoginPage() {
   const { toast } = useToast();
   const router = useRouter();
-  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
@@ -62,7 +61,6 @@ export default function HostLoginPage() {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       // The useEffect will handle redirection after state update.
-      // We don't need to manually redirect here as `isAdmin` state change will trigger it.
       toast({ title: 'Success', description: 'Redirecting…' });
     } catch (error: any) {
       let description = 'An unexpected error occurred.';

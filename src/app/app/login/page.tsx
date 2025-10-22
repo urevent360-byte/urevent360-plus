@@ -11,6 +11,7 @@ import {
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
+  UserCredential,
 } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
@@ -36,16 +37,17 @@ export default function HostLoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
 
-  // Redirect once auth context resolves
+  // Redirect once auth context resolves if a user is already logged in
   useEffect(() => {
-    if (!loading && user) {
-      if (isAdmin) {
-        router.replace('/admin/dashboard');
-      } else {
-        router.replace('/app/home');
-      }
+    if (loading) return;
+    if (!user) return;
+  
+    if (isAdmin) {
+      router.replace('/admin/dashboard');
+    } else {
+      router.replace('/app/home');
     }
-  }, [user, isAdmin, loading, router]);
+  }, [loading, user, isAdmin, router]);
 
   const {
     register,
@@ -55,13 +57,27 @@ export default function HostLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' },
   });
+  
+  const handleSuccessfulLogin = async (userCredential: UserCredential) => {
+    const { claims } = await userCredential.user.getIdTokenResult();
+    
+    // The `isAdmin` from the useAuth hook might not have updated yet,
+    // so we check claims directly for immediate redirection.
+    if (claims.admin) {
+        toast({ title: 'Admin Login Success', description: 'Redirecting to your admin dashboard…' });
+        router.replace('/admin/dashboard');
+    } else {
+        toast({ title: 'Success', description: 'Redirecting to your portal…' });
+        router.replace('/app/home');
+    }
+  };
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The useEffect will handle redirection after state update.
-      toast({ title: 'Success', description: 'Redirecting…' });
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      // The useEffect will handle redirection, but we can do it faster here
+      await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
@@ -86,10 +102,9 @@ export default function HostLoginPage() {
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
-      await signInWithPopup(auth, provider);
-
-      // The useEffect will handle redirection after state update.
-      toast({ title: 'Success', description: 'Redirecting…' });
+      const userCredential = await signInWithPopup(auth, provider);
+      // The useEffect will handle redirection, but we can do it faster here
+      await handleSuccessfulLogin(userCredential);
 
     } catch (error: any) {
       let description = error?.message || 'Social login failed.';

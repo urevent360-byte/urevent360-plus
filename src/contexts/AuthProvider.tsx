@@ -20,31 +20,38 @@ const Ctx = createContext<AuthCtx | null>(null);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<'admin' | 'host' | 'unknown'>('unknown');
-  const [loading, setLoading] = useState(true); // <- permanece true hasta rol resuelto
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
+      setLoading(true); // Ensure loading is true while we check roles.
       setUser(u);
+
       if (!u) {
         setRole('unknown');
         setLoading(false);
         return;
       }
 
-      // 1) Lee admins/{uid}
       try {
-        const snap = await getDoc(doc(db, 'admins', u.uid));
-        if (snap.exists() && snap.data()?.active) {
+        // Check for admin role in Firestore
+        const adminDocRef = doc(db, 'admins', u.uid);
+        const adminDocSnap = await getDoc(adminDocRef);
+
+        if (adminDocSnap.exists() && adminDocSnap.data()?.active) {
           setRole('admin');
         } else {
           setRole('host');
         }
-      } catch {
-        setRole('host');
+      } catch (error) {
+        console.error("Error checking admin status:", error);
+        setRole('host'); // Default to 'host' on error
       } finally {
+        // This is the crucial part: setLoading(false) only after the async check is complete.
         setLoading(false);
       }
     });
+
     return () => unsub();
   }, []);
   

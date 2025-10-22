@@ -17,34 +17,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const onAuthPage = adminAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    // 1) Do nothing while we resolve session and role
+    // 1) No redirigir mientras aún se resuelve la sesión/rol.
     if (loading) return;
 
-    // 2) No session → go to login (unless we are already there)
+    // 2) Sin sesión → a login (si no estamos ya allí).
     if (!user) {
       if (!onAuthPage) router.replace('/admin/login');
       return;
     }
-    
-    // 3) If the user is logged in but IS NOT an admin, get them out of the admin area
-    if (user && isAdmin === false) {
+
+    // 3) Con sesión pero NO admin → sácalo del área admin.
+    if (isAdmin === false) {
       router.replace('/app/home');
       return;
     }
-
-    // 4) If the user is an admin and is on a login page, send them to the dashboard
-    if (user && isAdmin && onAuthPage) {
+    
+    // 4) Si es admin y está en una página de login, llévalo al dashboard.
+    if (isAdmin === true && onAuthPage) {
       router.replace('/admin/dashboard');
     }
 
   }, [loading, user, isAdmin, onAuthPage, router, pathname]);
 
-  // If it is a login/register page, it doesn't need the portal layout
+  // Si es una página de autenticación, no necesita el layout del portal.
   if (onAuthPage) {
     return <>{children}</>;
   }
 
-  // Show a loader while session is being verified or if the user is not an admin
+  // Evita pintar contenido admin hasta confirmar que de verdad es admin.
   const canRenderAdmin = !loading && !!user && isAdmin === true;
 
   if (!canRenderAdmin) {
@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // If admin and not on an auth page, render the portal
+  // Si es admin y no está en una página de autenticación, renderiza el portal.
   return (
     <SidebarProvider>
       <AdminPortalLayout>{children}</AdminPortalLayout>

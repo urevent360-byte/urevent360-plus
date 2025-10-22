@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
 } from 'firebase/auth';
@@ -28,16 +28,22 @@ type FormValues = z.infer<typeof formSchema>;
 export default function AdminLoginPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
 
   // Redirect if already logged in as admin
   useEffect(() => {
-    if (!loading && user && isAdmin) {
-      router.replace('/admin/dashboard');
+    const inAdmin = pathname?.startsWith('/admin');
+    if (!loading && user) {
+      if (isAdmin) {
+        router.replace('/admin/dashboard');
+      } else if (!inAdmin) {
+        router.replace('/app/home');
+      }
     }
-  }, [user, isAdmin, loading, router]);
+  }, [user, isAdmin, loading, router, pathname]);
 
   const {
     register,

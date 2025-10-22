@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
@@ -32,17 +32,22 @@ type FormValues = z.infer<typeof formSchema>;
 export default function HostLoginPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
 
   // Redirect once auth context resolves
   useEffect(() => {
+    const inApp = pathname?.startsWith('/app');
     if (!loading && user) {
-      if (isAdmin) router.replace('/admin/home');
-      else router.replace('/app/home');
+      if (isAdmin && !inApp) {
+        router.replace('/admin/home');
+      } else if (!isAdmin) {
+        router.replace('/app/home');
+      }
     }
-  }, [user, isAdmin, loading, router]);
+  }, [user, isAdmin, loading, router, pathname]);
 
   const {
     register,
@@ -85,16 +90,11 @@ export default function HostLoginPage() {
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      await signInWithPopup(auth, provider);
 
-      // If that account is actually admin, route them away from host portal
-      if ((await auth.currentUser?.getIdTokenResult())?.claims?.admin || isAdmin) {
-        toast({ title: 'Success', description: 'Redirecting to your portal…' });
-        router.replace('/admin/home');
-      } else {
-        toast({ title: 'Success', description: 'Redirecting to your portal…' });
-        router.replace('/app/home');
-      }
+      // Let the useEffect handle redirection after state update.
+      toast({ title: 'Success', description: 'Redirecting to your portal…' });
+
     } catch (error: any) {
       let description = error?.message || 'Social login failed.';
       switch (error?.code) {

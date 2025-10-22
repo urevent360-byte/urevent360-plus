@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
@@ -33,20 +33,22 @@ type FormValues = z.infer<typeof formSchema>;
 export default function RegisterPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { user, isAdmin, loading } = useAuth();
   
   useEffect(() => {
+    const inApp = pathname?.startsWith('/app');
     if (user && !loading) {
-      if (isAdmin) {
+      if (isAdmin && !inApp) {
         router.push('/admin/home');
       } else {
         router.push('/app/home');
       }
     }
-  }, [user, loading, router, isAdmin]);
+  }, [user, loading, router, isAdmin, pathname]);
 
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({

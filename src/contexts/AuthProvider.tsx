@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
+import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
 import { db } from '@/lib/firebase/client';
@@ -12,6 +12,7 @@ type AuthCtx = {
   isAdmin: boolean;
   role: 'admin' | 'host' | 'unknown';
   signOut: () => Promise<void>;
+  updateProfile?: (profile: { displayName?: string, photoURL?: string }) => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
@@ -46,6 +47,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     return () => unsub();
   }, []);
+  
+  const updateProfile = async (profile: { displayName?: string, photoURL?: string }) => {
+    if (auth.currentUser) {
+        await firebaseUpdateProfile(auth.currentUser, profile);
+        // Refresh user state by re-setting it
+        setUser(auth.currentUser ? { ...auth.currentUser } : null);
+    }
+  };
 
   const isAdmin = role === 'admin';
 
@@ -56,6 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAdmin,
       role,
       signOut: () => import('firebase/auth').then(({ signOut }) => signOut(auth)),
+      updateProfile,
     }),
     [user, loading, isAdmin, role]
   );

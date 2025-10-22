@@ -16,16 +16,22 @@ export default function RootAdminLayout({ children }: { children: React.ReactNod
   const isAuthPage = adminAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    if (loading || isAuthPage) return;
+    if (loading) return;
 
     if (!user) {
-      router.replace('/admin/login');
+      if (!isAuthPage) {
+        router.replace('/admin/login');
+      }
       return;
     }
+    
     if (!isAdmin) {
       router.replace('/app/home'); // No-admins al portal de host
+    } else if (isAuthPage) {
+      // If user is admin and on a login page, redirect to dashboard
+      router.replace('/admin/dashboard');
     }
-  }, [loading, user, isAdmin, router, isAuthPage]);
+  }, [loading, user, isAdmin, router, pathname, isAuthPage]);
 
   // Si es una página de login/registro, no se necesita el layout del portal
   if (isAuthPage) {
@@ -33,7 +39,7 @@ export default function RootAdminLayout({ children }: { children: React.ReactNod
   }
   
   // Muestra un loader mientras se verifica la sesión o si el usuario no es admin
-  if (loading || !user || !isAdmin) {
+  if (loading || !user || (!isAdmin && typeof window !== 'undefined')) {
     return (
         <div className="flex min-h-screen items-center justify-center bg-background">
             <div className="flex items-center gap-3 text-muted-foreground">

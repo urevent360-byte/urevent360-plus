@@ -39,15 +39,14 @@ export default function HostLoginPage() {
 
   // Redirect once auth context resolves
   useEffect(() => {
-    const inApp = pathname?.startsWith('/app');
     if (!loading && user) {
-      if (isAdmin && !inApp) {
-        router.replace('/admin/home');
-      } else if (!isAdmin) {
+      if (isAdmin) {
+        router.replace('/admin/dashboard');
+      } else {
         router.replace('/app/home');
       }
     }
-  }, [user, isAdmin, loading, router, pathname]);
+  }, [user, isAdmin, loading, router]);
 
   const {
     register,
@@ -62,9 +61,9 @@ export default function HostLoginPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // Explicit redirect on success
-      toast({ title: 'Success', description: 'Redirecting to your portal…' });
-      router.replace('/app/home');
+      // The useEffect will handle redirection after state update.
+      // We don't need to manually redirect here as `isAdmin` state change will trigger it.
+      toast({ title: 'Success', description: 'Redirecting…' });
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
@@ -80,7 +79,6 @@ export default function HostLoginPage() {
           description = error?.message || description; break;
       }
       toast({ title: 'Login Failed', description, variant: 'destructive' });
-    } finally {
       setIsSubmitting(false);
     }
   }
@@ -92,8 +90,8 @@ export default function HostLoginPage() {
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
       await signInWithPopup(auth, provider);
 
-      // Let the useEffect handle redirection after state update.
-      toast({ title: 'Success', description: 'Redirecting to your portal…' });
+      // The useEffect will handle redirection after state update.
+      toast({ title: 'Success', description: 'Redirecting…' });
 
     } catch (error: any) {
       let description = error?.message || 'Social login failed.';
@@ -108,7 +106,6 @@ export default function HostLoginPage() {
           description = `The ${kind} provider is not enabled in Firebase.`; break;
       }
       toast({ title: 'Error', description, variant: 'destructive' });
-    } finally {
       setIsSubmitting(false);
     }
   }
@@ -171,8 +168,8 @@ export default function HostLoginPage() {
             </div>
 
             <Button type="submit" disabled={isSubmitting || loading} className="w-full">
-              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
-              {isSubmitting ? 'Logging in…' : 'Login'}
+              {isSubmitting || loading ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
+              {isSubmitting || loading ? 'Logging in…' : 'Login'}
             </Button>
           </form>
 

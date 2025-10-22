@@ -35,15 +35,10 @@ export default function AdminLoginPage() {
 
   // Redirect if already logged in as admin
   useEffect(() => {
-    const inAdmin = pathname?.startsWith('/admin');
-    if (!loading && user) {
-      if (isAdmin) {
+    if (!loading && user && isAdmin) {
         router.replace('/admin/dashboard');
-      } else if (!inAdmin) {
-        router.replace('/app/home');
-      }
     }
-  }, [user, isAdmin, loading, router, pathname]);
+  }, [user, isAdmin, loading, router]);
 
   const {
     register,
@@ -58,11 +53,8 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The redirection is now handled by the AuthProvider and the AdminLayout's useEffect.
-      // This page's only job is to log in and send the user to the admin dashboard.
-      // The layout guard will then verify if they are an admin and redirect if not.
       toast({ title: 'Login successful!', description: 'Checking credentials and redirecting...' });
-      router.replace('/admin/dashboard');
+      router.replace('/admin/dashboard'); // Always redirect to admin dashboard
 
     } catch (error: any) {
       let description = 'An unexpected error occurred.';

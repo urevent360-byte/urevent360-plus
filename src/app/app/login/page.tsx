@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -41,12 +40,13 @@ export default function HostLoginPage() {
   // Redirect once auth context resolves if a user is already logged in
   useEffect(() => {
     if (loading) return;
-    if (!user) return; // Only redirect if there's a user
   
-    if (isAdmin) {
-      router.replace('/admin/dashboard');
-    } else {
-      router.replace('/app/home');
+    if (user) {
+      if (isAdmin) {
+        router.replace('/admin/dashboard');
+      } else {
+        router.replace('/app/home');
+      }
     }
   }, [loading, user, isAdmin, router]);
 

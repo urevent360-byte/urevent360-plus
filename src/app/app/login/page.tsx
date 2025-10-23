@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -59,11 +60,10 @@ export default function HostLoginPage() {
   });
   
   const handleSuccessfulLogin = async (userCredential: UserCredential) => {
-    const { claims } = await userCredential.user.getIdTokenResult();
+    const idTokenResult = await userCredential.user.getIdTokenResult();
+    const isUserAdmin = !!idTokenResult.claims.admin;
     
-    // The `isAdmin` from the useAuth hook might not have updated yet,
-    // so we check claims directly for immediate redirection.
-    if (claims.admin) {
+    if (isUserAdmin) {
         toast({ title: 'Admin Login Success', description: 'Redirecting to your admin dashboard…' });
         router.replace('/admin/dashboard');
     } else {
@@ -76,7 +76,6 @@ export default function HostLoginPage() {
     setIsSubmitting(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The useEffect will handle redirection, but we can do it faster here
       await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
@@ -103,7 +102,6 @@ export default function HostLoginPage() {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
-      // The useEffect will handle redirection, but we can do it faster here
       await handleSuccessfulLogin(userCredential);
 
     } catch (error: any) {

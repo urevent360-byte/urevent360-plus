@@ -12,42 +12,36 @@ const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading, isAdmin, roleLoaded } = useAuth();
 
   const onAuthPage = adminAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    // 1) No redirigir mientras aún se resuelve la sesión/rol.
+    // Espera SIEMPRE a que terminen auth + rol
     if (loading) return;
 
-    // 2) Sin sesión → a login (si no estamos ya allí).
     if (!user) {
       if (!onAuthPage) router.replace('/admin/login');
       return;
     }
 
-    // 3) Con sesión pero NO admin → sácalo del área admin.
-    if (isAdmin === false) {
+    // Solo decide “no admin” cuando roleLoaded esté listo
+    if (isAdmin === false && roleLoaded) {
       router.replace('/app/home');
       return;
     }
-    
-    // 4) Si es admin y está en una página de login, llévalo al dashboard.
+
     if (isAdmin === true && onAuthPage) {
       router.replace('/admin/dashboard');
     }
+  }, [loading, roleLoaded, user, isAdmin, onAuthPage, router, pathname]);
 
-  }, [loading, user, isAdmin, onAuthPage, router, pathname]);
-
-  // Si es una página de autenticación, no necesita el layout del portal.
   if (onAuthPage) {
     return <>{children}</>;
   }
 
-  // Evita pintar contenido admin hasta confirmar que de verdad es admin.
-  const canRenderAdmin = !loading && !!user && isAdmin === true;
-
-  if (!canRenderAdmin) {
+  const canRender = !loading && roleLoaded && !!user && isAdmin === true;
+  if (!canRender) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="flex items-center gap-3 text-muted-foreground">
@@ -58,7 +52,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     );
   }
 
-  // Si es admin y no está en una página de autenticación, renderiza el portal.
   return (
     <SidebarProvider>
       <AdminPortalLayout>{children}</AdminPortalLayout>

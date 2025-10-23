@@ -35,11 +35,11 @@ export default function HostLoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, roleLoaded } = useAuth();
 
   // Redirect once auth context resolves if a user is already logged in
   useEffect(() => {
-    if (loading) return;
+    if (loading || !roleLoaded) return;
   
     if (user) {
       if (isAdmin) {
@@ -48,7 +48,7 @@ export default function HostLoginPage() {
         router.replace('/app/home');
       }
     }
-  }, [loading, user, isAdmin, router]);
+  }, [loading, roleLoaded, user, isAdmin, router]);
 
   const {
     register,
@@ -60,11 +60,12 @@ export default function HostLoginPage() {
   });
   
   const handleSuccessfulLogin = async (userCredential: UserCredential) => {
-    // Re-fetch token result to get the latest claims after login.
-    const idTokenResult = await userCredential.user.getIdTokenResult(true);
-    const isUserAdmin = !!idTokenResult.claims.admin;
+    // Re-fetch token result to get the latest claims after login for immediate accuracy.
+    const tokenResult = await userCredential.user.getIdTokenResult(true);
+    const isAdminClaim = !!tokenResult.claims.admin;
     
-    if (isUserAdmin) {
+    // Use the context's isAdmin as primary, but fall back to the claim for race conditions.
+    if (isAdmin || isAdminClaim) {
         toast({ title: 'Admin Login Success', description: 'Redirecting to your admin dashboard…' });
         router.replace('/admin/dashboard');
     } else {

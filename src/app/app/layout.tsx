@@ -1,18 +1,34 @@
 'use client';
+import { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthProvider';
 import AppPortalLayout from '@/app/app/PortalLayout';
-import { usePathname } from 'next/navigation';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
-const appAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
+const hostAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname() ?? '';
-  const isAuthPage = appAuthRoutes.includes(pathname);
+  const { user, loading, roleLoaded, role } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const onAuthPage = hostAuthRoutes.includes(pathname);
 
-  if (isAuthPage) {
+  useEffect(() => {
+    // Wait for auth and role to be resolved
+    if (loading || !roleLoaded) return;
+
+    // If user is an admin and not on an auth page, redirect them away from the host portal
+    if (user && role === 'admin' && !onAuthPage) {
+      router.replace('/admin/dashboard');
+    }
+  }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);
+
+  // For host-specific auth pages, don't render the main portal layout
+  if (onAuthPage) {
     return <>{children}</>;
   }
-
+  
+  // For all other pages in the host portal, render the standard layout
   return (
     <SidebarProvider>
       <AppPortalLayout>{children}</AppPortalLayout>

@@ -6,11 +6,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
 import { db } from '@/lib/firebase/client';
 
+type Role = 'admin' | 'host' | 'unknown';
+
 type AuthCtx = {
   user: User | null;
-  loading: boolean;        // incluye carga de sesión + rol
+  loading: boolean;
+  roleLoaded: boolean;
   isAdmin: boolean;
-  role: 'admin' | 'host' | 'unknown';
+  role: Role;
   signOut: () => Promise<void>;
   updateProfile?: (profile: { displayName?: string, photoURL?: string }) => Promise<void>;
 };
@@ -19,22 +22,23 @@ const Ctx = createContext<AuthCtx | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<'admin' | 'host' | 'unknown'>('unknown');
-  const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState<Role>('unknown');
+  const [authLoading, setAuthLoading] = useState(true);
+  const [roleLoading, setRoleLoading] = useState(true);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
-      setLoading(true); // Ensure loading is true while we check roles.
       setUser(u);
+      setAuthLoading(false);
 
       if (!u) {
         setRole('unknown');
-        setLoading(false);
+        setRoleLoading(false);
         return;
       }
 
+      setRoleLoading(true);
       try {
-        // Check for admin role in Firestore
         const adminDocRef = doc(db, 'admins', u.uid);
         const adminDocSnap = await getDoc(adminDocRef);
 
@@ -47,8 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error("Error checking admin status:", error);
         setRole('host'); // Default to 'host' on error
       } finally {
-        // This is the crucial part: setLoading(false) only after the async check is complete.
-        setLoading(false);
+        setRoleLoading(false);
       }
     });
 
@@ -64,17 +67,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const isAdmin = role === 'admin';
+  const loading = authLoading || roleLoading;
 
   const value = useMemo(
     () => ({
       user,
       loading,
+      roleLoaded: !roleLoading,
       isAdmin,
       role,
       signOut: () => import('firebase/auth').then(({ signOut }) => signOut(auth)),
       updateProfile,
     }),
-    [user, loading, isAdmin, role]
+    [user, loading, roleLoading, isAdmin, role]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

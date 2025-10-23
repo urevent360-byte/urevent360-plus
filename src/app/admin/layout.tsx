@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     // Con sesión y rol HOST → sácalo del área admin
     if (role === 'host') {
-      router.replace('/app/home');
+      router.replace('/app/login');
       return;
     }
 

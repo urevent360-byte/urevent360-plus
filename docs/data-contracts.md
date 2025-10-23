@@ -200,7 +200,7 @@ service cloud.firestore {
       return request.auth.uid == get(/databases/$(database)/documents/events/$(eventId)).data.hostId;
     }
 
-    // Admins have global read/write access.
+    // Admins have global write access.
     match /{document=**} {
       allow write: if isAdmin();
     }
@@ -210,9 +210,9 @@ service cloud.firestore {
         allow read, write: if request.auth.uid == uid || isAdmin();
     }
 
-    // Admins can read their own admin record to verify their role
+    // Allows a logged-in user to check if they have an admin record.
     match /admins/{uid} {
-        allow read: if request.auth.uid == uid || isAdmin();
+        allow read: if request.auth != null && request.auth.uid == uid;
     }
 
     // Events can only be read by the assigned host or an admin.

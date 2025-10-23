@@ -15,7 +15,7 @@ type AuthCtx = {
   isAdmin: boolean;
   role: Role;
   signOut: () => Promise<void>;
-  updateProfile?: (profile: { displayName?: string, photoURL?: string }) => Promise<void>;
+  updateProfile?: (profile: { displayName?: string; photoURL?: string }) => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
@@ -39,17 +39,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setRoleLoading(true);
       try {
-        const adminDocRef = doc(db, 'admins', u.uid);
-        const adminDocSnap = await getDoc(adminDocRef);
+        // 1) Intentar con custom claims primero (NO requiere Firestore)
+        const token = await u.getIdTokenResult(true);
+        if (token.claims?.admin) {
+          setRole('admin');
+          return;
+        }
 
-        if (adminDocSnap.exists() && adminDocSnap.data()?.active) {
+        // 2) Respaldo: admins/{uid} en Firestore
+        const snap = await getDoc(doc(db, 'admins', u.uid));
+        if (snap.exists() && snap.data()?.active) {
           setRole('admin');
         } else {
           setRole('host');
         }
-      } catch (error) {
-        console.error("Error checking admin status:", error);
-        setRole('host'); // Default to 'host' on error
+      } catch (err) {
+        console.error('AuthProvider role resolve error:', err);
+        // Si falla la lectura de Firestore por reglas u otro motivo,
+        // NO asumimos host a ciegas: mantenemos 'unknown' para evitar expulsar
+        setRole('unknown');
       } finally {
         setRoleLoading(false);
       }
@@ -57,12 +65,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return () => unsub();
   }, []);
-  
-  const updateProfile = async (profile: { displayName?: string, photoURL?: string }) => {
+
+  const updateProfile = async (profile: { displayName?: string; photoURL?: string }) => {
     if (auth.currentUser) {
-        await firebaseUpdateProfile(auth.currentUser, profile);
-        // Refresh user state by re-setting it
-        setUser(auth.currentUser ? { ...auth.currentUser } : null);
+      await firebaseUpdateProfile(auth.currentUser, profile);
+      setUser(auth.currentUser ? { ...auth.currentUser } : null);
     }
   };
 

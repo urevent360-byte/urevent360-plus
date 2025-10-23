@@ -41,7 +41,7 @@ export default function HostLoginPage() {
   // Redirect once auth context resolves if a user is already logged in
   useEffect(() => {
     if (loading) return;
-    if (!user) return;
+    if (!user) return; // Only redirect if there's a user
   
     if (isAdmin) {
       router.replace('/admin/dashboard');
@@ -60,14 +60,15 @@ export default function HostLoginPage() {
   });
   
   const handleSuccessfulLogin = async (userCredential: UserCredential) => {
-    const idTokenResult = await userCredential.user.getIdTokenResult();
+    // Re-fetch token result to get the latest claims after login.
+    const idTokenResult = await userCredential.user.getIdTokenResult(true);
     const isUserAdmin = !!idTokenResult.claims.admin;
     
     if (isUserAdmin) {
         toast({ title: 'Admin Login Success', description: 'Redirecting to your admin dashboard…' });
         router.replace('/admin/dashboard');
     } else {
-        toast({ title: 'Success', description: 'Redirecting to your portal…' });
+        toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
         router.replace('/app/home');
     }
   };

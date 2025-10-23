@@ -12,42 +12,46 @@ const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, isAdmin, roleLoaded } = useAuth();
+  const { user, loading, roleLoaded, role } = useAuth();   // <— usa roleLoaded y role
 
   const onAuthPage = adminAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    // Espera SIEMPRE a que terminen auth + rol
-    if (loading) return;
+    // Espera SIEMPRE hasta que auth y rol estén resueltos
+    if (loading || !roleLoaded) return;
 
+    // Sin sesión → a login si no estamos ya allí
     if (!user) {
       if (!onAuthPage) router.replace('/admin/login');
       return;
     }
 
-    // Solo decide “no admin” cuando roleLoaded esté listo
-    if (isAdmin === false && roleLoaded) {
+    // Con sesión y rol HOST → sácalo del área admin
+    if (role === 'host') {
       router.replace('/app/home');
       return;
     }
 
-    if (isAdmin === true && onAuthPage) {
+    // Si es admin y está en una página de auth, llévalo al dashboard
+    if (role === 'admin' && onAuthPage) {
       router.replace('/admin/dashboard');
     }
-  }, [loading, roleLoaded, user, isAdmin, onAuthPage, router, pathname]);
+  }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);
 
+  // Páginas de auth (login/forgot) no usan el layout con sidebar
   if (onAuthPage) {
     return <>{children}</>;
   }
 
-  const canRender = !loading && roleLoaded && !!user && isAdmin === true;
-  if (!canRender) {
+  // No pintes el portal hasta confirmar que de verdad es admin
+  const canRenderAdmin = !loading && roleLoaded && !!user && role === 'admin';
+  if (!canRenderAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-          <div className="flex items-center gap-3 text-muted-foreground">
-              <Loader2 className="h-5 w-5 animate-spin" />
-              <span>Checking admin access…</span>
-          </div>
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Checking admin access…</span>
+        </div>
       </div>
     );
   }

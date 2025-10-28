@@ -13,39 +13,40 @@ const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, loading, roleLoaded, role } = useAuth();   // <— usa roleLoaded y role
-
-  const onAuthPage = adminAuthRoutes.includes(pathname);
+  const { user, loading, roleLoaded, role } = useAuth();
 
   useEffect(() => {
-    console.debug('[ADMIN LAYOUT] effect enter', { loading, roleLoaded, user: cp src/app/admin/layout.tsx src/app/admin/layout.tsx.bakuser, role, pathname });
-    // Espera SIEMPRE hasta que auth y rol estén resueltos
+    // 1) Wait for auth and role resolution to finish
     if (loading || !roleLoaded) return;
 
-    // Sin sesión → a login si no estamos ya allí
+    const onAuthPage = adminAuthRoutes.includes(pathname);
+
+    // 2) Not authenticated -> send to login (if not already there)
     if (!user) {
       if (!onAuthPage) router.replace('/admin/login');
       return;
     }
 
-    // Con sesión y rol HOST → sácalo del área admin
+    // 3) Authenticated host (not admin) -> get them out of the admin portal
     if (role === 'host') {
       router.replace('/app/login');
       return;
     }
 
-    // Si es admin y está en una página de auth, llévalo al dashboard
+    // 4) Authenticated admin on an auth page -> send to dashboard
     if (role === 'admin' && onAuthPage) {
       router.replace('/admin/dashboard');
     }
-  }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);
+  }, [loading, roleLoaded, user, role, pathname, router]);
 
-  // Páginas de auth (login/forgot) no usan el layout con sidebar
+  const onAuthPage = adminAuthRoutes.includes(pathname);
+
+  // Auth pages (login/forgot) don't use the sidebar layout
   if (onAuthPage) {
     return <>{children}</>;
   }
 
-  // No pintes el portal hasta confirmar que de verdad es admin
+  // Don't render the portal until we confirm it's really an admin
   const canRenderAdmin = !loading && roleLoaded && !!user && role === 'admin';
   if (!canRenderAdmin) {
     return (

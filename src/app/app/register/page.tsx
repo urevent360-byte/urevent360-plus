@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -37,18 +38,19 @@ export default function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { user, isAdmin, loading } = useAuth();
+  const { user, isAdmin, loading, roleLoaded } = useAuth();
   
   useEffect(() => {
-    const inApp = pathname?.startsWith('/app');
-    if (user && !loading) {
-      if (isAdmin && !inApp) {
-        router.push('/admin/home');
+    if (loading || !roleLoaded) return;
+    
+    if (user) {
+      if (isAdmin) {
+        router.push('/admin/dashboard');
       } else {
         router.push('/app/home');
       }
     }
-  }, [user, loading, router, isAdmin, pathname]);
+  }, [user, loading, roleLoaded, router, isAdmin]);
 
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({

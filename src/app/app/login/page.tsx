@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -66,7 +67,6 @@ export default function HostLoginPage() {
     
     // Use the context's isAdmin as primary, but fall back to the claim for race conditions.
     if (isAdmin || isAdminClaim) {
-        toast({ title: 'Admin Login Success', description: 'Redirecting to your admin dashboard…' });
         router.replace('/admin/dashboard');
     } else {
         toast({ title: 'Login Success', description: 'Redirecting to your portal…' });

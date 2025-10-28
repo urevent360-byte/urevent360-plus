@@ -29,6 +29,8 @@ import {
   Palette,
   User,
   Menu,
+  Search,
+  Users2,
 } from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
@@ -47,7 +49,8 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/gallery', label: 'Gallery', icon: Camera },
   { href: '/admin/marketing', label: 'Marketing', icon: BarChart },
   { href: '/admin/content', label: 'Content', icon: Newspaper },
-  { href: '/admin/settings/profile', label: 'My Profile', icon: User },
+  { href: '/admin/seo', label: 'SEO', icon: Search },
+  { href: '/admin/users', label: 'Users & Roles', icon: Users2 },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
   { href: '/admin/assistant', label: 'AI Assistant', icon: Bot },
 ];

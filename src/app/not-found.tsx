@@ -5,7 +5,7 @@ import { Home, Frown } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="container mx-auto px-4 py-16 md:py-24 flex flex-col items-center justify-center text-center">
+    <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center text-center min-h-[calc(100vh-20rem)]">
       <div className="max-w-md">
         <Frown className="mx-auto h-24 w-24 text-primary opacity-30" />
         <h1 className="mt-8 text-4xl font-bold tracking-tight text-primary md:text-6xl">

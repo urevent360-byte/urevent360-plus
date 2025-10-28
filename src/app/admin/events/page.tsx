@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,7 @@ const statusDetails: Record<EventStatus, {
 }> = {
     planning: {
         label: 'Planning',
-        icon: <Clock className="h-3 w-3" />,
+        icon: <Clock className="h-3 w-3 text-blue-600" />,
         badgeClass: 'bg-blue-100 text-blue-800 border-blue-300',
     },
     active: {
@@ -49,7 +50,7 @@ const statusDetails: Record<EventStatus, {
     },
     completed: {
         label: 'Completed',
-        icon: <CheckCircle className="h-3 w-3" />,
+        icon: <CheckCircle className="h-3 w-3 text-gray-600" />,
         badgeClass: 'bg-gray-100 text-gray-800 border-gray-300',
     },
     'on-hold': {

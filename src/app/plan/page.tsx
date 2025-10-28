@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -17,6 +18,7 @@ import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { createLeadAction } from '@/app/app/events/new/actions';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { getCanonicalServiceId } from '@/lib/data-adapter';
 
 const planSchema = z.object({
   eventType: z.string().min(2, 'Event type is required'),
@@ -125,7 +127,7 @@ export default function PlanMyEventPage() {
         onsiteContactPhone: data.phone || '',
         notes: `Lead generated from "Plan My Event" wizard. Venue: ${data.venue || 'Not specified'}.`,
         requestedServices: recommendedServices.map(s => ({
-            serviceId: s.id,
+            serviceId: getCanonicalServiceId(s.id),
             title: s.label,
             qty: 1,
             notes: 'Recommended from wizard'

@@ -18,7 +18,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const onAuthPage = adminAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    console.debug('[ADMIN LAYOUT] effect enter', { loading, roleLoaded, user: cp src/app/admin/layout.tsx src/app/admin/layout.tsx.bakuser, role, pathname });
     // Espera SIEMPRE hasta que auth y rol estén resueltos
     if (loading || !roleLoaded) return;
 

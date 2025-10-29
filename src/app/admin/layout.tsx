@@ -12,7 +12,7 @@ const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
   const { user, loading, roleLoaded, role } = useAuth();
 
   useEffect(() => {

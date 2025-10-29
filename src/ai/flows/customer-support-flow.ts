@@ -163,11 +163,22 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
   return customerSupportFlow(limitedHistory);
 }
 
+const MessageDataSchema = z.object({
+  role: z.enum(['user', 'model', 'system', 'tool']),
+  content: z.array(z.object({
+    text: z.string().optional(),
+    media: z.object({
+      contentType: z.string(),
+      url: z.string(),
+    }).optional(),
+  })),
+});
+
 
 const customerSupportFlow = ai.defineFlow(
   {
     name: 'customerSupportFlow',
-    inputSchema: z.array(MessageData),
+    inputSchema: z.array(MessageDataSchema),
     outputSchema: z.string(),
   },
   async (messages) => {
@@ -192,7 +203,7 @@ const customerSupportFlow = ai.defineFlow(
             name: `customerSupportPrompt-${lang}`,
             system: systemPromptText,
             tools: [createLeadTool],
-            inputSchema: z.array(MessageData),
+            input: {schema: z.array(MessageDataSchema)},
         });
         
         const history = messages.length > 0

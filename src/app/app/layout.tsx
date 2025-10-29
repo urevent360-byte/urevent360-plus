@@ -16,35 +16,37 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const onAuthPage = hostAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    console.debug('[APP LAYOUT] effect enter', { loading, roleLoaded, user, role, pathname });
-    // Wait for auth and role to be resolved
+    // Wait for auth and role to be fully resolved before making any decisions.
     if (loading || !roleLoaded) return;
     
-    // Redirect non-logged-in users to login if not on auth page
-    if (!user && !onAuthPage) {
+    // If a user is logged in, handle role-based redirects.
+    if (user) {
+      // If an admin somehow lands in the host portal, send them to their dashboard.
+      if (role === 'admin') {
+        router.replace('/admin/dashboard');
+        return;
+      }
+      // If a logged-in host lands on an auth page (e.g., via back button), send them to their home.
+      if (role === 'host' && onAuthPage) {
+        router.replace('/app/home');
+        return;
+      }
+    } else {
+      // If there is no user and they are not on an auth page, send them to login.
+      if (!onAuthPage) {
         router.replace('/app/login');
         return;
+      }
     }
-
-    // If user is an admin, redirect them away from the host portal
-    if (user && role === 'admin') {
-      router.replace('/admin/dashboard');
-      return;
-    }
-    
-    // If a logged-in host lands on an auth page, redirect them to their home
-    if (user && role === 'host' && onAuthPage) {
-        router.replace('/app/home');
-    }
-
   }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);
 
-  // For host-specific auth pages, don't render the main portal layout
+  // For host-specific auth pages, don't render the main portal layout.
   if (onAuthPage) {
     return <>{children}</>;
   }
   
-  // Prevent rendering the portal until we know it's a host
+  // Show a loading screen until we can confirm the user is a host,
+  // preventing the "jump" and premature rendering.
   const canRenderHost = !loading && roleLoaded && !!user && role === 'host';
   if (!canRenderHost) {
       return (
@@ -57,7 +59,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       );
   }
   
-  // For all other pages in the host portal, render the standard layout
+  // For all other pages in the host portal, render the standard layout.
   return (
     <SidebarProvider>
       <AppPortalLayout>{children}</AppPortalLayout>

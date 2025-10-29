@@ -16,7 +16,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const onAuthPage = hostAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    console.debug('[APP LAYOUT] effect enter', { loading, roleLoaded, user: cp src/app/app/layout.tsx src/app/app/layout.tsx.bakuser, role, pathname });
+    console.debug('[APP LAYOUT] effect enter', { loading, roleLoaded, user, role, pathname });
     // Wait for auth and role to be resolved
     if (loading || !roleLoaded) return;
     

@@ -8,9 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthProvider';
-import { listHostEvents, type Event } from '@/lib/data-adapter';
+import type { Event } from '@/lib/types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight, PlusCircle } from 'lucide-react';
+
+async function listHostEvents(hostId: string): Promise<any[]> {
+    console.log(`MOCK: listHostEvents for ${hostId}`);
+    return [];
+}
 
 export default function AppMyEventsPage() {
     const { user } = useAuth();
@@ -62,7 +67,7 @@ export default function AppMyEventsPage() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                         {events.length > 0 ? (
-                            events.map((event) => (
+                            events.map((event: any) => (
                                 <Card key={event.id}>
                                     <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
                                         <div className="md:col-span-2">

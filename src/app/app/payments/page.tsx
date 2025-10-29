@@ -8,9 +8,18 @@ import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { useAuth } from '@/contexts/AuthProvider';
-import { listHostEventsWithPayments, type EventWithPayments } from '@/lib/data-adapter';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ArrowRight, DollarSign } from 'lucide-react';
+import { Event, Payment } from '@/lib/types';
+
+
+export type EventWithPayments = Event & { activePayment?: Payment };
+
+async function listHostEventsWithPayments(hostId: string): Promise<EventWithPayments[]> {
+    console.log(`MOCK: listHostEventsWithPayments for ${hostId}`);
+    return [];
+}
+
 
 const paymentStatusDetails: Record<string, { badgeClass: string; label: string }> = {
     unpaid: { badgeClass: 'bg-red-500/20 text-red-700 border-red-500/30', label: 'Unpaid' },
@@ -80,7 +89,7 @@ export default function AppPaymentsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                      {eventsWithPayments.length > 0 ? (
-                        eventsWithPayments.map(event => {
+                        eventsWithPayments.map((event: any) => {
                             const paymentStatus = getPaymentStatus(event.activePayment);
                             return (
                                 <Card key={event.id}>

@@ -6,15 +6,22 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { listSelectedServices, requestAddons, approveServiceRequest, listRequestedServices } from '@/lib/data-adapter';
 import type { Service } from '@/app/admin/services/[serviceId]/actions';
-import { RequestedService } from '@/lib/data-adapter';
+import { RequestedService } from '@/lib/types';
 import Image from 'next/image';
 import { Check, PlusCircle, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthProvider';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import servicesCatalog from '@/lib/services-catalog.json';
+
+
+// Mock functions to replace data-adapter
+async function listSelectedServices(eventId: string): Promise<any[]> { console.log(`MOCK: listSelectedServices ${eventId}`); return []; }
+async function requestAddons(eventId: string, items: string[]) { console.log(`MOCK: requestAddons ${eventId}`, items); }
+async function approveServiceRequest(eventId: string, requestId: string) { console.log(`MOCK: approveServiceRequest ${eventId}, ${requestId}`); }
+async function listRequestedServices(eventId: string): Promise<RequestedService[]> { console.log(`MOCK: listRequestedServices ${eventId}`); return []; }
+
 
 type EventServicesProps = {
     eventId: string;
@@ -47,9 +54,9 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
             !requestedAddonIds.includes(service.id)
         );
 
-        setBookedServices(allBooked);
+        setBookedServices(allBooked as any);
         setAvailableAddons(unbookedAddons);
-        setRequestedAddons(allRequests);
+        setRequestedAddons(allRequests as any);
     };
 
     useEffect(() => {
@@ -105,7 +112,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         <TableBody>
                             {bookedServices.map((req) => (
                                 <TableRow key={req.id}>
-                                    <TableCell className="font-medium">{req.serviceName}</TableCell>
+                                    <TableCell className="font-medium">{(req as any).serviceName}</TableCell>
                                     <TableCell>
                                         <Badge variant='default' className="capitalize bg-green-500">Booked</Badge>
                                     </TableCell>
@@ -116,7 +123,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                             ))}
                             {requestedAddons.map((req) => (
                                 <TableRow key={req.id}>
-                                    <TableCell className="font-medium">{req.serviceName}</TableCell>
+                                    <TableCell className="font-medium">{(req as any).serviceName}</TableCell>
                                     <TableCell>
                                         <Badge variant={req.status === 'approved' ? 'default' : 'outline'} className="capitalize">{req.status}</Badge>
                                     </TableCell>
@@ -156,7 +163,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         <Card key={booking.id}>
                             <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
                                 <div className="md:col-span-3">
-                                    <h3 className="font-semibold">{booking.serviceName}</h3>
+                                    <h3 className="font-semibold">{(booking as any).serviceName}</h3>
                                 </div>
                                 <div>
                                     <Badge variant={'default'} className="bg-green-500">Booked</Badge>

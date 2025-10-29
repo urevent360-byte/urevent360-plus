@@ -12,7 +12,7 @@ const hostAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, loading, roleLoaded, role } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? '';
   const onAuthPage = hostAuthRoutes.includes(pathname);
 
   useEffect(() => {

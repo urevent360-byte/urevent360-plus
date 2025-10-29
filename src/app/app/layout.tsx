@@ -17,7 +17,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Wait for auth and role to be fully resolved before making any decisions.
-    if (loading || !roleLoaded) return;
+    if (loading || !roleLoaded) {
+      return;
+    }
     
     // If a user is logged in, handle role-based redirects.
     if (user) {
@@ -35,7 +37,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       // If there is no user and they are not on an auth page, send them to login.
       if (!onAuthPage) {
         router.replace('/app/login');
-        return;
       }
     }
   }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);

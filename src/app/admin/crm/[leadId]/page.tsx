@@ -4,7 +4,6 @@ import LeadDetailClient from './client';
 
 type Props = {
   params: { leadId: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default function AdminLeadDetailPage({ params }: Props) {

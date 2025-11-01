@@ -1,0 +1,71 @@
+
+'use client';
+
+import { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthProvider';
+import AdminPortalLayout from '@/app/admin/PortalLayout';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { Loader2 } from 'lucide-react';
+
+const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  const pathname = usePathname() ?? '';
+  const { user, loading, roleLoaded, role } = useAuth();
+
+  useEffect(() => {
+    // 1) Wait for auth and role resolution to finish
+    if (loading || !roleLoaded) return;
+
+    const onAuthPage = adminAuthRoutes.includes(pathname);
+
+    // 2) Not authenticated -> send to login (if not already there)
+    if (!user) {
+      if (!onAuthPage) {
+        router.replace('/admin/login');
+      }
+      return;
+    }
+
+    // 3) Authenticated, but not an admin -> get them out of the admin portal
+    if (role !== 'admin') {
+      router.replace('/app/login');
+      return;
+    }
+
+    // 4) Authenticated admin on an auth page -> send to dashboard
+    if (onAuthPage) {
+      router.replace('/admin/dashboard');
+    }
+  }, [loading, roleLoaded, user, role, pathname, router]);
+
+  const onAuthPage = adminAuthRoutes.includes(pathname);
+
+  // Auth pages (login/forgot) don't use the sidebar layout
+  if (onAuthPage) {
+    return <>{children}</>;
+  }
+
+  // Show a loading spinner until we can definitively say the user is an admin.
+  // This prevents the "jump" by not rendering the child layout (which might redirect) prematurely.
+  const canRenderAdminPortal = !loading && roleLoaded && user && role === 'admin';
+
+  if (!canRenderAdminPortal) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Checking admin access…</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider>
+      <AdminPortalLayout>{children}</AdminPortalLayout>
+    </SidebarProvider>
+  );
+}

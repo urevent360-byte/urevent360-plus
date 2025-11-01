@@ -1,7 +1,7 @@
 
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
@@ -21,6 +21,22 @@ type AuthCtx = {
 
 const Ctx = createContext<AuthCtx | null>(null);
 
+async function setRoleCookie(role: Role) {
+  if (role === 'unknown') return;
+  await fetch('/api/session/set-role', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
+}
+
+async function clearRoleCookie() {
+    await fetch('/api/session/clear-role', {
+        method: 'POST',
+    });
+}
+
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -30,6 +46,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
+      if (!u) {
+          // User logged out, clear the cookie
+          await clearRoleCookie();
+      }
       setAuthLoading(false);
     });
 
@@ -54,6 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!cancelled && tok.claims?.admin === true) {
         setIsAdmin(true);
         setRoleLoading(false);
+        await setRoleCookie('admin');
         return;
       }
 
@@ -62,14 +83,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const ref = doc(db, 'admins', user.uid);
       try {
         const snap = await getDoc(ref);
+        const isActiveAdmin = snap.exists() && (snap.data() as any)?.active !== false;
         if (!cancelled) {
-          const isActiveAdmin = snap.exists() && (snap.data() as any)?.active !== false;
           setIsAdmin(isActiveAdmin);
+          await setRoleCookie(isActiveAdmin ? 'admin' : 'host');
         }
       } catch (error) {
           console.error("Error checking admin status in Firestore:", error);
           if (!cancelled) {
               setIsAdmin(false);
+              await setRoleCookie('host');
           }
       } finally {
           if (!cancelled) {
@@ -94,6 +117,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(auth.currentUser ? { ...auth.currentUser } : null);
     }
   };
+  
+  const signOut = useCallback(async () => {
+    await auth.signOut();
+    // The onAuthStateChanged listener will handle clearing the cookie
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -102,10 +130,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       roleLoaded: !roleLoading,
       isAdmin,
       role,
-      signOut: () => import('firebase/auth').then(({ signOut }) => signOut(auth)),
+      signOut,
       updateProfile,
     }),
-    [user, loading, roleLoading, isAdmin, role]
+    [user, loading, roleLoading, isAdmin, role, signOut]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

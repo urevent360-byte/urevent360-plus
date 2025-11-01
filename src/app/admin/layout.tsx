@@ -23,18 +23,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     // 2) Not authenticated -> send to login (if not already there)
     if (!user) {
-      if (!onAuthPage) router.replace('/admin/login');
+      if (!onAuthPage) {
+        router.replace('/admin/login');
+      }
       return;
     }
 
-    // 3) Authenticated host (not admin) -> get them out of the admin portal
-    if (role === 'host') {
+    // 3) Authenticated, but not an admin -> get them out of the admin portal
+    if (role !== 'admin') {
       router.replace('/app/login');
       return;
     }
 
     // 4) Authenticated admin on an auth page -> send to dashboard
-    if (role === 'admin' && onAuthPage) {
+    if (onAuthPage) {
       router.replace('/admin/dashboard');
     }
   }, [loading, roleLoaded, user, role, pathname, router]);
@@ -46,9 +48,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return <>{children}</>;
   }
 
-  // Don't render the portal until we confirm it's really an admin
-  const canRenderAdmin = !loading && roleLoaded && !!user && role === 'admin';
-  if (!canRenderAdmin) {
+  // Show a loading spinner until we can definitively say the user is an admin.
+  // This prevents the "jump" by not rendering the child layout (which might redirect) prematurely.
+  const canRenderAdminPortal = !loading && roleLoaded && user && role === 'admin';
+
+  if (!canRenderAdminPortal) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="flex items-center gap-3 text-muted-foreground">

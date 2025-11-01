@@ -75,7 +75,7 @@ export function EventProfileShell({ event, role, children, isLoading = false, ac
         <Card>
             <CardHeader className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
-                    <CardTitle>Project: {event.eventName}</CardTitle>
+                    <CardTitle>Project: {event.name}</CardTitle>
                     <CardDescription>
                         Client: {event.clientName} | Event Date: {format(new Date(event.eventDate), 'PPP')} | Status: <span className="capitalize font-medium p-1 rounded-md bg-secondary text-secondary-foreground">{event.status.replace('_', ' ')}</span>
                     </CardDescription>

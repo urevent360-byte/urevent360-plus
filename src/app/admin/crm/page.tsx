@@ -18,15 +18,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal, QrCode, Link as LinkIcon, CalendarCog, Edit } from 'lucide-react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import QRCode from "qrcode.react";
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -68,7 +59,6 @@ const allStatuses: Status[] = ['new_request', 'contacted', 'follow-up', 'quote_s
 export default function CrmPage() {
   const [leads] = useState<Lead[]>(placeholderLeads);
   const [filter, setFilter] = useState<Status | 'all'>('all');
-  const [qrCodeData, setQrCodeData] = useState<{url: string, eventId: string} | null>(null);
   const { toast } = useToast();
   const router = useRouter();
   const [language, setLanguage] = useState<'en' | 'es'>('en');
@@ -181,31 +171,6 @@ export default function CrmPage() {
                 </Table>
             </CardContent>
         </Card>
-
-        <Dialog open={!!qrCodeData} onOpenChange={(isOpen) => !isOpen && setQrCodeData(null)}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Event Photo Upload QR Code</DialogTitle>
-                    <DialogDescription>
-                        This QR code allows guests to upload photos for the event "{qrCodeData?.eventId}". This action is now managed on the Event page.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="flex items-center justify-center p-4">
-                    {qrCodeData && (
-                        <QRCode
-                            value={qrCodeData.url}
-                            size={256}
-                            level={"H"}
-                            includeMargin={true}
-                        />
-                    )}
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setQrCodeData(null)}>Close</Button>
-                </DialogFooter>
-            </DialogContent>
-        </Dialog>
-
     </div>
   );
 }

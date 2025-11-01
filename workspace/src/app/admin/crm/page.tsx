@@ -24,6 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import QRCode from "qrcode.react";
 import { useToast } from '@/hooks/use-toast';
@@ -182,11 +183,11 @@ export default function CrmPage() {
         </Card>
 
         <Dialog open={!!qrCodeData} onOpenChange={(isOpen) => !isOpen && setQrCodeData(null)}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Event Photo Upload QR Code</DialogTitle>
                     <DialogDescription>
-                        This generates a unique QR code for guests to upload photos to the event gallery for <span className="font-bold">"{qrCodeData?.eventId}"</span>. This action should now be performed on the Event Management page.
+                        This QR code allows guests to upload photos for the event "{qrCodeData?.eventId}". This action is now managed on the Event page.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="flex items-center justify-center p-4">
@@ -199,6 +200,9 @@ export default function CrmPage() {
                         />
                     )}
                 </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setQrCodeData(null)}>Close</Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
 

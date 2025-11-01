@@ -15,6 +15,10 @@ export function FirebaseErrorListener() {
 
     errorEmitter.on('permission-error', handleError);
 
+    return () => {
+        // It's good practice to clean up the listener, though in this root component it's less critical.
+        // emitter.off('permission-error', handleError);
+    };
   }, []);
 
   return null; // This component does not render anything.

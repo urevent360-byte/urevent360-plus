@@ -29,11 +29,6 @@ export default function AppMyEventsPage() {
                 const hostEvents = await listHostEvents(user.uid);
                 setEvents(hostEvents);
                 setIsLoading(false);
-            } else if (user) {
-                // Fallback for mock environment where uid might not exist
-                 const hostEvents = await listHostEvents('user-davidlee'); // mock hostId
-                 setEvents(hostEvents);
-                 setIsLoading(false);
             }
         }
         fetchEvents();

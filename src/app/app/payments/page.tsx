@@ -46,12 +46,6 @@ export default function AppPaymentsPage() {
                 const data = await listHostEventsWithPayments(user.uid);
                 setEventsWithPayments(data);
                 setIsLoading(false);
-            } else if (user) {
-                 // Fallback for mock environment
-                setIsLoading(true);
-                const data = await listHostEventsWithPayments('user-davidlee');
-                setEventsWithPayments(data);
-                setIsLoading(false);
             }
         }
         fetchEventsAndPayments();

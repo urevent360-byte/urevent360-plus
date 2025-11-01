@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   Sidebar,
+  SidebarProvider,
   SidebarInset,
   SidebarHeader,
   SidebarContent,
@@ -55,7 +56,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/assistant', label: 'AI Assistant', icon: Bot },
 ];
 
-export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
+function AdminPortalContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? '';
   const { toggleSidebar } = useSidebar();
 
@@ -125,5 +126,14 @@ export default function AdminPortalLayout({ children }: { children: React.ReactN
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
     </>
+  );
+}
+
+
+export default function AdminPortalLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider>
+      <AdminPortalContent>{children}</AdminPortalContent>
+    </SidebarProvider>
   );
 }

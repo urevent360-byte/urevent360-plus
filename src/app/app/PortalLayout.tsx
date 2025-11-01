@@ -53,12 +53,12 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/app/profile', label: 'My Profile', icon: User, className: 'text-slate-500' },
 ];
 
-export default function AppPortalLayout({ children }: { children: React.ReactNode }) {
+function AppPortalContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname() ?? '';
   const { toggleSidebar } = useSidebar();
-
+  
   return (
-    <SidebarProvider>
+    <>
       <Sidebar>
         <SidebarHeader>
           <div className="p-2 flex justify-center">
@@ -122,6 +122,14 @@ export default function AppPortalLayout({ children }: { children: React.ReactNod
 
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>
       </SidebarInset>
+    </>
+  );
+}
+
+export default function AppPortalLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <SidebarProvider>
+      <AppPortalContent>{children}</AppPortalContent>
     </SidebarProvider>
   );
 }

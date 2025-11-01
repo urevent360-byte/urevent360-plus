@@ -6,6 +6,7 @@ import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
 import { app } from '@/lib/firebase/client'; // Import app to initialize db
+import { usePathname, useRouter } from 'next/navigation';
 
 type Role = 'admin' | 'host' | 'unknown';
 
@@ -42,6 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
   const [roleLoading, setRoleLoading] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
@@ -49,6 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!u) {
           // User logged out, clear the cookie
           await clearRoleCookie();
+          setIsAdmin(false);
       }
       setAuthLoading(false);
     });
@@ -58,23 +62,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
-    setRoleLoading(true);
-
-    async function checkAdmin() {
+    
+    async function checkAdminAndRedirect() {
+      setRoleLoading(true);
       if (!user) {
-        if (!cancelled) {
-          setIsAdmin(false);
-          setRoleLoading(false);
-        }
+        setIsAdmin(false);
+        setRoleLoading(false);
         return;
       }
 
       // 1) Prefer the custom claim
-      const tok = await user.getIdTokenResult(true);
-      if (!cancelled && tok.claims?.admin === true) {
-        setIsAdmin(true);
-        setRoleLoading(false);
-        await setRoleCookie('admin');
+      const tokenResult = await user.getIdTokenResult(true);
+      if (tokenResult.claims?.admin === true) {
+        if (!cancelled) {
+          setIsAdmin(true);
+          await setRoleCookie('admin');
+          setRoleLoading(false);
+          if (pathname?.startsWith('/app')) router.replace('/admin/dashboard');
+        }
         return;
       }
 
@@ -87,12 +92,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!cancelled) {
           setIsAdmin(isActiveAdmin);
           await setRoleCookie(isActiveAdmin ? 'admin' : 'host');
+           if (isActiveAdmin && pathname?.startsWith('/app')) {
+            router.replace('/admin/dashboard');
+          } else if (!isActiveAdmin && pathname?.startsWith('/admin')) {
+            router.replace('/app/home');
+          }
         }
       } catch (error) {
           console.error("Error checking admin status in Firestore:", error);
           if (!cancelled) {
               setIsAdmin(false);
               await setRoleCookie('host');
+              if (pathname?.startsWith('/admin')) router.replace('/app/home');
           }
       } finally {
           if (!cancelled) {
@@ -101,11 +112,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    checkAdmin();
+    checkAdminAndRedirect();
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, pathname, router]);
 
   const role: Role = isAdmin ? 'admin' : (user ? 'host' : 'unknown');
   const loading = authLoading || roleLoading;
@@ -120,8 +131,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const signOut = useCallback(async () => {
     await auth.signOut();
-    // The onAuthStateChanged listener will handle clearing the cookie
-  }, []);
+    // Redirect to home page after sign out to avoid being stuck on a protected route
+    router.push('/');
+  }, [router]);
 
   const value = useMemo(
     () => ({

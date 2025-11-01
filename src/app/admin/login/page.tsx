@@ -46,8 +46,7 @@ export default function AdminLoginPage() {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The AdminLayout will handle the redirect upon successful auth state change.
-      // We simply toast and let the layout do its job.
+      // The AuthProvider will handle the redirect upon successful auth state change.
       toast({ title: 'Login successful!', description: 'Checking credentials and redirecting...' });
 
     } catch (error: any) {
@@ -143,12 +142,6 @@ export default function AdminLoginPage() {
               <Link href="/">
                 <Home className="mr-2" />
                 Go back to landing page
-              </Link>
-            </Button>
-            <Button variant="link" asChild>
-              <Link href="/app/login">
-                <User className="mr-2" />
-                Go to Host Login
               </Link>
             </Button>
           </div>

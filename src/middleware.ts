@@ -2,45 +2,51 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Lee cookie 'role' puesta tras login (o cámbialo a verificación de Firebase si ya usas tokens)
 function getRole(req: NextRequest) {
-  const cookieRole = req.cookies.get('role')?.value; // 'admin' | 'host' | 'client' | undefined
-  return cookieRole;
+  return req.cookies.get('role')?.value as 'admin' | 'host' | undefined;
 }
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const role = getRole(req);
 
-  // Rutas admin protegidas
+  // ADMIN routes protection
   if (pathname.startsWith('/admin')) {
-    // Permitir las rutas de auth admin
-    const adminAuth = ['/admin/login', '/admin/forgot-password'];
-    if (adminAuth.includes(pathname)) return NextResponse.next();
-
+    const adminAuthRoutes = ['/admin/login', '/admin/forgot-password'];
+    if (adminAuthRoutes.includes(pathname)) {
+      // If a logged-in admin tries to access login, redirect them to dashboard
+      if (role === 'admin') {
+        return NextResponse.redirect(new URL('/admin/dashboard', req.url));
+      }
+      return NextResponse.next();
+    }
+    // If not an admin, redirect to admin login
     if (role !== 'admin') {
-      const url = req.nextUrl.clone();
-      url.pathname = '/admin/login';
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL('/admin/login', req.url));
     }
     return NextResponse.next();
   }
 
-  // Rutas app (host/cliente)
+  // APP (host/client) routes protection
   if (pathname.startsWith('/app')) {
-    const appAuth = ['/app/login', '/app/register', '/app/forgot-password'];
-    if (appAuth.includes(pathname)) return NextResponse.next();
-
-    // Si marcaste rol 'host' o 'client' permites; si es admin, manda a admin dashboard
-    if (role === 'admin') {
-      const url = req.nextUrl.clone();
-      url.pathname = '/admin/dashboard';
-      return NextResponse.redirect(url);
+    const appAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
+    if (appAuthRoutes.includes(pathname)) {
+       // If a logged-in user (host or admin) tries to access login, redirect them away
+      if (role === 'host') {
+        return NextResponse.redirect(new URL('/app/home', req.url));
+      }
+      if (role === 'admin') {
+        return NextResponse.redirect(new URL('/admin/dashboard', req.url));
+      }
+      return NextResponse.next();
     }
+    // If user is an admin, they belong in the admin portal
+    if (role === 'admin') {
+      return NextResponse.redirect(new URL('/admin/dashboard', req.url));
+    }
+    // If no role (not logged in), redirect to host login
     if (!role) {
-      const url = req.nextUrl.clone();
-      url.pathname = '/app/login';
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL('/app/login', req.url));
     }
     return NextResponse.next();
   }
@@ -48,7 +54,6 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Aplica solo a estas rutas
 export const config = {
-  matcher: ['/admin/:path*', '/app/:path*']
+  matcher: ['/admin/:path*', '/app/:path*'],
 };

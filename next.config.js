@@ -34,6 +34,9 @@ const nextConfig = {
   experimental: {
     typedRoutes: false,
   },
+
+  // Exclude the workspace directory from being watched by Next.js/Turbopack
+  exclude: ['**/workspace/**'],
 };
 
 module.exports = nextConfig;

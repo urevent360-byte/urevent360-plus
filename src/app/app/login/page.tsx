@@ -61,17 +61,14 @@ export default function HostLoginPage() {
   });
   
   const handleSuccessfulLogin = async (userCredential: UserCredential) => {
-    // Re-fetch token result to get the latest claims after login for immediate accuracy.
-    const tokenResult = await userCredential.user.getIdTokenResult(true);
-    const isAdminClaim = !!tokenResult.claims.admin;
-    
-    // Use the context's isAdmin as primary, but fall back to the claim for race conditions.
-    if (isAdmin || isAdminClaim) {
-        router.replace('/admin/dashboard');
-    } else {
-        toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
-        router.replace('/app/home');
-    }
+    await fetch('/api/session/set-role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'host' }),
+    });
+
+    toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
+    router.replace('/app/home');
   };
 
   async function onSubmit(data: FormValues) {

@@ -211,11 +211,6 @@ export default function HostLoginPage() {
             </Link>
           </p>
 
-          <div className="mt-6 text-center">
-            <Button variant="link" asChild>
-              <Link href="/"><Home className="mr-2" /> Go back to landing page</Link>
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

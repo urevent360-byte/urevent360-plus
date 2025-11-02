@@ -1,69 +1,38 @@
-
 'use client';
-import { useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/AuthProvider';
 import AppPortalLayout from '@/app/app/PortalLayout';
-import { SidebarProvider } from '@/components/ui/sidebar';
-import { Loader2 } from 'lucide-react';
-
-const hostAuthRoutes = ['/app/login', '/app/register', '/app/forgot-password'];
+import { useAuth } from '@/contexts/AuthProvider';
+import { usePathname } from 'next/navigation';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, roleLoaded, role } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname() ?? '';
-  const onAuthPage = hostAuthRoutes.includes(pathname);
+  const { user, loading, roleLoaded, isAdmin } = useAuth();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    // Wait for auth and role to be fully resolved before making any decisions.
-    if (loading || !roleLoaded) {
-      return;
-    }
-    
-    // If a user is logged in, handle role-based redirects.
-    if (user) {
-      // If an admin somehow lands in the host portal, send them to their dashboard.
-      if (role === 'admin') {
-        router.replace('/admin/dashboard');
-        return;
-      }
-      // If a logged-in host lands on an auth page (e.g., via back button), send them to their home.
-      if (role === 'host' && onAuthPage) {
-        router.replace('/app/home');
-        return;
-      }
-    } else {
-      // If there is no user and they are not on an auth page, send them to login.
-      if (!onAuthPage) {
-        router.replace('/app/login');
-      }
-    }
-  }, [loading, roleLoaded, user, role, onAuthPage, router, pathname]);
+  // Wait until authentication status is fully resolved to prevent flickers
+  if (loading || !roleLoaded) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground">Loading portal...</p>
+      </div>
+    );
+  }
 
-  // For host-specific auth pages, don't render the main portal layout.
-  if (onAuthPage) {
+  const isAuthPage =
+    pathname === '/app/login' ||
+    pathname === '/app/register' ||
+    pathname === '/app/forgot-password';
+
+  // For auth pages, render them standalone without the portal sidebar.
+  if (isAuthPage) {
     return <>{children}</>;
   }
-  
-  // Show a loading screen until we can confirm the user is a host,
-  // preventing the "jump" and premature rendering.
-  const canRenderHost = !loading && roleLoaded && !!user && role === 'host';
-  if (!canRenderHost) {
-      return (
-        <div className="flex min-h-screen items-center justify-center bg-background">
-            <div className="flex items-center gap-3 text-muted-foreground">
-            <Loader2 className="h-5 w-5 animate-spin" />
-            <span>Verifying access…</span>
-            </div>
-        </div>
-      );
+
+  // If we are on a protected page but the user is not a logged-in host,
+  // the middleware should have already redirected. This is a client-side safeguard.
+  // We render null to avoid showing the portal layout briefly before redirection.
+  if (!user || isAdmin) {
+    return null;
   }
-  
-  // For all other pages in the host portal, render the standard layout.
-  return (
-    <SidebarProvider>
-      <AppPortalLayout>{children}</AppPortalLayout>
-    </SidebarProvider>
-  );
+
+  // For all other protected app pages, show the full portal layout.
+  return <AppPortalLayout>{children}</AppPortalLayout>;
 }

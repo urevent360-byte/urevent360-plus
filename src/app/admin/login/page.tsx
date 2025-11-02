@@ -7,16 +7,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Mail, LogIn, Eye, EyeOff, Home, Loader2, User } from 'lucide-react';
+import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { auth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
 
@@ -45,9 +43,20 @@ export default function AdminLoginPage() {
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
+      // 1. Authenticate with Firebase
       await signInWithEmailAndPassword(auth, data.email, data.password);
-      // The AuthProvider will handle the redirect upon successful auth state change.
-      toast({ title: 'Login successful!', description: 'Checking credentials and redirecting...' });
+      
+      // 2. Set the role cookie for the middleware
+      await fetch('/api/session/set-role', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'admin' }),
+      });
+
+      toast({ title: 'Login successful!', description: 'Redirecting to the admin dashboard...' });
+
+      // 3. Redirect to the admin dashboard
+      router.replace('/admin/dashboard');
 
     } catch (error: any) {
       let description = 'An unexpected error occurred.';
@@ -133,8 +142,8 @@ export default function AdminLoginPage() {
             </div>
 
             <Button type="submit" disabled={isSubmitting || loading} className="w-full">
-              {isSubmitting || loading ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
-              {isSubmitting || loading ? 'Logging in…' : 'Login with Email'}
+              {isSubmitting || loading ? <Loader2 className="mr-2 animate-spin" /> : <LogIn className="mr-2" />}
+              {isSubmitting || loading ? 'Logging in…' : 'Login'}
             </Button>
           </form>
           <div className="mt-6 text-center space-y-2">

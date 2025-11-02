@@ -9,7 +9,6 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const role = getRole(req);
 
-  // ADMIN
   if (pathname.startsWith('/admin')) {
     const adminAuth = ['/admin/login', '/admin/forgot-password'];
     if (adminAuth.includes(pathname)) return NextResponse.next();
@@ -21,7 +20,6 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // APP (host/cliente)
   if (pathname.startsWith('/app')) {
     const appAuth = ['/app/login', '/app/register', '/app/forgot-password'];
     if (appAuth.includes(pathname)) return NextResponse.next();
@@ -41,6 +39,4 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ['/admin/:path*', '/app/:path*'],
-};
+export const config = { matcher: ['/admin/:path*', '/app/:path*'] };

@@ -15,7 +15,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { auth } from '@/lib/firebase/authClient';
-import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),
@@ -28,7 +27,6 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { loading } = useAuth();
 
   const {
     register,
@@ -140,9 +138,9 @@ export default function AdminLoginPage() {
               )}
             </div>
 
-            <Button type="submit" disabled={isSubmitting || loading} className="w-full">
-              {isSubmitting || loading ? <Loader2 className="mr-2 animate-spin" /> : <LogIn className="mr-2" />}
-              {isSubmitting || loading ? 'Logging in…' : 'Login'}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <LogIn className="mr-2" />}
+              {isSubmitting ? 'Logging in…' : 'Login'}
             </Button>
           </form>
           <div className="mt-6 text-center space-y-2">

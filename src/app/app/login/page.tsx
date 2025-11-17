@@ -177,9 +177,9 @@ export default function HostLoginPage() {
               {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
             </div>
 
-            <Button type="submit" disabled={isSubmitting || loading} className="w-full">
-              {isSubmitting || loading ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
-              {isSubmitting || loading ? 'Logging in…' : 'Login'}
+            <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
+              {isSubmitting ? 'Logging in…' : 'Login'}
             </Button>
           </form>
 
@@ -193,10 +193,10 @@ export default function HostLoginPage() {
           </div>
 
           <div className="space-y-4">
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')} disabled={isSubmitting || loading}>
+            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')} disabled={isSubmitting}>
               <GoogleIcon className="mr-2" /> Continue with Google
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')} disabled={isSubmitting || loading}>
+            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')} disabled={isSubmitting}>
               <FacebookIcon className="mr-2" /> Continue with Facebook
             </Button>
           </div>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -37,11 +38,13 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   }, []);
 
   // -------------------------------
-  // ENLACES INTELIGENTES SEGÚN SESIÓN
+  // ENLACES FIJOS Y CORRECTOS
   // -------------------------------
   const isLoggedIn = !!user;
-  const hostLink = isLoggedIn ? '/app/home' : '/app/login';
-  const adminLink = isLoggedIn ? '/admin/dashboard' : '/admin/login';
+  const hostLink = '/app/login';
+  const adminLink = '/admin/login';
+  const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/home';
+
 
   const navItems = [
     { href: '/', label: 'Home' },
@@ -114,7 +117,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
                       <AvatarFallback>
-                        {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                        {(user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U').toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -128,17 +131,10 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={isAdmin ? '/admin/dashboard' : '/app/home'}>
+                    <Link href={dashboardLink}>
                       <User className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </Link>
-                  </DropdownMenuItem>
-                  {/* Accesos rápidos visibles aunque haya sesión */}
-                  <DropdownMenuItem asChild>
-                    <Link href={hostLink}>Host Login</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={adminLink}>Admin Login</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="mr-2 h-4 w-4" />
@@ -171,29 +167,37 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                 <div className="flex flex-col items-center justify-center h-full">
                   <NavLinks isMobile />
                   <div className="mt-8 flex flex-col gap-4 w-full px-8">
-                    {/* SIEMPRE visibles en móvil; si hay sesión llevan al dashboard */}
-                    <Button asChild variant="outline" size="lg">
-                      <Link href={hostLink} onClick={() => setSheetOpen(false)}>
-                        Host Login
-                      </Link>
-                    </Button>
-                    <Button asChild variant="default" size="lg">
-                      <Link href={adminLink} onClick={() => setSheetOpen(false)}>
-                        Admin Login
-                      </Link>
-                    </Button>
-                    {/* Si quieres, agrega logout rápido cuando hay sesión */}
-                    {isClient && isLoggedIn && (
-                      <Button
-                        variant="ghost"
-                        size="lg"
-                        onClick={() => {
-                          setSheetOpen(false);
-                          signOut();
-                        }}
-                      >
-                        Logout
-                      </Button>
+                    {isLoggedIn ? (
+                       <>
+                        <Button asChild variant="default" size="lg">
+                          <Link href={dashboardLink} onClick={() => setSheetOpen(false)}>
+                            Go to Dashboard
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="lg"
+                          onClick={() => {
+                            setSheetOpen(false);
+                            signOut();
+                          }}
+                        >
+                          Logout
+                        </Button>
+                       </>
+                    ) : (
+                      <>
+                        <Button asChild variant="outline" size="lg">
+                          <Link href={hostLink} onClick={() => setSheetOpen(false)}>
+                            Host Login
+                          </Link>
+                        </Button>
+                        <Button asChild variant="default" size="lg">
+                          <Link href={adminLink} onClick={() => setSheetOpen(false)}>
+                            Admin Login
+                          </Link>
+                        </Button>
+                      </>
                     )}
                   </div>
                 </div>

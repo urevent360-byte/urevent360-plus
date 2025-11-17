@@ -27,7 +27,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthProvider';
 
 
-// --- Datos mock (puedes reemplazar por datos reales) ---
+// --- Mock data (can be replaced with real data) ---
 const stats = {
   services: 11,
   openOrders: 3,
@@ -38,33 +38,27 @@ const stats = {
 const recentActivity = [
     {
       id: 'act-1',
-      title: 'Nueva cotización recibida',
-      meta: '360 Photo Booth • Boda • 12/14',
-      when: 'hace 15 min',
-      pill: 'Cotización',
+      title: 'New quote received',
+      meta: '360 Photo Booth • Wedding • 12/14',
+      when: '15 min ago',
+      pill: 'Quote',
     },
     {
       id: 'act-2',
-      title: 'Reserva confirmada',
+      title: 'Booking confirmed',
       meta: 'Magic Mirror • Sweet 16 • 10/30',
-      when: 'hace 1 h',
-      pill: 'Reserva',
+      when: '1 hour ago',
+      pill: 'Booking',
     },
     {
       id: 'act-3',
-      title: 'Servicio actualizado',
-      meta: 'LED Screens Wall • Precio y descripción',
-      when: 'ayer',
-      pill: 'Actualización',
+      title: 'Service updated',
+      meta: 'LED Screens Wall • Price and description',
+      when: 'yesterday',
+      pill: 'Update',
     },
 ];
 
-/**
- * Admin Dashboard
- * - Protegido por el layout de /admin
- * - KPIs de ejemplo
- * - Acciones rápidas y accesos a módulos de administración
- */
 export default function AdminDashboardPage() {
   const { user } = useAuth();
   
@@ -83,8 +77,7 @@ export default function AdminDashboardPage() {
             Dashboard
           </h1>
           <p className="text-sm text-muted-foreground">
-            Hola {user?.email?.split('@')[0] ?? 'admin'}, gestiona servicios, reservas y
-            contenido de UREVENT 360 PLUS.
+            Hi {user?.email?.split('@')[0] ?? 'admin'}, manage services, bookings, and content for UREVENT 360 PLUS.
           </p>
         </div>
 
@@ -92,13 +85,13 @@ export default function AdminDashboardPage() {
           <Button asChild variant="outline">
             <Link href="/admin/settings">
               <Settings className="mr-2 h-4 w-4" />
-              Configuración
+              Settings
             </Link>
           </Button>
           <Button asChild>
             <Link href="/admin/services/new">
               <Sparkles className="mr-2 h-4 w-4" />
-              Nuevo servicio
+              New Service
             </Link>
           </Button>
         </div>
@@ -108,39 +101,39 @@ export default function AdminDashboardPage() {
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Servicios publicados</CardDescription>
+            <CardDescription>Published Services</CardDescription>
             <CardTitle className="text-3xl">{stats.services}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Wand2 className="h-4 w-4" />
-              <span>Catálogo</span>
+              <span>Catalog</span>
             </div>
             <Link href="/admin/services" className="inline-flex items-center">
-              Ver <ChevronRight className="ml-1 h-4 w-4" />
+              View <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Órdenes pendientes</CardDescription>
+            <CardDescription>Pending Orders</CardDescription>
             <CardTitle className="text-3xl">{stats.openOrders}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
-              <span>Reservas</span>
+              <span>Bookings</span>
             </div>
             <Link href="/admin/orders" className="inline-flex items-center">
-              Gestionar <ChevronRight className="ml-1 h-4 w-4" />
+              Manage <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Consultas abiertas</CardDescription>
+            <CardDescription>Open Inquiries</CardDescription>
             <CardTitle className="text-3xl">{stats.inquiries}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
@@ -149,37 +142,37 @@ export default function AdminDashboardPage() {
               <span>Leads</span>
             </div>
             <Link href="/admin/inquiries" className="inline-flex items-center">
-              Ver <ChevronRight className="ml-1 h-4 w-4" />
+              View <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
-            <CardDescription>Inventario crítico</CardDescription>
+            <CardDescription>Critical Inventory</CardDescription>
             <CardTitle className="text-3xl">{stats.lowInventory}</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4" />
-              <span>Equipos</span>
+              <span>Equipment</span>
             </div>
             <Link href="/admin/inventory" className="inline-flex items-center">
-              Revisar <ChevronRight className="ml-1 h-4 w-4" />
+              Review <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
           </CardContent>
         </Card>
       </section>
 
-      {/* Acciones rápidas */}
+      {/* Quick Actions & Activity */}
       <section className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-primary" />
-              Actividad reciente
+              Recent Activity
             </CardTitle>
-            <CardDescription>Últimos movimientos en el sistema.</CardDescription>
+            <CardDescription>Latest system movements.</CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="space-y-4">
@@ -205,27 +198,27 @@ export default function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary" />
-              Acciones rápidas
+              Quick Actions
             </CardTitle>
-            <CardDescription>Atajos para tareas comunes.</CardDescription>
+            <CardDescription>Shortcuts for common tasks.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-3">
             <Button asChild variant="secondary" className="justify-start">
               <Link href="/admin/services/new">
                 <Wand2 className="mr-2 h-4 w-4" />
-                Crear servicio
+                Create Service
               </Link>
             </Button>
             <Button asChild variant="secondary" className="justify-start">
               <Link href="/admin/orders">
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Ver reservas
+                View Bookings
               </Link>
             </Button>
             <Button asChild variant="secondary" className="justify-start">
               <Link href="/admin/media">
                 <Images className="mr-2 h-4 w-4" />
-                Gestionar galería
+                Manage Gallery
               </Link>
             </Button>
             <Separator />
@@ -238,13 +231,13 @@ export default function AdminDashboardPage() {
             <Button asChild variant="outline" className="justify-start">
               <Link href="/admin/users">
                 <Users2 className="mr-2 h-4 w-4" />
-                Usuarios & Roles
+                Users & Roles
               </Link>
             </Button>
             <Button asChild variant="outline" className="justify-start">
               <Link href="/admin/settings">
                 <Settings className="mr-2 h-4 w-4" />
-                Configuración
+                Settings
               </Link>
             </Button>
           </CardContent>

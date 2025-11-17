@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
-  const { role } = await req.json(); // 'admin' | 'host' | 'client'
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set('role', role, { httpOnly: true, sameSite: 'lax', path: '/' });
-  return res;
+  try {
+    const { role } = await req.json(); // 'admin' | 'host'
+    if (role !== 'admin' && role !== 'host') {
+      return NextResponse.json({ ok: false, error: 'Invalid role' }, { status: 400 });
+    }
+    const res = NextResponse.json({ ok: true });
+    // Set httpOnly for security
+    res.cookies.set('role', role, { httpOnly: true, sameSite: 'lax', path: '/' });
+    return res;
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: 'Invalid request body' }, { status: 400 });
+  }
 }

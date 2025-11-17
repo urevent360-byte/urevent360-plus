@@ -1,11 +1,10 @@
-
 'use client';
 
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
 import { doc, getDoc, getFirestore } from 'firebase/firestore';
 import { auth } from '@/lib/firebase/authClient';
-import { app } from '@/lib/firebase/client'; // Import app to initialize db
+import { app } from '@/lib/firebase/client';
 import { usePathname, useRouter } from 'next/navigation';
 
 type Role = 'admin' | 'host' | 'unknown';
@@ -21,15 +20,6 @@ type AuthCtx = {
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
-
-async function setRoleCookie(role: Role) {
-  if (role === 'unknown') return;
-  await fetch('/api/session/set-role', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ role }),
-  });
-}
 
 async function clearRoleCookie() {
     await fetch('/api/session/clear-role', {
@@ -71,16 +61,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      // 1) Prefer the custom claim
-      const tokenResult = await user.getIdTokenResult(true);
-      if (tokenResult.claims?.admin === true) {
-        if (!cancelled) {
-          setIsAdmin(true);
-          await setRoleCookie('admin');
-          setRoleLoading(false);
-          if (pathname?.startsWith('/app')) router.replace('/admin/dashboard');
+      // Check for role cookie first as a quick check
+      // Note: The definitive check is done via token or Firestore below
+      const roleCookie = document.cookie.split('; ').find(row => row.startsWith('role='))?.split('=')[1];
+      
+      // 1) Prefer the custom claim for definitive role check
+      try {
+        const tokenResult = await user.getIdTokenResult(true);
+        if (tokenResult.claims?.admin === true) {
+          if (!cancelled) {
+            setIsAdmin(true);
+            setRoleLoading(false);
+            if (pathname?.startsWith('/app')) router.replace('/admin/dashboard');
+          }
+          return;
         }
-        return;
+      } catch (e) {
+        console.error("Error getting ID token:", e);
       }
 
       // 2) Fallback to Firestore: admins/{uid}
@@ -91,7 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const isActiveAdmin = snap.exists() && (snap.data() as any)?.active !== false;
         if (!cancelled) {
           setIsAdmin(isActiveAdmin);
-          await setRoleCookie(isActiveAdmin ? 'admin' : 'host');
            if (isActiveAdmin && pathname?.startsWith('/app')) {
             router.replace('/admin/dashboard');
           } else if (!isActiveAdmin && pathname?.startsWith('/admin')) {
@@ -102,7 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error("Error checking admin status in Firestore:", error);
           if (!cancelled) {
               setIsAdmin(false);
-              await setRoleCookie('host');
               if (pathname?.startsWith('/admin')) router.replace('/app/home');
           }
       } finally {
@@ -131,6 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
   const signOut = useCallback(async () => {
     await auth.signOut();
+    // The onAuthStateChanged listener will handle cookie clearing
     // Redirect to home page after sign out to avoid being stuck on a protected route
     router.push('/');
   }, [router]);

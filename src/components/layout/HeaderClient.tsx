@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -31,18 +30,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const { items } = useCart();
   const { setOpen: setInquiryOpen } = useOpenInquiryModal();
 
-  // Evita hidración inconsistente
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // -------------------------------
-  // ENLACES FIJOS Y CORRECTOS
-  // -------------------------------
   const isLoggedIn = !!user;
-  const hostLink = '/app/login';
-  const adminLink = '/admin/login';
   const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/home';
 
 
@@ -87,12 +80,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
         </Link>
 
         <div className="flex items-center gap-2">
-          {/* Links principales (desktop) */}
+          {/* Main links (desktop) */}
           <div className="hidden md:flex">
             <NavLinks />
           </div>
 
-          {/* Carrito / Inquiry */}
+          {/* Inquiry Cart */}
           <Button
             variant="ghost"
             size="icon"
@@ -108,7 +101,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
             <span className="sr-only">Open inquiry cart</span>
           </Button>
 
-          {/* Autenticación (desktop) */}
+          {/* Authentication (desktop) */}
           {isClient && (
             isLoggedIn ? (
               <DropdownMenu>
@@ -145,16 +138,16 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
             ) : (
               <div className="hidden md:flex items-center gap-2">
                 <Button asChild variant="outline" size="sm">
-                  <Link href={hostLink}>Host Login</Link>
+                  <Link href="/app/login">Host Login</Link>
                 </Button>
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={adminLink}>Admin Login</Link>
+                  <Link href="/admin/login">Admin Login</Link>
                 </Button>
               </div>
             )
           )}
 
-          {/* Móvil: Drawer */}
+          {/* Mobile Drawer */}
           <div className="md:hidden">
             <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
               <SheetTrigger asChild>
@@ -188,12 +181,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                     ) : (
                       <>
                         <Button asChild variant="outline" size="lg">
-                          <Link href={hostLink} onClick={() => setSheetOpen(false)}>
+                          <Link href="/app/login" onClick={() => setSheetOpen(false)}>
                             Host Login
                           </Link>
                         </Button>
                         <Button asChild variant="default" size="lg">
-                          <Link href={adminLink} onClick={() => setSheetOpen(false)}>
+                          <Link href="/admin/login" onClick={() => setSheetOpen(false)}>
                             Admin Login
                           </Link>
                         </Button>

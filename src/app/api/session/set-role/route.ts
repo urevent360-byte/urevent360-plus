@@ -6,9 +6,15 @@ export async function POST(req: Request) {
     if (role !== 'admin' && role !== 'host') {
       return NextResponse.json({ ok: false, error: 'Invalid role' }, { status: 400 });
     }
+
     const res = NextResponse.json({ ok: true });
-    // Set httpOnly for security
-    res.cookies.set('role', role, { httpOnly: true, sameSite: 'lax', path: '/' });
+
+    res.cookies.set('role', role, {
+      path: '/',
+      sameSite: 'lax',
+      // httpOnly: false // por defecto ya no es httpOnly
+    });
+
     return res;
   } catch (error) {
     return NextResponse.json({ ok: false, error: 'Invalid request body' }, { status: 400 });

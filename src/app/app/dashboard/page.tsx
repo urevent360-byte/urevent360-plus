@@ -17,12 +17,17 @@ import {
 } from 'lucide-react';
 
 function useHostGuard() {
-  const { user, loading } = useAuth?.() ?? { user: null, loading: false };
+  const { user, loading, role } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) router.replace('/app/login');
-  }, [loading, user, router]);
+    if (loading) return;
+
+    // Si no hay user o el rol no es host, lo sacamos al login
+    if (!user || role !== 'host') {
+      router.replace('/app/login');
+    }
+  }, [loading, user, role, router]);
 
   return { loading, user };
 }

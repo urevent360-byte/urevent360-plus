@@ -35,7 +35,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   }, []);
 
   const isLoggedIn = !!user;
-  const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/home';
+  const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/dashboard';
 
 
   const navItems = [

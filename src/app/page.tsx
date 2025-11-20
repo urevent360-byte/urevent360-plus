@@ -19,7 +19,7 @@ export default async function Home() {
     <div className="flex flex-col">
       <HeroSection />
 
-      <section className="py-16 md:py-24 mt-12">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <ExperiencesContent />
           <ExperiencesCarousel />

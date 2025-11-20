@@ -14,7 +14,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuLabel
 } from "@/components/ui/dropdown-menu";
@@ -137,10 +136,10 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center gap-2">
-                <Button asChild variant="outline" size="sm">
+                <Button asChild variant="link" size="sm">
                   <Link href="/app/login">Host Login</Link>
                 </Button>
-                <Button asChild variant="ghost" size="sm">
+                <Button asChild variant="link" size="sm">
                   <Link href="/admin/login">Admin Login</Link>
                 </Button>
               </div>

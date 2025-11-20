@@ -8,14 +8,15 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthProvider';
 import { cn } from '@/lib/utils';
 import { Logo } from '@/components/shared/icons';
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '../ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuLabel
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useCart } from '@/hooks/use-cart';
@@ -37,7 +38,6 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const isLoggedIn = !!user;
   const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/dashboard';
 
-
   const navItems = [
     { href: '/', label: 'Home' },
     { href: '/services', label: 'Services' },
@@ -48,8 +48,8 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
     <nav
       className={cn(
-        "flex items-center gap-2",
-        isMobile ? "flex-col space-y-4 pt-8" : "hidden md:flex"
+        'flex items-center gap-2',
+        isMobile ? 'flex-col space-y-4 pt-8' : 'hidden md:flex'
       )}
     >
       {navItems.map((item) => (
@@ -71,9 +71,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
     </nav>
   );
 
+  const showAuthButtons = isClient && !authLoading;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <Logo logoUrl={logoUrl} />
         </Link>
@@ -100,16 +103,22 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
             <span className="sr-only">Open inquiry cart</span>
           </Button>
 
-          {/* Authentication (desktop) */}
-          {isClient && (
+          {/* Auth (desktop) */}
+          {showAuthButtons && (
             isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || 'User'} />
+                      <AvatarImage
+                        src={user?.photoURL || undefined}
+                        alt={user?.displayName || 'User'}
+                      />
                       <AvatarFallback>
-                        {(user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U').toUpperCase()}
+                        {(user?.displayName?.charAt(0) ||
+                          user?.email?.charAt(0) ||
+                          'U'
+                        ).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -117,8 +126,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.displayName || 'User'}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user?.displayName || 'User'}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -160,9 +173,12 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                   <NavLinks isMobile />
                   <div className="mt-8 flex flex-col gap-4 w-full px-8">
                     {isLoggedIn ? (
-                       <>
+                      <>
                         <Button asChild variant="default" size="lg">
-                          <Link href={dashboardLink} onClick={() => setSheetOpen(false)}>
+                          <Link
+                            href={dashboardLink}
+                            onClick={() => setSheetOpen(false)}
+                          >
                             Go to Dashboard
                           </Link>
                         </Button>
@@ -176,16 +192,22 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
                         >
                           Logout
                         </Button>
-                       </>
+                      </>
                     ) : (
                       <>
                         <Button asChild variant="outline" size="lg">
-                          <Link href="/app/login" onClick={() => setSheetOpen(false)}>
+                          <Link
+                            href="/app/login"
+                            onClick={() => setSheetOpen(false)}
+                          >
                             Host Login
                           </Link>
                         </Button>
                         <Button asChild variant="default" size="lg">
-                          <Link href="/admin/login" onClick={() => setSheetOpen(false)}>
+                          <Link
+                            href="/admin/login"
+                            onClick={() => setSheetOpen(false)}
+                          >
                             Admin Login
                           </Link>
                         </Button>

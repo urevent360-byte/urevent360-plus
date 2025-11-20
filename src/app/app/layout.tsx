@@ -12,7 +12,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     pathname === '/app/register' ||
     pathname === '/app/forgot-password';
 
-  // For auth pages, render them standalone without the portal sidebar.
+  // For auth pages, render them standalone without the portal layout.
   if (isAuthPage) {
     return <>{children}</>;
   }

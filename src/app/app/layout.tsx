@@ -1,23 +1,25 @@
 'use client';
-import AppPortalLayout from '@/app/app/PortalLayout';
-import { useAuth } from '@/contexts/AuthProvider';
+
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthProvider';
+import AppPortalLayout from '@/app/app/PortalLayout';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  const { user, loading, roleLoaded, isAdmin } = useAuth();
-  const pathname = usePathname();
+  const { user, role, loading, roleLoaded } = useAuth();
+  const pathname = usePathname() ?? '';
 
+  // Páginas de autenticación del host portal
   const isAuthPage =
     pathname === '/app/login' ||
     pathname === '/app/register' ||
     pathname === '/app/forgot-password';
 
-  // For auth pages, render them standalone without the portal layout.
+  // Las páginas de login/register/forgot se muestran SIN sidebar
   if (isAuthPage) {
     return <>{children}</>;
   }
-  
-  // Wait until authentication status is fully resolved to prevent flickers
+
+  // Mientras se resuelve el estado de auth/rol, mostramos un loader
   if (loading || !roleLoaded) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
@@ -26,13 +28,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If we are on a protected page but the user is not a logged-in host,
-  // the middleware should have already redirected. This is a client-side safeguard.
-  // We render null to avoid showing the portal layout briefly before redirection.
-  if (!user || isAdmin) {
+  // Si no hay usuario o el rol no es "host", no pintamos el portal.
+  // El AuthProvider + middleware se encargarán de redirigir.
+  if (!user || role !== 'host') {
     return null;
   }
 
-  // For all other protected app pages, show the full portal layout.
+  // Para todas las demás rutas /app/*, mostramos el portal completo
   return <AppPortalLayout>{children}</AppPortalLayout>;
 }

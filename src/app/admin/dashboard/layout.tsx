@@ -12,13 +12,11 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   useEffect(() => {
     if (loading) return;
 
-    // No logueado → al login admin
     if (!user) {
       router.replace('/admin/login');
       return;
     }
 
-    // Logueado pero NO admin → manda al portal host
     if (!isAdmin) {
       router.replace('/app/dashboard');
       return;
@@ -26,9 +24,8 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
   }, [loading, user, isAdmin, router]);
 
   if (loading || !user || !isAdmin) {
-    return null; // o un spinner
+    return null;
   }
 
-  // Si es admin, muestra el portal admin completo (sidebar, etc.)
   return <AdminPortalLayout>{children}</AdminPortalLayout>;
 }

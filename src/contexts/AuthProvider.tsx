@@ -4,15 +4,13 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
 import { auth } from '@/lib/firebase/authClient';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 type Role = 'admin' | 'host' | 'unknown';
 
 type AuthCtx = {
   user: User | null;
   loading: boolean;
-  // The following properties are now simplified or will be deprecated in favor of middleware.
-  // They are kept for now to prevent breaking other components that might use them.
   roleLoaded: boolean;
   isAdmin: boolean; 
   role: Role;

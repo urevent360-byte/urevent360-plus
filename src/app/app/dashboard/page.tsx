@@ -1,9 +1,6 @@
-
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthProvider';
@@ -13,24 +10,8 @@ import {
   Wallet,
   Heart,
   UserCircle,
-  PlusCircle
+  PlusCircle,
 } from 'lucide-react';
-
-function useHostGuard() {
-  const { user, loading, role } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (loading) return;
-
-    // Si no hay user o el rol no es host, lo sacamos al login
-    if (!user || role !== 'host') {
-      router.replace('/app/login');
-    }
-  }, [loading, user, role, router]);
-
-  return { loading, user };
-}
 
 const quickActions = [
   { title: 'My Events', icon: <CalendarCheck />, href: '/app/my-events' },
@@ -42,14 +23,15 @@ const quickActions = [
 ];
 
 export default function HostDashboardPage() {
-  const { loading, user } = useHostGuard();
-  if (loading || !user) return null;
+  const { user } = useAuth();
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user.displayName?.split(' ')[0] || 'Host'}! 🎉</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Welcome back, {user?.displayName?.split(' ')[0] || 'Host'}! 🎉
+          </h1>
           <p className="text-muted-foreground">
             Review your upcoming events, payments, messages, and quick actions.
           </p>
@@ -65,17 +47,17 @@ export default function HostDashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
-          <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4">
-            {quickActions.map((item) => (
-              <Button asChild variant="outline" key={item.href}>
-                <Link href={item.href}>
-                  {item.icon}
-                  {item.title}
-                </Link>
-              </Button>
-            ))}
-          </CardContent>
         </CardHeader>
+        <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4 pt-4">
+          {quickActions.map((item) => (
+            <Button asChild variant="outline" key={item.href}>
+              <Link href={item.href}>
+                {item.icon}
+                {item.title}
+              </Link>
+            </Button>
+          ))}
+        </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">

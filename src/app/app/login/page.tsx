@@ -46,7 +46,7 @@ export default function HostLoginPage() {
       if (isAdmin) {
         router.replace('/admin/dashboard');
       } else {
-        router.replace('/app/home');
+        router.replace('/app/dashboard');
       }
     }
   }, [loading, roleLoaded, user, isAdmin, router]);
@@ -68,7 +68,7 @@ export default function HostLoginPage() {
     });
 
     toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
-    router.replace('/app/home');
+    router.replace('/app/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

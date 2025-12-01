@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, {
@@ -121,14 +122,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Usuario autenticado
     if (role === 'admin') {
-      // Admin no debería estar en /app*, ni en /admin login/root
-      if (isAppArea(pathname) || pathname === '/admin' || adminAuthPages.includes(pathname)) {
+      // Admin no debería estar en /app*, ni en las páginas de auth de admin
+      if (isAppArea(pathname) || adminAuthPages.includes(pathname)) {
         router.replace('/admin/dashboard');
         return;
       }
     } else if (role === 'host') {
-      // Host no debería estar en /admin*, ni en /app root/login
-      if (isAdminArea(pathname) || pathname === '/app' || appAuthPages.includes(pathname)) {
+      // Host no debería estar en /admin*, ni en las páginas de auth de app
+      if (isAdminArea(pathname) || appAuthPages.includes(pathname)) {
         router.replace('/app/dashboard');
         return;
       }

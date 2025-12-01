@@ -1,10 +1,11 @@
+
 'use client';
 
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   signInWithEmailAndPassword,
@@ -22,7 +23,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
-import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),
@@ -35,20 +35,6 @@ export default function HostLoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const { user, isAdmin, loading, roleLoaded } = useAuth();
-
-  // Redirect once auth context resolves if a user is already logged in
-  useEffect(() => {
-    if (loading || !roleLoaded) return;
-  
-    if (user) {
-      if (isAdmin) {
-        router.replace('/admin/dashboard');
-      } else {
-        router.replace('/app/dashboard');
-      }
-    }
-  }, [loading, roleLoaded, user, isAdmin, router]);
 
   const {
     register,
@@ -67,7 +53,7 @@ export default function HostLoginPage() {
     });
 
     toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
-    router.replace('/app/dashboard');
+    router.push('/app/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

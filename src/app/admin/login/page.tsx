@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -46,13 +45,21 @@ export default function AdminLoginPage() {
   });
 
   const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
+    // 1) Guardar rol en cookie (para middleware + AuthProvider)
     await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: 'admin' }),
     });
-    toast({ title: 'Login Success', description: 'Redirecting to admin dashboard…' });
-    router.push('/admin/dashboard');
+
+    // 2) Feedback al usuario
+    toast({
+      title: 'Login Success',
+      description: 'Redirecting to admin dashboard…',
+    });
+
+    // 3) Ir al dashboard admin
+    router.replace('/admin/dashboard');
   };
 
   async function onSubmit(data: FormValues) {
@@ -63,6 +70,7 @@ export default function AdminLoginPage() {
     } catch (error: any) {
       console.error('Admin login error', error);
       let description = 'An unexpected error occurred.';
+
       switch (error?.code) {
         case 'auth/invalid-credential':
         case 'auth/user-not-found':
@@ -79,9 +87,9 @@ export default function AdminLoginPage() {
           description = error?.message || description;
           break;
       }
+
       toast({ title: 'Login Failed', description, variant: 'destructive' });
     } finally {
-      // SIEMPRE liberar el botón, aunque haya redirect
       setIsSubmitting(false);
     }
   }
@@ -91,11 +99,13 @@ export default function AdminLoginPage() {
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+
       const userCredential = await signInWithPopup(auth, provider);
       await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
       console.error('Admin social login error', error);
       let description = error?.message || 'Social login failed.';
+
       switch (error?.code) {
         case 'auth/popup-closed-by-user':
           description = 'Login popup closed.';
@@ -110,6 +120,7 @@ export default function AdminLoginPage() {
           description = `The ${kind} provider is not enabled in Firebase.`;
           break;
       }
+
       toast({ title: 'Error', description, variant: 'destructive' });
     } finally {
       setIsSubmitting(false);

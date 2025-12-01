@@ -1,4 +1,3 @@
-
 'use client';
 
 import Link from 'next/link';
@@ -44,16 +43,23 @@ export default function HostLoginPage() {
     resolver: zodResolver(formSchema),
     defaultValues: { email: '', password: '' },
   });
-  
-  const handleSuccessfulLogin = async (userCredential: UserCredential) => {
+
+  const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
+    // 1) Guardar rol host
     await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: 'host' }),
     });
 
-    toast({ title: 'Login Success', description: 'Redirecting to your portal…' });
-    router.push('/app/dashboard');
+    // 2) Feedback
+    toast({
+      title: 'Login Success',
+      description: 'Redirecting to your portal…',
+    });
+
+    // 3) Ir al dashboard host
+    router.replace('/app/dashboard');
   };
 
   async function onSubmit(data: FormValues) {
@@ -62,20 +68,28 @@ export default function HostLoginPage() {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
+      console.error('Host login error', error);
       let description = 'An unexpected error occurred.';
+
       switch (error?.code) {
         case 'auth/invalid-credential':
         case 'auth/user-not-found':
         case 'auth/wrong-password':
-          description = 'Incorrect email or password.'; break;
+          description = 'Incorrect email or password.';
+          break;
         case 'auth/too-many-requests':
-          description = 'Too many attempts. Please try again later.'; break;
+          description = 'Too many attempts. Please try again later.';
+          break;
         case 'auth/network-request-failed':
-          description = 'Network error. Check your connection.'; break;
+          description = 'Network error. Check your connection.';
+          break;
         default:
-          description = error?.message || description; break;
+          description = error?.message || description;
+          break;
       }
+
       toast({ title: 'Login Failed', description, variant: 'destructive' });
+    } finally {
       setIsSubmitting(false);
     }
   }
@@ -85,22 +99,30 @@ export default function HostLoginPage() {
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+
       const userCredential = await signInWithPopup(auth, provider);
       await handleSuccessfulLogin(userCredential);
-
     } catch (error: any) {
+      console.error('Host social login error', error);
       let description = error?.message || 'Social login failed.';
+
       switch (error?.code) {
         case 'auth/popup-closed-by-user':
-          description = 'Login popup closed.'; break;
+          description = 'Login popup closed.';
+          break;
         case 'auth/cancelled-popup-request':
-          description = 'Popup cancelled. Try again.'; break;
+          description = 'Popup cancelled. Try again.';
+          break;
         case 'auth/account-exists-with-different-credential':
-          description = 'Email already exists with another provider.'; break;
+          description = 'Email already exists with another provider.';
+          break;
         case 'auth/configuration-not-found':
-          description = `The ${kind} provider is not enabled in Firebase.`; break;
+          description = `The ${kind} provider is not enabled in Firebase.`;
+          break;
       }
+
       toast({ title: 'Error', description, variant: 'destructive' });
+    } finally {
       setIsSubmitting(false);
     }
   }
@@ -130,13 +152,18 @@ export default function HostLoginPage() {
                 {...register('email')}
                 aria-invalid={!!errors.email}
               />
-              {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+              {errors.email && (
+                <p className="text-sm text-destructive">{errors.email.message}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                <Link href="/app/forgot-password" className="text-sm font-medium text-primary hover:underline">
+                <Link
+                  href="/app/forgot-password"
+                  className="text-sm font-medium text-primary hover:underline"
+                >
                   Forgot Password?
                 </Link>
               </div>
@@ -159,7 +186,9 @@ export default function HostLoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
-              {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-sm text-destructive">{errors.password.message}</p>
+              )}
             </div>
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
@@ -178,10 +207,20 @@ export default function HostLoginPage() {
           </div>
 
           <div className="space-y-4">
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')} disabled={isSubmitting}>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialLogin('google')}
+              disabled={isSubmitting}
+            >
               <GoogleIcon className="mr-2" /> Continue with Google
             </Button>
-            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('facebook')} disabled={isSubmitting}>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialLogin('facebook')}
+              disabled={isSubmitting}
+            >
               <FacebookIcon className="mr-2" /> Continue with Facebook
             </Button>
           </div>
@@ -201,7 +240,6 @@ export default function HostLoginPage() {
               </Link>
             </Button>
           </div>
-
         </CardContent>
       </Card>
     </div>

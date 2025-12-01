@@ -1,12 +1,19 @@
+
 'use client';
 
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup,
+  UserCredential,
+} from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -14,7 +21,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
+import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
 import { auth } from '@/lib/firebase/authClient';
+import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),
@@ -27,6 +36,20 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { user, role, loading, roleLoaded } = useAuth();
+
+  // Si ya está logueado, redirigir según rol
+  useEffect(() => {
+    if (loading || !roleLoaded) return;
+
+    if (user) {
+      if (role === 'admin') {
+        router.replace('/admin/dashboard');
+      } else if (role === 'host') {
+        router.replace('/app/dashboard');
+      }
+    }
+  }, [loading, roleLoaded, user, role, router]);
 
   const {
     register,
@@ -34,53 +57,90 @@ export default function AdminLoginPage() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: 'info@urevent360.com', password: '' },
+    defaultValues: { email: '', password: '' },
   });
+
+  const setRoleCookie = async (role: 'admin' | 'host') => {
+    await fetch('/api/session/set-role', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role }),
+    });
+  };
+
+  const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
+    await setRoleCookie('admin');
+    toast({ title: 'Login Success', description: 'Redirecting to admin dashboard…' });
+    router.replace('/admin/dashboard');
+  };
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     try {
-      // 1. Authenticate with Firebase
-      await signInWithEmailAndPassword(auth, data.email, data.password);
-      
-      // 2. Set the role cookie for the middleware
-      await fetch('/api/session/set-role', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'admin' }),
-      });
-
-      toast({ title: 'Login successful!', description: 'Redirecting to the admin dashboard...' });
-
-      // 3. Redirect to the admin dashboard
-      router.replace('/admin/dashboard');
-
+      const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
+      console.error('Admin login error', error);
       let description = 'An unexpected error occurred.';
       switch (error?.code) {
         case 'auth/invalid-credential':
-        case 'auth/wrong-password':
         case 'auth/user-not-found':
-          description = 'Incorrect email or password.'; break;
+        case 'auth/wrong-password':
+          description = 'Incorrect email or password.';
+          break;
         case 'auth/too-many-requests':
-          description = 'Too many attempts. Please try again later.'; break;
+          description = 'Too many attempts. Please try again later.';
+          break;
         case 'auth/network-request-failed':
-          description = 'Network error. Check your connection.'; break;
+          description = 'Network error. Check your connection.';
+          break;
         default:
-          description = error?.message || description; break;
+          description = error?.message || description;
+          break;
       }
       toast({ title: 'Login Failed', description, variant: 'destructive' });
+    } finally {
+      // SIEMPRE liberar el botón, aunque haya redirect
+      setIsSubmitting(false);
+    }
+  }
+
+  async function handleSocialLogin(kind: 'google' | 'facebook') {
+    setIsSubmitting(true);
+    try {
+      const provider =
+        kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      await handleSuccessfulLogin(userCredential);
+    } catch (error: any) {
+      console.error('Admin social login error', error);
+      let description = error?.message || 'Social login failed.';
+      switch (error?.code) {
+        case 'auth/popup-closed-by-user':
+          description = 'Login popup closed.';
+          break;
+        case 'auth/cancelled-popup-request':
+          description = 'Popup cancelled. Try again.';
+          break;
+        case 'auth/account-exists-with-different-credential':
+          description = 'Email already exists with another provider.';
+          break;
+        case 'auth/configuration-not-found':
+          description = `The ${kind} provider is not enabled in Firebase.`;
+          break;
+      }
+      toast({ title: 'Error', description, variant: 'destructive' });
+    } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="flex h-screen items-center justify-center bg-background">
-      <div id="recaptcha-container" />
+    <div className="container mx-auto px-4 py-16 md:py-24 flex items-center justify-center min-h-screen">
       <Card className="max-w-md w-full shadow-xl border-0">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary pt-8">
-            Admin Portal
+            <LogIn className="inline-block mr-2" /> Admin Portal
           </CardTitle>
           <CardDescription className="text-lg">
             Access the UREVENT 360 PLUS dashboard.
@@ -95,7 +155,8 @@ export default function AdminLoginPage() {
                 id="email"
                 type="email"
                 autoComplete="username"
-                placeholder="admin@urevent360.com"
+                inputMode="email"
+                placeholder="you@example.com"
                 {...register('email')}
                 aria-invalid={!!errors.email}
               />
@@ -139,14 +200,43 @@ export default function AdminLoginPage() {
             </div>
 
             <Button type="submit" disabled={isSubmitting} className="w-full">
-              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <LogIn className="mr-2" />}
+              {isSubmitting ? <Loader2 className="mr-2 animate-spin" /> : <Mail className="mr-2" />}
               {isSubmitting ? 'Logging in…' : 'Login'}
             </Button>
           </form>
-          <div className="mt-6 text-center space-y-2">
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">OR</span>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialLogin('google')}
+              disabled={isSubmitting}
+            >
+              <GoogleIcon className="mr-2" /> Continue with Google
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => handleSocialLogin('facebook')}
+              disabled={isSubmitting}
+            >
+              <FacebookIcon className="mr-2" /> Continue with Facebook
+            </Button>
+          </div>
+
+          <div className="mt-4 text-center">
             <Button variant="link" asChild>
               <Link href="/">
-                <Home className="mr-2" />
+                <Home className="mr-2 h-4 w-4" />
                 Go back to landing page
               </Link>
             </Button>

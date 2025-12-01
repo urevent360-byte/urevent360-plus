@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, {
@@ -9,8 +8,11 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { onAuthStateChanged, User, updateProfile as firebaseUpdateProfile } from 'firebase/auth';
-import { usePathname, useRouter } from 'next/navigation';
+import {
+  onAuthStateChanged,
+  User,
+  updateProfile as firebaseUpdateProfile,
+} from 'firebase/auth';
 import { auth } from '@/lib/firebase/authClient';
 
 type Role = 'admin' | 'host' | 'unknown';
@@ -22,55 +24,50 @@ type AuthCtx = {
   isAdmin: boolean;
   role: Role;
   signOut: () => Promise<void>;
-  updateProfile?: (profile: { displayName?: string; photoURL?: string }) => Promise<void>;
+  updateProfile: (profile: { displayName?: string; photoURL?: string }) => Promise<void>;
 };
 
 const Ctx = createContext<AuthCtx | null>(null);
 
-// Páginas de auth permitidas sin sesión
-const adminAuthPages = ['/admin/login', '/admin/forgot-password'];
-const appAuthPages = ['/app/login', '/app/register', '/app/forgot-password'];
-
-function isAdminArea(path: string) {
-  return path === '/admin' || path.startsWith('/admin/');
-}
-
-function isAppArea(path: string) {
-  return path === '/app' || path.startsWith('/app/');
-}
+// ---- helpers de cookie de rol ----
 
 async function clearRoleCookie() {
-  await fetch('/api/session/clear-role', {
-    method: 'POST',
-  });
+  try {
+    await fetch('/api/session/clear-role', { method: 'POST' });
+  } catch (e) {
+    console.error('Error clearing role cookie', e);
+  }
 }
 
 function getRoleFromCookie(): Role {
   if (typeof window === 'undefined') return 'unknown';
-  const cookie = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('role='))
-    ?.split('=')[1];
 
-  if (cookie === 'admin') return 'admin';
-  if (cookie === 'host') return 'host';
+  const cookie = document.cookie
+    .split(';')
+    .map((c) => c.trim())
+    .find((row) => row.startsWith('role='));
+
+  if (!cookie) return 'unknown';
+
+  const value = cookie.split('=')[1];
+  if (value === 'admin') return 'admin';
+  if (value === 'host') return 'host';
   return 'unknown';
 }
+
+// ---- AuthProvider real (con Firebase) ----
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const router = useRouter();
-  const pathname = usePathname() ?? '/';
-
-  // 1) Escuchar cambios de sesión Firebase
+  // 1) Escuchar cambios de sesión en Firebase
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
 
+      // si se cerró sesión, limpia cookie de rol
       if (!u) {
-        // User logged out → limpiar cookie de rol
         await clearRoleCookie();
       }
 
@@ -80,62 +77,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsub();
   }, []);
 
-  // 2) Función de logout
+  // 2) Logout
   const signOut = useCallback(async () => {
-    const inAdmin = isAdminArea(pathname);
-    await auth.signOut();
-    // onAuthStateChanged se encargará de limpiar la cookie
-    router.push(inAdmin ? '/admin/login' : '/app/login');
-  }, [pathname, router]);
+    try {
+      await auth.signOut();
+      await clearRoleCookie();
+      // La redirección la harán middleware + layouts
+    } catch (e) {
+      console.error('Error on signOut', e);
+    }
+  }, []);
 
   // 3) Actualizar perfil
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
       if (auth.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, profile);
-        setUser(auth.currentUser ? { ...auth.currentUser } : null);
+        // Forzar re-render copiando el user
+        setUser({ ...auth.currentUser });
       }
     },
     []
   );
 
-  // 4) Roles (a partir de la cookie)
+  // 4) Rol a partir de la cookie (solo tiene sentido si hay user)
   const role: Role = user ? getRoleFromCookie() : 'unknown';
   const isAdmin = role === 'admin';
 
-  // 5) Lógica de redirección según sesión + rol + ruta actual
-  useEffect(() => {
-    if (loading) return;
-
-    // Usuario NO autenticado → proteger /admin y /app
-    if (!user) {
-      if (isAdminArea(pathname) && !adminAuthPages.includes(pathname)) {
-        router.replace('/admin/login');
-        return;
-      }
-      if (isAppArea(pathname) && !appAuthPages.includes(pathname)) {
-        router.replace('/app/login');
-        return;
-      }
-      return;
-    }
-
-    // Usuario autenticado
-    if (role === 'admin') {
-      // Admin no debería estar en /app*, ni en las páginas de auth de admin
-      if (isAppArea(pathname) || adminAuthPages.includes(pathname)) {
-        router.replace('/admin/dashboard');
-        return;
-      }
-    } else if (role === 'host') {
-      // Host no debería estar en /admin*, ni en las páginas de auth de app
-      if (isAdminArea(pathname) || appAuthPages.includes(pathname)) {
-        router.replace('/app/dashboard');
-        return;
-      }
-    }
-  }, [loading, user, role, pathname, router]);
-
+  // 5) Valor expuesto al resto de la app
   const value = useMemo(
     () => ({
       user,

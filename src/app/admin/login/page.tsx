@@ -45,16 +45,12 @@ export default function AdminLoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  const setRoleCookie = async (role: 'admin' | 'host') => {
+  const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
     await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role }),
+      body: JSON.stringify({ role: 'admin' }),
     });
-  };
-
-  const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
-    await setRoleCookie('admin');
     toast({ title: 'Login Success', description: 'Redirecting to admin dashboard…' });
     router.push('/admin/dashboard');
   };

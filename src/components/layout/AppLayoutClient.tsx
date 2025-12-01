@@ -6,11 +6,11 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { InquiryModal } from '../page/home/InquiryModal';
 
-const adminRoutes = ['/admin', '/app'];
+const portalRoutes = ['/admin', '/app'];
 
 export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNode, logoUrl: string | null }) {
   const pathname = usePathname() ?? '';
-  const isPortalRoute = adminRoutes.some(route => pathname.startsWith(route));
+  const isPortalRoute = portalRoutes.some(route => pathname.startsWith(route));
 
   if (isPortalRoute) {
     return <>{children}</>;

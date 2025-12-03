@@ -28,7 +28,7 @@ export default function ServicesPage() {
     });
     toast({
       title: t('services.toast.added.title'),
-      description: `${service.title} ${t('services.toast.added.description')}`,
+      description: `${t(`service.${service.id}.title`)} ${t('services.toast.added.description')}`,
     });
   };
 
@@ -74,7 +74,7 @@ export default function ServicesPage() {
                 <div className="relative h-64 w-full">
                   <Image
                     src={service.heroImage || 'https://picsum.photos/800/600'}
-                    alt={service.title}
+                    alt={t(`service.${service.id}.title`)}
                     fill
                     className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-110"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -82,8 +82,8 @@ export default function ServicesPage() {
                 </div>
               </Link>
               <div className="p-6">
-                <h3 className="font-headline text-xl font-semibold text-primary">{service.title}</h3>
-                <p className="mt-2 text-gray-700 min-h-[72px]">{service.shortDescription}</p>
+                <h3 className="font-headline text-xl font-semibold text-primary">{t(`service.${service.id}.title`)}</h3>
+                <p className="mt-2 text-gray-700 min-h-[72px]">{t(`service.${service.id}.desc`)}</p>
                 <div className="mt-4 flex gap-2">
                     <Button asChild className="flex-1" variant="outline">
                         <Link href={`/services/${service.slug}`}>

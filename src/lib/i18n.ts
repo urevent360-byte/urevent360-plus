@@ -60,6 +60,32 @@ const en: Messages = {
   'services.card.addToCart': 'Add to Cart',
   'services.toast.added.title': 'Added to cart!',
   'services.toast.added.description': 'has been added to your inquiry cart.',
+
+  // Service titles
+  'service.360-photo-booth.title': '360 Photo Booth',
+  'service.magic-mirror.title': 'Magic Mirror',
+  'service.photo-booth-printer.title': 'Photo Booth Printer',
+  'service.la-hora-loca-led-robot.title': 'La Hora Loca with LED Robot',
+  'service.cold-sparklers.title': 'Cold Sparkler Fountains',
+  'service.dance-on-the-clouds.title': 'Dance on the Clouds',
+  'service.led-tunnel-neon-tubes.title': 'LED Tunnel & Neon Tubes',
+  'service.led-screen-wall.title': 'LED Screen Wall',
+  'service.projector-screen.title': 'Projector & Screen',
+  'service.custom-monogram.title': 'Custom Monogram',
+  'service.champagne-dress-hostess.title': 'Champagne Dress Hostess',
+
+  // Service descriptions
+  'service.360-photo-booth.desc': 'A modern platform where guests can record dynamic, slow-motion videos with a rotating camera.',
+  'service.magic-mirror.desc': 'An interactive, full-length mirror that takes amazing selfies with fun animations.',
+  'service.photo-booth-printer.desc': 'Receive glossy, high-quality photo strips instantly with custom logos and designs.',
+  'service.la-hora-loca-led-robot.desc': 'An epic hour of high-energy entertainment with a giant LED robot, dancers, and CO2 jets.',
+  'service.cold-sparklers.desc': 'Create a stunning, safe pyrotechnic-like effect for magical moments without heat or smoke.',
+  'service.dance-on-the-clouds.desc': 'A dreamy, thick cloud effect that covers the dance floor for a fairy-tale first dance.',
+  'service.led-tunnel-neon-tubes.desc': 'Create a futuristic entrance or photo backdrop with dynamic, colorful neon tube arches.',
+  'service.led-screen-wall.desc': 'A massive LED screen wall for vibrant visuals, animations, and a futuristic event look.',
+  'service.projector-screen.desc': 'Display slideshows and videos on a large screen for an emotional and personal touch.',
+  'service.custom-monogram.desc': 'Project a custom, glowing monogram of initials or designs onto the dance floor or wall.',
+  'service.champagne-dress-hostess.desc': 'A glamorous hostess serves champagne from an elegant dress-like structure, wowing your guests upon arrival.',
 };
 
 const es: Messages = {
@@ -119,6 +145,32 @@ const es: Messages = {
   'services.card.addToCart': 'Añadir al Carrito',
   'services.toast.added.title': '¡Añadido al carrito!',
   'services.toast.added.description': 'ha sido añadido a tu carrito de cotización.',
+
+  // Service titles
+  'service.360-photo-booth.title': 'Cabina de Fotos 360',
+  'service.magic-mirror.title': 'Espejo Mágico',
+  'service.photo-booth-printer.title': 'Impresora para Cabina de Fotos',
+  'service.la-hora-loca-led-robot.title': 'La Hora Loca con Robot LED',
+  'service.cold-sparklers.title': 'Fuentes de Chispas Frías',
+  'service.dance-on-the-clouds.title': 'Baile en las Nubes',
+  'service.led-tunnel-neon-tubes.title': 'Túnel LED y Tubos de Neón',
+  'service.led-screen-wall.title': 'Pantalla de Video LED',
+  'service.projector-screen.title': 'Proyector y Pantalla',
+  'service.custom-monogram.title': 'Monograma Personalizado',
+  'service.champagne-dress-hostess.title': 'Anfitriona con Vestido de Champán',
+
+  // Service descriptions
+  'service.360-photo-booth.desc': 'Una moderna plataforma donde los invitados graban videos dinámicos en cámara lenta con una cámara giratoria.',
+  'service.magic-mirror.desc': 'Un espejo interactivo de cuerpo entero que toma increíbles selfies con divertidas animaciones.',
+  'service.photo-booth-printer.desc': 'Recibe tiras de fotos brillantes y de alta calidad al instante con logos y diseños personalizados.',
+  'service.la-hora-loca-led-robot.desc': 'Una hora épica de entretenimiento de alta energía con un robot LED gigante, bailarines y chorros de CO2.',
+  'service.cold-sparklers.desc': 'Crea un impresionante efecto pirotécnico seguro para momentos mágicos sin calor ni humo.',
+  'service.dance-on-the-clouds.desc': 'Un efecto de nube densa y soñadora que cubre la pista de baile para un primer baile de cuento de hadas.',
+  'service.led-tunnel-neon-tubes.desc': 'Crea una entrada futurista o un fondo para fotos con arcos de tubos de neón dinámicos y coloridos.',
+  'service.led-screen-wall.desc': 'Una enorme pantalla de video LED para visuales vibrantes, animaciones y un look de evento futurista.',
+  'service.projector-screen.desc': 'Muestra presentaciones de diapositivas y videos en una pantalla grande para un toque emocional y personal.',
+  'service.custom-monogram.desc': 'Proyecta un monograma brillante y personalizado de iniciales o diseños en la pista de baile o en la pared.',
+  'service.champagne-dress-hostess.desc': 'Una glamorosa anfitriona sirve champán desde una elegante estructura tipo vestido, sorprendiendo a tus invitados a su llegada.',
 };
 
 const dictionaries: Record<Language, Messages> = {

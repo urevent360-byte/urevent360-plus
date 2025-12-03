@@ -27,6 +27,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useOpenRoyalInquiryModal } from '@/hooks/use-royal-inquiry-modal';
 import { Textarea } from '@/components/ui/textarea';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const royalInquirySchema = z.object({
   eventType: z.string().min(2, { message: 'Event type is required.' }),
@@ -42,6 +43,7 @@ export function RoyalInquiryModal() {
   const { isOpen, setOpen } = useOpenRoyalInquiryModal();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const form = useForm<RoyalInquiryFormValues>({
     resolver: zodResolver(royalInquirySchema),
@@ -69,8 +71,8 @@ export function RoyalInquiryModal() {
 
       if (response.ok) {
         toast({
-          title: 'Inquiry Submitted!',
-          description: "Thank you! We will be in touch shortly to discuss your Royal Celebration Jr. party.",
+          title: t('royalInquiryModal.toast.success.title'),
+          description: t('royalInquiryModal.toast.success.description'),
         });
         form.reset();
         setOpen(false);
@@ -79,7 +81,7 @@ export function RoyalInquiryModal() {
       }
     } catch (error: any) {
       toast({
-        title: 'Error',
+        title: t('royalInquiryModal.toast.error.title'),
         description: error.message,
         variant: 'destructive',
       });
@@ -92,9 +94,9 @@ export function RoyalInquiryModal() {
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Royal Celebration Jr. Inquiry</DialogTitle>
+          <DialogTitle>{t('royalInquiryModal.title')}</DialogTitle>
           <DialogDescription>
-            Tell us a bit about the party you're planning, and we'll get in touch to discuss the details.
+            {t('royalInquiryModal.description')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -104,9 +106,9 @@ export function RoyalInquiryModal() {
               name="eventType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type of Event</FormLabel>
+                  <FormLabel>{t('royalInquiryModal.eventType.label')}</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Birthday, Graduation" {...field} />
+                    <Input placeholder={t('royalInquiryModal.eventType.placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -118,7 +120,7 @@ export function RoyalInquiryModal() {
                 name="guestCount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Number of Guests</FormLabel>
+                    <FormLabel>{t('royalInquiryModal.guestCount.label')}</FormLabel>
                     <FormControl>
                       <Input type="number" {...field} />
                     </FormControl>
@@ -131,7 +133,7 @@ export function RoyalInquiryModal() {
                 name="zipCode"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>ZIP Code</FormLabel>
+                    <FormLabel>{t('royalInquiryModal.zipCode.label')}</FormLabel>
                     <FormControl>
                       <Input placeholder="32801" {...field} />
                     </FormControl>
@@ -145,9 +147,9 @@ export function RoyalInquiryModal() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>{t('royalInquiryModal.phone.label')}</FormLabel>
                   <FormControl>
-                    <Input type="tel" placeholder="(123) 456-7890" {...field} />
+                    <Input type="tel" placeholder={t('royalInquiryModal.phone.placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -158,9 +160,9 @@ export function RoyalInquiryModal() {
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>{t('royalInquiryModal.notes.label')}</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Any specific themes, characters, or ideas you have in mind?" {...field} />
+                    <Textarea placeholder={t('royalInquiryModal.notes.placeholder')} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -168,10 +170,10 @@ export function RoyalInquiryModal() {
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                Cancel
+                {t('royalInquiryModal.cancelButton')}
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Submit Inquiry'}
+                {isSubmitting ? t('royalInquiryModal.submittingButton') : t('royalInquiryModal.submitButton')}
               </Button>
             </DialogFooter>
           </form>

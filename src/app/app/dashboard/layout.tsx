@@ -1,6 +1,14 @@
 'use client';
 
-export default function AppDashboardLayout({ children }: { children: React.ReactNode }) {
-  // El guard y el PortalLayout ya los maneja src/app/app/layout.tsx
-  return <>{children}</>;
+import React from 'react';
+import AppPortalLayout from '@/app/app/PortalLayout';
+
+export default function AppDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  // Aquí ya NO hacemos useAuth ni useRouter.
+  // El middleware + AuthProvider se encargan de la seguridad.
+  return <AppPortalLayout>{children}</AppPortalLayout>;
 }

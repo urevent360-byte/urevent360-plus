@@ -2,6 +2,7 @@
 'use server';
 
 import { HeroSection } from '@/components/page/home/HeroSection';
+import { RoyalPromotionSection } from '@/components/page/home/RoyalPromotionSection';
 import { ExperiencesContent } from '@/components/page/home/ExperiencesContent';
 import { AboutContent } from '@/components/page/home/AboutContent';
 import { ExperiencesCarousel } from '@/components/page/home/ExperiencesCarousel';
@@ -18,6 +19,8 @@ export default async function Home() {
   return (
     <div className="flex flex-col">
       <HeroSection />
+
+      <RoyalPromotionSection />
 
       <section className="py-16 md:py-24">
         <div className="container mx-auto px-4">

@@ -82,6 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await auth.signOut();
       await clearRoleCookie();
+      // El propio middleware + layouts se encargarán de redirigir
     } catch (e) {
       console.error('Error on signOut', e);
     }

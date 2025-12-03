@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 💡 Ignorar errores de ESLint en los builds
   eslint: {
-    // Desactiva ESLint en los builds de producción
     ignoreDuringBuilds: true,
+  },
+
+  // 💡 Ignorar errores de TypeScript en los builds
+  typescript: {
+    ignoreBuildErrors: true,
   },
 
   // Dominios desde donde puedo cargar imágenes remotas

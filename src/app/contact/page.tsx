@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useFormState, useFormStatus } from 'react-dom';
@@ -14,6 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { submitInquiryAction } from './actions';
 import { Send } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -25,14 +27,15 @@ type FormValues = z.infer<typeof formSchema>;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const { t } = useTranslation();
   return (
     <Button type="submit" disabled={pending} className="w-full bg-accent hover:bg-accent/90">
       {pending ? (
-        <>Sending...</>
+        <>{t('contact.submittingButton')}</>
       ) : (
         <>
           <Send className="mr-2 h-4 w-4" />
-          Send Inquiry
+          {t('contact.submitButton')}
         </>
       )}
     </Button>
@@ -41,6 +44,7 @@ function SubmitButton() {
 
 export default function ContactPage() {
   const { toast } = useToast();
+  const { t, language } = useTranslation();
   
   const [state, formAction] = useFormState(submitInquiryAction, {
     message: '',
@@ -55,41 +59,41 @@ export default function ContactPage() {
     if (state.message) {
       if (Object.keys(state.errors).length > 0 || state.message.startsWith('An unexpected')) {
         toast({
-          title: 'Error',
+          title: t('contact.toast.error.title'),
           description: state.message,
           variant: 'destructive',
         });
       } else {
         toast({
-          title: 'Success!',
-          description: 'Inquiry sent successfully! We will get in touch with you soon.',
+          title: t('contact.toast.success.title'),
+          description: t('contact.toast.success.description'),
         });
         reset();
       }
     }
-  }, [state, toast, reset]);
+  }, [state, toast, reset, t]);
 
   return (
     <div className="container mx-auto px-4 py-16 md:py-24">
       <Card className="max-w-2xl mx-auto shadow-xl border-0">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-3xl md:text-4xl text-primary">
-            Request an Inquiry
+            {t('contact.title')}
           </CardTitle>
           <CardDescription className="text-lg">
-            Have a question or want to start planning your event? Fill out the form below and we'll get back to you shortly.
+            {t('contact.description')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form action={formAction} className="space-y-6">
-            <input type="hidden" name="languagePreference" value="en" />
+            <input type="hidden" name="languagePreference" value={language} />
             
             <div className="space-y-2">
-              <Label htmlFor="name">Your Name</Label>
+              <Label htmlFor="name">{t('contact.nameLabel')}</Label>
               <Input
                 id="name"
                 {...register('name')}
-                placeholder="John Doe"
+                placeholder={t('contact.namePlaceholder')}
                 aria-invalid={!!errors.name}
               />
               {(errors.name || state.errors?.name) && (
@@ -98,12 +102,12 @@ export default function ContactPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Your Email</Label>
+              <Label htmlFor="email">{t('contact.emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
                 {...register('email')}
-                placeholder="john.doe@example.com"
+                placeholder={t('contact.emailPlaceholder')}
                 aria-invalid={!!errors.email}
               />
               {(errors.email || state.errors?.email) && (
@@ -112,11 +116,11 @@ export default function ContactPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="message">Your Message</Label>
+              <Label htmlFor="message">{t('contact.messageLabel')}</Label>
               <Textarea
                 id="message"
                 {...register('message')}
-                placeholder="Tell us about your event..."
+                placeholder={t('contact.messagePlaceholder')}
                 className="min-h-[150px]"
                 aria-invalid={!!errors.message}
               />

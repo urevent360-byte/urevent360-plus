@@ -93,6 +93,21 @@ const en: Messages = {
   'gallery.button.arrange': 'Arrange with AI',
   'gallery.button.arranging': 'Arranging...',
   'gallery.aiLayout.title': 'AI-Generated Layout',
+
+  // Contact Page
+  'contact.title': 'Request an Inquiry',
+  'contact.description': "Have a question or want to start planning your event? Fill out the form below and we'll get back to you shortly.",
+  'contact.nameLabel': 'Your Name',
+  'contact.emailLabel': 'Your Email',
+  'contact.messageLabel': 'Your Message',
+  'contact.namePlaceholder': 'John Doe',
+  'contact.emailPlaceholder': 'john.doe@example.com',
+  'contact.messagePlaceholder': 'Tell us about your event...',
+  'contact.submitButton': 'Send Inquiry',
+  'contact.submittingButton': 'Sending...',
+  'contact.toast.success.title': 'Success!',
+  'contact.toast.success.description': 'Inquiry sent successfully! We will get in touch with you soon.',
+  'contact.toast.error.title': 'Error'
 };
 
 const es: Messages = {
@@ -185,6 +200,21 @@ const es: Messages = {
   'gallery.button.arrange': 'Organizar con IA',
   'gallery.button.arranging': 'Organizando...',
   'gallery.aiLayout.title': 'Diseño Generado por IA',
+
+  // Contact Page
+  'contact.title': 'Solicitar una Cotización',
+  'contact.description': '¿Tienes alguna pregunta o quieres empezar a planificar tu evento? Rellena el siguiente formulario y nos pondremos en contacto contigo en breve.',
+  'contact.nameLabel': 'Tu Nombre',
+  'contact.emailLabel': 'Tu Email',
+  'contact.messageLabel': 'Tu Mensaje',
+  'contact.namePlaceholder': 'Juan Pérez',
+  'contact.emailPlaceholder': 'juan.perez@example.com',
+  'contact.messagePlaceholder': 'Cuéntanos sobre tu evento...',
+  'contact.submitButton': 'Enviar Cotización',
+  'contact.submittingButton': 'Enviando...',
+  'contact.toast.success.title': '¡Éxito!',
+  'contact.toast.success.description': '¡Solicitud enviada con éxito! Nos pondremos en contacto contigo pronto.',
+  'contact.toast.error.title': 'Error'
 };
 
 const dictionaries: Record<Language, Messages> = {

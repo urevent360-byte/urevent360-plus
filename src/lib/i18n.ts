@@ -47,6 +47,19 @@ const en: Messages = {
   'royalInquiryModal.toast.success.title': 'Inquiry Submitted!',
   'royalInquiryModal.toast.success.description': "Thank you! We will be in touch shortly to discuss your Royal Celebration Jr. party.",
   'royalInquiryModal.toast.error.title': 'Error',
+  'services.title': 'Our Services',
+  'services.subtitle': 'Explore the wide range of services we offer to make your event unforgettable.',
+  'services.category.all': 'All Services',
+  'services.category.photo_booths': 'Photo Booths',
+  'services.category.hora_loca': 'Hora Loca',
+  'services.category.effects': 'Effects',
+  'services.category.installations': 'Installations',
+  'services.category.screens_projection': 'Screens & Projection',
+  'services.category.special_welcomes': 'Special Welcomes',
+  'services.card.viewDetails': 'View Details',
+  'services.card.addToCart': 'Add to Cart',
+  'services.toast.added.title': 'Added to cart!',
+  'services.toast.added.description': 'has been added to your inquiry cart.',
 };
 
 const es: Messages = {
@@ -54,7 +67,7 @@ const es: Messages = {
   'hero.subtitle': 'UREVENT 360 PLUS hace realidad tu visión con pasión, creatividad y precisión. Creemos recuerdos juntos.',
   'hero.requestInquiry': 'Solicitar Cotización',
   'section.ourExperiences': 'Nuestras Experiencias',
-  'experiences.subtitle': 'Desde reuniones íntimas hasta grandes celebraciones, nos especializamos en crear eventos a medida que reflejan tu estilo único.',
+  'experiences.subtitle': 'Desde reuniones íntimas hasta grandes celebraciones, creamos eventos a la medida que reflejan tu estilo único.',
   'royal.title': 'Presentando Royal Celebration Jr.',
   'royal.subtitle': 'Una mágica experiencia de fiesta todo incluido, diseñada para nuestros pequeños VIP. ¡Déjanos encargarnos de los detalles para una celebración que nunca olvidarán!',
   'royal.button': 'Saber Más y Cotizar',
@@ -93,6 +106,19 @@ const es: Messages = {
   'royalInquiryModal.toast.success.title': '¡Cotización Enviada!',
   'royalInquiryModal.toast.success.description': '¡Gracias! Nos pondremos en contacto pronto para hablar de tu fiesta Royal Celebration Jr.',
   'royalInquiryModal.toast.error.title': 'Error',
+  'services.title': 'Nuestros Servicios',
+  'services.subtitle': 'Explora la amplia gama de servicios que ofrecemos para hacer tu evento inolvidable.',
+  'services.category.all': 'Todos los Servicios',
+  'services.category.photo_booths': 'Cabinas de Fotos',
+  'services.category.hora_loca': 'Hora Loca',
+  'services.category.effects': 'Efectos',
+  'services.category.installations': 'Instalaciones',
+  'services.category.screens_projection': 'Pantallas y Proyección',
+  'services.category.special_welcomes': 'Bienvenidas Especiales',
+  'services.card.viewDetails': 'Ver Detalles',
+  'services.card.addToCart': 'Añadir al Carrito',
+  'services.toast.added.title': '¡Añadido al carrito!',
+  'services.toast.added.description': 'ha sido añadido a tu carrito de cotización.',
 };
 
 const dictionaries: Record<Language, Messages> = {

@@ -1,11 +1,10 @@
 
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
-import Providers from './Providers';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import brandingData from '@/lib/branding.json';
 import { LanguageProvider } from '@/contexts/LanguageProvider';
+import Providers from './Providers';
 
 
 export const metadata = {
@@ -32,13 +31,11 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body>
-        <LanguageProvider>
           <Providers>
               <AppLayoutClient logoUrl={logoUrl}>
                   {children}
               </AppLayoutClient>
           </Providers>
-        </LanguageProvider>
       </body>
     </html>
   );

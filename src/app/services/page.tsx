@@ -9,6 +9,7 @@ import { ArrowRight, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/use-cart';
 import { useToast } from '@/hooks/use-toast';
 import servicesCatalog from '@/lib/services-catalog.json';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const activeServices = servicesCatalog.services.filter(service => service.active);
 const allCategories = [...new Set(activeServices.map(service => service.category))];
@@ -17,6 +18,7 @@ export default function ServicesPage() {
   const { addToCart } = useCart();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const { t } = useTranslation();
 
   const handleAddToCart = (service: typeof activeServices[0]) => {
     addToCart({
@@ -25,8 +27,8 @@ export default function ServicesPage() {
       image: service.heroImage || '',
     });
     toast({
-      title: 'Added to cart!',
-      description: `${service.title} has been added to your inquiry cart.`,
+      title: t('services.toast.added.title'),
+      description: `${service.title} ${t('services.toast.added.description')}`,
     });
   };
 
@@ -38,10 +40,10 @@ export default function ServicesPage() {
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h1 className="font-headline text-3xl md:text-4xl font-bold text-primary">
-          Our Services
+          {t('services.title')}
         </h1>
         <p className="mt-4 text-lg text-foreground/80">
-          Explore the wide range of services we offer to make your event unforgettable.
+          {t('services.subtitle')}
         </p>
       </div>
 
@@ -50,7 +52,7 @@ export default function ServicesPage() {
           variant={selectedCategory === 'all' ? 'default' : 'outline'}
           onClick={() => setSelectedCategory('all')}
         >
-          All Services
+          {t('services.category.all')}
         </Button>
         {allCategories.map(category => (
           <Button
@@ -59,7 +61,7 @@ export default function ServicesPage() {
             onClick={() => setSelectedCategory(category)}
             className="capitalize"
           >
-            {category.replace(/_/g, ' ')}
+            {t(`services.category.${category}`)}
           </Button>
         ))}
       </div>
@@ -85,12 +87,12 @@ export default function ServicesPage() {
                 <div className="mt-4 flex gap-2">
                     <Button asChild className="flex-1" variant="outline">
                         <Link href={`/services/${service.slug}`}>
-                            View Details <ArrowRight className="ml-2" />
+                            {t('services.card.viewDetails')} <ArrowRight className="ml-2" />
                         </Link>
                     </Button>
                     <Button onClick={() => handleAddToCart(service)} className="flex-1">
                         <ShoppingCart className="mr-2"/>
-                        Add to Cart
+                        {t('services.card.addToCart')}
                     </Button>
                 </div>
               </div>

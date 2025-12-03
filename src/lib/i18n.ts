@@ -4,6 +4,10 @@ import type { Language } from '@/contexts/LanguageProvider';
 type Messages = Record<string, string>;
 
 const en: Messages = {
+  'nav.home': 'Home',
+  'nav.services': 'Services',
+  'nav.gallery': 'Gallery',
+  'nav.contact': 'Contact',
   'hero.title': 'Unforgettable Events, Perfectly Planned.',
   'hero.subtitle': "UREVENT 360 PLUS brings your vision to life with passion, creativity, and precision. Let's create memories together.",
   'hero.requestInquiry': 'Request an Inquiry',
@@ -111,6 +115,10 @@ const en: Messages = {
 };
 
 const es: Messages = {
+  'nav.home': 'Inicio',
+  'nav.services': 'Servicios',
+  'nav.gallery': 'Galería',
+  'nav.contact': 'Contacto',
   'hero.title': 'Eventos Inolvidables, Perfectamente Planeados.',
   'hero.subtitle': 'UREVENT 360 PLUS hace realidad tu visión con pasión, creatividad y precisión. Creemos recuerdos juntos.',
   'hero.requestInquiry': 'Solicitar Cotización',

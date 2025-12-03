@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -22,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useCart } from '@/hooks/use-cart';
 import { useOpenInquiryModal } from '../page/home/InquiryModal';
 import LanguageSwitcher from '../shared/LanguageSwitcher';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
@@ -30,6 +32,7 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const [isSheetOpen, setSheetOpen] = useState(false);
   const { items } = useCart();
   const { setOpen: setInquiryOpen } = useOpenInquiryModal();
+  const { t } = useTranslation();
 
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {
@@ -40,10 +43,10 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const dashboardLink = isAdmin ? '/admin/dashboard' : '/app/dashboard';
 
   const navItems = [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/gallery', label: 'Gallery' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/', label: t('nav.home') },
+    { href: '/services', label: t('nav.services') },
+    { href: '/gallery', label: t('nav.gallery') },
+    { href: '/contact', label: t('nav.contact') },
   ];
 
   const NavLinks = ({ isMobile = false }: { isMobile?: boolean }) => (

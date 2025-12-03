@@ -86,6 +86,13 @@ const en: Messages = {
   'service.projector-screen.desc': 'Display slideshows and videos on a large screen for an emotional and personal touch.',
   'service.custom-monogram.desc': 'Project a custom, glowing monogram of initials or designs onto the dance floor or wall.',
   'service.champagne-dress-hostess.desc': 'A glamorous hostess serves champagne from an elegant dress-like structure, wowing your guests upon arrival.',
+
+  // Gallery Page
+  'gallery.title': 'Dynamic Image Gallery',
+  'gallery.subtitle': 'Explore our past events. Click the button below to see our AI dynamically rearrange the gallery for a unique visual experience.',
+  'gallery.button.arrange': 'Arrange with AI',
+  'gallery.button.arranging': 'Arranging...',
+  'gallery.aiLayout.title': 'AI-Generated Layout',
 };
 
 const es: Messages = {
@@ -171,6 +178,13 @@ const es: Messages = {
   'service.projector-screen.desc': 'Muestra presentaciones de diapositivas y videos en una pantalla grande para un toque emocional y personal.',
   'service.custom-monogram.desc': 'Proyecta un monograma brillante y personalizado de iniciales o diseños en la pista de baile o en la pared.',
   'service.champagne-dress-hostess.desc': 'Una glamorosa anfitriona sirve champán desde una elegante estructura tipo vestido, sorprendiendo a tus invitados a su llegada.',
+
+  // Gallery Page
+  'gallery.title': 'Galería de Imágenes Dinámica',
+  'gallery.subtitle': 'Explora nuestros eventos pasados. Haz clic en el botón de abajo para ver cómo nuestra IA reorganiza dinámicamente la galería para una experiencia visual única.',
+  'gallery.button.arrange': 'Organizar con IA',
+  'gallery.button.arranging': 'Organizando...',
+  'gallery.aiLayout.title': 'Diseño Generado por IA',
 };
 
 const dictionaries: Record<Language, Messages> = {

@@ -11,6 +11,7 @@ import {
 import placeholderImages from '@/lib/placeholder-images.json';
 import { Loader2 } from 'lucide-react';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const galleryImages = placeholderImages.placeholderImages.filter(p =>
   p.id.startsWith('gallery-')
@@ -20,6 +21,7 @@ export default function GalleryPage() {
   const [arrangedData, setArrangedData] =
     useState<DynamicallyArrangeImagesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleArrangeClick = async () => {
     setIsLoading(true);
@@ -56,10 +58,10 @@ export default function GalleryPage() {
     <div className="container mx-auto px-4 py-16 md:py-24">
       <div className="mb-12 text-center">
         <h1 className="font-headline text-3xl font-bold text-primary md:text-4xl">
-          Dynamic Image Gallery
+          {t('gallery.title')}
         </h1>
         <p className="mx-auto mt-2 max-w-3xl text-lg text-foreground/80">
-          Explore our past events. Click the button below to see our AI dynamically rearrange the gallery for a unique visual experience.
+          {t('gallery.subtitle')}
         </p>
       </div>
 
@@ -68,17 +70,17 @@ export default function GalleryPage() {
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Arranging...
+              {t('gallery.button.arranging')}
             </>
           ) : (
-            'Arrange with AI'
+            t('gallery.button.arrange')
           )}
         </Button>
       </div>
 
       {arrangedData && (
         <Alert className="my-8 max-w-4xl mx-auto">
-          <AlertTitle className="font-bold">AI-Generated Layout</AlertTitle>
+          <AlertTitle className="font-bold">{t('gallery.aiLayout.title')}</AlertTitle>
           <AlertDescription>
             {arrangedData.layoutMetadata}
           </AlertDescription>

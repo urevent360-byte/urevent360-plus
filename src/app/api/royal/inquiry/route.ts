@@ -1,6 +1,8 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { db } from '@/lib/firebase/client';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const royalInquirySchema = z.object({
   eventType: z.string().min(2),
@@ -19,11 +21,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: 'Invalid form data.', errors: validatedData.error.flatten().fieldErrors }, { status: 400 });
     }
 
-    // In a real app, you would save this to Firestore in a new collection, e.g., 'royalInquiries'.
-    console.log('Received new Royal Celebration Jr. inquiry:', validatedData.data);
-    
-    // Simulate DB save
-    await new Promise(resolve => setTimeout(resolve, 500));
+    const { eventType, guestCount, zipCode, phone, notes } = validatedData.data;
+
+    // Save to Firestore
+    await addDoc(collection(db, 'royal_inquiries'), {
+      eventType,
+      guests: guestCount,
+      zip: zipCode,
+      phone,
+      notes: notes || '',
+      status: 'new',
+      createdAt: serverTimestamp(),
+    });
 
     return NextResponse.json({ message: 'Inquiry received successfully!' });
 

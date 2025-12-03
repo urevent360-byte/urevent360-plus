@@ -32,6 +32,7 @@ import {
   Menu,
   Search,
   Users2,
+  Crown,
 } from 'lucide-react';
 import { Logo } from '@/components/shared/icons';
 import { AuthSignOutButton } from '@/components/shared/AuthSignOutButton';
@@ -49,6 +50,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/admin/designs', label: 'Designs', icon: Palette },
   { href: '/admin/gallery', label: 'Gallery', icon: Camera },
   { href: '/admin/marketing', label: 'Marketing', icon: BarChart },
+  { href: '/admin/royal-inquiries', label: 'Royal Inquiries', icon: Crown },
   { href: '/admin/content', label: 'Content', icon: Newspaper },
   { href: '/admin/seo', label: 'SEO', icon: Search },
   { href: '/admin/users', label: 'Users & Roles', icon: Users2 },

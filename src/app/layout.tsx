@@ -6,6 +6,7 @@ import { JsonLd } from '@/components/shared/JsonLd';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import brandingData from '@/lib/branding.json';
 import { RoyalInquiryModal } from '@/components/page/home/RoyalInquiryModal';
+import { LanguageProvider } from '@/contexts/LanguageProvider';
 
 
 export const metadata = {
@@ -32,11 +33,13 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body>
-        <Providers>
-            <AppLayoutClient logoUrl={logoUrl}>
-                {children}
-            </AppLayoutClient>
-        </Providers>
+        <LanguageProvider>
+          <Providers>
+              <AppLayoutClient logoUrl={logoUrl}>
+                  {children}
+              </AppLayoutClient>
+          </Providers>
+        </LanguageProvider>
         <Toaster />
         <RoyalInquiryModal />
       </body>

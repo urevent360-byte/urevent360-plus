@@ -5,7 +5,6 @@ import Providers from './Providers';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import brandingData from '@/lib/branding.json';
-import { RoyalInquiryModal } from '@/components/page/home/RoyalInquiryModal';
 import { LanguageProvider } from '@/contexts/LanguageProvider';
 
 
@@ -40,8 +39,6 @@ export default function RootLayout({
               </AppLayoutClient>
           </Providers>
         </LanguageProvider>
-        <Toaster />
-        <RoyalInquiryModal />
       </body>
     </html>
   );

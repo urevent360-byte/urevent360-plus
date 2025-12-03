@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { InquiryModal } from '../page/home/InquiryModal';
+import { RoyalInquiryModal } from '../page/home/RoyalInquiryModal';
+import { Toaster } from '../ui/toaster';
 
 const portalRoutes = ['/admin', '/app'];
 
@@ -13,7 +15,12 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
   const isPortalRoute = portalRoutes.some(route => pathname.startsWith(route));
 
   if (isPortalRoute) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <Toaster />
+      </>
+    );
   }
 
   return (
@@ -22,6 +29,8 @@ export function AppLayoutClient({ children, logoUrl }: { children: React.ReactNo
       <main className="flex-grow flex flex-col">{children}</main>
       <Footer />
       <InquiryModal />
+      <RoyalInquiryModal />
+      <Toaster />
     </div>
   );
 }

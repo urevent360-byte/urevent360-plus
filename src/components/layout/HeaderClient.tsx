@@ -21,6 +21,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { useCart } from '@/hooks/use-cart';
 import { useOpenInquiryModal } from '../page/home/InquiryModal';
+import LanguageSwitcher from '../shared/LanguageSwitcher';
 
 export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
   const { user, isAdmin, signOut, loading: authLoading } = useAuth();
@@ -81,11 +82,13 @@ export function HeaderClient({ logoUrl }: { logoUrl: string | null }) {
           <Logo logoUrl={logoUrl} />
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           {/* Main links (desktop) */}
           <div className="hidden md:flex">
             <NavLinks />
           </div>
+
+          <LanguageSwitcher />
 
           {/* Inquiry Cart */}
           <Button

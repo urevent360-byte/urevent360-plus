@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
-import type { Event, FileRecord, TimelineItem, Song, Payment } from '@/lib/types';
+import type { Event, FileRecord, TimelineItem, Song, Payment } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { TabsContent } from '@/components/ui/tabs';
 import { EventChat } from '@/components/shared/EventChat';
@@ -181,7 +181,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [isLoading, setIsLoading] = useState(true);
     const [isSigning, setIsSigning] = useState(false);
     const searchParams = useSearchParams();
-    const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'details');
+    const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'details');
     const { toast } = useToast();
 
     async function fetchEventData() {

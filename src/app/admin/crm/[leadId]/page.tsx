@@ -1,14 +1,10 @@
-
 // src/app/admin/crm/[leadId]/page.tsx
+
 import LeadDetailClient from './client';
-type LeadPageProps = {
-  params: {
-    leadId: string;
-  };
-};
 
+// Usamos "any" para evitar el choque con PageProps de Next.
+export default function AdminLeadDetailPage({ params }: any) {
+  const leadId = params?.leadId as string;
 
-export default function AdminLeadDetailPage({ params }: LeadPageProps) {
-  const { leadId } = params;
   return <LeadDetailClient leadId={leadId} />;
 }

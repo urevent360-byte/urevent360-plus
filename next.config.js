@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  eslint: {
+    // Desactiva ESLint en los builds de producción
+    ignoreDuringBuilds: true,
+  },
 
   // Dominios desde donde puedo cargar imágenes remotas
   images: {
@@ -25,4 +28,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

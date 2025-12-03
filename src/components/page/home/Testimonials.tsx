@@ -1,28 +1,9 @@
+
 'use client';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Star, Quote } from 'lucide-react';
-
-const testimonialsData = [
-  {
-    rating: 5,
-    text: '"UREVENT 360 transformed our wedding reception into an unforgettable experience. The 360 Photo Booth was a huge hit!"',
-    author: 'Sarah Johnson',
-    title: 'Wedding Planner',
-  },
-  {
-    rating: 5,
-    text: '"The Magic Mirror brought so much joy to our company party. Everyone was talking about it for weeks!"',
-    author: 'Michael Rodriguez',
-    title: 'Corporate Event Manager',
-  },
-  {
-    rating: 5,
-    text: '"La Hora Loca was exactly what we needed to energize our celebration. Professional and fun!"',
-    author: 'Emma Chen',
-    title: 'Birthday Party Organizer',
-  },
-];
+import { useTranslation } from '@/hooks/useTranslation';
 
 const Rating = ({ rating }: { rating: number }) => (
   <div className="flex items-center gap-0.5">
@@ -38,14 +19,36 @@ const Rating = ({ rating }: { rating: number }) => (
 );
 
 export function Testimonials() {
+  const { t } = useTranslation();
+
+  const testimonialsData = [
+    {
+      rating: 5,
+      text: t('testimonials.t1.text'),
+      author: t('testimonials.t1.author'),
+      title: t('testimonials.t1.title'),
+    },
+    {
+      rating: 5,
+      text: t('testimonials.t2.text'),
+      author: t('testimonials.t2.author'),
+      title: t('testimonials.t2.title'),
+    },
+    {
+      rating: 5,
+      text: t('testimonials.t3.text'),
+      author: t('testimonials.t3.author'),
+      title: t('testimonials.t3.title'),
+    },
+  ];
 
   return (
     <div className="text-center">
       <h2 className="font-headline text-3xl font-bold text-primary md:text-4xl">
-        What Our Clients Say
+        {t('testimonials.title')}
       </h2>
       <p className="mx-auto mt-2 max-w-2xl text-lg text-foreground/80">
-        Don't just take our word for it - hear from those who've experienced our magic
+        {t('testimonials.subtitle')}
       </p>
 
       <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">

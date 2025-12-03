@@ -1,3 +1,4 @@
+
 import type { Language } from '@/contexts/LanguageProvider';
 
 type Messages = Record<string, string>;
@@ -8,6 +9,28 @@ const en: Messages = {
   'hero.requestInquiry': 'Request an Inquiry',
   'section.ourExperiences': 'Our Experiences',
   'experiences.subtitle': 'From intimate gatherings to grand celebrations, we specialize in creating bespoke events that reflect your unique style.',
+  'royal.title': 'Introducing Royal Celebration Jr.',
+  'royal.subtitle': "A magical, all-inclusive party experience designed for our little VIPs. Let us handle the details for a celebration they'll never forget!",
+  'royal.button': 'Learn More & Inquire',
+  'about.title': 'About UREVENT 360',
+  'about.subtitle': 'Crafting Unforgettable Moments, One Event at a Time',
+  'about.p1': 'At UREVENT 360, we believe every event is an opportunity to create lasting memories. We are a passionate team dedicated to transforming your visions into spectacular realities. With years of experience in event planning and entertainment, we bring creativity, professionalism, and a touch of magic to every celebration.',
+  'about.p2': 'Our mission is to provide seamless, stress-free event experiences that exceed expectations. From intimate gatherings to grand corporate affairs, we handle every detail with precision and care, ensuring your event is not just successful, but truly unforgettable. Let us bring your dream event to life!',
+  'about.mission.title': 'Our Mission',
+  'about.mission.text': 'To deliver exceptional event experiences through innovative solutions and unparalleled service.',
+  'about.vision.title': 'Our Vision',
+  'about.vision.text': 'To be the leading event planning and entertainment provider, known for creativity, reliability, and client satisfaction.',
+  'testimonials.title': 'What Our Clients Say',
+  'testimonials.subtitle': "Don't just take our word for it - hear from those who've experienced our magic",
+  'testimonials.t1.text': '"UREVENT 360 transformed our wedding reception into an unforgettable experience. The 360 Photo Booth was a huge hit!"',
+  'testimonials.t1.author': 'Sarah Johnson',
+  'testimonials.t1.title': 'Wedding Planner',
+  'testimonials.t2.text': '"The Magic Mirror brought so much joy to our company party. Everyone was talking about it for weeks!"',
+  'testimonials.t2.author': 'Michael Rodriguez',
+  'testimonials.t2.title': 'Corporate Event Manager',
+  'testimonials.t3.text': '"La Hora Loca was exactly what we needed to energize our celebration. Professional and fun!"',
+  'testimonials.t3.author': 'Emma Chen',
+  'testimonials.t3.title': 'Birthday Party Organizer',
 };
 
 const es: Messages = {
@@ -16,6 +39,28 @@ const es: Messages = {
   'hero.requestInquiry': 'Solicitar Cotización',
   'section.ourExperiences': 'Nuestras Experiencias',
   'experiences.subtitle': 'Desde reuniones íntimas hasta grandes celebraciones, nos especializamos en crear eventos a medida que reflejan tu estilo único.',
+  'royal.title': 'Presentando Royal Celebration Jr.',
+  'royal.subtitle': 'Una mágica experiencia de fiesta todo incluido, diseñada para nuestros pequeños VIP. ¡Déjanos encargarnos de los detalles para una celebración que nunca olvidarán!',
+  'royal.button': 'Saber Más y Cotizar',
+  'about.title': 'Sobre UREVENT 360',
+  'about.subtitle': 'Creando Momentos Inolvidables, Un Evento a la Vez',
+  'about.p1': 'En UREVENT 360, creemos que cada evento es una oportunidad para crear recuerdos duraderos. Somos un equipo apasionado dedicado a transformar tus visiones en realidades espectaculares. Con años de experiencia en planificación y entretenimiento de eventos, aportamos creatividad, profesionalismo y un toque de magia a cada celebración.',
+  'about.p2': 'Nuestra misión es proporcionar experiencias de eventos fluidas y sin estrés que superen las expectativas. Desde reuniones íntimas hasta grandes eventos corporativos, manejamos cada detalle con precisión y cuidado, asegurando que tu evento no solo sea exitoso, sino verdaderamente inolvidable. ¡Permítenos dar vida al evento de tus sueños!',
+  'about.mission.title': 'Nuestra Misión',
+  'about.mission.text': 'Ofrecer experiencias de eventos excepcionales a través de soluciones innovadoras y un servicio inigualable.',
+  'about.vision.title': 'Nuestra Visión',
+  'about.vision.text': 'Ser el proveedor líder de planificación y entretenimiento de eventos, conocido por la creatividad, la confiabilidad y la satisfacción del cliente.',
+  'testimonials.title': 'Lo Que Dicen Nuestros Clientes',
+  'testimonials.subtitle': 'No confíes solo en nuestra palabra, escucha a quienes han experimentado nuestra magia.',
+  'testimonials.t1.text': '"UREVENT 360 transformó la recepción de nuestra boda en una experiencia inolvidable. ¡La Cabina 360 fue un éxito total!"',
+  'testimonials.t1.author': 'Sarah Johnson',
+  'testimonials.t1.title': 'Organizadora de Bodas',
+  'testimonials.t2.text': '"El Espejo Mágico trajo muchísima alegría a nuestra fiesta de empresa. ¡Todo el mundo habló de él durante semanas!"',
+  'testimonials.t2.author': 'Michael Rodriguez',
+  'testimonials.t2.title': 'Gerente de Eventos Corporativos',
+  'testimonials.t3.text': '"La Hora Loca fue exactamente lo que necesitábamos para energizar nuestra celebración. ¡Profesional y divertido!"',
+  'testimonials.t3.author': 'Emma Chen',
+  'testimonials.t3.title': 'Organizadora de Fiestas',
 };
 
 const dictionaries: Record<Language, Messages> = {

@@ -22,7 +22,7 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
     value: "studio-9636239298-2e252"
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "studio-9636239298-2e252.appspot.com"
+    value: "studio-9636239298-2e252.firebasestorage.app"
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "298341125021"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID

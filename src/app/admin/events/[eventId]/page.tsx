@@ -1,13 +1,11 @@
 
 import * as React from 'react';
 import AdminEventDetailClient from './client';
+export default async function AdminEventPage({
+  params,
+  searchParams,
+}: any) {
 
-type Props = {
-  params: { eventId: string };
-  searchParams?: Record<string, string | string[] | undefined>;
-};
-
-export default function AdminEventDetailPage({ params }: Props) {
     const { eventId } = params;
     return <AdminEventDetailClient eventId={eventId} />;
 }

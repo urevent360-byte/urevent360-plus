@@ -33,4 +33,5 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// 👇 ***IMPORTANTE***: usar CommonJS, NO "export default"
+module.exports = nextConfig;

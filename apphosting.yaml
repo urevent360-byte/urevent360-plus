@@ -22,6 +22,6 @@ env:
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "298341125021"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
-    value: "1:298341125021:web:abaa2c228a0fdebed6bd74"
+    value: "1:298341125021:web:a0f34866c9cce9d1d6bd74"
   - variable: GOOGLE_GENAI_API_KEY
     value: "AIzaSyDocPBpSqGr_vYTxijDOtxYPxwvePJISiY"

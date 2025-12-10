@@ -10,10 +10,6 @@ runConfig:
 
 # Environment variables and secrets
 # See https://firebase.google.com/docs/app-hosting/configure#environment-variables
-# apphosting.yaml
-runConfig:
-  minInstances: 0
-
 env:
   - variable: NEXT_PUBLIC_FIREBASE_API_KEY
     value: "AIzaSyCgx3p7fMTWv-9TJcc32QiKsHRMJmSrBWQ"
@@ -27,3 +23,5 @@ env:
     value: "298341125021"
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: "1:298341125021:web:abaa2c228a0fdebed6bd74"
+  - variable: GOOGLE_GENAI_API_KEY
+    value: "AIzaSyDocPBpSqGr_vYTxijDOtxYPxwvePJISiY"

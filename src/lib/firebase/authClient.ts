@@ -1,4 +1,4 @@
 "use client";
 import { getAuth } from "firebase/auth";
-import { app } from "./app";
+import { app } from "./client";
 export const auth = getAuth(app);

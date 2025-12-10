@@ -13,7 +13,7 @@ import {
   User,
   updateProfile as firebaseUpdateProfile,
 } from 'firebase/auth';
-import { auth } from '@/lib/firebase/authClient';
+import { getFirebaseAuth } from '@/lib/firebase/authClient';
 
 type Role = 'admin' | 'host' | 'unknown';
 
@@ -63,6 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 1) Escuchar cambios de sesión en Firebase
   useEffect(() => {
+    const auth = getFirebaseAuth();
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
 
@@ -80,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 2) Logout
   const signOut = useCallback(async () => {
     try {
+      const auth = getFirebaseAuth();
       await auth.signOut();
       await clearRoleCookie();
       // El propio middleware + layouts se encargarán de redirigir
@@ -91,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 3) Actualizar perfil
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
+      const auth = getFirebaseAuth();
       if (auth.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, profile);
         // Forzar re-render copiando el user

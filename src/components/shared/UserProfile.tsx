@@ -15,7 +15,7 @@ import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, L
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
-import { auth } from '@/lib/firebase/authClient';
+import { getFirebaseAuth } from '@/lib/firebase/authClient';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { useState } from 'react';
 import locales from '@/lib/locales.json';
@@ -85,7 +85,7 @@ export function UserProfile({ role }: UserProfileProps) {
       return;
     }
     try {
-      // This is a real Firebase call
+      const auth = getFirebaseAuth();
       await sendPasswordResetEmail(auth, user.email);
       toast({
         title: locales.profile.toast.passwordReset.title[language],

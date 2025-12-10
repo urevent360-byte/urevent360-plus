@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { UserPlus, Eye, EyeOff } from 'lucide-react';
-import { auth } from '@/lib/firebase/authClient';
+import { getFirebaseAuth } from '@/lib/firebase/authClient';
 import { useAuth } from '@/contexts/AuthProvider';
 
 const formSchema = z.object({
@@ -59,6 +59,7 @@ export default function RegisterPage() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
+    const auth = getFirebaseAuth();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await updateProfile(userCredential.user, { displayName: data.name });

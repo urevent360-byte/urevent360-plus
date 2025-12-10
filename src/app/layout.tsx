@@ -3,7 +3,6 @@ import './globals.css';
 import { JsonLd } from '@/components/shared/JsonLd';
 import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
 import brandingData from '@/lib/branding.json';
-import { LanguageProvider } from '@/contexts/LanguageProvider';
 import Providers from './Providers';
 
 

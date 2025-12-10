@@ -21,7 +21,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
-import { auth } from '@/lib/firebase/authClient';
+import { getFirebaseAuth } from '@/lib/firebase/authClient';
 
 const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),
@@ -64,6 +64,7 @@ export default function AdminLoginPage() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
+    const auth = getFirebaseAuth();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       await handleSuccessfulLogin(userCredential);
@@ -96,6 +97,7 @@ export default function AdminLoginPage() {
 
   async function handleSocialLogin(kind: 'google' | 'facebook') {
     setIsSubmitting(true);
+    const auth = getFirebaseAuth();
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();

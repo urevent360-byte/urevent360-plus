@@ -1,7 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/firebase/client';
+import { adminDb } from '@/lib/firebase/server';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const royalInquirySchema = z.object({
@@ -23,8 +23,8 @@ export async function POST(req: Request) {
 
     const { eventType, guestCount, zipCode, phone, notes } = validatedData.data;
 
-    // Save to Firestore
-    await addDoc(collection(db, 'royal_inquiries'), {
+    // Save to Firestore using the admin SDK
+    await addDoc(collection(adminDb, 'royal_inquiries'), {
       eventType,
       guests: guestCount,
       zip: zipCode,

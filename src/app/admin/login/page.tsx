@@ -7,12 +7,13 @@ import { z } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  getFirebaseAuth,
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
-  UserCredential,
-} from 'firebase/auth';
+  type UserCredential,
+} from '@/lib/firebase/authClient';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -21,7 +22,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Mail, LogIn, Eye, EyeOff, Home, Loader2 } from 'lucide-react';
 import { GoogleIcon, FacebookIcon } from '@/components/shared/icons';
-import { getFirebaseAuth } from '@/lib/firebase/authClient';
 
 const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),

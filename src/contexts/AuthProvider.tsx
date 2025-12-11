@@ -9,11 +9,12 @@ import React, {
   useCallback,
 } from 'react';
 import {
+  getFirebaseAuth,
   onAuthStateChanged,
-  User,
-  updateProfile as firebaseUpdateProfile,
-} from 'firebase/auth';
-import { getFirebaseAuth } from '@/lib/firebase/authClient';
+  firebaseUpdateProfile,
+  type User,
+} from '@/lib/firebase/authClient';
+
 
 type Role = 'admin' | 'host' | 'unknown';
 

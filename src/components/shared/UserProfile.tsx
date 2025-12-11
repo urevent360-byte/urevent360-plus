@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -15,8 +14,7 @@ import { Camera, Save, KeyRound, ShieldCheck, Mail, Phone, Bell, User, Trash2, L
 import { Separator } from '../ui/separator';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
-import { getFirebaseAuth } from '@/lib/firebase/authClient';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { getFirebaseAuth, sendPasswordResetEmail } from '@/lib/firebase/authClient';
 import { useState } from 'react';
 import locales from '@/lib/locales.json';
 

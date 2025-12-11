@@ -1,8 +1,7 @@
 'use client';
 
-import { sendPasswordResetEmail } from 'firebase/auth';
+import { getFirebaseAuth, sendPasswordResetEmail } from '@/lib/firebase/authClient';
 import { z } from 'zod';
-import { getFirebaseAuth } from '@/lib/firebase/authClient';
 
 const formSchema = z.object({
   email: z.string().email('A valid email is required.'),
@@ -35,5 +34,3 @@ export async function forgotPasswordAction(formData: FormData) {
     return { success: true };
   }
 }
-
-    

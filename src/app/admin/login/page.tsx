@@ -227,6 +227,13 @@ export default function AdminLoginPage() {
             </Button>
           </div>
 
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Don&apos;t have an account?{' '}
+            <Link href="/app/register" className="font-semibold text-primary hover:underline">
+              Sign up
+            </Link>
+          </p>
+
           <div className="mt-4 text-center">
             <Button variant="link" asChild>
               <Link href="/">

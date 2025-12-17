@@ -1,12 +1,18 @@
 # Settings for Backend (on Cloud Run)
 # See https://firebase.google.com/docs/app-hosting/configure#cloud-run
-
 runConfig:
   minInstances: 0
   # maxInstances: 100
   # concurrency: 80
   # cpu: 1
   # memoryMiB: 512
+
+# Make environment variables available to the build process
+# See https://firebase.google.com/docs/app-hosting/configure-backend#build-with-secrets
+buildConfig:
+  buildEnvVars:
+    - variable: GOOGLE_GENAI_API_KEY
+      value: "AIzaSyDocPBpSqGr_vYTxijDOtxYPxwvePJISiY"
 
 # Environment variables and secrets
 # See https://firebase.google.com/docs/app-hosting/configure#environment-variables

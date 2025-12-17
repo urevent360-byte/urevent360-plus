@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, {
@@ -13,6 +14,7 @@ import {
   onAuthStateChanged,
   firebaseUpdateProfile,
   type User,
+  type Auth,
 } from '@/lib/firebase/authClient';
 
 
@@ -28,7 +30,7 @@ type AuthCtx = {
   updateProfile: (profile: { displayName?: string; photoURL?: string }) => Promise<void>;
 };
 
-const Ctx = createContext<AuthCtx | null>(null);
+const AuthContext = createContext<AuthCtx | null>(null);
 
 // ---- helpers de cookie de rol ----
 
@@ -61,54 +63,58 @@ function getRoleFromCookie(): Role {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [auth, setAuth] = useState<Auth | null>(null);
 
-  // 1) Escuchar cambios de sesión en Firebase
+  // 1) Get auth instance on client
   useEffect(() => {
-    const auth = getFirebaseAuth();
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      setUser(u);
+    // This function only runs on the client, so getFirebaseAuth is safe here.
+    const authInstance = getFirebaseAuth();
+    setAuth(authInstance);
+  }, []);
 
-      // si se cerró sesión, limpia cookie de rol
+  // 2) Listen for auth state changes
+  useEffect(() => {
+    if (!auth) return; // Don't run if auth isn't initialized yet
+
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
       if (!u) {
         await clearRoleCookie();
       }
-
       setLoading(false);
     });
 
-    return () => unsub();
-  }, []);
+    return () => unsubscribe();
+  }, [auth]);
 
-  // 2) Logout
+  // 3) Logout
   const signOut = useCallback(async () => {
+    if (!auth) return;
     try {
-      const auth = getFirebaseAuth();
       await auth.signOut();
       await clearRoleCookie();
-      // El propio middleware + layouts se encargarán de redirigir
     } catch (e) {
       console.error('Error on signOut', e);
     }
-  }, []);
+  }, [auth]);
 
-  // 3) Actualizar perfil
+  // 4) Update profile
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
-      const auth = getFirebaseAuth();
-      if (auth.currentUser) {
+      if (auth?.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, profile);
-        // Forzar re-render copiando el user
+        // Force re-render with updated user info by creating a new object
         setUser({ ...auth.currentUser });
       }
     },
-    []
+    [auth]
   );
 
-  // 4) Rol a partir de la cookie (solo tiene sentido si hay user)
+  // 5) Determine role from cookie
   const role: Role = user ? getRoleFromCookie() : 'unknown';
   const isAdmin = role === 'admin';
 
-  // 5) Valor expuesto al resto de la app
+  // 6) Memoize the context value
   const value = useMemo(
     () => ({
       user,
@@ -122,11 +128,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [user, loading, isAdmin, role, signOut, updateProfile]
   );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const v = useContext(Ctx);
-  if (!v) throw new Error('useAuth must be used within AuthProvider');
-  return v;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }

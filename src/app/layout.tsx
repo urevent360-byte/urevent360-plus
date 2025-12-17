@@ -1,9 +1,8 @@
 
 import './globals.css';
 import { JsonLd } from '@/components/shared/JsonLd';
-import { AppLayoutClient } from '@/components/layout/AppLayoutClient';
-import brandingData from '@/lib/branding.json';
 import Providers from './Providers';
+import brandingData from '@/lib/branding.json';
 
 
 export const metadata = {
@@ -30,10 +29,8 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body>
-          <Providers>
-              <AppLayoutClient logoUrl={logoUrl}>
-                  {children}
-              </AppLayoutClient>
+          <Providers logoUrl={logoUrl}>
+            {children}
           </Providers>
       </body>
     </html>

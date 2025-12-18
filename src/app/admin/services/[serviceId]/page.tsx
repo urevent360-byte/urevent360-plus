@@ -92,9 +92,14 @@ const ArrayFieldManager = <T extends FieldValues>({ name, control, label, descri
 };
 
 
-export default function ServiceFormPage({ params }: { params: { serviceId: string } }) {
+type Props = {
+  params: Promise<{ serviceId: string }>;
+};
+
+export default async function Page({ params }: Props) {
+  const { serviceId } = await params;
+
     const router = useRouter();
-    const serviceId = params.serviceId;
     const isEditing = serviceId !== 'new';
     
     const { toast } = useToast();

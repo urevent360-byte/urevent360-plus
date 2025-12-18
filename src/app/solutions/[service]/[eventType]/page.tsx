@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import * as React from 'react';
@@ -107,8 +108,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-export default async function SolutionPage({ params }: Props) {
-  const { service: serviceSlug, eventType } = params;
+export default async function SolutionPage({ params }: { params: Promise<any> }) {
+  const { service: serviceSlug, eventType } = await params;
   const service = servicesCatalog.services.find(s => s.slug === serviceSlug);
 
   if (!service) {
@@ -150,7 +151,7 @@ export default async function SolutionPage({ params }: Props) {
             {title}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white drop-shadow-sm md:text-xl">
-            Elevate your {formattedEventType.toLowerCase()} in {CITY_NAME} with a unique and engaging experience.
+            Elevate your ${formattedEventType.toLowerCase()} in ${CITY_NAME} with a unique and engaging experience.
           </p>
            <Button size="lg" className="mt-8 bg-accent font-bold text-accent-foreground hover:bg-accent/90" asChild>
             <Link href={QUOTE_PATH}>
@@ -211,7 +212,7 @@ export default async function SolutionPage({ params }: Props) {
             Ready to Book a {service.title}?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg opacity-90">
-            Let&apos;s make your {formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
+            Let's make your ${formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
           </p>
           <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 font-bold" asChild>
             <Link href={QUOTE_PATH}>

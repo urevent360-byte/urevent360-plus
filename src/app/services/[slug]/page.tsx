@@ -1,4 +1,5 @@
 
+
 import * as React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import ServiceDetailClient from './client';
@@ -145,14 +146,14 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
 }
 
 
-export default function ServiceDetailPage({ params }: Props) {
-    const service = servicesCatalog.services.find(s => s.slug === params.slug);
-    const { slug } = params;
+export default async function ServiceDetailPage({ params }: { params: Promise<any> }) {
+    const { slug } = await params;
+    const service = servicesCatalog.services.find(s => s.slug === slug);
 
     return (
         <>
             {service && <FAQPageSchema service={service} />}
-            <ServiceDetailClient slug={slug} />
+            <ServiceDetailClient slug={slug as string} />
         </>
     );
 }

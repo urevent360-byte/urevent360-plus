@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import * as React from 'react';
@@ -75,8 +76,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-export default async function VenuePage({ params }: Props) {
-    const { slug } = params;
+export default async function VenuePage({ params }: { params: Promise<any> }) {
+    const { slug } = await params;
     const venue = venues.find(v => v.slug === slug);
   
     if (!venue) {

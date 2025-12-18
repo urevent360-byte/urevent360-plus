@@ -1,11 +1,13 @@
 
+
 import * as React from 'react';
 import AdminEventDetailClient from './client';
 export default async function AdminEventPage({
   params,
-  searchParams,
-}: any) {
+}: {
+  params: Promise<any>;
+}) {
 
-    const { eventId } = params;
+    const { eventId } = await params;
     return <AdminEventDetailClient eventId={eventId} />;
 }

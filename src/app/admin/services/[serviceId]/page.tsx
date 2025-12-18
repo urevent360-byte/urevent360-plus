@@ -198,7 +198,7 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
             <Card>
                 <CardHeader>
                     <CardTitle>{isEditing ? 'Edit Service' : 'Add New Service'}</CardTitle>
-                    <CardDescription>Fill out the details for the service below. The 'ID' field must be unique and cannot be changed after creation.</CardDescription>
+                    <CardDescription>Fill out the details for the service below. The &apos;ID&apos; field must be unique and cannot be changed after creation.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -425,4 +425,3 @@ export default function ServiceFormPage({ params }: { params: { serviceId: strin
   );
 }
 // src/app/admin/services/[serviceId]/page.tsx
-

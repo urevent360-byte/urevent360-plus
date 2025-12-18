@@ -70,7 +70,7 @@ export default function AppInquiriesPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Inquiry History</CardTitle>
-                    <CardDescription>A list of all inquiries you've submitted and their current status.</CardDescription>
+                    <CardDescription>A list of all inquiries you&apos;ve submitted and their current status.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {placeholderInquiries.map((inquiry) => (
@@ -93,7 +93,7 @@ export default function AppInquiriesPage() {
                     ))}
                      {placeholderInquiries.length === 0 && (
                          <div className="text-center text-muted-foreground py-12">
-                            <p>You haven't made any inquiries yet.</p>
+                            <p>You haven&apos;t made any inquiries yet.</p>
                          </div>
                     )}
                 </CardContent>

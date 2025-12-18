@@ -96,7 +96,7 @@ export default function PromptEditorPage() {
                         <CardHeader>
                             <CardTitle>AI Assistant Prompt Editor (English)</CardTitle>
                             <CardDescription>
-                                This is the core "System Prompt" for the AI assistant in English. It defines its personality, goals, and knowledge.
+                                This is the core &quot;System Prompt&quot; for the AI assistant in English. It defines its personality, goals, and knowledge.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -128,7 +128,7 @@ export default function PromptEditorPage() {
                         <CardHeader>
                             <CardTitle>AI Assistant Prompt Editor (Spanish)</CardTitle>
                             <CardDescription>
-                                This is the core "System Prompt" for the AI assistant in Spanish.
+                                This is the core &quot;System Prompt&quot; for the AI assistant in Spanish.
                             </CardDescription>
                         </CardHeader>
                         <CardContent>

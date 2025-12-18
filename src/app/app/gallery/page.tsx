@@ -79,7 +79,7 @@ export default function AppGalleryPage() {
         return (
             <Alert variant="destructive">
                 <AlertTitle>Event Not Found</AlertTitle>
-                <AlertDescription>We couldn't find gallery information for your event.</AlertDescription>
+                <AlertDescription>We couldn&apos;t find gallery information for your event.</AlertDescription>
             </Alert>
         )
     }
@@ -91,7 +91,7 @@ export default function AppGalleryPage() {
             <div className="flex items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">My Event Gallery</h1>
-                    <p className="text-muted-foreground">Access your professional photos and guest uploads for "{event.eventName}".</p>
+                    <p className="text-muted-foreground">Access your professional photos and guest uploads for &quot;{event.eventName}&quot;.</p>
                 </div>
             </div>
             

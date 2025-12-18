@@ -99,9 +99,9 @@ export default function MarketingPage() {
                                 <BarChart3 className="h-4 w-4" />
                                 <AlertTitle>Optimization Opportunity</AlertTitle>
                                 <AlertDescription>
-                                    Your "IG Story - Quinceañera Promo" campaign has a high click-through rate but lower lead conversion.
+                                    Your &quot;IG Story - Quinceañera Promo&quot; campaign has a high click-through rate but lower lead conversion.
                                     <span className="font-bold"> Recommendation: </span>
-                                    Try adding a clearer "Get a Quote" call-to-action in the story.
+                                    Try adding a clearer &quot;Get a Quote&quot; call-to-action in the story.
                                 </AlertDescription>
                            </Alert>
                            <Alert>

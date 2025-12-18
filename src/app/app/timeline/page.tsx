@@ -84,7 +84,7 @@ export default function AppTimelinePage() {
                             ))
                         ) : (
                              <div className="text-center text-muted-foreground py-12">
-                                <p>You don't have any events with us yet.</p>
+                                <p>You don&apos;t have any events with us yet.</p>
                                 <Button variant="link" asChild className="mt-2">
                                     <Link href="/contact">Request an Inquiry</Link>
                                 </Button>

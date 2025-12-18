@@ -84,7 +84,7 @@ export default function FooterContentPage() {
             <Card>
                 <CardHeader>
                     <CardTitle>Edit Footer Content</CardTitle>
-                    <CardDescription>Update the contact information and social media links displayed in your website's footer.</CardDescription>
+                    <CardDescription>Update the contact information and social media links displayed in your website&apos;s footer.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     <h3 className="font-semibold text-lg">Contact Information</h3>

@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import type { Event, FileRecord, TimelineItem, Song, Payment } from '@/lib/data-adapter';
@@ -135,7 +135,7 @@ function MusicPreferences({ eventId }: { eventId: string }) {
         <Card>
             <CardHeader>
                 <CardTitle>Music Preferences</CardTitle>
-                <CardDescription>Curate the soundtrack for your event. Add songs to your "Must-Play" and "Do-Not-Play" lists.</CardDescription>
+                <CardDescription>Curate the soundtrack for your event. Add songs to your &quot;Must-Play&quot; and &quot;Do-Not-Play&quot; lists.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="border p-4 rounded-lg space-y-4">
@@ -184,7 +184,7 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
     const [activeTab, setActiveTab] = useState(searchParams?.get('tab') || 'details');
     const { toast } = useToast();
 
-    async function fetchEventData() {
+    const fetchEventData = useCallback(async () => {
         setIsLoading(true);
         const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedPayments] = await Promise.all([
             getEvent(eventId),
@@ -197,11 +197,11 @@ export default function AppEventDetailClient({ eventId }: { eventId: string }) {
         setTimeline(fetchedTimeline);
         setPayments(fetchedPayments);
         setIsLoading(false);
-    }
+    }, [eventId]);
 
     useEffect(() => {
         fetchEventData();
-    }, [eventId]);
+    }, [fetchEventData]);
     
     const isLocked = (event as any)?.status !== 'booked';
 

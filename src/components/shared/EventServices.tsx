@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,7 +37,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
     const { toast } = useToast();
     const { user } = useAuth();
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         if (!user || !eventId) return;
         
         const [allBooked, allRequests] = await Promise.all([
@@ -57,11 +57,11 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
         setBookedServices(allBooked as any);
         setAvailableAddons(unbookedAddons);
         setRequestedAddons(allRequests as any);
-    };
+    }, [user, eventId]);
 
     useEffect(() => {
         fetchData();
-    }, [user, eventId]);
+    }, [fetchData]);
 
     const handleAddToCart = (addon: Service) => {
         setCart(prev => [...prev, addon]);

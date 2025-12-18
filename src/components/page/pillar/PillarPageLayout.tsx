@@ -206,7 +206,7 @@ export function PillarPageLayout({
                     <div>
                     <Quote className="h-10 w-10 text-primary/20" />
                     <p className="mt-4 text-gray-700 italic">
-                        "{testimonial.text}"
+                        &quot;{testimonial.text}&quot;
                     </p>
                     </div>
                     <div className="mt-6">
@@ -226,7 +226,7 @@ export function PillarPageLayout({
             Ready to Create an Unforgettable Event?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg opacity-90">
-            Let's discuss your vision and make it a reality. Contact us today for a personalized quote and check our availability.
+            Let&apos;s discuss your vision and make it a reality. Contact us today for a personalized quote and check our availability.
           </p>
           <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 font-bold" onClick={() => setInquiryOpen(true)}>
             Get Your Free Quote

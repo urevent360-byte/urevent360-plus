@@ -88,7 +88,7 @@ export default function NewEventPage() {
 
     const prevStep = () => {
         if (currentStep > 0) {
-            setCurrentStep(prev => prev - 1);
+            setCurrentStep(prev => prev + 1);
         }
     };
 
@@ -245,7 +245,7 @@ export default function NewEventPage() {
                         
                         {currentStep === 5 && (
                             <div className="space-y-4">
-                                <p>You're almost done! Please review the details on the previous pages. Add any additional notes below.</p>
+                                <p>You&apos;re almost done! Please review the details on the previous pages. Add any additional notes below.</p>
                                 <div className="space-y-2">
                                     <Label>Additional Notes</Label>
                                     <Textarea {...register('notes')} placeholder="Is there anything else we should know?" />
@@ -277,5 +277,3 @@ export default function NewEventPage() {
         </div>
     );
 }
-
-    

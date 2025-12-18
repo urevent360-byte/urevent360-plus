@@ -4,11 +4,12 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import servicesCatalog from '@/lib/services-catalog.json';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CheckCircle, GalleryHorizontal } from 'lucide-react';
 import Link from 'next/link';
+import venuesData from '@/lib/venues-data.json';
+import servicesCatalog from '@/lib/services-catalog.json';
 
 type Props = {
   params: { service: string; eventType: string };
@@ -210,7 +211,7 @@ export default async function SolutionPage({ params }: Props) {
             Ready to Book a {service.title}?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg opacity-90">
-            Let's make your {formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
+            Let&apos;s make your {formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
           </p>
           <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 font-bold" asChild>
             <Link href={QUOTE_PATH}>

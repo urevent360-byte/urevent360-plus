@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back! Here's an overview of your platform.</p>
+          <p className="text-muted-foreground">Welcome back! Here&apos;s an overview of your platform.</p>
         </div>
       </div>
 
@@ -62,7 +62,7 @@ export default function AdminDashboardPage() {
                 <div className="text-xs text-muted-foreground ml-auto">2 hours ago</div>
               </li>
               <li className="flex items-center gap-3">
-                <div className="text-sm"><span className="font-bold">Event Confirmed:</span> John Doe's event status changed to "confirmed".</div>
+                <div className="text-sm"><span className="font-bold">Event Confirmed:</span> John Doe&apos;s event status changed to &quot;confirmed&quot;.</div>
                 <div className="text-xs text-muted-foreground ml-auto">1 day ago</div>
               </li>
               <li className="flex items-center gap-3">

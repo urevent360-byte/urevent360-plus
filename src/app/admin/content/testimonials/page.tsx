@@ -105,7 +105,7 @@ export default function TestimonialsContentPage() {
                                         <Input id={`author-${testimonial.id}`} name="author" value={testimonial.author} onChange={(e) => handleInputChange(testimonial.id, e)} />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor={`title-${testimonial.id}`}>Author's Title</Label>
+                                        <Label htmlFor={`title-${testimonial.id}`}>Author&apos;s Title</Label>
                                         <Input id={`title-${testimonial.id}`} name="title" value={testimonial.title} onChange={(e) => handleInputChange(testimonial.id, e)} />
                                     </div>
                                     <div className="space-y-2">

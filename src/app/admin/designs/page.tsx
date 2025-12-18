@@ -61,7 +61,7 @@ export default function AdminDesignsPage() {
                 <CardHeader>
                     <CardTitle>Available Designs</CardTitle>
                     <CardDescription>
-                        These are the designs that will be presented to the host when they click "View Design" in their portal.
+                        These are the designs that will be presented to the host when they click &quot;View Design&quot; in their portal.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

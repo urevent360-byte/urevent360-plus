@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EventProfileShell } from '@/components/shared/EventProfileShell';
 import type { Event, FileRecord, TimelineItem, RequestedService, Payment, Song, ChangeRequest } from '@/lib/data-adapter';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -55,7 +55,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
     const [activeTab, setActiveTab] = useState('details');
     const { toast } = useToast();
 
-    async function fetchEventData() {
+    const fetchEventData = useCallback(async () => {
         setIsLoading(true);
         const [fetchedEvent, fetchedFiles, fetchedTimeline, fetchedRequests, fetchedPayments, musicPlaylist, fetchedChanges] = await Promise.all([
             getEvent(eventId),
@@ -77,11 +77,11 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
             setDoNotPlay(musicPlaylist.doNotPlay);
         }
         setIsLoading(false);
-    }
+    }, [eventId]);
 
     useEffect(() => {
         fetchEventData();
-    }, [eventId]);
+    }, [fetchEventData]);
 
     const handleCreateInvoice = async () => {
         if (!event) return;
@@ -233,7 +233,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                  <div className="space-y-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Admin Controls & Event Info</CardTitle>
+                            <CardTitle>Admin Controls &amp; Event Info</CardTitle>
                              <CardDescription>
                                 Key details about the event. The host sees this information in their portal.
                             </CardDescription>
@@ -305,7 +305,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
                                 )}
                             </div>
                             <p className="text-sm text-muted-foreground">
-                                Use "Simulate Deposit Payment" to trigger the webhook that marks the deposit as paid and unlocks the host portal.
+                                Use &quot;Simulate Deposit Payment&quot; to trigger the webhook that marks the deposit as paid and unlocks the host portal.
                             </p>
                         </CardContent>
                     </Card>
@@ -526,7 +526,7 @@ export default function AdminEventDetailClient({ eventId }: { eventId: string })
              <TabsContent value="music">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Client's Music Preferences</CardTitle>
+                        <CardTitle>Client&apos;s Music Preferences</CardTitle>
                         <CardDescription>This is a read-only view of the song lists curated by the client.</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-8">

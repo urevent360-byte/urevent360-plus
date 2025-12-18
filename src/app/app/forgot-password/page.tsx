@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm } from 'react-hook-form';
@@ -60,7 +61,7 @@ export default function ForgotPasswordPage() {
             Reset Your Password
           </CardTitle>
           <CardDescription className="text-lg">
-            Enter your email and we'll send you a link to reset your password.
+            Enter your email and we&apos;ll send you a link to reset your password.
           </CardDescription>
         </CardHeader>
         <CardContent>

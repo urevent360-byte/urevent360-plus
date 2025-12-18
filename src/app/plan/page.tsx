@@ -163,7 +163,7 @@ export default function PlanMyEventPage() {
           Plan My Event in Orlando
         </h1>
         <p className="mt-4 text-lg text-foreground/80">
-          Let's build the perfect package for your special occasion. Follow these simple steps and we'll send you a personalized quote.
+          Let&apos;s build the perfect package for your special occasion. Follow these simple steps and we&apos;ll send you a personalized quote.
         </p>
       </div>
 
@@ -240,7 +240,7 @@ export default function PlanMyEventPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Recommended Services</CardTitle>
-                        <CardDescription>Based on your event, here are some popular services. We'll include these in your initial quote.</CardDescription>
+                        <CardDescription>Based on your event, here are some popular services. We&apos;ll include these in your initial quote.</CardDescription>
                     </CardHeader>
                     <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {recommendedServices.map(service => (

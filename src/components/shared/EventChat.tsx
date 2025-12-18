@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -33,7 +33,7 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
     const chatContentRef = useRef<HTMLDivElement>(null);
     const { toast } = useToast();
 
-    const fetchMessages = async () => {
+    const fetchMessages = useCallback(async () => {
         setIsLoading(true);
         try {
             const fetchedMessages = await listMessages(eventId);
@@ -43,11 +43,11 @@ export function EventChat({ eventId, role }: { eventId: string; role: 'admin' | 
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [eventId, toast]);
 
     useEffect(() => {
         fetchMessages();
-    }, [eventId]);
+    }, [fetchMessages]);
 
     useEffect(() => {
         if (chatContentRef.current) {

@@ -64,7 +64,7 @@ export default function ContentManagementPage() {
         <div className="flex items-center justify-between mb-8">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Content Management</h1>
-                <p className="text-muted-foreground">Update your website's text, images, and other content.</p>
+                <p className="text-muted-foreground">Update your website&apos;s text, images, and other content.</p>
             </div>
         </div>
 

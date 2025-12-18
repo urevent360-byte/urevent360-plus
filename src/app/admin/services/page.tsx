@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -33,18 +33,18 @@ export default function ServiceManagementPage() {
   const [services, setServices] = useState<Service[]>([]);
   const { toast } = useToast();
 
-  const fetchServices = async () => {
+  const fetchServices = useCallback(async () => {
     const result = await getServicesAction();
     if (result.success && result.services) {
       setServices(result.services);
     } else {
       toast({ title: "Error", description: result.message, variant: "destructive" });
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     fetchServices();
-  }, [toast]);
+  }, [fetchServices]);
 
   const handleDelete = async (serviceId: string) => {
     const result = await deleteServiceAction(serviceId);

@@ -94,7 +94,7 @@ export default function ServiceDetailClient({ slug }: { slug: string }) {
                  <h2 className="font-headline text-2xl md:text-3xl font-bold text-primary text-center">Why choose {service.title} for your event?</h2>
                  <div className="prose prose-lg mx-auto mt-6 text-foreground/80 text-justify">
                     <p>
-                        Elevate your celebration with our premier {service.title} service, the perfect ingredient for an unforgettable event in Central Florida. Ideal for weddings, quinceañeras, and corporate functions, this experience is designed to leave a lasting impression on your guests. We pride ourselves on offering extensive customization options to seamlessly match your event's theme and atmosphere, ensuring a truly personal touch. Our professional on-site team handles every detail, guaranteeing a smooth and engaging experience from start to finish. Let us bring the 'wow' factor to your special day.
+                        Elevate your celebration with our premier {service.title} service, the perfect ingredient for an unforgettable event in Central Florida. Ideal for weddings, quinceañeras, and corporate functions, this experience is designed to leave a lasting impression on your guests. We pride ourselves on offering extensive customization options to seamlessly match your event&apos;s theme and atmosphere, ensuring a truly personal touch. Our professional on-site team handles every detail, guaranteeing a smooth and engaging experience from start to finish. Let us bring the &apos;wow&apos; factor to your special day.
                     </p>
                  </div>
                  <div className="text-center mt-8">

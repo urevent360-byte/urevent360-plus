@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/form';
 import { upsertServiceAction, getServiceAction } from './actions';
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import servicesCatalog from '@/lib/services-catalog.json';
 import { useEffect, useState } from 'react';
 import { Switch } from '@/components/ui/switch';
@@ -96,9 +96,9 @@ type Props = {
   params: Promise<{ serviceId: string }>;
 };
 
-export default async function Page({ params }: Props) {
-  const { serviceId } = await params;
-
+export default function Page() {
+  const params = useParams<{ serviceId: string }>();
+  const serviceId = params.serviceId;
     const router = useRouter();
     const isEditing = serviceId !== 'new';
     

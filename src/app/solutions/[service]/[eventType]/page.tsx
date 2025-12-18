@@ -212,7 +212,7 @@ export default async function SolutionPage({ params }: { params: Promise<any> })
             Ready to Book a {service.title}?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg opacity-90">
-            Let's make your ${formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
+            Let&apos;s make your ${formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.
           </p>
           <Button size="lg" className="mt-8 bg-white text-primary hover:bg-white/90 font-bold" asChild>
             <Link href={QUOTE_PATH}>

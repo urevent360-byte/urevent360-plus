@@ -4,10 +4,7 @@ import * as React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import ServiceDetailClient from './client';
 import servicesCatalog from '@/lib/services-catalog.json';
-
-type Props = {
-  params: { slug: string };
-  searchParams?: Record<string, string | string[] | undefined>;
+searchParams?: Record<string, string | string[] | undefined>;
 };
 
 const metadataMap: Record<string, { title: string; description: string }> = {
@@ -144,13 +141,7 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
     />
   );
 }
-
-
-type Props = {
-  params: Promise<{ slug: string }>;
-};
-
-export default async function Page({ params }: Props) {
+export default async function Page({ params }: { params: any }) {
     const { slug } = await params;
     const service = servicesCatalog.services.find(s => s.slug === slug);
 

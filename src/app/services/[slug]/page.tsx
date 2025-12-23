@@ -146,7 +146,11 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
 }
 
 
-export default async function ServiceDetailPage({ params }: { params: Promise<any> }) {
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export default async function Page({ params }: Props) {
     const { slug } = await params;
     const service = servicesCatalog.services.find(s => s.slug === slug);
 

@@ -98,7 +98,7 @@ type Props = {
 
 export default function Page() {
   const params = useParams<{ serviceId: string }>();
-  const serviceId = params.serviceId;
+  const serviceId = params?.serviceId;
     const router = useRouter();
     const isEditing = serviceId !== 'new';
     
@@ -128,7 +128,7 @@ export default function Page() {
     });
 
      useEffect(() => {
-        if (isEditing) {
+        if (isEditing && serviceId) {
             const fetchService = async () => {
                 setIsLoading(true);
                 const result = await getServiceAction(serviceId);

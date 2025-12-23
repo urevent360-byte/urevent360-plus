@@ -4,9 +4,6 @@ import * as React from 'react';
 import type { Metadata, ResolvingMetadata } from 'next';
 import ServiceDetailClient from './client';
 import servicesCatalog from '@/lib/services-catalog.json';
-searchParams?: Record<string, string | string[] | undefined>;
-};
-
 const metadataMap: Record<string, { title: string; description: string }> = {
   '360-photo-booth': {
     title: '360 Photo Booth Rental Orlando | Slow-Mo 360 Videos',
@@ -76,10 +73,11 @@ const metadataMap: Record<string, { title: string; description: string }> = {
 
 
 export async function generateMetadata(
-  { params }: Props,
+  { params }: { params: any },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const slug = params.slug;
+  const { slug } = await Promise.resolve(params);
+
   const service = servicesCatalog.services.find(s => s.slug === slug);
   const customMeta = metadataMap[slug];
 
@@ -142,7 +140,7 @@ function FAQPageSchema({ service }: { service: (typeof servicesCatalog.services)
   );
 }
 export default async function Page({ params }: { params: any }) {
-    const { slug } = await params;
+  const { slug } = await Promise.resolve(params);
     const service = servicesCatalog.services.find(s => s.slug === slug);
 
     return (

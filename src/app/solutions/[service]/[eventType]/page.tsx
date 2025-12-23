@@ -61,7 +61,7 @@ function ServiceSchema({ service, eventType }: { service: (typeof servicesCatalo
 
 // --- METADATA GENERATION ---
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { service: serviceSlug, eventType } = params;
+  const { service: serviceSlug, eventType } = await Promise.resolve(params);
   const service = servicesCatalog.services.find(s => s.slug === serviceSlug);
   const formattedEventType = formatSlug(eventType);
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:9002';

@@ -1,7 +1,4 @@
 
-
-'use server';
-
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
@@ -16,7 +13,7 @@ import servicesCatalog from '@/lib/services-catalog.json';
 import { Separator } from '@/components/ui/separator';
 
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 const { venues } = venuesData;
@@ -53,7 +50,8 @@ function VenueSchema({ venue }: { venue: (typeof venues)[0] }) {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const venue = venues.find(v => v.slug === params.slug);
+  const { slug } = await params;
+  const venue = venues.find(v => v.slug === slug);
 
   if (!venue) {
     return {
@@ -76,8 +74,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 // --- PAGE COMPONENT ---
-export default async function VenuePage({ params }: { params: Promise<any> }) {
-    const { slug } = await params;
+export default async function VenuePage({ params }: Props) {
+  const { slug } = await params;
     const venue = venues.find(v => v.slug === slug);
   
     if (!venue) {
@@ -189,3 +187,4 @@ export async function generateStaticParams() {
     slug: venue.slug,
   }));
 }
+

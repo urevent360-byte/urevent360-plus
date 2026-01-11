@@ -159,8 +159,24 @@ export async function continueConversation(messages: MessageData[]): Promise<Con
     .filter((msg): msg is MessageData => !!msg);
 
   const limitedHistory = normalizedHistory.slice(-15);
+const safeHistory = limitedHistory.map((m) => ({
+  ...m,
+  content: (m.content || []).map((c: any) => {
+    if (c?.media?.url) {
+      return {
+        media: {
+          url: c.media.url,
+          contentType: c.media.contentType ?? 'application/octet-stream',
+        },
+      };
+    }
+    if (typeof c?.text === 'string') return { text: c.text };
+    return { text: '' };
+  }),
+}));
 
-  return customerSupportFlow(limitedHistory);
+
+  return customerSupportFlow(safeHistory);
 }
 
 const MessageDataSchema = z.object({

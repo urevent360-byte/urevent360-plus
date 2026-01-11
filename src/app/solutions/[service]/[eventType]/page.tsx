@@ -13,7 +13,6 @@ import { ArrowRight, CheckCircle, GalleryHorizontal } from 'lucide-react';
 import servicesCatalog from '@/lib/services-catalog.json';
 
 type Props = {
-  // IMPORTANT (Next 15 in this environment): params is a Promise
   params: Promise<{ service: string; eventType: string }>;
 };
 
@@ -225,7 +224,7 @@ export default async function SolutionPage({ params }: Props) {
             {`Ready to Book a ${service.title}?`}
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg opacity-90">
-            {`Let's make your ${formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.`}
+            {`Let&apos;s make your ${formattedEventType.toLowerCase()} unforgettable. Contact us today for a personalized quote.`}
           </p>
           <Button
             size="lg"

@@ -42,10 +42,10 @@ export default function FooterContentPage() {
     const form = useForm<FooterFormValues>({
         resolver: zodResolver(footerFormSchema),
         defaultValues: {
-          email1: footerData.contact.emails[0]?.address || '',
-          email2: footerData.contact.emails[1]?.address || '',
-          phone1: footerData.contact.phones[0]?.number || '',
-          phone2: footerData.contact.phones[1]?.number || '',
+          email1: (footerData as any)?.contact?.emails?.[0]?.address || '',
+          email2: (footerData as any)?.contact?.emails?.[1]?.address || '',
+          phone1: (footerData as any)?.contact?.phones?.[0]?.number || '',
+          phone2: (footerData as any)?.contact?.phones?.[1]?.number || '',
           instagram: footerData.social.instagram || '',
           facebook: footerData.social.facebook || '',
           twitter: footerData.social.twitter || '',

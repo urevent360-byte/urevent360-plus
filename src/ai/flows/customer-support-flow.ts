@@ -164,19 +164,17 @@ const safeHistory = limitedHistory.map((m) => ({
   content: (m.content || []).map((c: any) => {
     if (c?.media?.url) {
       return {
+        ...c,
         media: {
-          url: c.media.url,
+          ...c.media,
           contentType: c.media.contentType ?? 'application/octet-stream',
         },
       };
     }
-    if (typeof c?.text === 'string') return { text: c.text };
-    return { text: '' };
+    return c;
   }),
 }));
-
-
-  return customerSupportFlow(safeHistory);
+return customerSupportFlow(safeHistory);
 }
 
 const MessageDataSchema = z.object({

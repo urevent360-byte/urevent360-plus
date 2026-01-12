@@ -89,12 +89,12 @@ const ConversationOutputSchema = z.string().describe("The AI's response.");
 export type ConversationOutput = z.infer<typeof ConversationOutputSchema>;
 
 // Helper function to detect language from messages
-const detectLanguage = (messages: MessageData[]): 'en' | 'es' => {
+const detectLanguage = (messages: any) => {
     const spanishKeywords = ['hola', 'gracias', 'evento', 'precio', 'servicio', 'ayuda'];
     const userText = messages
-        .filter(m => m.role === 'user')
-        .flatMap(m => m.content)
-        .map(c => c?.text || '')
+        .filter((m: any) => m.role === 'user')
+        .flatMap((m: any) => m.content)
+        .map((c: any) => c?.text || '')
         .join(' ')
         .toLowerCase();
     

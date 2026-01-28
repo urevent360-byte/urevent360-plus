@@ -137,7 +137,7 @@ export default function RoyalInquiriesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem asChild>
-                            <a href={`https://wa.me/${inquiry.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
+                            <a href={`https://wa.me/${(inquiry.phone ?? '').replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer">
                                 Open in WhatsApp
                             </a>
                           </DropdownMenuItem>

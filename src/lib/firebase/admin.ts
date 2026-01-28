@@ -3,7 +3,6 @@ import { getFirestore } from 'firebase-admin/firestore';
 
 // Admin SDK (SERVER-ONLY).
 // En Firebase App Hosting / Cloud Run, applicationDefault() usa las credenciales del entorno (ADC).
-// Esto evita depender de un JSON de service account en variables de entorno.
 const adminApp =
   getApps().length > 0
     ? getApps()[0]
@@ -12,3 +11,8 @@ const adminApp =
       });
 
 export const adminDb = getFirestore(adminApp);
+
+// Backward-compatible export used by existing routes:
+export function getAdminDb() {
+  return adminDb;
+}

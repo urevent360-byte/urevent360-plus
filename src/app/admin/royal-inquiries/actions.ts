@@ -9,14 +9,12 @@ export type RoyalInquiry = {
   createdAt?: any;
   updatedAt?: any;
 
-  // Campos típicos del formulario
   eventType?: string;
   phone?: string;
   guests?: number;
   zipcode?: string;
   notes?: string;
 
-  // Control interno
   status?: RoyalInquiryStatus;
 };
 
@@ -24,16 +22,15 @@ const COL = 'royal_inquiries';
 
 export async function getRoyalInquiriesAction(): Promise<{ inquiries: RoyalInquiry[] }> {
   const snap = await adminDb.collection(COL).orderBy('createdAt', 'desc').get();
-
   const inquiries = snap.docs.map((d) => ({
     id: d.id,
     ...(d.data() as Omit<RoyalInquiry, 'id'>),
   }));
-
   return { inquiries };
 }
 
-export async function setRoyalInquiryStatusAction(
+// ✅ This is the name your page.tsx is already importing:
+export async function updateInquiryStatusAction(
   id: string,
   status: RoyalInquiryStatus
 ): Promise<{ ok: true }> {
@@ -44,7 +41,6 @@ export async function setRoyalInquiryStatusAction(
     },
     { merge: true }
   );
-
   return { ok: true };
 }
 

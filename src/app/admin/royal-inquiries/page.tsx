@@ -124,7 +124,7 @@ export default function RoyalInquiriesPage() {
                     <TableCell className="max-w-xs truncate">{inquiry.notes || '-'}</TableCell>
                     <TableCell>{format(inquiry.createdAt.toDate(), 'PPP')}</TableCell>
                     <TableCell>
-                      <Badge className={`${statusColors[inquiry.status]} text-white capitalize`}>
+                      <Badge className={`${statusColors[(inquiry.status ?? 'new')]} text-white capitalize`}>
                         {inquiry.status}
                       </Badge>
                     </TableCell>

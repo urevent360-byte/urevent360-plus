@@ -1,47 +1,54 @@
-
 'use server';
 
-import { db } from '@/lib/firebase/client';
-import { collection, getDocs, doc, updateDoc, query, orderBy, Timestamp } from 'firebase/firestore';
-import { revalidatePath } from 'next/cache';
+import { adminDb } from '@/lib/firebase/admin';
 
-export type RoyalInquiryStatus = 'new' | 'contacted' | 'closed';
+export type RoyalInquiryStatus = 'new' | 'contacted' | 'archived';
 
 export type RoyalInquiry = {
   id: string;
-  eventType: string;
-  guests: number;
-  zip: string;
-  phone: string;
-  notes: string;
-  status: RoyalInquiryStatus;
-  createdAt: Timestamp;
+  createdAt?: any;
+  updatedAt?: any;
+
+  // Campos típicos del formulario
+  eventType?: string;
+  phone?: string;
+  guests?: number;
+  zipcode?: string;
+  notes?: string;
+
+  // Control interno
+  status?: RoyalInquiryStatus;
 };
 
+const COL = 'royal_inquiries';
+
 export async function getRoyalInquiriesAction(): Promise<{ inquiries: RoyalInquiry[] }> {
-  try {
-    const inquiriesRef = collection(db, 'royal_inquiries');
-    const q = query(inquiriesRef, orderBy('createdAt', 'desc'));
-    const querySnapshot = await getDocs(q);
-    const inquiries = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    } as RoyalInquiry));
-    return { inquiries };
-  } catch (error) {
-    console.error('Error fetching royal inquiries:', error);
-    return { inquiries: [] };
-  }
+  const snap = await adminDb.collection(COL).orderBy('createdAt', 'desc').get();
+
+  const inquiries = snap.docs.map((d) => ({
+    id: d.id,
+    ...(d.data() as Omit<RoyalInquiry, 'id'>),
+  }));
+
+  return { inquiries };
 }
 
-export async function updateInquiryStatusAction(id: string, status: RoyalInquiryStatus): Promise<{ success: boolean }> {
-    try {
-        const inquiryRef = doc(db, 'royal_inquiries', id);
-        await updateDoc(inquiryRef, { status });
-        revalidatePath('/admin/royal-inquiries');
-        return { success: true };
-    } catch (error) {
-        console.error('Error updating inquiry status:', error);
-        return { success: false };
-    }
+export async function setRoyalInquiryStatusAction(
+  id: string,
+  status: RoyalInquiryStatus
+): Promise<{ ok: true }> {
+  await adminDb.collection(COL).doc(id).set(
+    {
+      status,
+      updatedAt: new Date(),
+    },
+    { merge: true }
+  );
+
+  return { ok: true };
+}
+
+export async function deleteRoyalInquiryAction(id: string): Promise<{ ok: true }> {
+  await adminDb.collection(COL).doc(id).delete();
+  return { ok: true };
 }

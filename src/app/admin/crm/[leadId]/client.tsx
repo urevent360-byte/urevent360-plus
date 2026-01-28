@@ -91,7 +91,7 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
     const handleMarkAccepted = async () => {
         if (!lead) return;
         await markAccepted(lead.id);
-        setLead(prev => prev ? { ...prev, status: 'accepted' } : null);
+        setLead(prev => prev ? { ...prev, status: 'confirmed' } : null);
         toast({ title: 'Lead Marked as Accepted!', description: 'You can now convert this lead to a project.' });
     };
 
@@ -151,10 +151,10 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
                     <p className="text-muted-foreground mt-1">Manage this inquiry and convert it into a project.</p>
                 </div>
                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleSendQuote} disabled={lead.status === 'converted'}>
+                    <Button variant="outline" onClick={handleSendQuote} disabled={lead.status === 'archived'}>
                         <Send className="mr-2" /> {locales.crm.sendQuote[language]}
                     </Button>
-                     <Button variant="outline" onClick={handleMarkAccepted} disabled={!['quote_sent'].includes(lead.status as any)}>
+                     <Button variant="outline" onClick={handleMarkAccepted} disabled={!['contacted', 'follow-up'].includes(lead.status)}>
                         <Check className="mr-2" /> {locales.crm.markAccepted[language]}
                     </Button>
                     <Button onClick={handleConvertToProject} disabled={isConverting || !['accepted'].includes(lead.status as any)}>
@@ -164,7 +164,7 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
                 </div>
             </div>
             
-            {lead.status === 'converted' && lead.eventId && (
+            {lead.status === 'confirmed' && lead.eventId && (
                 <Alert>
                     <Info className="h-4 w-4" />
                     <AlertTitle>Lead Already Converted</AlertTitle>

@@ -84,7 +84,7 @@ export default function LeadDetailClient({ leadId }: { leadId: string }) {
     const handleSendQuote = async () => {
         if (!lead) return;
         await sendQuote(lead.id);
-        setLead(prev => prev ? { ...prev, status: 'quote_sent' } : null);
+        setLead(prev => prev ? { ...prev, status: 'contacted' } : null);
         toast({ title: 'Quote Sent!', description: `An email has been simulated for ${lead.email}.` });
     };
     

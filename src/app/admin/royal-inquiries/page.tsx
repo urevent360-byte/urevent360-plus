@@ -144,8 +144,8 @@ export default function RoyalInquiriesPage() {
                           <DropdownMenuItem onClick={() => handleUpdateStatus(inquiry.id, 'contacted')} disabled={inquiry.status === 'contacted'}>
                             Mark as Contacted
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleUpdateStatus(inquiry.id, 'closed')} disabled={inquiry.status === 'closed'}>
-                            Mark as Closed
+                          <DropdownMenuItem onClick={() => handleUpdateStatus(inquiry.id, 'archived')} disabled={inquiry.status === 'archived'}>
+                            Mark as Archived
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

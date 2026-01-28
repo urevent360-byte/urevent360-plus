@@ -22,10 +22,10 @@ import { getRoyalInquiriesAction, updateInquiryStatusAction, type RoyalInquiry, 
 const statusColors: Record<RoyalInquiryStatus, string> = {
   new: 'bg-blue-500 hover:bg-blue-500',
   contacted: 'bg-yellow-500 hover:bg-yellow-500',
-  closed: 'bg-green-500 hover:bg-green-500',
+  archived: 'bg-green-500 hover:bg-green-500',
 };
 
-const allStatuses: RoyalInquiryStatus[] = ['new', 'contacted', 'closed'];
+const allStatuses: RoyalInquiryStatus[] = ['new', 'contacted', 'archived'];
 
 export default function RoyalInquiriesPage() {
   const [inquiries, setInquiries] = useState<RoyalInquiry[]>([]);

@@ -47,7 +47,7 @@ export default function RoyalInquiriesPage() {
   const handleUpdateStatus = (id: string, status: RoyalInquiryStatus) => {
     startTransition(async () => {
       const result = await updateInquiryStatusAction(id, status);
-      if (result.success) {
+      if (result.ok) {
         toast({ title: 'Status Updated', description: `Inquiry marked as ${status}.` });
         // Optimistically update UI
         setInquiries(prev => prev.map(inq => inq.id === id ? { ...inq, status } : inq));

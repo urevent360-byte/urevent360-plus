@@ -119,7 +119,7 @@ export default function RoyalInquiriesPage() {
                     <TableCell>{inquiry.guests}</TableCell>
                     <TableCell>
                       <div>{inquiry.phone}</div>
-                      <div className="text-xs text-muted-foreground">ZIP: {inquiry.zip}</div>
+                      <div className="text-xs text-muted-foreground">ZIP: {inquiry.zipcode}</div>
                     </TableCell>
                     <TableCell className="max-w-xs truncate">{inquiry.notes || '-'}</TableCell>
                     <TableCell>{format(inquiry.createdAt.toDate(), 'PPP')}</TableCell>

@@ -129,7 +129,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                                     </TableCell>
                                     <TableCell className="text-right">
                                         {req.status === 'requested' && (
-                                            <Button size="sm" onClick={() => handleApproveRequest(req.id)}>
+                                            <Button size="sm" onClick={() => handleApproveRequest(req.serviceId)}>
                                                 <Check className="mr-2" />
                                                 Approve
                                             </Button>

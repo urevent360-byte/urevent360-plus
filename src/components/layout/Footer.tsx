@@ -22,13 +22,13 @@ export function Footer() {
           <div>
             <h3 className="font-headline font-semibold uppercase tracking-wider text-primary">Contact Us</h3>
             <ul className="mt-4 space-y-2">
-              {contact.emails.map((email, index) => (
+              {(contact as any).emails.map((email: any, index: number) => (
                 <li key={index} className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
                   <Mail className="h-5 w-5" />
                   <a href={`mailto:${email.address}`}>{email.address}</a>
                 </li>
               ))}
-              {contact.phones.map((phone, index) => (
+              {(contact as any).phones.map((phone: any, index: number) => (
                  <li key={index} className="flex items-center justify-center md:justify-start gap-2 text-gray-600 hover:text-primary transition-colors">
                     <Phone className="h-5 w-5" />
                     <a href={`tel:${phone.number.replace(/\D/g, '')}`}>

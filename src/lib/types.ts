@@ -142,3 +142,12 @@ export type Payment = {
   createdAt?: any;
   updatedAt?: any;
 };
+
+export type RequestedService = {
+  serviceId: string;
+  quantity?: number;
+  notes?: string;
+  // Any extra per-service options selected by the user
+  options?: Record<string, unknown>;
+};
+

@@ -129,3 +129,16 @@ export type Booking = {
       timestamp: Date;
   };
 };
+
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+
+export type Payment = {
+  id: string;
+  eventId?: string;
+  amount?: number;
+  currency?: string;
+  status?: PaymentStatus;
+  provider?: 'stripe' | 'manual' | 'other';
+  createdAt?: any;
+  updatedAt?: any;
+};

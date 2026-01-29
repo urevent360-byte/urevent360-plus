@@ -160,7 +160,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {bookedServices.map(booking => (
-                        <Card key={booking.id}>
+                        <Card key={booking.serviceId}>
                             <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 items-center gap-4">
                                 <div className="md:col-span-3">
                                     <h3 className="font-semibold">{(booking as any).serviceName}</h3>

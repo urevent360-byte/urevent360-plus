@@ -59,7 +59,7 @@ export default function HostLoginPage() {
     });
 
     // 3) Ir al dashboard host
-    router.replace('/app/dashboard');
+    router.push('/app/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

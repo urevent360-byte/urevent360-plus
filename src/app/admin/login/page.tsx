@@ -59,7 +59,7 @@ export default function AdminLoginPage() {
     });
 
     // 3) Ir al dashboard admin
-    router.replace('/admin/dashboard');
+    router.push('/admin/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

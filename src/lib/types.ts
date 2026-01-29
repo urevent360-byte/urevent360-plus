@@ -145,9 +145,12 @@ export type Payment = {
 
 export type RequestedService = {
   serviceId: string;
+  status?: RequestedServiceStatus;
   quantity?: number;
   notes?: string;
   // Any extra per-service options selected by the user
   options?: Record<string, unknown>;
 };
+
+export type RequestedServiceStatus = 'requested' | 'approved' | 'rejected';
 

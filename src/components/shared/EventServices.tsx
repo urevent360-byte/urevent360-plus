@@ -111,7 +111,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                         </TableHeader>
                         <TableBody>
                             {bookedServices.map((req) => (
-                                <TableRow key={req.id}>
+                                <TableRow key={req.serviceId}>
                                     <TableCell className="font-medium">{(req as any).serviceName}</TableCell>
                                     <TableCell>
                                         <Badge variant='default' className="capitalize bg-green-500">Booked</Badge>

@@ -122,7 +122,7 @@ export function EventServices({ eventId, role, onDataChange }: EventServicesProp
                                 </TableRow>
                             ))}
                             {requestedAddons.map((req) => (
-                                <TableRow key={req.id}>
+                                <TableRow key={req.serviceId}>
                                     <TableCell className="font-medium">{(req as any).serviceName}</TableCell>
                                     <TableCell>
                                         <Badge variant={req.status === 'approved' ? 'default' : 'outline'} className="capitalize">{req.status}</Badge>

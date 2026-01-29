@@ -82,7 +82,7 @@ export function EventGallery({ role, event, onLinkChange }: EventGalleryProps) {
     const handleSaveLink = async () => {
         if (!event) return;
         setIsSaving(true);
-        await setPhotoBoothLink(event.id, photoBoothLink);
+        await setPhotoBoothLink(photoBoothLink);
         setIsSaving(false);
         onLinkChange();
         toast({

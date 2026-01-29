@@ -683,7 +683,7 @@ export async function convertLeadToEvent(leadId: string): Promise<{ eventId: str
             MOCK_EVENTS.push(newEvent);
 
             if (!MOCK_REQUESTED_SERVICES[newEventId as any]) {
-                MOCK_REQUESTED_SERVICES[newEventId as any] = [];
+                (MOCK_REQUESTED_SERVICES as any)[newEventId as any] = [];
             }
             lead.requestedServices.forEach(s => {
                 (MOCK_REQUESTED_SERVICES as any).push({

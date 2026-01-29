@@ -14,8 +14,8 @@ function getRole(req: NextRequest): 'admin' | 'host' | 'unknown' {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const isAdminArea = pathname.startsWith('/admin');
-  const isAppArea = pathname.startsWith('/app');
+  const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
+  const isAppArea = pathname === '/app' || pathname.startsWith('/app/');
 
   // Rutas que no son ni /admin ni /app -> no tocar
   if (!isAdminArea && !isAppArea) {

@@ -46,11 +46,16 @@ export default function AdminLoginPage() {
 
   const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
     // 1) Guardar rol en cookie (para middleware + AuthProvider)
-    await fetch('/api/session/set-role', {
+    const roleRes = await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ role: 'admin' }),
     });
+
+    if (!roleRes.ok) {
+      throw new Error('Failed to set admin role cookie');
+    }
 
     // 2) Feedback al usuario
     toast({
@@ -59,7 +64,7 @@ export default function AdminLoginPage() {
     });
 
     // 3) Ir al dashboard admin
-    router.push('/admin/dashboard');
+    window.location.assign('/admin/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

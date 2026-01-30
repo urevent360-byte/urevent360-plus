@@ -46,11 +46,16 @@ export default function HostLoginPage() {
 
   const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
     // 1) Guardar rol host
-    await fetch('/api/session/set-role', {
+    const roleRes = await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ role: 'host' }),
     });
+
+    if (!roleRes.ok) {
+      throw new Error('Failed to set host role cookie');
+    }
 
     // 2) Feedback
     toast({
@@ -59,7 +64,7 @@ export default function HostLoginPage() {
     });
 
     // 3) Ir al dashboard host
-    router.push('/app/dashboard');
+    window.location.assign('/app/dashboard');
   };
 
   async function onSubmit(data: FormValues) {

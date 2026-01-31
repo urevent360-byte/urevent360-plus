@@ -20,7 +20,7 @@ export async function forgotPasswordAction(formData: FormData) {
   }
   
   const { email } = validatedFields.data;
-  const auth = getFirebaseAuth();
+  const auth = await getFirebaseAuth();
 
   try {
     await sendPasswordResetEmail(auth, email);

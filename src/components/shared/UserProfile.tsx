@@ -83,7 +83,7 @@ export function UserProfile({ role }: UserProfileProps) {
       return;
     }
     try {
-      const auth = getFirebaseAuth();
+      const auth = await getFirebaseAuth();
       await sendPasswordResetEmail(auth, user.email);
       toast({
         title: locales.profile.toast.passwordReset.title[language],

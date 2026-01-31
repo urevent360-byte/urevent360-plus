@@ -67,9 +67,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 1) Get auth instance on client
   useEffect(() => {
-    // This function only runs on the client, so getFirebaseAuth is safe here.
-    const authInstance = getFirebaseAuth();
-    setAuth(authInstance);
+    let alive = true;
+
+    (async () => {
+      try {
+        const authInstance = await getFirebaseAuth();
+        if (alive) setAuth(authInstance);
+      } catch (e) {
+        console.error('Failed to init Firebase Auth', e);
+      }
+    })();
+
+    return () => {
+      alive = false
+    };
   }, []);
 
   // 2) Listen for auth state changes

@@ -69,7 +69,7 @@ export default function HostLoginPage() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
-    const auth = getFirebaseAuth();
+    const auth = await getFirebaseAuth();
     try {
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
       await handleSuccessfulLogin(userCredential);
@@ -102,7 +102,7 @@ export default function HostLoginPage() {
 
   async function handleSocialLogin(kind: 'google' | 'facebook') {
     setIsSubmitting(true);
-    const auth = getFirebaseAuth();
+    const auth = await getFirebaseAuth();
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();

@@ -1,5 +1,4 @@
-// This module is safe to import on the server or client.
-// It only exports functions that should be called on the client.
+// Safe to import on server/client, but Auth instance is created ONLY on client.
 import {
   getAuth,
   type Auth,
@@ -13,27 +12,40 @@ import {
   type UserCredential,
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
+  setPersistence,
+  browserLocalPersistence,
 } from 'firebase/auth';
 import { app } from './client';
 
 let auth: Auth | null = null;
+let authReadyPromise: Promise<Auth> | null = null;
 
-// This function ensures getAuth is only called on the client.
-export function getFirebaseAuth(): Auth {
-  // `app` will be null on the server, so this will throw if called on the server.
-  // This function should only be called in client components or inside other functions here.
+// ✅ This async initializer ensures persistence is ready BEFORE any auth listeners run.
+export async function getFirebaseAuth(): Promise<Auth> {
   if (!app) {
     throw new Error(
       'Firebase app is not initialized. getFirebaseAuth() can only be called on the client.'
     );
   }
-  if (!auth) {
-    auth = getAuth(app);
+
+  // If we already initialized and set persistence, return it
+  if (auth) return auth;
+
+  // Avoid double-initialization in React strict mode / multiple renders
+  if (!authReadyPromise) {
+    authReadyPromise = (async () => {
+      const a = getAuth(app);
+      // ✅ Critical: make auth session survive reloads/navigation
+      await setPersistence(a, browserLocalPersistence);
+      auth = a;
+      return a;
+    })();
   }
-  return auth;
+
+  return authReadyPromise;
 }
 
-// Re-export all the necessary auth functions so that no other file needs to import 'firebase/auth' directly.
+// Re-export auth utilities
 export {
   onAuthStateChanged,
   firebaseUpdateProfile,

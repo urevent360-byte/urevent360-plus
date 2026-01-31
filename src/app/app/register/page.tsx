@@ -61,7 +61,7 @@ export default function RegisterPage() {
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
-    const auth = getFirebaseAuth();
+    const auth = await getFirebaseAuth();
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
       await firebaseUpdateProfile(userCredential.user, { displayName: data.name });

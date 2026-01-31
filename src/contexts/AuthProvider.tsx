@@ -8,6 +8,7 @@ import React, {
   useMemo,
   useState,
   useCallback,
+  useRef,
 } from 'react';
 import {
   getFirebaseAuth,
@@ -64,6 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<Auth | null>(null);
+  const hadUserRef = useRef(false);
 
   // 1) Get auth instance on client
   useEffect(() => {
@@ -89,9 +91,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (!u) {
+
+      // IMPORTANT:
+      // Firebase can emit null during initial hydration before restoring persistence.
+      // Only clear the role cookie if we previously had a user and then became null (real sign-out).
+      if (u) {
+        hadUserRef.current = true;
+      } else if (hadUserRef.current) {
         await clearRoleCookie();
       }
+
       setLoading(false);
     });
 

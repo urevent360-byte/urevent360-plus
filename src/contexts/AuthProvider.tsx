@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, {
@@ -18,7 +17,6 @@ import {
   type Auth,
 } from '@/lib/firebase/authClient';
 
-
 type Role = 'admin' | 'host' | 'unknown';
 
 type AuthCtx = {
@@ -33,11 +31,11 @@ type AuthCtx = {
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
-// ---- helpers de cookie de rol ----
+// ---- role cookie helpers ----
 
 async function clearRoleCookie() {
   try {
-    await fetch('/api/session/clear-role', { method: 'POST' });
+    await fetch('/api/session/clear-role', { method: 'POST', credentials: 'include' });
   } catch (e) {
     console.error('Error clearing role cookie', e);
   }
@@ -59,15 +57,19 @@ function getRoleFromCookie(): Role {
   return 'unknown';
 }
 
-// ---- AuthProvider real (con Firebase) ----
+// ---- AuthProvider ----
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<Auth | null>(null);
+
+  // IMPORTANT:
+  // Firebase can emit `null` briefly while restoring persisted session.
+  // We must NOT clear the role cookie on initial null.
   const hadUserRef = useRef(false);
 
-  // 1) Get auth instance on client
+  // 1) Init auth (client-only)
   useEffect(() => {
     let alive = true;
 
@@ -77,27 +79,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (alive) setAuth(authInstance);
       } catch (e) {
         console.error('Failed to init Firebase Auth', e);
+        if (alive) setLoading(false);
       }
     })();
 
     return () => {
-      alive = false
+      alive = false;
     };
   }, []);
 
-  // 2) Listen for auth state changes
+  // 2) Listen auth changes
   useEffect(() => {
-    if (!auth) return; // Don't run if auth isn't initialized yet
+    if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
 
-      // IMPORTANT:
-      // Firebase can emit null during initial hydration before restoring persistence.
-      // Only clear the role cookie if we previously had a user and then became null (real sign-out).
       if (u) {
         hadUserRef.current = true;
       } else if (hadUserRef.current) {
+        // Only clear role cookie after a real sign-out / session loss AFTER having a user
         await clearRoleCookie();
       }
 
@@ -123,18 +124,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (profile: { displayName?: string; photoURL?: string }) => {
       if (auth?.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, profile);
-        // Force re-render with updated user info by creating a new object
         setUser({ ...auth.currentUser });
       }
     },
     [auth]
   );
 
-  // 5) Determine role from cookie
+  // 5) Role (from cookie)
   const role: Role = user ? getRoleFromCookie() : 'unknown';
   const isAdmin = role === 'admin';
 
-  // 6) Memoize the context value
   const value = useMemo(
     () => ({
       user,
@@ -153,8 +152,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

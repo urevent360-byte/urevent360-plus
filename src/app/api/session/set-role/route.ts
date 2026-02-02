@@ -9,12 +9,22 @@ export async function POST(req: NextRequest) {
 
   const res = NextResponse.json({ ok: true });
 
-  // IMPORTANTE: sin httpOnly para que AuthProvider pueda leerla con document.cookie
+  const host = req.headers.get('host') ?? '';
+  const isUreventDomain =
+    host === 'urevent360plus.com' ||
+    host === 'www.urevent360plus.com' ||
+    host.endsWith('.urevent360plus.com');
+
+  // ✅ Make cookie shared across apex + www (only for your real domain)
+  const cookieDomain = isUreventDomain ? '.urevent360plus.com' : undefined;
+
   res.cookies.set('role', role, {
-    httpOnly: false,
+    httpOnly: false, // AuthProvider reads via document.cookie
     sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
     path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 7 días
+    domain: cookieDomain,
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 
   return res;

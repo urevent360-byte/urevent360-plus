@@ -1,25 +1,33 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+function getCookieDomain(req: NextRequest): string | undefined {
+  const host = req.headers.get('host') || '';
+  const hostname = host.split(':')[0].toLowerCase();
+
+  if (hostname === 'urevent360plus.com' || hostname.endsWith('.urevent360plus.com')) {
+    return '.urevent360plus.com';
+  }
+
+  return undefined;
+}
+
 export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true });
 
-  const host = req.headers.get('host') ?? '';
-  const isUreventDomain =
-    host === 'urevent360plus.com' ||
-    host === 'www.urevent360plus.com' ||
-    host.endsWith('.urevent360plus.com');
+  const domain = getCookieDomain(req);
+  const isSecure = (req.headers.get('x-forwarded-proto') || '').toLowerCase() === 'https';
 
-  const cookieDomain = isUreventDomain ? '.urevent360plus.com' : undefined;
-
-  // Clear cookie for both apex/www
-  res.cookies.set('role', '', {
+  const cookieOptions: any = {
     httpOnly: false,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
     path: '/',
-    domain: cookieDomain,
     expires: new Date(0),
-  });
+    secure: isSecure,
+  };
+
+  if (domain) cookieOptions.domain = domain;
+
+  res.cookies.set('role', '', cookieOptions);
 
   return res;
 }

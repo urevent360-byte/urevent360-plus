@@ -1,33 +1,47 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-function getCookieDomain(req: NextRequest): string | undefined {
-  const host = req.headers.get('host') || '';
-  const hostname = host.split(':')[0].toLowerCase();
+function getHost(req: NextRequest) {
+  return (req.headers.get('host') || '').split(':')[0].toLowerCase();
+}
 
-  if (hostname === 'urevent360plus.com' || hostname.endsWith('.urevent360plus.com')) {
-    return '.urevent360plus.com';
-  }
-
-  return undefined;
+function isProdHost(host: string) {
+  return host === 'urevent360plus.com' || host.endsWith('.urevent360plus.com');
 }
 
 export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true });
 
-  const domain = getCookieDomain(req);
-  const isSecure = (req.headers.get('x-forwarded-proto') || '').toLowerCase() === 'https';
+  const host = getHost(req);
+  const isProd = isProdHost(host);
+  const secure = isProd;
 
-  const cookieOptions: any = {
-    httpOnly: false,
-    sameSite: 'lax',
+  // Host-only
+  res.cookies.set('role', '', {
     path: '/',
     expires: new Date(0),
-    secure: isSecure,
-  };
+    sameSite: 'lax',
+    secure,
+  });
 
-  if (domain) cookieOptions.domain = domain;
+  if (isProd) {
+    // Apex explícito
+    res.cookies.set('role', '', {
+      path: '/',
+      expires: new Date(0),
+      sameSite: 'lax',
+      secure,
+      domain: 'urevent360plus.com',
+    });
 
-  res.cookies.set('role', '', cookieOptions);
+    // Wildcard
+    res.cookies.set('role', '', {
+      path: '/',
+      expires: new Date(0),
+      sameSite: 'lax',
+      secure,
+      domain: '.urevent360plus.com',
+    });
+  }
 
   return res;
 }

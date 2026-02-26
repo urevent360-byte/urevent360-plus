@@ -20,11 +20,12 @@ export async function POST(req: NextRequest) {
   const host = getHost(req);
   const isProd = isProdHost(host);
 
-  // En prod SIEMPRE secure (evita depender de x-forwarded-proto)
+  // ✅ prod = ALWAYS secure, no depender de x-forwarded-proto
   const secure = isProd;
 
-  // STEP 1: BORRAR TODAS LAS VARIANTES POSIBLES (evita duplicadas)
-  // Host-only (sin domain)
+  // 🔥 STEP 1 — DELETE ALL POSSIBLE OLD COOKIES
+
+  // Host-only
   res.cookies.set('role', '', {
     path: '/',
     expires: new Date(0),
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
   });
 
   if (isProd) {
-    // Apex explícito (Domain=urevent360plus.com)
+    // Apex domain
     res.cookies.set('role', '', {
       path: '/',
       expires: new Date(0),
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       domain: 'urevent360plus.com',
     });
 
-    // Wildcard (Domain=.urevent360plus.com)
+    // Wildcard domain
     res.cookies.set('role', '', {
       path: '/',
       expires: new Date(0),
@@ -52,9 +53,10 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // STEP 2: SETEAR UNA SOLA COOKIE LIMPIA
+  // 🔥 STEP 2 — SET SINGLE CLEAN COOKIE
+
   const cookieOptions: any = {
-    httpOnly: false, // la lees en cliente (AuthProvider)
+    httpOnly: false,
     sameSite: 'lax',
     path: '/',
     maxAge: 60 * 60 * 24 * 7,

@@ -24,7 +24,6 @@ export async function POST(req: NextRequest) {
   });
 
   if (isProd) {
-    // Apex explícito
     res.cookies.set('role', '', {
       path: '/',
       expires: new Date(0),
@@ -33,7 +32,6 @@ export async function POST(req: NextRequest) {
       domain: 'urevent360plus.com',
     });
 
-    // Wildcard
     res.cookies.set('role', '', {
       path: '/',
       expires: new Date(0),

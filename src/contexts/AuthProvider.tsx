@@ -1,14 +1,7 @@
+
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-} from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import {
   getFirebaseAuth,
   onAuthStateChanged,
@@ -23,30 +16,25 @@ type AuthCtx = {
   user: User | null;
   loading: boolean;
   roleLoaded: boolean;
-  isAdmin: boolean;
   role: Role;
+  isAdmin: boolean;
   signOut: () => Promise<void>;
   updateProfile: (profile: { displayName?: string; photoURL?: string }) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
-// -------------------------------
-// Cookie helpers
-// -------------------------------
+// ---- role cookie helpers ----
 
 async function clearRoleCookie() {
   try {
-    await fetch('/api/session/clear-role', {
-      method: 'POST',
-      credentials: 'include',
-    });
+    await fetch('/api/session/clear-role', { method: 'POST', credentials: 'include' });
   } catch (e) {
     console.error('Error clearing role cookie', e);
   }
 }
 
-function getRoleFromCookie(): Role {
+function readRoleCookie(): Role {
   if (typeof window === 'undefined') return 'unknown';
 
   const cookie = document.cookie
@@ -56,28 +44,26 @@ function getRoleFromCookie(): Role {
 
   if (!cookie) return 'unknown';
 
-  const value = cookie.split('=')[1];
-
+  const value = decodeURIComponent(cookie.split('=').slice(1).join('='));
   if (value === 'admin') return 'admin';
   if (value === 'host') return 'host';
-
   return 'unknown';
 }
 
-// -------------------------------
-// AuthProvider
-// -------------------------------
+// ---- AuthProvider ----
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [auth, setAuth] = useState<Auth | null>(null);
 
-  // Firebase can emit null briefly while restoring session.
-  // We DO NOT clear role cookie unless we had a user before.
-  const hadUserRef = useRef(false);
+  // Firebase user state
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // 1️⃣ Initialize Firebase Auth
+  // Role state (independiente de user)
+  const [role, setRole] = useState<Role>('unknown');
+  const [roleLoaded, setRoleLoaded] = useState(false);
+
+  // 1) Init auth (client-only)
   useEffect(() => {
     let alive = true;
 
@@ -96,39 +82,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // 2️⃣ Listen to auth changes
+  // 2) Load role cookie immediately on mount (no depende de Firebase)
+  useEffect(() => {
+    setRole(readRoleCookie());
+    setRoleLoaded(true);
+
+    // Optional: keep role in sync if another tab updates cookies
+    const onFocus = () => {
+      setRole(readRoleCookie());
+    };
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
+  // 3) Listen auth changes
   useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-
-      if (u) {
-        hadUserRef.current = true;
-      } else if (hadUserRef.current) {
-        // Only clear cookie after real logout
-        await clearRoleCookie();
-      }
-
       setLoading(false);
+
+      // IMPORTANT:
+      // NO borres role cookie aquí. Firebase puede emitir null temporalmente al restaurar sesión.
+      // El rol se controla por middleware/cookie + signOut explícito.
     });
 
     return () => unsubscribe();
   }, [auth]);
 
-  // 3️⃣ Logout
+  // 4) Logout (ONLY here we clear role)
   const signOut = useCallback(async () => {
     if (!auth) return;
 
     try {
       await auth.signOut();
-      await clearRoleCookie();
     } catch (e) {
-      console.error('Error during signOut', e);
+      console.error('Error on Firebase signOut', e);
+    } finally {
+      await clearRoleCookie();
+      setRole('unknown');
+      setUser(null);
     }
   }, [auth]);
 
-  // 4️⃣ Update profile
+  // 5) Update profile
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
       if (auth?.currentUser) {
@@ -139,23 +137,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     [auth]
   );
 
-  // 5️⃣ ROLE FIX (CRITICAL FIX)
-  // 🔥 IMPORTANT: DO NOT depend on `user` here.
-  // Cookie exists independently of Firebase's brief null state.
-  const role: Role = getRoleFromCookie();
   const isAdmin = role === 'admin';
 
   const value = useMemo(
     () => ({
       user,
       loading,
-      roleLoaded: !loading,
-      isAdmin,
+      roleLoaded,
       role,
+      isAdmin,
       signOut,
       updateProfile,
     }),
-    [user, loading, isAdmin, role, signOut, updateProfile]
+    [user, loading, roleLoaded, role, isAdmin, signOut, updateProfile]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -163,8 +157,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 }

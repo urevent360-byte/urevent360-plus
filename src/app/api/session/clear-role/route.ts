@@ -1,13 +1,13 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   const res = NextResponse.json({ ok: true });
 
   const isProd = process.env.NODE_ENV === 'production';
   const secure = isProd;
   const domain = '.urevent360plus.com';
 
-  // Expire both cookies
   res.cookies.set('role', '', {
     httpOnly: true,
     secure,

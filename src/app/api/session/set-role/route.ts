@@ -1,47 +1,47 @@
-
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 type Role = 'admin' | 'host';
 
-function getCookieDomain(hostname: string) {
-  // En producción queremos compartir entre urevent360plus.com y www.urevent360plus.com
-  if (hostname === 'urevent360plus.com' || hostname.endsWith('.urevent360plus.com')) {
-    return '.urevent360plus.com';
-  }
-  // En local/preview no seteamos domain para evitar que el browser lo ignore
+function cookieDomainFromHost(host: string | null) {
+  if (!host) return undefined;
+
+  const h = host.split(':')[0].toLowerCase();
+  // cubre www y sin-www
+  if (h === 'urevent360plus.com' || h === 'www.urevent360plus.com') return '.urevent360plus.com';
+
+  // para previews tipo *.vercel.app no fuerces domain
   return undefined;
 }
 
-export async function POST(req: NextRequest) {
-  const { role } = (await req.json()) as { role?: Role };
+export async function POST(req: Request) {
+  const { role } = (await req.json()) as { role: Role };
 
   if (role !== 'admin' && role !== 'host') {
-    return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
+    return NextResponse.json({ ok: false, error: 'Invalid role' }, { status: 400 });
   }
 
-  const res = NextResponse.json({ ok: true });
+  const host = req.headers.get('host');
+  const domain = cookieDomainFromHost(host);
 
-  const secure = process.env.NODE_ENV === 'production';
-  const domain = getCookieDomain(req.nextUrl.hostname);
+  const res = NextResponse.json({ ok: true, role });
 
-  const base = {
-    path: '/',
-    sameSite: 'lax' as const,
-    secure,
-    domain,
-  };
+  const secure = true; // estás en https en prod
 
-  // Cookie para middleware (server-side)
   res.cookies.set('role', role, {
-    ...base,
     httpOnly: true,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    domain,
     maxAge: 60 * 60 * 24 * 30, // 30 days
   });
 
-  // Cookie para UI (client-side)
   res.cookies.set('role_ui', role, {
-    ...base,
     httpOnly: false,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    domain,
     maxAge: 60 * 60 * 24 * 30,
   });
 

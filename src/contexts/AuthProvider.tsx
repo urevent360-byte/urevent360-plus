@@ -1,4 +1,3 @@
-
 'use client';
 
 import React, { createContext, useContext, useEffect, useMemo, useState, useCallback } from 'react';
@@ -51,17 +50,17 @@ function readRoleCookie(): Role {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<Auth | null>(null);
 
+  // Firebase user
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // role state (NO depende de Firebase)
+  // Role cookie (independiente del user)
   const [role, setRole] = useState<Role>('unknown');
   const [roleLoaded, setRoleLoaded] = useState(false);
 
-  // 1) Init Firebase Auth
+  // Init auth
   useEffect(() => {
     let alive = true;
-
     (async () => {
       try {
         const authInstance = await getFirebaseAuth();
@@ -71,38 +70,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (alive) setLoading(false);
       }
     })();
-
     return () => {
       alive = false;
     };
   }, []);
 
-  // 2) Load role cookie ASAP (no depende de Firebase)
+  // Load role cookie ASAP
   useEffect(() => {
     setRole(readRoleCookie());
     setRoleLoaded(true);
 
-    // Mantener role actualizado si otra tab cambia cookie
-    const sync = () => setRole(readRoleCookie());
-    window.addEventListener('focus', sync);
-    return () => window.removeEventListener('focus', sync);
+    const onFocus = () => setRole(readRoleCookie());
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, []);
 
-  // 3) Listen auth changes (NO borrar role aquí)
+  // Firebase auth listener (NO borra cookies aquí)
   useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
-      // NO tocar cookies aquí.
-      // Firebase puede emitir null temporalmente al restaurar sesión.
     });
 
     return () => unsubscribe();
   }, [auth]);
 
-  // 4) Logout (solo aquí borramos role)
+  // Logout: aquí SÍ limpiamos cookie
   const signOut = useCallback(async () => {
     if (!auth) return;
 
@@ -117,7 +112,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [auth]);
 
-  // 5) Update profile
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
       if (auth?.currentUser) {
@@ -131,15 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = role === 'admin';
 
   const value = useMemo(
-    () => ({
-      user,
-      loading,
-      roleLoaded,
-      role,
-      isAdmin,
-      signOut,
-      updateProfile,
-    }),
+    () => ({ user, loading, roleLoaded, role, isAdmin, signOut, updateProfile }),
     [user, loading, roleLoaded, role, isAdmin, signOut, updateProfile]
   );
 

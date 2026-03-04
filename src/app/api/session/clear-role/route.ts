@@ -1,29 +1,36 @@
+import { NextResponse } from 'next/server';
 
-import { NextRequest, NextResponse } from 'next/server';
+function cookieDomainFromHost(host: string | null) {
+  if (!host) return undefined;
 
-function getCookieDomain(hostname: string) {
-  if (hostname === 'urevent360plus.com' || hostname.endsWith('.urevent360plus.com')) {
-    return '.urevent360plus.com';
-  }
+  const h = host.split(':')[0].toLowerCase();
+  if (h === 'urevent360plus.com' || h === 'www.urevent360plus.com') return '.urevent360plus.com';
   return undefined;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
+  const host = req.headers.get('host');
+  const domain = cookieDomainFromHost(host);
+
   const res = NextResponse.json({ ok: true });
 
-  const secure = process.env.NODE_ENV === 'production';
-  const domain = getCookieDomain(req.nextUrl.hostname);
-
-  const base = {
+  res.cookies.set('role', '', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'lax',
     path: '/',
-    sameSite: 'lax' as const,
-    secure,
     domain,
-    expires: new Date(0),
-  };
+    maxAge: 0,
+  });
 
-  res.cookies.set('role', '', { ...base, httpOnly: true });
-  res.cookies.set('role_ui', '', { ...base, httpOnly: false });
+  res.cookies.set('role_ui', '', {
+    httpOnly: false,
+    secure: true,
+    sameSite: 'lax',
+    path: '/',
+    domain,
+    maxAge: 0,
+  });
 
   return res;
 }

@@ -24,8 +24,6 @@ type AuthCtx = {
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
-// ---- role cookie helpers ----
-
 async function clearRoleCookie() {
   try {
     await fetch('/api/session/clear-role', { method: 'POST', credentials: 'include' });
@@ -40,7 +38,7 @@ function readRoleCookie(): Role {
   const cookie = document.cookie
     .split(';')
     .map((c) => c.trim())
-    .find((row) => row.startsWith('role='));
+    .find((row) => row.startsWith('role_ui='));
 
   if (!cookie) return 'unknown';
 
@@ -50,20 +48,17 @@ function readRoleCookie(): Role {
   return 'unknown';
 }
 
-// ---- AuthProvider ----
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<Auth | null>(null);
 
-  // Firebase user state
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Role state (independiente de user)
+  // role state (NO depende de Firebase)
   const [role, setRole] = useState<Role>('unknown');
   const [roleLoaded, setRoleLoaded] = useState(false);
 
-  // 1) Init auth (client-only)
+  // 1) Init Firebase Auth
   useEffect(() => {
     let alive = true;
 
@@ -82,36 +77,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // 2) Load role cookie immediately on mount (no depende de Firebase)
+  // 2) Load role cookie ASAP (no depende de Firebase)
   useEffect(() => {
     setRole(readRoleCookie());
     setRoleLoaded(true);
 
-    // Optional: keep role in sync if another tab updates cookies
-    const onFocus = () => {
-      setRole(readRoleCookie());
-    };
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
+    // Mantener role actualizado si otra tab cambia cookie
+    const sync = () => setRole(readRoleCookie());
+    window.addEventListener('focus', sync);
+    return () => window.removeEventListener('focus', sync);
   }, []);
 
-  // 3) Listen auth changes
+  // 3) Listen auth changes (NO borrar role aquí)
   useEffect(() => {
     if (!auth) return;
 
-    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
-
-      // IMPORTANT:
-      // NO borres role cookie aquí. Firebase puede emitir null temporalmente al restaurar sesión.
-      // El rol se controla por middleware/cookie + signOut explícito.
+      // NO tocar cookies aquí.
+      // Firebase puede emitir null temporalmente al restaurar sesión.
     });
 
     return () => unsubscribe();
   }, [auth]);
 
-  // 4) Logout (ONLY here we clear role)
+  // 4) Logout (solo aquí borramos role)
   const signOut = useCallback(async () => {
     if (!auth) return;
 

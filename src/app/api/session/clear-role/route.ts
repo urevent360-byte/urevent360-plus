@@ -1,45 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-function getHost(req: NextRequest) {
-  return (req.headers.get('host') || '').split(':')[0].toLowerCase();
-}
-
-function isProdHost(host: string) {
-  return host === 'urevent360plus.com' || host.endsWith('.urevent360plus.com');
-}
-
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   const res = NextResponse.json({ ok: true });
 
-  const host = getHost(req);
-  const isProd = isProdHost(host);
+  const isProd = process.env.NODE_ENV === 'production';
   const secure = isProd;
+  const domain = '.urevent360plus.com';
 
-  // Host-only
+  // Expire both cookies
   res.cookies.set('role', '', {
-    path: '/',
-    expires: new Date(0),
-    sameSite: 'lax',
+    httpOnly: true,
     secure,
+    sameSite: 'lax',
+    path: '/',
+    domain,
+    expires: new Date(0),
   });
 
-  if (isProd) {
-    res.cookies.set('role', '', {
-      path: '/',
-      expires: new Date(0),
-      sameSite: 'lax',
-      secure,
-      domain: 'urevent360plus.com',
-    });
-
-    res.cookies.set('role', '', {
-      path: '/',
-      expires: new Date(0),
-      sameSite: 'lax',
-      secure,
-      domain: '.urevent360plus.com',
-    });
-  }
+  res.cookies.set('role_ui', '', {
+    httpOnly: false,
+    secure,
+    sameSite: 'lax',
+    path: '/',
+    domain,
+    expires: new Date(0),
+  });
 
   return res;
 }

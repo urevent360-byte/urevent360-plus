@@ -23,28 +23,31 @@ type AuthCtx = {
 
 const AuthContext = createContext<AuthCtx | null>(null);
 
+// ---- cookie helpers ----
+// IMPORTANT: UI must read role_ui (NOT role) because role is HttpOnly.
+function readCookie(name: string): string | null {
+  if (typeof window === 'undefined') return null;
+  const match = document.cookie
+    .split(';')
+    .map((c) => c.trim())
+    .find((c) => c.startsWith(`${name}=`));
+  if (!match) return null;
+  return decodeURIComponent(match.split('=').slice(1).join('='));
+}
+
+function readRoleUI(): Role {
+  const value = readCookie('role_ui');
+  if (value === 'admin') return 'admin';
+  if (value === 'host') return 'host';
+  return 'unknown';
+}
+
 async function clearRoleCookie() {
   try {
     await fetch('/api/session/clear-role', { method: 'POST', credentials: 'include' });
   } catch (e) {
     console.error('Error clearing role cookie', e);
   }
-}
-
-function readRoleCookie(): Role {
-  if (typeof window === 'undefined') return 'unknown';
-
-  const cookie = document.cookie
-    .split(';')
-    .map((c) => c.trim())
-    .find((row) => row.startsWith('role_ui='));
-
-  if (!cookie) return 'unknown';
-
-  const value = decodeURIComponent(cookie.split('=').slice(1).join('='));
-  if (value === 'admin') return 'admin';
-  if (value === 'host') return 'host';
-  return 'unknown';
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -54,11 +57,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Role cookie (independiente del user)
+  // Role for UI (from role_ui cookie)
   const [role, setRole] = useState<Role>('unknown');
   const [roleLoaded, setRoleLoaded] = useState(false);
 
-  // Init auth
+  // 1) Init Firebase Auth
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -70,34 +73,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (alive) setLoading(false);
       }
     })();
+
     return () => {
       alive = false;
     };
   }, []);
 
-  // Load role cookie ASAP
+  // 2) Load role_ui immediately (independent of Firebase)
   useEffect(() => {
-    setRole(readRoleCookie());
+    const sync = () => setRole(readRoleUI());
+    sync();
     setRoleLoaded(true);
 
-    const onFocus = () => setRole(readRoleCookie());
-    window.addEventListener('focus', onFocus);
-    return () => window.removeEventListener('focus', onFocus);
+    // Keep in sync when tab refocuses
+    window.addEventListener('focus', sync);
+    return () => window.removeEventListener('focus', sync);
   }, []);
 
-  // Firebase auth listener (NO borra cookies aquí)
+  // 3) Listen Firebase auth changes (DO NOT clear cookies here!)
   useEffect(() => {
     if (!auth) return;
 
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
+      // DO NOT clear role cookie here.
+      // Firebase can emit null briefly while restoring session.
     });
 
     return () => unsubscribe();
   }, [auth]);
 
-  // Logout: aquí SÍ limpiamos cookie
+  // 4) Logout (ONLY here we clear role cookies)
   const signOut = useCallback(async () => {
     if (!auth) return;
 
@@ -112,6 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [auth]);
 
+  // 5) Update profile
   const updateProfile = useCallback(
     async (profile: { displayName?: string; photoURL?: string }) => {
       if (auth?.currentUser) {
@@ -125,7 +133,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = role === 'admin';
 
   const value = useMemo(
-    () => ({ user, loading, roleLoaded, role, isAdmin, signOut, updateProfile }),
+    () => ({
+      user,
+      loading,
+      roleLoaded,
+      role,
+      isAdmin,
+      signOut,
+      updateProfile,
+    }),
     [user, loading, roleLoaded, role, isAdmin, signOut, updateProfile]
   );
 
@@ -133,7 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within an AuthProvider');
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  return ctx;
 }

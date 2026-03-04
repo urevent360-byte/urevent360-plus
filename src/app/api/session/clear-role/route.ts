@@ -1,22 +1,14 @@
 import { NextResponse } from 'next/server';
 
-function cookieDomainFromHost(host: string | null) {
-  if (!host) return undefined;
-
-  const h = host.split(':')[0].toLowerCase();
-  if (h === 'urevent360plus.com' || h === 'www.urevent360plus.com') return '.urevent360plus.com';
-  return undefined;
-}
-
-export async function POST(req: Request) {
-  const host = req.headers.get('host');
-  const domain = cookieDomainFromHost(host);
-
+export async function POST() {
   const res = NextResponse.json({ ok: true });
+
+  const isProd = process.env.NODE_ENV === 'production';
+  const domain = 'urevent360plus.com';
 
   res.cookies.set('role', '', {
     httpOnly: true,
-    secure: true,
+    secure: isProd,
     sameSite: 'lax',
     path: '/',
     domain,
@@ -25,7 +17,7 @@ export async function POST(req: Request) {
 
   res.cookies.set('role_ui', '', {
     httpOnly: false,
-    secure: true,
+    secure: isProd,
     sameSite: 'lax',
     path: '/',
     domain,

@@ -26,6 +26,7 @@ const formSchema = z.object({
   email: z.string().email('Enter a valid email.'),
   password: z.string().min(6, 'At least 6 characters.'),
 });
+
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AdminLoginPage() {
@@ -54,6 +55,10 @@ export default function AdminLoginPage() {
 
     console.log('🔥 FETCH DONE', roleRes);
     console.log('🔥 FETCH STATUS', roleRes.status);
+    console.log('🔥 FETCH URL', roleRes.url);
+
+    const setCookieHeader = roleRes.headers.get('set-cookie');
+    console.log('🔥 SET-COOKIE HEADER', setCookieHeader);
 
     let responseText = '';
     try {
@@ -164,7 +169,7 @@ export default function AdminLoginPage() {
             <LogIn className="inline-block mr-2" /> Admin Portal
           </CardTitle>
           <CardDescription className="text-lg">
-          Access the UREVENT 360 PLUS dashboard. DEBUG BUILD 1
+            Access the UREVENT 360 PLUS dashboard. DEBUG BUILD 2
           </CardDescription>
         </CardHeader>
 

@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   getFirebaseAuth,
   signInWithEmailAndPassword,
@@ -31,7 +30,6 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function AdminLoginPage() {
   const { toast } = useToast();
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -45,7 +43,8 @@ export default function AdminLoginPage() {
   });
 
   const handleSuccessfulLogin = async (_userCredential: UserCredential) => {
-    // 1) Guardar rol en cookie (para middleware + AuthProvider)
+    console.log('🔥 HANDLE LOGIN START');
+
     const roleRes = await fetch('/api/session/set-role', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -53,28 +52,46 @@ export default function AdminLoginPage() {
       body: JSON.stringify({ role: 'admin' }),
     });
 
+    console.log('🔥 FETCH DONE', roleRes);
+    console.log('🔥 FETCH STATUS', roleRes.status);
+
+    let responseText = '';
+    try {
+      responseText = await roleRes.text();
+    } catch (e) {
+      console.error('❌ FAILED TO READ RESPONSE TEXT', e);
+    }
+
+    console.log('🔥 FETCH BODY', responseText);
+
     if (!roleRes.ok) {
+      console.error('❌ roleRes NOT OK');
       throw new Error('Failed to set admin role cookie');
     }
 
-    // 2) Feedback al usuario
+    console.log('✅ ROLE SET SUCCESS');
+
     toast({
       title: 'Login Success',
       description: 'Redirecting to admin dashboard…',
     });
 
-    // 3) Ir al dashboard admin
     window.location.assign('/admin/dashboard');
   };
 
   async function onSubmit(data: FormValues) {
     setIsSubmitting(true);
     const auth = await getFirebaseAuth();
+
     try {
+      console.log('🔥 BEFORE FIREBASE LOGIN');
       const userCredential = await signInWithEmailAndPassword(auth, data.email, data.password);
+      console.log('✅ FIREBASE LOGIN SUCCESS', userCredential?.user?.email);
+
       await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
-      console.error('Admin login error', error);
+      console.error('❌ Admin login error', error);
+
       let description = 'An unexpected error occurred.';
 
       switch (error?.code) {
@@ -103,14 +120,19 @@ export default function AdminLoginPage() {
   async function handleSocialLogin(kind: 'google' | 'facebook') {
     setIsSubmitting(true);
     const auth = await getFirebaseAuth();
+
     try {
       const provider =
         kind === 'google' ? new GoogleAuthProvider() : new FacebookAuthProvider();
 
+      console.log(`🔥 BEFORE ${kind.toUpperCase()} LOGIN`);
       const userCredential = await signInWithPopup(auth, provider);
+      console.log(`✅ ${kind.toUpperCase()} LOGIN SUCCESS`, userCredential?.user?.email);
+
       await handleSuccessfulLogin(userCredential);
     } catch (error: any) {
-      console.error('Admin social login error', error);
+      console.error('❌ Admin social login error', error);
+
       let description = error?.message || 'Social login failed.';
 
       switch (error?.code) {
@@ -174,6 +196,7 @@ export default function AdminLoginPage() {
                   Forgot Password?
                 </Link>
               </div>
+
               <div className="relative">
                 <Input
                   id="password"
@@ -193,6 +216,7 @@ export default function AdminLoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+
               {errors.password && (
                 <p className="text-sm text-destructive">{errors.password.message}</p>
               )}
@@ -222,6 +246,7 @@ export default function AdminLoginPage() {
             >
               <GoogleIcon className="mr-2" /> Continue with Google
             </Button>
+
             <Button
               variant="outline"
               className="w-full"

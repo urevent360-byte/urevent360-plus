@@ -164,7 +164,7 @@ export default function AdminLoginPage() {
             <LogIn className="inline-block mr-2" /> Admin Portal
           </CardTitle>
           <CardDescription className="text-lg">
-            Access the UREVENT 360 PLUS dashboard.
+          Access the UREVENT 360 PLUS dashboard. DEBUG BUILD 1
           </CardDescription>
         </CardHeader>
 

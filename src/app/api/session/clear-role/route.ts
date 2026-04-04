@@ -13,13 +13,14 @@ function getCookieDomain(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true });
 
-  const forwardedProto = (req.headers.get('x-forwarded-proto') || '').toLowerCase();
-  const isSecure = forwardedProto === 'https' || process.env.NODE_ENV === 'production';
+  const forwardedProto = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim().toLowerCase();
+  const isSecure = forwardedProto === 'https' || req.nextUrl.protocol === 'https:';
   const domain = getCookieDomain(req);
+  const sameSite: 'none' | 'lax' = isSecure ? 'none' : 'lax';
 
   const common = {
     secure: isSecure,
-    sameSite: 'lax' as const,
+    sameSite,
     path: '/',
     expires: new Date(0),
   };
@@ -37,6 +38,5 @@ export async function POST(req: NextRequest) {
   });
 
   res.headers.set('Cache-Control', 'no-store');
-
   return res;
 }

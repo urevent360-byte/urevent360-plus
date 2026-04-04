@@ -17,33 +17,29 @@ export async function POST(req: NextRequest) {
   const role = body?.role;
 
   if (role !== 'admin' && role !== 'host') {
-    return NextResponse.json(
-      { ok: false, error: 'Invalid role' },
-      { status: 400 }
-    );
+    return NextResponse.json({ ok: false, error: 'Invalid role' }, { status: 400 });
   }
 
   const res = NextResponse.json({ ok: true });
 
-  const forwardedProto = (req.headers.get('x-forwarded-proto') || '').toLowerCase();
-  const isSecure = forwardedProto === 'https' || process.env.NODE_ENV === 'production';
+  const forwardedProto = req.headers.get('x-forwarded-proto')?.split(',')[0]?.trim().toLowerCase();
+  const isSecure = forwardedProto === 'https' || req.nextUrl.protocol === 'https:';
   const domain = getCookieDomain(req);
+  const sameSite: 'none' | 'lax' = isSecure ? 'none' : 'lax';
 
   const common = {
     secure: isSecure,
-    sameSite: 'lax' as const,
+    sameSite,
     path: '/',
     maxAge: 60 * 60 * 24 * 30,
   };
 
-  // Cookie para middleware
   res.cookies.set('role', role, {
     ...common,
     httpOnly: true,
     ...(domain ? { domain } : {}),
   });
 
-  // Cookie para UI/AuthProvider
   res.cookies.set('role_ui', role, {
     ...common,
     httpOnly: false,
@@ -51,6 +47,5 @@ export async function POST(req: NextRequest) {
   });
 
   res.headers.set('Cache-Control', 'no-store');
-
   return res;
 }
